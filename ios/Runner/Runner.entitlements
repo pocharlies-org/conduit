@@ -6,9 +6,16 @@
 	<array>
 		<string>$(APP_GROUP_ID)</string>
 	</array>
-	<key>com.apple.developer.private-cloud-compute</key>
-	<true/>
-	<key>com.apple.developer.carplay-voice-based-conversation</key>
-	<true/>
+	<!-- SC-2732: Universal Links con chat.e-dani.com. El lado del servidor
+	     (apple-app-site-association) vive en dgx-infra k8s/apps/chat/aasa.yaml;
+	     si cambias el bundle id, cambia también el appID de ese fichero. -->
+	<key>com.apple.developer.associated-domains</key>
+	<array>
+		<string>applinks:chat.e-dani.com</string>
+	</array>
+	<!-- private-cloud-compute y carplay-voice eliminados del upstream:
+	     son capacidades que Apple no concede a nuestro equipo (Q3AVWT9CS8)
+	     y rompen la firma automática. Aquí no se usan: el modelo lo sirve
+	     nuestro servidor. -->
 </dict>
 </plist>
