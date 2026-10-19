@@ -77,11 +77,13 @@ archivar() {
   done
   # Prewarm de los native assets (hooks objective_c/pdfium): bajo xcodebuild fallan a veces —xcrun sale vacío con
   # muchos hooks en paralelo—; en un entorno limpio compilan y quedan cacheados en .dart_tool para el archive.
-  flutter build ios --release --no-codesign || { echo "flutter build ios (prewarm) falló" >&2; exit 1; }
+  flutter build ios --release --no-codesign --build-number="$N" || { echo "flutter build ios (prewarm) falló" >&2; exit 1; }
+  # En Flutter el CFBundleVersion del Info.plist es $(FLUTTER_BUILD_NUMBER) (Generated.xcconfig), no
+  # $(CURRENT_PROJECT_VERSION): hay que pasar los dos o la build sube con el número del pubspec.
   if ! xcodebuild -workspace ios/Runner.xcworkspace -scheme Runner \
     -destination "generic/platform=iOS" -configuration Release \
     -archivePath "$ARCHIVE" -derivedDataPath "$BUILD" \
-    CURRENT_PROJECT_VERSION="$N" archive >"$log" 2>&1; then
+    CURRENT_PROJECT_VERSION="$N" FLUTTER_BUILD_NUMBER="$N" archive >"$log" 2>&1; then
     echo "  log completo: $log" >&2; tail -30 "$log"; exit 1
   fi
   grep -E "^\*\*" "$log" | tail -2
