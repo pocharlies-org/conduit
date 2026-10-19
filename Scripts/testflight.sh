@@ -53,6 +53,8 @@ archivar() {
   local log app ver N
   N="$(git rev-list --count HEAD)"
   log="$(mktemp)"
+  # mermaid_core (path en pubspec) vive en un submódulo: sin él, pub get cae en un clone limpio.
+  git submodule update --init --depth 1 third_party/mermaid third_party/katex
   # El package ephemeral de Flutter (FlutterGeneratedPluginSwiftPackage) no existe hasta que flutter configura el proyecto iOS.
   flutter build ios --config-only || { echo "flutter build ios --config-only falló" >&2; exit 1; }
   if ! xcodebuild -workspace ios/Runner.xcworkspace -scheme Runner \
