@@ -49,10 +49,21 @@ extensiones() {  # "bundle|nombre" por línea, Runner primero
   echo "$BUNDLE.ShareExtension|${PERFIL/ App Store/ Share App Store}"
 }
 
+# Sin sesión con ventana (runner/ssh), una keychain bloqueada hace saltar errSecInternalComponent sin dónde pulsar «Always
+# Allow». La contraseña va por stdin a `security -i`, nunca por argv (en un Mac cualquiera ve los procesos de otro).
+llavero() {
+  local kc="$HOME/Library/Keychains/build.keychain-db" pass
+  [[ -f "$kc" && -f "$HOME/asc-certs/.kc-pass" ]] || { echo "falta build.keychain o ~/asc-certs/.kc-pass" >&2; exit 1; }
+  pass="$(cat "$HOME/asc-certs/.kc-pass")"
+  pass="${pass//\\/\\\\}"; pass="${pass//\"/\\\"}"
+  printf 'unlock-keychain -p "%s" %s\n' "$pass" "$kc" | security -i >/dev/null
+  printf 'set-key-partition-list -S apple-tool:,apple:,codesign: -s -k "%s" %s\n' "$pass" "$kc" | security -i >/dev/null
+}
+
 archivar() {
   local log app ver N
   N="$(git rev-list --count HEAD)"
-  log="$(mktemp)"
+  log="build/ios/archive-xcodebuild.log"; mkdir -p build/ios
   # mermaid_core (path en pubspec) vive en un submódulo: sin él, pub get cae en un clone limpio.
   git submodule update --init --depth 1 third_party/mermaid third_party/katex
   # El package ephemeral de Flutter (FlutterGeneratedPluginSwiftPackage) no existe hasta que flutter configura el proyecto iOS.
@@ -61,9 +72,9 @@ archivar() {
     -destination "generic/platform=iOS" -configuration Release \
     -archivePath "$ARCHIVE" -derivedDataPath "$BUILD" \
     CURRENT_PROJECT_VERSION="$N" archive >"$log" 2>&1; then
-    tail -30 "$log"; rm -f "$log"; exit 1
+    echo "  log completo: $log" >&2; tail -30 "$log"; exit 1
   fi
-  grep -E "^\*\*" "$log" | tail -2; rm -f "$log"
+  grep -E "^\*\*" "$log" | tail -2
   app="$(find "$ARCHIVE/Products/Applications" -maxdepth 1 -name '*.app' -print -quit)"
   ver="$(/usr/libexec/PlistBuddy -c 'Print :CFBundleVersion' "$app/Info.plist" 2>/dev/null || echo "?")"
   [[ "$ver" == "$N" ]] || { echo "  CFBundleVersion ($ver) != cuenta de commits ($N)" >&2; exit 1; }
@@ -108,6 +119,7 @@ publicar() {
              | python3 -c 'import json,sys;print(len(json.load(sys.stdin).get("data", [])))')"
     [[ "$dupes" == "0" ]] || { say "la build $N ya está en ASC: nada que subir"; return 0; }
   fi
+  llavero
   # Los perfiles de los 3 targets, instalados ANTES del archive: la firma manual del archive los necesita en el Mac.
   # exportar los vuelve a pedir y perfil-tienda.py los reutiliza (idempotente).
   while IFS='|' read -r bun nom; do
