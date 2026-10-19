@@ -108,6 +108,11 @@ publicar() {
              | python3 -c 'import json,sys;print(len(json.load(sys.stdin).get("data", [])))')"
     [[ "$dupes" == "0" ]] || { say "la build $N ya está en ASC: nada que subir"; return 0; }
   fi
+  # Los perfiles de los 3 targets, instalados ANTES del archive: la firma manual del archive los necesita en el Mac.
+  # exportar los vuelve a pedir y perfil-tienda.py los reutiliza (idempotente).
+  while IFS='|' read -r bun nom; do
+    python3 Scripts/perfil-tienda.py --bundle "$bun" --equipo "$TEAM" --nombre "$nom" --destino export >/dev/null
+  done < <(extensiones)
   say "archive (build $N)"
   archivar
   say "export (destination=$destino)"
