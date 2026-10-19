@@ -33,7 +33,9 @@ keyfile() {
     echo "faltan ASC_KEY_ID/ASC_ISSUER_ID/ASC_PRIVATE_KEY" >&2; exit 1; }
   KEYFILE="$(mktemp)"; chmod 600 "$KEYFILE"
   trap 'rm -f "$KEYFILE"' EXIT
-  printf '%s' "$ASC_PRIVATE_KEY" | base64 -d > "$KEYFILE" 2>/dev/null || printf '%s' "$ASC_PRIVATE_KEY" > "$KEYFILE"
+  printf '%s' "$ASC_PRIVATE_KEY" | base64 -d > "$KEYFILE" 2>/dev/null || true
+  # base64 -d de BSD no falla con un PEM crudo: sale con 0 y deja basura. Si no huele a PEM, se escribe el valor tal cual.
+  grep -q "BEGIN" "$KEYFILE" || printf '%s' "$ASC_PRIVATE_KEY" > "$KEYFILE"
   grep -q "BEGIN" "$KEYFILE" || { echo "ASC_PRIVATE_KEY no es un .p8" >&2; exit 1; }
 }
 
