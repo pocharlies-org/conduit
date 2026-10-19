@@ -53,6 +53,8 @@ archivar() {
   local log app ver N
   N="$(git rev-list --count HEAD)"
   log="$(mktemp)"
+  # El package ephemeral de Flutter (FlutterGeneratedPluginSwiftPackage) no existe hasta que flutter configura el proyecto iOS.
+  flutter build ios --config-only || { echo "flutter build ios --config-only falló" >&2; exit 1; }
   if ! xcodebuild -workspace ios/Runner.xcworkspace -scheme Runner \
     -destination "generic/platform=iOS" -configuration Release \
     -archivePath "$ARCHIVE" -derivedDataPath "$BUILD" \
