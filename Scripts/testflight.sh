@@ -3,10 +3,10 @@
 # correo-ios (Scripts/testflight.sh) a este repo Flutter: sin xcodegen ni project.yml — el equipo y el bundle id se leen del
 # project.pbxproj de Runner, su único sitio.
 #
-# Firma: archive con firma automática (identidad de desarrollo, perfiles gestionados por Xcode vía la clave de ASC con rol
-# Developer) y exportación a mano con el perfil de tienda que Scripts/perfil-tienda.py busca o crea por API (nunca crea
-# certificados). Las claves de ASC van SIEMPRE por ruta absoluta: xcodebuild no expande `~` (medido en SC-2732: con `~` literal
-# da "Authentication failed: bearer token" y parece un problema de rol de la clave).
+# Firma: todo manual y determinista. Los tres targets llevan CODE_SIGN_STYLE = Manual en el pbxproj con sus perfiles de tienda,
+# que Scripts/perfil-tienda.py busca o crea por API e instala en el Mac (nunca crea certificados; la clave de ASC es rol App
+# Manager: puede crear perfiles, la de Developer no). Xcode no gestiona nada en la nube: con la clave de Developer fallaba con
+# "Authentication failed: bearer token" porque gestionar perfiles con App Groups exige crearlos y esa clave recibe 403.
 #
 # Subcomandos:
 #   subir    archive Release + export destination=upload. Necesita ASC_KEY_ID/ASC_ISSUER_ID/ASC_PRIVATE_KEY y la ficha de la app.
@@ -37,6 +37,15 @@ keyfile() {
   grep -q "BEGIN" "$KEYFILE" || { echo "ASC_PRIVATE_KEY no es un .p8" >&2; exit 1; }
 }
 
+# Los tres targets se firman a mano (CODE_SIGN_STYLE = Manual en el project.pbxproj, rama SC-2732): la firma automática de Xcode
+# necesita gestionar perfiles en la nube y la clave de ASC de CI no puede crearlos (403). El archive no habla con Apple: usa los
+# perfiles instalados por perfil-tienda.py. Las extensiones llevan el sufijo de su bundle id en el nombre del perfil.
+extensiones() {  # "bundle|nombre" por línea, Runner primero
+  echo "$BUNDLE|$PERFIL"
+  echo "$BUNDLE.ConduitWidget|${PERFIL/ App Store/ Widget App Store}"
+  echo "$BUNDLE.ShareExtension|${PERFIL/ App Store/ Share App Store}"
+}
+
 archivar() {
   local log app ver N
   N="$(git rev-list --count HEAD)"
@@ -44,9 +53,6 @@ archivar() {
   if ! xcodebuild -workspace ios/Runner.xcworkspace -scheme Runner \
     -destination "generic/platform=iOS" -configuration Release \
     -archivePath "$ARCHIVE" -derivedDataPath "$BUILD" \
-    -allowProvisioningUpdates \
-    -authenticationKeyPath "$KEYFILE" -authenticationKeyID "$ASC_KEY_ID" \
-    -authenticationKeyIssuerID "$ASC_ISSUER_ID" \
     CURRENT_PROJECT_VERSION="$N" archive >"$log" 2>&1; then
     tail -30 "$log"; rm -f "$log"; exit 1
   fi
@@ -57,9 +63,24 @@ archivar() {
 }
 
 exportar() {
-  local options subir="" salida=""
+  local options subir="" salida="" par
   options="$(mktemp)"
-  python3 Scripts/perfil-tienda.py --bundle "$BUNDLE" --equipo "$TEAM" --nombre "$PERFIL" --destino "$1" > "$options"
+  # Un plist de exportación con los TRES perfiles: la App Store exige el perfil de cada target del archive.
+  while IFS='|' read -r bun nom; do
+    python3 Scripts/perfil-tienda.py --bundle "$bun" --equipo "$TEAM" --nombre "$nom" --destino "$1" > "$options.$bun"
+  done < <(extensiones)
+  python3 - "$options" "$1" "$TEAM" "$options.$BUNDLE" "$options.$BUNDLE.ConduitWidget" "$options.$BUNDLE.ShareExtension" <<'PY'
+import plistlib, sys
+salida, destino, equipo = sys.argv[1:4]
+base = [plistlib.load(open(r, 'rb')) for r in sys.argv[4:]]
+perfiles = {}
+for d in base:
+    perfiles.update(d['provisioningProfiles'])
+plistlib.dump({"method": "app-store-connect", "destination": destino, "teamID": equipo, "signingStyle": "manual",
+               "signingCertificate": base[0]["signingCertificate"], "provisioningProfiles": perfiles,
+               "manageAppVersionAndBuildNumber": False}, open(salida, 'wb'))
+PY
+  rm -f "$options.$BUNDLE" "$options.$BUNDLE.ConduitWidget" "$options.$BUNDLE.ShareExtension"
   [[ "$1" == export ]] && salida="$BUILD/export"
   [[ "$1" == upload ]] && subir=1
   xcodebuild -exportArchive -archivePath "$ARCHIVE" -exportOptionsPlist "$options" ${salida:+-exportPath "$salida"} \
