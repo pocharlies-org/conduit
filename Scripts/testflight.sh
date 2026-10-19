@@ -66,8 +66,18 @@ archivar() {
   log="build/ios/archive-xcodebuild.log"; mkdir -p build/ios
   # mermaid_core (path en pubspec) vive en un submódulo: sin él, pub get cae en un clone limpio.
   git submodule update --init --depth 1 third_party/mermaid third_party/katex
-  # El package ephemeral de Flutter (FlutterGeneratedPluginSwiftPackage) no existe hasta que flutter configura el proyecto iOS.
-  flutter build ios --config-only || { echo "flutter build ios --config-only falló" >&2; exit 1; }
+  flutter pub get
+  # Codegen como release.yml (app + packages que declaran build_runner): sin .g.dart/.freezed.dart el kernel del
+  # Run Script de Xcode cae con "Error when reading '*.g.dart': No such file or directory".
+  dart run build_runner build --delete-conflicting-outputs
+  for dir in packages/*/; do
+    if [ -f "$dir/pubspec.yaml" ] && grep -q '^  build_runner:' "$dir/pubspec.yaml"; then
+      (cd "$dir" && dart run build_runner build --delete-conflicting-outputs)
+    fi
+  done
+  # Prewarm de los native assets (hooks objective_c/pdfium): bajo xcodebuild fallan a veces —xcrun sale vacío con
+  # muchos hooks en paralelo—; en un entorno limpio compilan y quedan cacheados en .dart_tool para el archive.
+  flutter build ios --release --no-codesign || { echo "flutter build ios (prewarm) falló" >&2; exit 1; }
   if ! xcodebuild -workspace ios/Runner.xcworkspace -scheme Runner \
     -destination "generic/platform=iOS" -configuration Release \
     -archivePath "$ARCHIVE" -derivedDataPath "$BUILD" \
