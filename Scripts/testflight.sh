@@ -19,7 +19,7 @@ cd "$(dirname "${BASH_SOURCE[0]}")/.."
 PBX=ios/Runner.xcodeproj/project.pbxproj
 TEAM="$(grep -m1 -o 'DEVELOPMENT_TEAM = [A-Z0-9]*' "$PBX" | awk '{print $3}')"
 # El primer PRODUCT_BUNDLE_IDENTIFIER del pbxproj es el de Debug (.debug): el de la tienda es el que no lleva sufijo.
-BUNDLE="$(grep -o 'PRODUCT_BUNDLE_IDENTIFIER = [A-Za-z0-9.]*' "$PBX" | awk '{print $3}' | grep -Ev '\.debug$|Widget|Share' | head -1)"
+BUNDLE="$(grep -o 'PRODUCT_BUNDLE_IDENTIFIER = [A-Za-z0-9.]*' "$PBX" | awk '{print $3}' | grep -Ev '\.debug$|Widget|Share|RunnerTests' | head -1)"
 [[ -n "$TEAM" && -n "$BUNDLE" ]] || { echo "no encuentro DEVELOPMENT_TEAM o PRODUCT_BUNDLE_IDENTIFIER en $PBX" >&2; exit 1; }
 PERFIL="e-Dani Chat App Store (CI)"
 BUILD="build/ci"
