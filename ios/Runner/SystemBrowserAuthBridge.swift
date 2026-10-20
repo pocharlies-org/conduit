@@ -66,17 +66,17 @@ final class SystemBrowserAuthBridge: NSObject, ConduitBridge,
     session.prefersEphemeralWebBrowserSession = false
     session.presentationContextProvider = self
     self.session = session
-    if !session.present() {
+    // start()/presentationAnchor son la API válida desde iOS 12 (deprecada en
+    // 17.4 pero funcional): el despliegue del Runner es iOS 16.
+    if !session.start() {
       self.session = nil
       result("error")
     }
   }
 
-  func presentationContextForWebAuthenticationSession(
-    _ session: ASWebAuthenticationSession
-  ) -> ASPresentationContext {
-    let context = ASPresentationContext()
-    context.window = host?.activeWindowScene?.keyWindow
-    return context
+  func presentationAnchor(for session: ASWebAuthenticationSession) -> UIWindow {
+    // shortcut: sin escena activa no hay ancla real; la app está en primer
+    // plano siempre que se abre la hoja, si falta un ancla viable se revisa.
+    host?.activeWindowScene?.keyWindow ?? UIWindow()
   }
 }
