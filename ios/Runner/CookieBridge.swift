@@ -126,9 +126,12 @@ final class CookieBridge: ConduitBridge {
           return
         }
 
-        // Get cookies from WKWebView's cookie store
+        // Las cookies de la hoja del sistema (ASWebAuthenticationSession no-ephemeral)
+        // viven en HTTPCookieStorage.shared, no en el almacén WK (SC-2799, medido en el
+        // simulador 20-10): se leen los dos y cookieValuesForUrl desempata por ámbito.
+        let shared = HTTPCookieStorage.shared.cookies ?? []
         WKWebsiteDataStore.default().httpCookieStore.getAllCookies { cookies in
-          result(cookieValuesForUrl(cookies: cookies, url: url))
+          result(cookieValuesForUrl(cookies: shared + cookies, url: url))
         }
       } else if call.method == "clearCookies" {
         // Deletes the cookies the system-browser SSO sheet would reuse for this
@@ -139,7 +142,12 @@ final class CookieBridge: ConduitBridge {
           result(FlutterError(code: "INVALID_ARGS", message: "Invalid URL", details: nil))
           return
         }
+        // Se borra en los dos almacenes (WK y compartido): si quedara una sesión vieja
+        // en el compartido, el sondeo del login la leería como sesión nueva (SC-2799).
         let store = WKWebsiteDataStore.default().httpCookieStore
+        let shared = HTTPCookieStorage.shared
+        let sharedMatches = (shared.cookies ?? []).filter { cookieMatchesUrl(cookie: $0, url: url) }
+        for cookie in sharedMatches { shared.deleteCookie(cookie) }
         store.getAllCookies { cookies in
           let group = DispatchGroup()
           for cookie in cookies where cookieMatchesUrl(cookie: cookie, url: url) {
@@ -148,7 +156,8 @@ final class CookieBridge: ConduitBridge {
           }
           group.notify(queue: .main) {
             store.getAllCookies { remaining in
-              result(!remaining.contains { cookieMatchesUrl(cookie: $0, url: url) })
+              let sharedLeft = (shared.cookies ?? []).contains { cookieMatchesUrl(cookie: $0, url: url) }
+              result(!remaining.contains { cookieMatchesUrl(cookie: $0, url: url) } && !sharedLeft)
             }
           }
         }
