@@ -469,6 +469,31 @@ void main() {
     });
   });
 
+  group('proxySystemBrowserAuthResult', () {
+    test('completes with proxy cookies alone (manual Continuar semantics)', () {
+      final result = proxySystemBrowserAuthResult(
+        cookies: const {'_oauth2_proxy': 'x'},
+        jwtToken: null,
+      );
+      check(result).isNotNull().has((r) => r.success, 'success').isTrue();
+      check(result!.jwtToken).isNull();
+    });
+
+    test('completes with cookies and JWT when both are present', () {
+      final result = proxySystemBrowserAuthResult(
+        cookies: const {'token': 'a.b.c'},
+        jwtToken: 'a.b.c',
+      );
+      check(result!.jwtToken).equals('a.b.c');
+    });
+
+    test('nothing captured is a failure', () {
+      check(
+        proxySystemBrowserAuthResult(cookies: const {}, jwtToken: null),
+      ).isNull();
+    });
+  });
+
   group('ProxyAuthCaptureQueue', () {
     test('load-stop redirect adoption releases an old capture', () {
       final fence = ProxyAuthDocumentFence();

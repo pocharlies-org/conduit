@@ -8,6 +8,7 @@ import 'package:flutter_inappwebview/flutter_inappwebview.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../../core/auth/native_cookie_manager.dart';
+import '../../../core/auth/system_browser_auth.dart';
 import '../../../platform/webview_cookie_helper.dart';
 
 import 'package:conduit_core/auth/webview_origin.dart';
@@ -31,6 +32,17 @@ bool isTrustedProxyCredentialCaptureUrl({
 @visibleForTesting
 String proxyCookieLookupUrl(String serverUrl) =>
     webViewCookieLookupUrl(serverUrl);
+
+/// Outcome of the final cookie read of the system-browser proxy flow: proxy
+/// cookies alone complete (proxy-only sign-in, manual "Continuar" semantics);
+/// nothing captured is a failure.
+@visibleForTesting
+ProxyAuthResult? proxySystemBrowserAuthResult({
+  required Map<String, String> cookies,
+  required String? jwtToken,
+}) => cookies.isNotEmpty || hasCapturedJwtToken(jwtToken)
+    ? ProxyAuthResult.success(cookies: cookies, jwtToken: jwtToken)
+    : null;
 
 /// Runs the retry path appropriate for the current WebView lifecycle.
 ///
@@ -663,6 +675,36 @@ class _ProxyAuthPageState extends ConsumerState<ProxyAuthPage> {
       return;
     }
 
+    // iOS: the system-browser sheet is where Google OAuth works — it rejects
+    // embedded WebViews — and where AutoFill and password managers live
+    // (SC-2799). Its cookies land in the shared store the capture below
+    // already reads, so only the login UI changes.
+    if (SystemBrowserAuth.isSupported) {
+      if (widget.config.freshSession) {
+        final sharedCleared = await NativeCookieManager.clearCookiesForUrl(
+          serverUrl,
+        );
+        if (!mounted) return;
+        if (!sharedCleared) {
+          setState(() {
+            _error = AppLocalizations.of(context)!.pleaseCheckConnection;
+            _isLoading = false;
+          });
+          return;
+        }
+      }
+      setState(() {
+        _controller = null;
+        _shouldRenderWebView = false;
+        _isLoading = true;
+        _error = null;
+        _cookiesCaptured = false;
+        _isOnTargetServer = false;
+      });
+      await _runSystemBrowserProxyAuth();
+      return;
+    }
+
     setState(() {
       _controller = null;
       _shouldRenderWebView = true;
@@ -671,6 +713,61 @@ class _ProxyAuthPageState extends ConsumerState<ProxyAuthPage> {
       _cookiesCaptured = false;
       _isOnTargetServer = false;
     });
+  }
+
+  /// Drives the iOS system-browser proxy login: opens the sheet at the server
+  /// root (where oauth2-proxy bounces to Keycloak), then polls the shared
+  /// cookie store for the OpenWebUI JWT — the same success signal as the SSO
+  /// sheet (SC-2799). On JWT, closes the sheet and completes with the proxy
+  /// cookies and the JWT. If the sheet closed or timed out, a final read still
+  /// completes with proxy cookies alone (manual "Continuar" semantics).
+  Future<void> _runSystemBrowserProxyAuth() async {
+    final serverUrl = widget.config.serverConfig.url;
+    final lookupUrl = proxyCookieLookupUrl(serverUrl);
+    var sheetClosed = false;
+    unawaited(
+      SystemBrowserAuth.start(serverUrl).then((_) {
+        sheetClosed = true;
+      }),
+    );
+
+    const pollInterval = Duration(milliseconds: 700);
+    const timeout = Duration(minutes: 10);
+    final startedAt = DateTime.now();
+    while (mounted &&
+        !_cookiesCaptured &&
+        !sheetClosed &&
+        DateTime.now().difference(startedAt) < timeout) {
+      await Future.delayed(pollInterval);
+      if (!mounted || _cookiesCaptured) return;
+      final cookies = await NativeCookieManager.getCookiesForUrl(lookupUrl);
+      final jwtToken = ssoTokenFromNativeCookies(cookies);
+      if (jwtToken != null) {
+        await SystemBrowserAuth.cancel();
+        _completeProxyAuthWith(cookies, jwtToken);
+        return;
+      }
+    }
+
+    if (!mounted || _cookiesCaptured) return;
+    final cookies = await NativeCookieManager.getCookiesForUrl(lookupUrl);
+    final jwtToken = ssoTokenFromNativeCookies(cookies);
+    if (proxySystemBrowserAuthResult(cookies: cookies, jwtToken: jwtToken)
+        case final result?) {
+      _completeProxyAuthWith(result.cookies ?? const {}, result.jwtToken);
+      return;
+    }
+    setState(() {
+      _error = AppLocalizations.of(context)!.proxyAuthFailed;
+      _isLoading = false;
+    });
+  }
+
+  void _completeProxyAuthWith(Map<String, String> cookies, String? jwtToken) {
+    if (!mounted || _cookiesCaptured) return;
+    _cookiesCaptured = true;
+    widget.config.onAuthComplete?.call();
+    context.pop(ProxyAuthResult.success(cookies: cookies, jwtToken: jwtToken));
   }
 
   Future<void> _loadInitialServerPage(InAppWebViewController controller) async {
