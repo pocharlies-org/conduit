@@ -157,12 +157,18 @@ al_grupo_interno() {
     sleep 60
   done
   [[ -n "$B" ]] || { say "aviso: la build $N no quedó VALID en ASC en 30 min; añádela al grupo a mano"; return 0; }
-  G="$(bash Scripts/asc.sh GET "/betaGroups?filter%5Bapp%5D=$appid" \
-    | python3 -c 'import json,sys;d=json.load(sys.stdin).get("data",[]);print(d[0]["id"] if d else "")')"
+  # Hay dos «Pruebas internas» (medido 20-10) y una está vacía: se toma la que ya tiene builds.
+  for gid in $(bash Scripts/asc.sh GET "/betaGroups?filter%5Bapp%5D=$appid" \
+    | python3 -c 'import json,sys;[print(g["id"]) for g in json.load(sys.stdin).get("data",[])]'); do
+    if bash Scripts/asc.sh GET "/betaGroups/$gid/builds?limit=1" \
+      | python3 -c 'import json,sys;sys.exit(0 if json.load(sys.stdin).get("data") else 1)'; then G="$gid"; break; fi
+  done
   [[ -n "$G" ]] || { say "aviso: sin grupo de pruebas para $appid"; return 0; }
-  # El POST de la relación contesta 204 (cuerpo vacío) y asc.sh lo lee como «no es JSON»
-  # aunque haya añadido la build (medido 20-10 con la 1958): se verifica por GET.
-  bash Scripts/asc.sh POST "/betaGroups/$G/relationships/builds" "{\"data\":[{\"type\":\"builds\",\"id\":\"$B\"}]}" >/dev/null 2>&1 || true
+  # El alta se hace desde el build, no desde el grupo: el POST a
+  # /betaGroups/{G}/relationships/builds da 404 («no existe builds id») con builds recién
+  # subidas aunque GET /builds/{id} las devuelva (medido 20-10 con la 1962; el POST desde
+  # /builds/{id}/relationships/betaGroups sí funciona). El 204 vacío de asc.sh no es error.
+  bash Scripts/asc.sh POST "/builds/$B/relationships/betaGroups" "{\"data\":[{\"type\":\"betaGroups\",\"id\":\"$G\"}]}" >/dev/null 2>&1 || true
   # filter[version] no está permitido en esta relación (400 medido 20-10 con la 1960): se busca el id.
   if bash Scripts/asc.sh GET "/betaGroups/$G/builds?limit=200" \
     | python3 -c "import json,sys;sys.exit(0 if any(b['id']=='$B' for b in json.load(sys.stdin).get('data',[])) else 1)"; then
