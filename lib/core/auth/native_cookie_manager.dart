@@ -52,6 +52,37 @@ class NativeCookieManager {
     }
   }
 
+  /// Deletes every cookie the native store holds for `url` and verifies the
+  /// store is empty for it. Used to guarantee a fresh identity boundary before
+  /// the system-browser SSO sheet opens (SC-2799).
+  ///
+  /// Returns false on web, if the platform channel is missing, or if cookies
+  /// remain after the delete.
+  static Future<bool> clearCookiesForUrl(String url) async {
+    if (kIsWeb) return false;
+
+    try {
+      final result = await _channel.invokeMethod<bool>(
+        'clearCookies',
+        {'url': url},
+      );
+      return result ?? false;
+    } on MissingPluginException {
+      DebugLogger.log(
+        'Native cookie manager not available on this platform',
+        scope: 'auth/cookies',
+      );
+      return false;
+    } catch (e) {
+      DebugLogger.warning(
+        'Failed to clear native cookies',
+        scope: 'auth/cookies',
+        data: {'errorType': e.runtimeType.toString()},
+      );
+      return false;
+    }
+  }
+
   /// Formats cookies as a Cookie header string.
   static String formatCookieHeader(Map<String, String> cookies) {
     if (cookies.isEmpty) return '';
