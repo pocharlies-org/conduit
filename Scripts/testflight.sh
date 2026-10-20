@@ -61,8 +61,8 @@ llavero() {
 }
 
 archivar() {
-  local log app ver N
-  N="$(git rev-list --count HEAD)"
+  # N la pone publicar: la build y el dedupe de ASC tienen que usar el MISMO número.
+  local log app ver
   log="build/ios/archive-xcodebuild.log"; mkdir -p build/ios
   # mermaid_core (path en pubspec) vive en un submódulo: sin él, pub get cae en un clone limpio.
   git submodule update --init --depth 1 third_party/mermaid third_party/katex
@@ -89,7 +89,7 @@ archivar() {
   grep -E "^\*\*" "$log" | tail -2
   app="$(find "$ARCHIVE/Products/Applications" -maxdepth 1 -name '*.app' -print -quit)"
   ver="$(/usr/libexec/PlistBuddy -c 'Print :CFBundleVersion' "$app/Info.plist" 2>/dev/null || echo "?")"
-  [[ "$ver" == "$N" ]] || { echo "  CFBundleVersion ($ver) != cuenta de commits ($N)" >&2; exit 1; }
+  [[ "$ver" == "$N" ]] || { echo "  CFBundleVersion ($ver) != número de build ($N)" >&2; exit 1; }
 }
 
 exportar() {
@@ -121,7 +121,10 @@ PY
 publicar() {
   local destino="$1" appid="" N
   keyfile
-  N="$(git rev-list --count HEAD)"
+  # Timestamp, no cuenta de commits: TestFlight no instala una build con número menor que la
+  # instalada, y una rama de PR lleva MENOS commits que la build ya publicada (medido 20-10:
+  # las 1956–1962 de hoy eran invisibles frente a la 1966 de ayer y el Mac no actualizaba).
+  N="$(date -u +%Y%m%d%H%M%S)"
   if [[ "$destino" == upload ]]; then
     appid="$(bash Scripts/asc.sh GET "/apps?filter%5BbundleId%5D=$BUNDLE" \
       | python3 -c 'import json,sys;d=json.load(sys.stdin);print(d["data"][0]["id"] if d.get("data") else "")')"
