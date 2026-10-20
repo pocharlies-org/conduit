@@ -44,16 +44,11 @@ final class SystemBrowserAuthBridge: NSObject, ConduitBridge,
       return
     }
     session?.cancel()
-    // The https callback (iOS 17.4+) closes the sheet when the OAuth flow returns to
-    // the associated domain (AASA of chat.e-dani.com). On older iOS a never-matching
-    // custom scheme is used and Dart closes the sheet once it sees the session cookie.
-    let callbackScheme: String
-    if #available(iOS 17.4, *) {
-      callbackScheme = "https"
-    } else {
-      callbackScheme = "com.morenoibanez.chat"
-    }
-    let session = ASWebAuthenticationSession(url: url, callbackURLScheme: callbackScheme) { _, error in
+    // Scheme propio que el flujo nunca alcanza: la hoja queda abierta durante el
+    // login y Dart la cierra (cancel) al ver la cookie token. Con "https" la sesión
+    // se completaba en el primer redirect (Keycloak) y Dani no llegaba a escribir
+    // (medido 20-10 en su iPhone, build 1956).
+    let session = ASWebAuthenticationSession(url: url, callbackURLScheme: "com.morenoibanez.chat") { _, error in
       self.session = nil
       if let error = error as? ASWebAuthenticationSessionError, error.code == .canceledLogin {
         result("cancelled")
