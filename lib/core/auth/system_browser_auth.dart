@@ -31,14 +31,19 @@ String? ssoTokenFromNativeCookies(Map<String, String> cookies) {
   return value;
 }
 
-/// Presents the SSO login in the iOS system-browser sheet
-/// (`ASWebAuthenticationSession`), where AutoFill, one-time codes and
-/// password-manager extensions (1Password, KeePass) work — none of them do in
-/// the in-app WebView (SC-2799).
+/// Presents the SSO login on iOS, two ways (SC-2799):
 ///
-/// The sheet is non-ephemeral, so its cookies land in the shared
+/// - [fullScreen] (Keycloak SSO): an in-app `WKWebView` with no browser chrome
+///   — the system sheet paints a title bar and toolbar, which Dani rejected
+///   (21-10, «MUY feo»). AutoFill and one-time codes work here too (system
+///   AutoFill extension).
+/// - default (proxy login): the system-browser sheet
+///   (`ASWebAuthenticationSession`). Google OAuth rejects embedded WebViews
+///   (`disallowed_useragent`), so that flow needs the real browser.
+///
+/// Both are non-ephemeral: their cookies land in the shared
 /// `WKWebsiteDataStore` that [NativeCookieManager] reads. The caller opens the
-/// sheet and polls that store for the session token, then calls [cancel].
+/// screen and polls that store for the session token, then calls [cancel].
 class SystemBrowserAuth {
   static const _channel = MethodChannel('com.conduit.app/system_browser_auth');
 
@@ -46,12 +51,15 @@ class SystemBrowserAuth {
   static bool get isSupported =>
       !kIsWeb && defaultTargetPlatform == TargetPlatform.iOS;
 
-  /// Opens the sheet at [url]. Resolves when it closes: on the OAuth redirect
+  /// Opens the login at [url]. Resolves when it closes: on the OAuth redirect
   /// ([SystemBrowserAuthOutcome.done]), the user dismissing it
-  /// ([SystemBrowserAuthOutcome.cancelled]) or a native failure.
-  static Future<SystemBrowserAuthOutcome> start(String url) async {
+  /// ([SystemBrowserAuthOutcome.cancelled]) or a native failure. With
+  /// [fullScreen] the login is an in-app WebView without browser chrome.
+  static Future<SystemBrowserAuthOutcome> start(String url,
+      {bool fullScreen = false}) async {
     try {
-      final raw = await _channel.invokeMethod<String>('start', {'url': url});
+      final raw = await _channel.invokeMethod<String>('start',
+          {'url': url, 'fullScreen': fullScreen});
       return systemBrowserAuthOutcomeFromNative(raw);
     } on PlatformException {
       return SystemBrowserAuthOutcome.failed;

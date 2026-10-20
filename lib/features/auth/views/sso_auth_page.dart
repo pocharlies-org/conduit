@@ -223,10 +223,10 @@ class _SsoAuthPageState extends ConsumerState<SsoAuthPage> {
       return;
     }
 
-    // iOS: the system-browser sheet supports AutoFill, one-time codes and
-    // password managers (1Password, KeePass); the in-app WebView does not
-    // (SC-2799). It reads/writes the shared cookie store, so clear that store
-    // too for a fresh identity boundary before opening it.
+    // iOS: the login screen (full-screen WebView) supports AutoFill, one-time
+    // codes and password managers (1Password, KeePass) via the system AutoFill
+    // extension (SC-2799). It reads/writes the shared cookie store, so clear
+    // that store too for a fresh identity boundary before opening it.
     if (SystemBrowserAuth.isSupported) {
       final sharedCleared = await NativeCookieManager.clearCookiesForUrl(
         _serverUrl!,
@@ -260,11 +260,11 @@ class _SsoAuthPageState extends ConsumerState<SsoAuthPage> {
     });
   }
 
-  /// Drives the iOS system-browser SSO sheet: opens it at `$serverUrl/auth`,
-  /// then polls the shared cookie store (which the sheet writes) for the
+  /// Drives the iOS full-screen SSO login: opens it at `$serverUrl/auth`,
+  /// then polls the shared cookie store (which the WebView writes) for the
   /// session token. The OAuth flow redirects to the web root rather than a
   /// custom-scheme callback, so there is no native completion to wait on — the
-  /// token appearing is the success signal. On token, close the sheet and hand
+  /// token appearing is the success signal. On token, close the screen and hand
   /// it to [_handleToken]; on cancel or timeout, surface the error state.
   Future<void> _runSystemBrowserSso() async {
     final serverUrl = _serverUrl;
@@ -273,7 +273,7 @@ class _SsoAuthPageState extends ConsumerState<SsoAuthPage> {
 
     var sheetClosed = false;
     unawaited(
-      SystemBrowserAuth.start('$serverUrl/auth').then((_) {
+      SystemBrowserAuth.start('$serverUrl/auth', fullScreen: true).then((_) {
         sheetClosed = true;
       }),
     );
