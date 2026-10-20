@@ -151,7 +151,7 @@ al_grupo_interno() {
   local appid="$1" N="$2" B="" i st G
   for i in $(seq 1 30); do
     read -r B st < <(bash Scripts/asc.sh GET "/builds?filter%5Bapp%5D=$appid&filter%5Bversion%5D=$N" \
-      | python3 -c 'import json,sys;d=json.load(sys.stdin).get("data",[]);print(d[0]["id"], d[0]["attributes"].get("processingState") if d else "")')
+      | python3 -c 'import json,sys;d=json.load(sys.stdin).get("data",[]);print(("%s %s"%(d[0]["id"],d[0]["attributes"].get("processingState"))) if d else "")')
     [[ "$st" == "VALID" ]] && break
     B=""
     sleep 60
