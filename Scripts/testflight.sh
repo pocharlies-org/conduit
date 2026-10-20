@@ -160,9 +160,15 @@ al_grupo_interno() {
   G="$(bash Scripts/asc.sh GET "/betaGroups?filter%5Bapp%5D=$appid" \
     | python3 -c 'import json,sys;d=json.load(sys.stdin).get("data",[]);print(d[0]["id"] if d else "")')"
   [[ -n "$G" ]] || { say "aviso: sin grupo de pruebas para $appid"; return 0; }
-  bash Scripts/asc.sh POST "/betaGroups/$G/relationships/builds" "{\"data\":[{\"type\":\"builds\",\"id\":\"$B\"}]}" >/dev/null 2>&1 \
-    && say "build $N en el grupo de pruebas" \
-    || say "aviso: no se pudo añadir la build $N al grupo ($G)"
+  # El POST de la relación contesta 204 (cuerpo vacío) y asc.sh lo lee como «no es JSON»
+  # aunque haya añadido la build (medido 20-10 con la 1958): se verifica por GET.
+  bash Scripts/asc.sh POST "/betaGroups/$G/relationships/builds" "{\"data\":[{\"type\":\"builds\",\"id\":\"$B\"}]}" >/dev/null 2>&1 || true
+  if bash Scripts/asc.sh GET "/betaGroups/$G/builds?filter%5Bversion%5D=$N" \
+    | python3 -c 'import json,sys;sys.exit(0 if json.load(sys.stdin).get("data") else 1)'; then
+    say "build $N en el grupo de pruebas"
+  else
+    say "aviso: no se pudo añadir la build $N al grupo ($G)"
+  fi
 }
 
 case "${1:-subir}" in
