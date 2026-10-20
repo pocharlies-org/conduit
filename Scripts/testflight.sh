@@ -163,8 +163,9 @@ al_grupo_interno() {
   # El POST de la relación contesta 204 (cuerpo vacío) y asc.sh lo lee como «no es JSON»
   # aunque haya añadido la build (medido 20-10 con la 1958): se verifica por GET.
   bash Scripts/asc.sh POST "/betaGroups/$G/relationships/builds" "{\"data\":[{\"type\":\"builds\",\"id\":\"$B\"}]}" >/dev/null 2>&1 || true
-  if bash Scripts/asc.sh GET "/betaGroups/$G/builds?filter%5Bversion%5D=$N" \
-    | python3 -c 'import json,sys;sys.exit(0 if json.load(sys.stdin).get("data") else 1)'; then
+  # filter[version] no está permitido en esta relación (400 medido 20-10 con la 1960): se busca el id.
+  if bash Scripts/asc.sh GET "/betaGroups/$G/builds?limit=200" \
+    | python3 -c "import json,sys;sys.exit(0 if any(b['id']=='$B' for b in json.load(sys.stdin).get('data',[])) else 1)"; then
     say "build $N en el grupo de pruebas"
   else
     say "aviso: no se pudo añadir la build $N al grupo ($G)"
