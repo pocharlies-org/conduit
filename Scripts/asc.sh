@@ -61,13 +61,14 @@ metodo="${1:?uso: asc.sh GET|POST|PATCH|DELETE <ruta> [json]}"
 ruta="${2:?uso: asc.sh GET|POST|PATCH|DELETE <ruta> [json]}"
 cuerpo="${3:-}"
 # El JWT va por stdin (`-H @-`), nunca en los argumentos: en el Mac de CI un usuario ve los procesos de otro (`ps`). `printf` es de
-# bash y no lanza ningún proceso, así que no hay argv donde verlo. DELETE contesta 204 sin cuerpo: ahí «vacío» es el éxito.
+# bash y no lanza ningún proceso, así que no hay argv donde verlo. DELETE y el POST de una relación contestan 204 sin cuerpo:
+# ahí «vacío» es el éxito (un error de ASC siempre trae JSON con `errors`).
 printf 'Authorization: Bearer %s\n' "$(token)" \
   | curl -sS --connect-timeout 15 --max-time 60 --retry 3 -X "$metodo" "$API$ruta" \
       -H @- -H 'Content-Type: application/json' ${cuerpo:+-d "$cuerpo"} \
   | python3 -c 'import json,sys
 t=sys.stdin.read()
-if not t.strip() and sys.argv[1] == "DELETE":
+if not t.strip() and sys.argv[1] in ("DELETE", "POST"):
     sys.exit(0)
 try:
     d=json.loads(t)
