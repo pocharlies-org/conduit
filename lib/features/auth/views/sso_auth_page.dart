@@ -9,6 +9,8 @@ import 'package:flutter_inappwebview/flutter_inappwebview.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../../platform/webview_cookie_helper.dart';
+import '../../../core/auth/native_cookie_manager.dart';
+import '../../../core/auth/system_browser_auth.dart';
 
 import 'package:conduit_core/auth/webview_origin.dart';
 import 'package:conduit_core/models/server_config.dart';
@@ -221,6 +223,34 @@ class _SsoAuthPageState extends ConsumerState<SsoAuthPage> {
       return;
     }
 
+    // iOS: the system-browser sheet supports AutoFill, one-time codes and
+    // password managers (1Password, KeePass); the in-app WebView does not
+    // (SC-2799). It reads/writes the shared cookie store, so clear that store
+    // too for a fresh identity boundary before opening it.
+    if (SystemBrowserAuth.isSupported) {
+      final sharedCleared = await NativeCookieManager.clearCookiesForUrl(
+        _serverUrl!,
+      );
+      if (!mounted) return;
+      if (!sharedCleared) {
+        setState(() {
+          _error = AppLocalizations.of(context)!.ssoAuthFailed;
+          _isLoading = false;
+          _shouldRenderWebView = false;
+        });
+        return;
+      }
+      setState(() {
+        _controller = null;
+        _shouldRenderWebView = false;
+        _isLoading = true;
+        _error = null;
+        _tokenCaptured = false;
+      });
+      await _runSystemBrowserSso();
+      return;
+    }
+
     setState(() {
       _controller = null;
       _shouldRenderWebView = true;
@@ -228,6 +258,65 @@ class _SsoAuthPageState extends ConsumerState<SsoAuthPage> {
       _error = null;
       _tokenCaptured = false;
     });
+  }
+
+  /// Drives the iOS system-browser SSO sheet: opens it at `$serverUrl/auth`,
+  /// then polls the shared cookie store (which the sheet writes) for the
+  /// session token. The OAuth flow redirects to the web root rather than a
+  /// custom-scheme callback, so there is no native completion to wait on — the
+  /// token appearing is the success signal. On token, close the sheet and hand
+  /// it to [_handleToken]; on cancel or timeout, surface the error state.
+  Future<void> _runSystemBrowserSso() async {
+    final serverUrl = _serverUrl;
+    if (serverUrl == null) return;
+    final attemptId = _captureAttemptId;
+
+    var sheetClosed = false;
+    unawaited(
+      SystemBrowserAuth.start('$serverUrl/auth').then((_) {
+        sheetClosed = true;
+      }),
+    );
+
+    const pollInterval = Duration(milliseconds: 700);
+    const timeout = Duration(minutes: 10);
+    final startedAt = DateTime.now();
+    while (mounted &&
+        attemptId == _captureAttemptId &&
+        !_tokenCaptured &&
+        !sheetClosed &&
+        DateTime.now().difference(startedAt) < timeout) {
+      await Future.delayed(pollInterval);
+      final cookies = await NativeCookieManager.getCookiesForUrl(serverUrl);
+      final token = ssoTokenFromNativeCookies(cookies);
+      if (token != null &&
+          mounted &&
+          attemptId == _captureAttemptId &&
+          !_tokenCaptured) {
+        await SystemBrowserAuth.cancel();
+        await _handleToken(token);
+        return;
+      }
+    }
+
+    // Sheet closed (user dismissed or native error) or timed out. Do a final
+    // read in case the token landed just as the sheet dismissed.
+    if (!mounted || attemptId != _captureAttemptId || _tokenCaptured) return;
+    final cookies = await NativeCookieManager.getCookiesForUrl(serverUrl);
+    final token = ssoTokenFromNativeCookies(cookies);
+    if (token != null &&
+        mounted &&
+        attemptId == _captureAttemptId &&
+        !_tokenCaptured) {
+      await _handleToken(token);
+      return;
+    }
+    if (mounted && attemptId == _captureAttemptId && !_tokenCaptured) {
+      setState(() {
+        _error = AppLocalizations.of(context)!.ssoAuthFailed;
+        _isLoading = false;
+      });
+    }
   }
 
   Future<void> _loadInitialAuthPage(InAppWebViewController controller) async {

@@ -130,6 +130,28 @@ final class CookieBridge: ConduitBridge {
         WKWebsiteDataStore.default().httpCookieStore.getAllCookies { cookies in
           result(cookieValuesForUrl(cookies: cookies, url: url))
         }
+      } else if call.method == "clearCookies" {
+        // Deletes the cookies the system-browser SSO sheet would reuse for this
+        // server, and verifies the store is empty for it (SC-2799).
+        guard let args = call.arguments as? [String: Any],
+              let urlString = args["url"] as? String,
+              let url = URL(string: urlString) else {
+          result(FlutterError(code: "INVALID_ARGS", message: "Invalid URL", details: nil))
+          return
+        }
+        let store = WKWebsiteDataStore.default().httpCookieStore
+        store.getAllCookies { cookies in
+          let group = DispatchGroup()
+          for cookie in cookies where cookieMatchesUrl(cookie: cookie, url: url) {
+            group.enter()
+            store.deleteCookie(cookie) { group.leave() }
+          }
+          group.notify(queue: .main) {
+            store.getAllCookies { remaining in
+              result(!remaining.contains { cookieMatchesUrl(cookie: $0, url: url) })
+            }
+          }
+        }
       } else {
         result(FlutterMethodNotImplemented)
       }
