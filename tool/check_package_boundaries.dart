@@ -136,6 +136,7 @@ const List<String> _iosHostAgnosticSwift = <String>[
   'ios/Runner/PlatformEnvironmentBridge.swift',
   'ios/Runner/RealtimeAudioBridge.swift',
   'ios/Runner/ShareImportBridge.swift',
+  'ios/Runner/SystemBrowserAuthBridge.swift',
   'ios/Runner/VoiceAudioRouteBridge.swift',
 ];
 
