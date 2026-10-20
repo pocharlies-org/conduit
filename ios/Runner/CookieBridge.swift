@@ -144,7 +144,7 @@ final class CookieBridge: ConduitBridge {
           let group = DispatchGroup()
           for cookie in cookies where cookieMatchesUrl(cookie: cookie, url: url) {
             group.enter()
-            store.deleteCookie(cookie) { group.leave() }
+            store.delete(cookie) { group.leave() }
           }
           group.notify(queue: .main) {
             store.getAllCookies { remaining in
