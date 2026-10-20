@@ -1,16 +1,25 @@
 import AuthenticationServices
 import Flutter
 import UIKit
+import WebKit
 
-/// Presents the SSO login in the system browser sheet (ASWebAuthenticationSession):
-/// AutoFill, one-time codes and password-manager extensions work there, and none of
-/// them works in the in-app WebView (SC-2799). A non-ephemeral session lands its
-/// cookies in `WKWebsiteDataStore.default()`, which is the store `CookieBridge` reads.
+/// Presents the SSO login full-screen (SC-2799, Dani 21-10: la hoja de
+/// `ASWebAuthenticationSession` pinta barra de título y toolbar — «MUY feo», y
+/// el navegador del sistema no tiene API para ocultarlas). El `WKWebView` a
+/// pantalla completa con el almacén de datos por defecto mantiene lo que
+/// importa: AutoFill de contraseñas y códigos de un solo uso funcionan también
+/// aquí (extensión AutoFill del sistema, iOS 12+), y sus cookies caen en
+/// `WKWebsiteDataStore.default()`, que es lo que lee `CookieBridge`.
+///
+/// Sigue viva la hoja del sistema (`sheet`, modo por defecto): Google OAuth
+/// rechaza WebViews embebidas (`disallowed_useragent`), y el login del proxy
+/// la necesita.
 final class SystemBrowserAuthBridge: NSObject, ConduitBridge,
   ASWebAuthenticationPresentationContextProviding {
   static let shared = SystemBrowserAuthBridge()
 
   private var session: ASWebAuthenticationSession?
+  private var controller: SSOWebController?
   private var host: ConduitBridgeHost?
 
   private override init() { super.init() }
@@ -28,6 +37,7 @@ final class SystemBrowserAuthBridge: NSObject, ConduitBridge,
       case "cancel":
         DispatchQueue.main.async {
           self?.session?.cancel()
+          self?.controller?.finish("done")
           result(nil)
         }
       default:
@@ -44,6 +54,27 @@ final class SystemBrowserAuthBridge: NSObject, ConduitBridge,
       return
     }
     session?.cancel()
+    controller?.finish("cancelled")
+    if (args["fullScreen"] as? Bool) == true {
+      startFullScreen(url: url, result: result)
+    } else {
+      startSheet(url: url, result: result)
+    }
+  }
+
+  private func startFullScreen(url: URL, result: @escaping FlutterResult) {
+    let controller = SSOWebController(url: url)
+    controller.onDismiss = { outcome in result(outcome) }
+    self.controller = controller
+    guard let anchor = host?.activeWindowScene?.keyWindow?.rootViewController else {
+      self.controller = nil
+      result("error")
+      return
+    }
+    anchor.present(controller, animated: true)
+  }
+
+  private func startSheet(url: URL, result: @escaping FlutterResult) {
     // Scheme propio que el flujo nunca alcanza: la hoja queda abierta durante el
     // login y Dart la cierra (cancel) al ver la cookie token. Con "https" la sesión
     // se completaba en el primer redirect (Keycloak) y Dani no llegaba a escribir
@@ -73,5 +104,67 @@ final class SystemBrowserAuthBridge: NSObject, ConduitBridge,
     // shortcut: sin escena activa no hay ancla real; la app está en primer
     // plano siempre que se abre la hoja, si falta un ancla viable se revisa.
     host?.activeWindowScene?.keyWindow ?? UIWindow()
+  }
+}
+
+/// Pantalla completa sin cromo de navegador: solo la web y una X para salir.
+/// El flujo nunca "completa" por sí solo: Dart cierra la pantalla (cancel) al
+/// ver la cookie `token`.
+private final class SSOWebController: UIViewController, WKNavigationDelegate {
+  var onDismiss: ((String) -> Void)?
+
+  private let url: URL
+  private var finished = false
+
+  init(url: URL) {
+    self.url = url
+    super.init(nibName: nil, bundle: nil)
+    modalPresentationStyle = .fullScreen
+  }
+
+  required init?(coder: NSCoder) { fatalError() }
+
+  override func viewDidLoad() {
+    super.viewDidLoad()
+    view.backgroundColor = .black
+
+    // Sin configuration: almacén de datos por defecto → cookies visibles para CookieBridge.
+    let webView = WKWebView(frame: .zero, configuration: WKWebViewConfiguration())
+    webView.navigationDelegate = self
+    webView.translatesAutoresizingMaskIntoConstraints = false
+    view.addSubview(webView)
+
+    let close = UIButton(type: .system)
+    close.setImage(UIImage(systemName: "xmark.circle.fill"), for: .normal)
+    close.tintColor = UIColor.white.withAlphaComponent(0.7)
+    close.accessibilityLabel = "Cerrar"
+    close.addTarget(self, action: #selector(userClosed), for: .touchUpInside)
+    close.translatesAutoresizingMaskIntoConstraints = false
+    view.addSubview(close)
+
+    NSLayoutConstraint.activate([
+      webView.topAnchor.constraint(equalTo: view.topAnchor),
+      webView.bottomAnchor.constraint(equalTo: view.bottomAnchor),
+      webView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
+      webView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
+      close.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 8),
+      close.leadingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leadingAnchor, constant: 12),
+      close.widthAnchor.constraint(equalToConstant: 30),
+      close.heightAnchor.constraint(equalToConstant: 30),
+    ])
+
+    webView.load(URLRequest(url: url))
+  }
+
+  @objc private func userClosed() { finish("cancelled") }
+
+  /// Un solo disparo: el resultado de `start` no puede emitirse dos veces.
+  func finish(_ outcome: String) {
+    guard !finished else { return }
+    finished = true
+    onDismiss?(outcome)
+    if presentingViewController != nil {
+      dismiss(animated: true)
+    }
   }
 }
