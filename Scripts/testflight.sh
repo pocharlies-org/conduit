@@ -141,7 +141,28 @@ publicar() {
   archivar
   say "export (destination=$destino)"
   exportar "$destino"
-  [[ "$destino" == upload ]] && say "subida: TestFlight la tendrá cuando ASC la procese (~10-20 min)."
+  [[ "$destino" == upload ]] && al_grupo_interno "$appid" "$N"
+}
+
+# ASC no asigna sola al grupo interno la build subida: sin esto no se ve en TestFlight (medido
+# 20-10 con la 1956). La build solo existe en la API tras el procesado (~10-20 min): se espera a
+# VALID y se añade. Si no llega, aviso y verde — igual que whatsnew.sh en llm-status-ios.
+al_grupo_interno() {
+  local appid="$1" N="$2" B="" i st G
+  for i in $(seq 1 30); do
+    read -r B st < <(bash Scripts/asc.sh GET "/builds?filter%5Bapp%5D=$appid&filter%5Bversion%5D=$N" \
+      | python3 -c 'import json,sys;d=json.load(sys.stdin).get("data",[]);print(d[0]["id"], d[0]["attributes"].get("processingState") if d else "")')
+    [[ "$st" == "VALID" ]] && break
+    B=""
+    sleep 60
+  done
+  [[ -n "$B" ]] || { say "aviso: la build $N no quedó VALID en ASC en 30 min; añádela al grupo a mano"; return 0; }
+  G="$(bash Scripts/asc.sh GET "/betaGroups?filter%5Bapp%5D=$appid" \
+    | python3 -c 'import json,sys;d=json.load(sys.stdin).get("data",[]);print(d[0]["id"] if d else "")')"
+  [[ -n "$G" ]] || { say "aviso: sin grupo de pruebas para $appid"; return 0; }
+  bash Scripts/asc.sh POST "/betaGroups/$G/relationships/builds" "{\"data\":[{\"type\":\"builds\",\"id\":\"$B\"}]}" >/dev/null 2>&1 \
+    && say "build $N en el grupo de pruebas" \
+    || say "aviso: no se pudo añadir la build $N al grupo ($G)"
 }
 
 case "${1:-subir}" in
