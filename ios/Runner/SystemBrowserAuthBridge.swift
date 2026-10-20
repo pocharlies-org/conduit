@@ -11,10 +11,12 @@ final class SystemBrowserAuthBridge: NSObject, ConduitBridge,
   static let shared = SystemBrowserAuthBridge()
 
   private var session: ASWebAuthenticationSession?
+  private var host: ConduitBridgeHost?
 
   private override init() { super.init() }
 
   @MainActor func attach(to host: ConduitBridgeHost) {
+    self.host = host
     let channel = FlutterMethodChannel(
       name: "com.conduit.app/system_browser_auth",
       binaryMessenger: host.messenger
@@ -74,9 +76,7 @@ final class SystemBrowserAuthBridge: NSObject, ConduitBridge,
     _ session: ASWebAuthenticationSession
   ) -> ASPresentationContext {
     let context = ASPresentationContext()
-    context.window = UIApplication.shared.connectedScenes
-      .compactMap { ($0 as? UIWindowScene)?.keyWindow }
-      .first
+    context.window = host?.activeWindowScene?.keyWindow
     return context
   }
 }
