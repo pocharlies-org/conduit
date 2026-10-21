@@ -1879,7 +1879,7 @@ class _ProxyAuthPageState extends ConsumerState<ProxyAuthPage> {
               const SizedBox(height: Spacing.sm),
               ConduitButton(
                 text: l10n.proxyAuthSystemBrowser,
-                icon: CupertinoIcons.safari,
+                icon: Icons.open_in_browser,
                 onPressed: _startSystemBrowserFallback,
               ),
             ],
