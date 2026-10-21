@@ -23,6 +23,11 @@ typedef ProviderRead = T Function<T>(ProviderListenable<T> provider);
 /// consume al elegir. En memoria a propósito: cada arranque pregunta.
 bool accountChooserPending = false;
 
+/// OWU-105: asistente de configuración del primer arranque. `main()` lo pone
+/// a true mientras la preferencia no diga que ya se completó; el asistente la
+/// persiste al elegir cuenta y no vuelve a salir.
+bool setupWizardPending = false;
+
 /// The providers [resolveRouteRedirect] depends on. A host re-evaluates its
 /// redirect whenever one of them changes.
 final List<ProviderListenable<Object?>> routeRedirectDependencies = [
@@ -283,6 +288,17 @@ String? resolveRouteRedirect(String location, ProviderRead read) {
     }
   }
 
+  // OWU-105: el primer arranque pasa por el asistente de configuración, haya
+  // las cuentas que haya; completarlo deja la app en la entrada automática.
+  if (setupWizardPending &&
+      location == Routes.splash &&
+      !prefersDirect &&
+      !(prefersHermes && hermesConfig.enabled) &&
+      !usesAccountlessPrimaryBackend &&
+      (read(serverConfigsProvider).value?.isNotEmpty ?? false)) {
+    return Routes.setupWizard;
+  }
+
   // OWU-104: con más de una cuenta, el arranque frío elige con cuál entrar;
   // con una sola se entra directo. Solo desde el splash: un destino explícito
   // (deep link, quick action) va a la cuenta activa.
@@ -305,6 +321,7 @@ String? resolveRouteRedirect(String location, ProviderRead read) {
         location == Routes.proxyAuth ||
         location == Routes.ssoAuth ||
         location == Routes.accountChooser ||
+        location == Routes.setupWizard ||
         location == Routes.login) {
       return null;
     }
@@ -329,6 +346,8 @@ String? resolveRouteRedirect(String location, ProviderRead read) {
       // The chooser (OWU-104) stays: the chosen account may still need its
       // first sign-in, which the next redirect shows once one is active.
       if (location == Routes.accountChooser) return null;
+      // The first-run wizard (OWU-105) decides before sign-in too.
+      if (location == Routes.setupWizard) return null;
       // Redirect to authentication page if not already on an auth route
       // This handles the post-logout case where we want sign-in, not server setup
       if (isAuthLocation(location)) return null;
@@ -365,6 +384,8 @@ String? resolveRouteRedirect(String location, ProviderRead read) {
       if (location == Routes.accountChooser && accountChooserPending) {
         return null;
       }
+      // Same for the first-run wizard (OWU-105).
+      if (location == Routes.setupWizard && setupWizardPending) return null;
       // Avoid unnecessary redirects if already on a non-auth route
       if (isAuthLocation(location) ||
           location == Routes.splash ||

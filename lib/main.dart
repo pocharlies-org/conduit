@@ -59,6 +59,7 @@ import 'core/utils/model_logos.dart';
 import 'package:conduit_core/persistence/hive_prefs_migrator.dart';
 
 import 'package:conduit_core/persistence/persistence_migrator.dart';
+import 'package:conduit_core/persistence/persistence_keys.dart';
 
 import 'package:conduit_core/persistence/persistence_providers.dart';
 import 'package:conduit_core/persistence/preferences_store.dart';
@@ -73,7 +74,7 @@ import 'platform/carplay_service.dart';
 import 'core/services/native_symbol_image_service.dart';
 
 import 'package:conduit_core/navigation/route_redirect.dart'
-    show accountChooserPending;
+    show accountChooserPending, setupWizardPending;
 import 'package:conduit_core/services/openwebui_seed.dart';
 import 'package:conduit_core/services/readiness_gated_secure_storage.dart';
 import 'package:conduit_core/features/chat/server_speech/direct_voice_provider_settings.dart';
@@ -364,6 +365,10 @@ void main() {
       _startupTimeline?.instant('hive_ready');
       await preferencesFuture;
       _startupTimeline?.instant('prefs_ready');
+      // OWU-105: el asistente de configuración solo sale hasta completarlo.
+      setupWizardPending = !PreferencesStore.getBool(
+        PreferenceKeys.setupWizardCompleted,
+      )!;
       await platformUiFuture;
       _startupTimeline?.instant('platform_ui_ready');
 

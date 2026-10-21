@@ -447,6 +447,47 @@ void main() {
       });
     });
 
+    group('first-run setup wizard (OWU-105)', () {
+      test('the first launch shows the wizard even with a single account', () {
+        setupWizardPending = true;
+        addTearDown(() => setupWizardPending = false);
+        final read = _reader(auth: AuthNavigationState.needsLogin);
+
+        check(resolveRouteRedirect(Routes.splash, read))
+            .equals(Routes.setupWizard);
+      });
+
+      test('with nothing seeded the backend chooser still decides', () {
+        setupWizardPending = true;
+        addTearDown(() => setupWizardPending = false);
+        final read = _reader(
+          activeServer: const AsyncData(null),
+          auth: AuthNavigationState.needsLogin,
+          serverConfigs: const [],
+        );
+
+        check(resolveRouteRedirect(Routes.splash, read))
+            .equals(Routes.backendChooser);
+      });
+
+      test('the wizard stays while pending, signed in or not', () {
+        setupWizardPending = true;
+        addTearDown(() => setupWizardPending = false);
+        final signedIn = _reader();
+        final signedOut = _reader(auth: AuthNavigationState.needsLogin);
+
+        check(resolveRouteRedirect(Routes.setupWizard, signedIn)).isNull();
+        check(resolveRouteRedirect(Routes.setupWizard, signedOut)).isNull();
+      });
+
+      test('once completed the cold start enters directly', () {
+        setupWizardPending = false;
+        final read = _reader();
+
+        check(resolveRouteRedirect(Routes.splash, read)).equals(Routes.chat);
+      });
+    });
+
     group('account chooser on cold start (OWU-104)', () {
       const second = ServerConfig(
         id: 'server-2',

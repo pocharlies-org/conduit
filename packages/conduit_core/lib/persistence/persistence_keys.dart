@@ -79,6 +79,7 @@ final class PreferenceKeys {
   static const String lastSeenReleaseVersion = 'last_seen_release_version_v1';
   static const String releaseNotesExistingInstallAtBootstrap =
       'release_notes_existing_install_at_bootstrap_v1';
+  static const String setupWizardCompleted = 'setup_wizard_completed_v1';
   static const String releaseNotesBannerPreviousVersion =
       'release_notes_banner_previous_version_v1';
   static const String serverVersionWarningDismissed =
