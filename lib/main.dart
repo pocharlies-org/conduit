@@ -366,9 +366,8 @@ void main() {
       await preferencesFuture;
       _startupTimeline?.instant('prefs_ready');
       // OWU-105: el asistente de configuración solo sale hasta completarlo.
-      setupWizardPending = !PreferencesStore.getBool(
-        PreferenceKeys.setupWizardCompleted,
-      )!;
+      setupWizardPending =
+          PreferencesStore.getBool(PreferenceKeys.setupWizardCompleted) != true;
       await platformUiFuture;
       _startupTimeline?.instant('platform_ui_ready');
 
