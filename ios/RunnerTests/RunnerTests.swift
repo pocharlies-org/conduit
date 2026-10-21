@@ -3643,3 +3643,79 @@ private final class TestLockedCounter {
     return result
   }
 }
+
+/// OWU-104: arranque frío → seed (chat.e-dani.com) → WebView SSO a pantalla
+/// completa → login con credenciales → la pantalla se cierra sola al ver Dart
+/// la cookie `token`.
+///
+/// Solo corre con credenciales fuera del repo:
+///   CONDUIT_SSO_TEST=1 CONDUIT_SSO_PASSWORD_FILE=/ruta/0600 xcodebuild test …
+/// Sin esas variables se salta: la CI no tiene credenciales ni debe tenerlas.
+final class SsoLoginXCUITests: XCTestCase {
+
+  override func setUp() {
+    continueAfterFailure = false
+  }
+
+  func testColdStartSeedToChat() throws {
+    guard ProcessInfo.processInfo.environment["CONDUIT_SSO_TEST"] == "1" else {
+      throw XCTSkip("sin CONDUIT_SSO_TEST=1: requiere credenciales reales")
+    }
+    let passwordFile = ProcessInfo.processInfo.environment["CONDUIT_SSO_PASSWORD_FILE"]
+    let password = passwordFile.flatMap { try? String(contentsOfFile: $0) }?
+      .trimmingCharacters(in: .whitespacesAndNewlines)
+    XCTAssertNotNil(password, "falta CONDUIT_SSO_PASSWORD_FILE")
+
+    let app = XCUIApplication()
+    app.launch()
+
+    // El seed deja una cuenta: sin sesión, el redirect abre el login SSO, que
+    // desde OWU-104 es un WKWebView a pantalla completa (sin consentimiento
+    // del sistema: testeable headless).
+    let web = app.webViews.firstMatch
+    XCTAssertTrue(web.waitForExistence(timeout: 90), "no apareció el WebView del SSO")
+
+    let user = web.textFields.firstMatch
+    XCTAssertTrue(user.waitForExistence(timeout: 30), "no apareció el campo de usuario")
+    user.tap()
+    user.typeText("me@e-dani.com")
+    let pass = web.secureTextFields.firstMatch
+    XCTAssertTrue(pass.waitForExistence(timeout: 10), "no apareció el campo de contraseña")
+    pass.tap()
+    pass.typeText(password!)
+    // El botón de Keycloak cambia de texto con el idioma del navegador.
+    var submitted = false
+    for name in ["Sign In", "Iniciar sesión", "Log in"] {
+      let button = web.buttons[name]
+      if button.waitForExistence(timeout: 3) {
+        button.tap()
+        submitted = true
+        break
+      }
+    }
+    XCTAssertTrue(submitted, "no encontré el botón de iniciar sesión")
+
+    // Dart sondea la cookie `token` y cierra la pantalla: el WebView
+    // desaparece y queda la app (Flutter). La contraseña correcta es lo que se
+    // comprueba; si Keycloak pidiera OTP, se reporta (no es resoluble aquí).
+    let deadline = Date().addingTimeInterval(90)
+    var webGone = false
+    while Date() < deadline {
+      if app.webViews.count == 0 {
+        webGone = true
+        break
+      }
+      let otpAsked = web.staticTexts.matching(
+        NSPredicate(format: "label CONTAINS[c] %@", "one-time")
+      ).count > 0 || web.staticTexts.matching(
+        NSPredicate(format: "label CONTAINS[c] %@", "verification")
+      ).count > 0
+      if otpAsked {
+        XCTFail("login aceptado pero Keycloak pide OTP: el test no lo resuelve headless")
+        return
+      }
+      usleep(500_000)
+    }
+    XCTAssertTrue(webGone, "el WebView no se cerró: el login no terminó (cookie token no vista)")
+  }
+}
