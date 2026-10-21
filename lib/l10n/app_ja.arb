@@ -5808,6 +5808,7 @@
   "hermesSwitchConnectionConfirm": "切り替える",
   "hermesKeepCurrentConnection": "現在の接続のまま",
   "accountsTitle": "アカウント",
+  "accountChooserTitle": "アカウントを選択",
   "accountsAddAccount": "アカウントを追加",
   "accountsManage": "アカウントを管理",
   "accountsSignedOut": "サインアウト済み",

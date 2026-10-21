@@ -3977,6 +3977,7 @@
   "hermesSwitchConnectionConfirm": "전환",
   "hermesKeepCurrentConnection": "현재 연결 유지",
   "accountsTitle": "계정",
+  "accountChooserTitle": "계정 선택",
   "accountsAddAccount": "계정 추가",
   "accountsManage": "계정 관리",
   "accountsSignedOut": "로그아웃됨",

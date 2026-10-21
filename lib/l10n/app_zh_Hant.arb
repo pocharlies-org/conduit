@@ -4205,6 +4205,7 @@
   "hermesSwitchConnectionConfirm": "切換",
   "hermesKeepCurrentConnection": "保留目前連線",
   "accountsTitle": "帳戶",
+  "accountChooserTitle": "選擇帳戶",
   "accountsAddAccount": "新增帳戶",
   "accountsManage": "管理帳戶",
   "accountsSignedOut": "已登出",

@@ -4205,6 +4205,7 @@
   "hermesSwitchConnectionConfirm": "Wechseln",
   "hermesKeepCurrentConnection": "Aktuelle behalten",
   "accountsTitle": "Konten",
+  "accountChooserTitle": "Konto auswählen",
   "accountsAddAccount": "Konto hinzufügen",
   "accountsManage": "Konten verwalten",
   "accountsSignedOut": "Abgemeldet",

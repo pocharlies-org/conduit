@@ -7804,6 +7804,7 @@
   "hermesSwitchConnectionConfirm": "Przełącz",
   "hermesKeepCurrentConnection": "Zostań przy obecnym",
   "accountsTitle": "Konta",
+  "accountChooserTitle": "Wybierz konto",
   "accountsAddAccount": "Dodaj konto",
   "accountsManage": "Zarządzaj kontami",
   "accountsSignedOut": "Wylogowano",

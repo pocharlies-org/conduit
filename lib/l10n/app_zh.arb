@@ -4205,6 +4205,7 @@
   "hermesSwitchConnectionConfirm": "切换",
   "hermesKeepCurrentConnection": "保留当前连接",
   "accountsTitle": "账户",
+  "accountChooserTitle": "选择账户",
   "accountsAddAccount": "添加账户",
   "accountsManage": "管理账户",
   "accountsSignedOut": "已退出登录",
