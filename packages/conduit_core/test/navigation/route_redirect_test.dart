@@ -41,6 +41,7 @@ ProviderRead _reader({
   AuthState authSnapshot = const AuthState(status: AuthStatus.unauthenticated),
   String? settledAccount,
   bool proxySignInForRouteEditing = false,
+  List<ServerConfig> serverConfigs = const [_server],
 }) {
   final values = <ProviderListenable<Object?>, Object?>{
     accountAdditionOriginProvider: addingAccountFrom,
@@ -56,6 +57,7 @@ ProviderRead _reader({
         AsyncData<List<DirectConnectionProfile>>(directProfiles),
     accountlessPrimaryBackendUsableProvider: accountless,
     authStateManagerProvider: AsyncData<AuthState>(authSnapshot),
+    serverConfigsProvider: AsyncData<List<ServerConfig>>(serverConfigs),
   };
   return <T>(ProviderListenable<T> provider) {
     if (!values.containsKey(provider)) {
@@ -442,6 +444,63 @@ void main() {
 
         check(resolveRouteRedirect(Routes.hermesMcp, read))
             .equals(Routes.splash);
+      });
+    });
+
+    group('account chooser on cold start (OWU-104)', () {
+      const second = ServerConfig(
+        id: 'server-2',
+        name: 'Second',
+        url: 'https://owui2.example',
+      );
+
+      test('more than one account sends the cold start to the chooser', () {
+        accountChooserPending = true;
+        addTearDown(() => accountChooserPending = false);
+        final read = _reader(
+          activeServer: const AsyncData(null),
+          auth: AuthNavigationState.needsLogin,
+          serverConfigs: const [_server, second],
+        );
+        check(resolveRouteRedirect(Routes.splash, read))
+            .equals(Routes.accountChooser);
+      });
+
+      test('a single account enters directly, no chooser', () {
+        accountChooserPending = true;
+        addTearDown(() => accountChooserPending = false);
+        final read = _reader();
+        check(resolveRouteRedirect(Routes.splash, read)).equals(Routes.chat);
+      });
+
+      test('the chooser stays while pending, even signed in', () {
+        accountChooserPending = true;
+        addTearDown(() => accountChooserPending = false);
+        final read = _reader();
+        check(resolveRouteRedirect(Routes.accountChooser, read)).isNull();
+      });
+
+      test('the chooser stays when the chosen account still needs login', () {
+        accountChooserPending = true;
+        addTearDown(() => accountChooserPending = false);
+        final read = _reader(
+          activeServer: const AsyncData(null),
+          auth: AuthNavigationState.needsLogin,
+          serverConfigs: const [_server, second],
+        );
+        check(resolveRouteRedirect(Routes.accountChooser, read)).isNull();
+      });
+
+      test('once consumed, the chooser no longer intercepts the splash', () {
+        accountChooserPending = false;
+        final read = _reader(
+          activeServer: const AsyncData(null),
+          auth: AuthNavigationState.needsLogin,
+          serverConfigs: const [_server, second],
+        );
+        // No active server and nothing pending: the old setup chooser.
+        check(resolveRouteRedirect(Routes.splash, read))
+            .equals(Routes.backendChooser);
       });
     });
   });

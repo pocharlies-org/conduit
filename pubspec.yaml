@@ -186,6 +186,7 @@ flutter:
   
   assets:
     - THIRD_PARTY_NOTICES.md
+    - assets/seed_accounts.json
     - assets/icons/
     - assets/model_logos/
     - assets/release_notes/

@@ -72,6 +72,9 @@ import 'shared/services/raster_media_policy.dart';
 import 'platform/carplay_service.dart';
 import 'core/services/native_symbol_image_service.dart';
 
+import 'package:conduit_core/navigation/route_redirect.dart'
+    show accountChooserPending;
+import 'package:conduit_core/services/openwebui_seed.dart';
 import 'package:conduit_core/services/readiness_gated_secure_storage.dart';
 import 'package:conduit_core/features/chat/server_speech/direct_voice_provider_settings.dart';
 import 'package:conduit_core/features/chat/realtime_call/realtime_call_availability.dart';
@@ -256,6 +259,14 @@ void main() {
   // The preference store is a host capability too; installed
   // before bootstrap awaits its first synchronous read.
   PreferencesStore.installLoader(FlutterKeyValueStore.load);
+  // Cuentas precargadas (OWU-104): el seed del build entra en el registry en
+  // el primer arranque, cuando nunca hubo nada guardado.
+  OpenWebUiSeed.installLoader(
+    () => rootBundle.loadString('assets/seed_accounts.json'),
+  );
+  // Con más de una cuenta, el selector decide con cuál se entra en este
+  // arranque; lo consume el selector al elegir.
+  accountChooserPending = true;
 
   if (_enableFlutterDriverExtension) {
     enableFlutterDriverExtension();

@@ -9,6 +9,9 @@ class Routes {
   static const String folder = '/folder/:id';
   static const String login = '/login';
   static const String backendChooser = '/backend-chooser';
+
+  /// Cold-start account chooser with more than one account (OWU-104).
+  static const String accountChooser = '/account-chooser';
   static const String serverConnection = '/server-connection';
 
   /// Adding another Open WebUI account while signed in to one.
@@ -73,6 +76,7 @@ class RouteNames {
   static const String folder = 'folder';
   static const String login = 'login';
   static const String backendChooser = 'backend-chooser';
+  static const String accountChooser = 'account-chooser';
   static const String serverConnection = 'server-connection';
   static const String addServer = 'add-server';
   static const String connectionIssue = 'connection-issue';

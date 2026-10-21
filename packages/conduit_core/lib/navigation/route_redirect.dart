@@ -18,6 +18,11 @@ import 'package:riverpod/riverpod.dart';
 /// `ProviderContainer.read` all fit.
 typedef ProviderRead = T Function<T>(ProviderListenable<T> provider);
 
+/// OWU-104: con más de una cuenta, el selector decide con cuál se entra en el
+/// arranque frío. `main()` lo pone a true al lanzar la app y el selector lo
+/// consume al elegir. En memoria a propósito: cada arranque pregunta.
+bool accountChooserPending = false;
+
 /// The providers [resolveRouteRedirect] depends on. A host re-evaluates its
 /// redirect whenever one of them changes.
 final List<ProviderListenable<Object?>> routeRedirectDependencies = [
@@ -278,6 +283,18 @@ String? resolveRouteRedirect(String location, ProviderRead read) {
     }
   }
 
+  // OWU-104: con más de una cuenta, el arranque frío elige con cuál entrar;
+  // con una sola se entra directo. Solo desde el splash: un destino explícito
+  // (deep link, quick action) va a la cuenta activa.
+  if (accountChooserPending &&
+      location == Routes.splash &&
+      !prefersDirect &&
+      !(prefersHermes && hermesConfig.enabled) &&
+      !usesAccountlessPrimaryBackend &&
+      (read(serverConfigsProvider).value?.length ?? 0) > 1) {
+    return Routes.accountChooser;
+  }
+
   if (!hasActiveServer) {
     // No server configured - redirect to onboarding chooser.
     // Exception: allow staying on server connection, authentication,
@@ -287,6 +304,7 @@ String? resolveRouteRedirect(String location, ProviderRead read) {
         location == Routes.authentication ||
         location == Routes.proxyAuth ||
         location == Routes.ssoAuth ||
+        location == Routes.accountChooser ||
         location == Routes.login) {
       return null;
     }
@@ -308,6 +326,9 @@ String? resolveRouteRedirect(String location, ProviderRead read) {
       return location == Routes.splash ? null : Routes.splash;
     case AuthNavigationState.needsLogin:
       if (location == Routes.connectionIssue) return null;
+      // The chooser (OWU-104) stays: the chosen account may still need its
+      // first sign-in, which the next redirect shows once one is active.
+      if (location == Routes.accountChooser) return null;
       // Redirect to authentication page if not already on an auth route
       // This handles the post-logout case where we want sign-in, not server setup
       if (isAuthLocation(location)) return null;
@@ -339,6 +360,11 @@ String? resolveRouteRedirect(String location, ProviderRead read) {
         return null;
       }
       if (_isProxySignInForRouteEditing(location, read)) return null;
+      // The chooser (OWU-104) stays open until the user picks, even when the
+      // active account is already signed in.
+      if (location == Routes.accountChooser && accountChooserPending) {
+        return null;
+      }
       // Avoid unnecessary redirects if already on a non-auth route
       if (isAuthLocation(location) ||
           location == Routes.splash ||

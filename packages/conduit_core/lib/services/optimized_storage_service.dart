@@ -25,6 +25,7 @@ import 'package:conduit_core/utils/debug_logger.dart';
 
 import '../utils/json_normalization.dart';
 import 'cache_manager.dart';
+import 'openwebui_seed.dart';
 import 'secure_credential_storage.dart';
 
 import 'package:conduit_core/services/worker_manager.dart';
@@ -3353,6 +3354,14 @@ class OptimizedStorageService {
     if (legacy == null) {
       // Nothing writes the old list any more, so none can appear later.
       _registryMigrationSettled = true;
+      // First install (OWU-104): the build's seed enters the accounts here,
+      // before anything was ever stored. A wipe leaves an empty registry
+      // stored, so it never re-seeds.
+      final seeded = await OpenWebUiSeed.registryFromSeed();
+      if (seeded != null) {
+        await _saveRegistryUnlocked(seeded);
+        return seeded;
+      }
       return OpenWebUiRegistry.empty;
     }
     if (legacy.isEmpty) {
