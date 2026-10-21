@@ -4205,6 +4205,7 @@
   "hermesSwitchConnectionConfirm": "Cambiar",
   "hermesKeepCurrentConnection": "Conservar la actual",
   "accountsTitle": "Cuentas",
+  "accountChooserTitle": "Elige una cuenta",
   "accountsAddAccount": "Añadir cuenta",
   "accountsManage": "Gestionar cuentas",
   "accountsSignedOut": "Sesión cerrada",

@@ -6114,6 +6114,7 @@
   "hermesSwitchConnectionConfirm": "Přepnout",
   "hermesKeepCurrentConnection": "Ponechat současné",
   "accountsTitle": "Účty",
+  "accountChooserTitle": "Vyberte účet",
   "accountsAddAccount": "Přidat účet",
   "accountsManage": "Spravovat účty",
   "accountsSignedOut": "Odhlášeno",

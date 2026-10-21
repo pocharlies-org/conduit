@@ -4243,6 +4243,7 @@
   "hermesSwitchConnectionConfirm": "Переключить",
   "hermesKeepCurrentConnection": "Оставить текущее",
   "accountsTitle": "Аккаунты",
+  "accountChooserTitle": "Выберите аккаунт",
   "accountsAddAccount": "Добавить аккаунт",
   "accountsManage": "Управление аккаунтами",
   "accountsSignedOut": "Вход не выполнен",

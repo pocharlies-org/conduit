@@ -8642,6 +8642,10 @@
   "@accountsTitle": {
     "description": "Heading of the list of saved Open WebUI accounts on the profile page and of the page that manages them."
   },
+  "accountChooserTitle": "Choose an account",
+  "@accountChooserTitle": {
+    "description": "Heading of the cold-start screen shown when more than one account is configured (OWU-104)."
+  },
   "accountsAddAccount": "Add account",
   "@accountsAddAccount": {
     "description": "Row and button that starts signing in to another Open WebUI account, on a saved server or a new one."

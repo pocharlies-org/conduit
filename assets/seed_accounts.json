@@ -1,0 +1,5 @@
+{
+  "servers": [
+    { "name": "Chat", "url": "https://chat.e-dani.com" }
+  ]
+}
