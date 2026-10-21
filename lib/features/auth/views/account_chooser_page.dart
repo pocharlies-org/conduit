@@ -1,8 +1,9 @@
-import 'package:cupertino_ui/cupertino_ui.dart';
-import 'package:material_ui/material_ui.dart';
+import 'package:conduit/shared/widgets/platform_ui/platform_ui.dart';
+import 'package:flutter/widgets.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
+import 'package:conduit_core/models/server_config.dart';
 import 'package:conduit_core/navigation/route_redirect.dart';
 import 'package:conduit_core/navigation/routes.dart';
 import 'package:conduit_core/providers/app_providers.dart';
@@ -20,35 +21,19 @@ class AccountChooserPage extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final l10n = AppLocalizations.of(context)!;
     final configs = ref.watch(serverConfigsProvider);
-    return Scaffold(
-      body: SafeArea(
-        child: Center(
-          child: ConstrainedBox(
-            constraints: const BoxConstraints(maxWidth: 520),
-            child: configs.maybeWhen(
-              data: (list) => ListView(
-                shrinkWrap: true,
-                padding: const EdgeInsets.all(16),
-                children: [
-                  Text(
-                    l10n.accountChooserTitle,
-                    style: Theme.of(context).textTheme.titleLarge,
-                  ),
-                  const SizedBox(height: 16),
-                  for (final config in list)
-                    UtilitySelectionRow(
-                      leading: const Icon(Icons.account_circle_outlined),
-                      title: config.name.isEmpty ? config.url : config.name,
-                      subtitle: config.url,
-                      selected: config.isActive,
-                      onTap: () => _choose(context, ref, config.id),
-                    ),
-                ],
-              ),
-              orElse: () => const SizedBox.shrink(),
+    return UtilityPageScaffold.auth(
+      title: l10n.accountChooserTitle,
+      body: Column(
+        children: [
+          for (final config in configs.value ?? const <ServerConfig>[])
+            UtilitySelectionRow(
+              leading: const CNSymbol('person.crop.circle'),
+              title: config.name.isEmpty ? config.url : config.name,
+              subtitle: config.url,
+              selected: config.isActive,
+              onTap: () => _choose(context, ref, config.id),
             ),
-          ),
-        ),
+        ],
       ),
     );
   }
