@@ -1,4 +1,4 @@
-import 'package:conduit/shared/widgets/platform_ui/platform_ui.dart';
+import 'package:conduit/shared/widgets/platform_ui/vocabulary.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
@@ -9,6 +9,7 @@ import 'package:conduit_core/navigation/routes.dart';
 import 'package:conduit_core/providers/app_providers.dart';
 
 import '../../../l10n/app_localizations.dart';
+import '../../../shared/utils/ui_utils.dart';
 import '../../../shared/widgets/utility_components.dart';
 
 /// Selector de cuenta del arranque frío (OWU-104): con más de una cuenta
@@ -27,7 +28,12 @@ class AccountChooserPage extends ConsumerWidget {
         children: [
           for (final config in configs.value ?? const <ServerConfig>[])
             UtilitySelectionRow(
-              leading: const CNSymbol('person.crop.circle'),
+              leading: Icon(
+                UiUtils.platformIcon(
+                  ios: CupertinoIcons.person_crop_circle,
+                  android: Icons.account_circle_outlined,
+                ),
+              ),
               title: config.name.isEmpty ? config.url : config.name,
               subtitle: config.url,
               selected: config.isActive,
