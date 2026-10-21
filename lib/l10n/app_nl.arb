@@ -4553,5 +4553,6 @@
   "accountsAddressConfirmMessage": "Om zeker te weten dat {host} deze server is, stuurt Conduit er de sessie van een hier opgeslagen account naartoe. Ga alleen verder als je dit adres vertrouwt.",
   "accountsAddressConfirmAction": "Adres controleren",
   "setupWizardTitle": "Set up the app",
-  "setupWizardSubtitle": "Choose the account to enter with. You can change it later in Settings."
+  "setupWizardSubtitle": "Choose the account to enter with. You can change it later in Settings.",
+  "proxyAuthSystemBrowser": "Openen in de systeembrowser"
 }

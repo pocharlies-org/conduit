@@ -11,9 +11,9 @@ import WebKit
 /// aquí (extensión AutoFill del sistema, iOS 12+), y sus cookies caen en
 /// `WKWebsiteDataStore.default()`, que es lo que lee `CookieBridge`.
 ///
-/// Sigue viva la hoja del sistema (`sheet`, modo por defecto): Google OAuth
-/// rechaza WebViews embebidas (`disallowed_useragent`), y el login del proxy
-/// la necesita.
+/// La hoja del sistema sigue disponible (`sheet`, modo por defecto) como
+/// salida: Google OAuth rechaza WebViews embebidas (`disallowed_useragent`) y
+/// el login del proxy la ofrece solo si la pantalla completa no llega.
 final class SystemBrowserAuthBridge: NSObject, ConduitBridge,
   ASWebAuthenticationPresentationContextProviding {
   static let shared = SystemBrowserAuthBridge()

@@ -4325,5 +4325,6 @@
   "accountsAddressConfirmMessage": "{host}이(가) 이 서버인지 확인하기 위해 Conduit이 이 기기에 저장된 계정의 세션을 해당 주소로 보냅니다. 이 주소를 신뢰하는 경우에만 계속하세요.",
   "accountsAddressConfirmAction": "주소 확인",
   "setupWizardTitle": "Set up the app",
-  "setupWizardSubtitle": "Choose the account to enter with. You can change it later in Settings."
+  "setupWizardSubtitle": "Choose the account to enter with. You can change it later in Settings.",
+  "proxyAuthSystemBrowser": "시스템 브라우저에서 열기"
 }

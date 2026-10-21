@@ -1,6 +1,8 @@
 import 'package:conduit/l10n/app_localizations.dart';
 import 'package:conduit_core/features/hermes/providers/hermes_providers.dart';
 import 'package:conduit_core/navigation/routes.dart';
+import 'package:conduit_core/persistence/persistence_keys.dart';
+import 'package:conduit_core/persistence/preferences_store.dart';
 import 'package:conduit_core/providers/app_providers.dart';
 import 'package:conduit_core/providers/openwebui_accounts_controller.dart';
 import 'package:conduit_core/utils/debug_logger.dart';
@@ -181,6 +183,9 @@ Future<void> signOutOfAllAccounts(BuildContext context, WidgetRef ref) async {
     await ref
         .read(signOutCoordinatorProvider)
         .signOut(keepServerDetails: keepServerDetails);
+    // OWU-106: cerrar sesión limpia la configuración elegida; el siguiente
+    // arranque vuelve a preguntar con «Configura tu app».
+    await PreferencesStore.put(PreferenceKeys.setupWizardCompleted, false);
   } catch (_) {
     if (!context.mounted) return;
     UiUtils.showMessage(context, AppLocalizations.of(context)!.errorMessage);

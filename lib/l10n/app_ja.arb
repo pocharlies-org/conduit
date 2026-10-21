@@ -6156,5 +6156,6 @@
   "accountsAddressConfirmMessage": "{host} がこのサーバーであることを確かめるため、Conduit はこのデバイスに保存されたアカウントのセッションをそこへ送信します。このアドレスを信頼できる場合のみ続行してください。",
   "accountsAddressConfirmAction": "アドレスを確認",
   "setupWizardTitle": "Set up the app",
-  "setupWizardSubtitle": "Choose the account to enter with. You can change it later in Settings."
+  "setupWizardSubtitle": "Choose the account to enter with. You can change it later in Settings.",
+  "proxyAuthSystemBrowser": "システムブラウザで開く"
 }
