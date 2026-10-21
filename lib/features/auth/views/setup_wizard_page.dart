@@ -9,6 +9,7 @@ import 'package:conduit_core/navigation/routes.dart';
 import 'package:conduit_core/persistence/persistence_keys.dart';
 import 'package:conduit_core/persistence/preferences_store.dart';
 import 'package:conduit_core/providers/app_providers.dart';
+import 'package:conduit_core/providers/backend_mode_providers.dart';
 
 import '../../../l10n/app_localizations.dart';
 import '../../../shared/utils/ui_utils.dart';
@@ -57,6 +58,9 @@ class SetupWizardPage extends ConsumerWidget {
   ) async {
     final storage = ref.read(optimizedStorageServiceProvider);
     await storage.setActiveServerId(serverId);
+    // OWU-106: elegir cuenta aquí es elegir Open WebUI; el arranque no puede
+    // quedarse en otro backend por un valor viejo.
+    await ref.read(preferredBackendProvider.notifier).set(PreferredBackend.owui);
     await PreferencesStore.put(PreferenceKeys.setupWizardCompleted, true);
     setupWizardPending = false;
     ref.invalidate(serverConfigsProvider);

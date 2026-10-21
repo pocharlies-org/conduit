@@ -675,10 +675,9 @@ class _ProxyAuthPageState extends ConsumerState<ProxyAuthPage> {
       return;
     }
 
-    // iOS: the system-browser sheet is where Google OAuth works — it rejects
-    // embedded WebViews — and where AutoFill and password managers live
-    // (SC-2799). Its cookies land in the shared store the capture below
-    // already reads, so only the login UI changes.
+    // iOS: in-app and full-screen (OWU-106). Google OAuth refuses embedded
+    // WebViews, so the error state offers the system browser as a fallback.
+    // Either way the cookies land in the shared store the capture below reads.
     if (SystemBrowserAuth.isSupported) {
       if (widget.config.freshSession) {
         final sharedCleared = await NativeCookieManager.clearCookiesForUrl(
@@ -715,18 +714,21 @@ class _ProxyAuthPageState extends ConsumerState<ProxyAuthPage> {
     });
   }
 
-  /// Drives the iOS system-browser proxy login: opens the sheet at the server
-  /// root (where oauth2-proxy bounces to Keycloak), then polls the shared
+  /// Drives the iOS proxy login: opens the server root full-screen inside the
+  /// app ([fullScreen] false is the system-browser fallback), then polls the
+  /// shared
   /// cookie store for the OpenWebUI JWT — the same success signal as the SSO
   /// sheet (SC-2799). On JWT, closes the sheet and completes with the proxy
   /// cookies and the JWT. If the sheet closed or timed out, a final read still
   /// completes with proxy cookies alone (manual "Continuar" semantics).
-  Future<void> _runSystemBrowserProxyAuth() async {
+  Future<void> _runSystemBrowserProxyAuth({bool fullScreen = true}) async {
     final serverUrl = widget.config.serverConfig.url;
     final lookupUrl = proxyCookieLookupUrl(serverUrl);
     var sheetClosed = false;
     unawaited(
-      SystemBrowserAuth.start(serverUrl).then((_) {
+      // OWU-106: dentro de la app, a pantalla completa. La hoja del sistema
+      // del navegador (barra y esquinas) es justo lo que Dani rechaza.
+      SystemBrowserAuth.start(serverUrl, fullScreen: fullScreen).then((_) {
         sheetClosed = true;
       }),
     );
@@ -761,6 +763,14 @@ class _ProxyAuthPageState extends ConsumerState<ProxyAuthPage> {
       _error = AppLocalizations.of(context)!.proxyAuthFailed;
       _isLoading = false;
     });
+  }
+
+  void _startSystemBrowserFallback() {
+    setState(() {
+      _error = null;
+      _isLoading = true;
+    });
+    unawaited(_runSystemBrowserProxyAuth(fullScreen: false));
   }
 
   void _completeProxyAuthWith(Map<String, String> cookies, String? jwtToken) {
@@ -1863,6 +1873,16 @@ class _ProxyAuthPageState extends ConsumerState<ProxyAuthPage> {
               icon: Platform.isIOS ? CupertinoIcons.refresh : Icons.refresh,
               onPressed: _refresh,
             ),
+            // OWU-106: Google rechaza las WebViews embebidas; si el login
+            // dentro de la app no llega, queda el navegador del sistema.
+            if (SystemBrowserAuth.isSupported) ...[
+              const SizedBox(height: Spacing.sm),
+              ConduitButton(
+                text: l10n.proxyAuthSystemBrowser,
+                icon: Icons.open_in_browser,
+                onPressed: _startSystemBrowserFallback,
+              ),
+            ],
             const SizedBox(height: Spacing.md),
             ConduitButton(
               text: l10n.back,
