@@ -14,6 +14,7 @@ import 'package:conduit_core/utils/debug_logger.dart';
 import '../../features/auth/views/authentication_page.dart';
 import '../../features/auth/views/backend_chooser_page.dart';
 import '../../features/auth/views/account_chooser_page.dart';
+import '../../features/auth/views/setup_wizard_page.dart';
 import '../../features/auth/views/connect_signin_page.dart';
 import '../../features/auth/views/connection_issue_page.dart';
 import '../../features/auth/views/proxy_auth_page.dart';
@@ -201,6 +202,12 @@ final goRouterProvider = Provider<GoRouter>((ref) {
       name: RouteNames.accountChooser,
       pageBuilder: (context, state) =>
           _buildPlatformPage(state: state, child: const AccountChooserPage()),
+    ),
+    GoRoute(
+      path: Routes.setupWizard,
+      name: RouteNames.setupWizard,
+      pageBuilder: (context, state) =>
+          _buildPlatformPage(state: state, child: const SetupWizardPage()),
     ),
     GoRoute(
       path: Routes.serverConnection,
