@@ -4530,5 +4530,5 @@
   "accountsAddressConfirmAction": "Проверить адрес",
   "setupWizardTitle": "Set up the app",
   "setupWizardSubtitle": "Choose the account to enter with. You can change it later in Settings.",
-  "proxyAuthSystemBrowser": "Открыть в системном браузере"
+  "proxyAuthInAppWebView": "Открыть в приложении"
 }

@@ -10407,8 +10407,8 @@
   "@setupWizardSubtitle": {
     "description": "Body of the first-run setup wizard: the account list follows."
   },
-  "proxyAuthSystemBrowser": "Open in the system browser",
-  "@proxyAuthSystemBrowser": {
-    "description": "Fallback action: opens the login in the iOS system browser when the in-app web view is refused (Google OAuth)."
+  "proxyAuthInAppWebView": "Open inside the app",
+  "@proxyAuthInAppWebView": {
+    "description": "Fallback action: opens the login in an in-app web view when the system browser fails."
   }
 }

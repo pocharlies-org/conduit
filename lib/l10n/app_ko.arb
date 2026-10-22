@@ -4326,5 +4326,5 @@
   "accountsAddressConfirmAction": "주소 확인",
   "setupWizardTitle": "Set up the app",
   "setupWizardSubtitle": "Choose the account to enter with. You can change it later in Settings.",
-  "proxyAuthSystemBrowser": "시스템 브라우저에서 열기"
+  "proxyAuthInAppWebView": "앱 내에서 열기"
 }

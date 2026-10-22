@@ -4554,5 +4554,5 @@
   "accountsAddressConfirmAction": "检查地址",
   "setupWizardTitle": "Set up the app",
   "setupWizardSubtitle": "Choose the account to enter with. You can change it later in Settings.",
-  "proxyAuthSystemBrowser": "在系统浏览器中打开"
+  "proxyAuthInAppWebView": "在应用内打开"
 }

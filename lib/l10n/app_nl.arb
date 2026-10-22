@@ -4554,5 +4554,5 @@
   "accountsAddressConfirmAction": "Adres controleren",
   "setupWizardTitle": "Set up the app",
   "setupWizardSubtitle": "Choose the account to enter with. You can change it later in Settings.",
-  "proxyAuthSystemBrowser": "Openen in de systeembrowser"
+  "proxyAuthInAppWebView": "Openen in de app"
 }
