@@ -6157,5 +6157,5 @@
   "accountsAddressConfirmAction": "アドレスを確認",
   "setupWizardTitle": "Set up the app",
   "setupWizardSubtitle": "Choose the account to enter with. You can change it later in Settings.",
-  "proxyAuthSystemBrowser": "システムブラウザで開く"
+  "proxyAuthInAppWebView": "アプリ内で開く"
 }

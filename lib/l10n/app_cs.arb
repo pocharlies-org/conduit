@@ -6463,5 +6463,5 @@
   "accountsAddressConfirmAction": "Ověřit adresu",
   "setupWizardTitle": "Set up the app",
   "setupWizardSubtitle": "Choose the account to enter with. You can change it later in Settings.",
-  "proxyAuthSystemBrowser": "Otevřít v systémovém prohlížeči"
+  "proxyAuthInAppWebView": "Otevřít v aplikaci"
 }

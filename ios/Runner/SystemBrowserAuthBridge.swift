@@ -11,9 +11,11 @@ import WebKit
 /// aquí (extensión AutoFill del sistema, iOS 12+), y sus cookies caen en
 /// `WKWebsiteDataStore.default()`, que es lo que lee `CookieBridge`.
 ///
-/// La hoja del sistema sigue disponible (`sheet`, modo por defecto) como
-/// salida: Google OAuth rechaza WebViews embebidas (`disallowed_useragent`) y
-/// el login del proxy la ofrece solo si la pantalla completa no llega.
+/// El modo por defecto es la hoja del sistema (`sheet`): es donde Google OAuth
+/// funciona — rechaza WebViews embebidas (`disallowed_useragent`) — y donde
+/// viven la sesión de Google y AutoFill (OWU-107, Dani 22-10: «antes funcionaba
+/// y ahora ya no va»). La pantalla completa dentro de la app queda como
+/// opción desde el estado de error.
 final class SystemBrowserAuthBridge: NSObject, ConduitBridge,
   ASWebAuthenticationPresentationContextProviding {
   static let shared = SystemBrowserAuthBridge()

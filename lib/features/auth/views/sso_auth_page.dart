@@ -273,7 +273,7 @@ class _SsoAuthPageState extends ConsumerState<SsoAuthPage> {
 
     var sheetClosed = false;
     unawaited(
-      SystemBrowserAuth.start('$serverUrl/auth', fullScreen: true).then((_) {
+      SystemBrowserAuth.start('$serverUrl/auth').then((_) {
         sheetClosed = true;
       }),
     );

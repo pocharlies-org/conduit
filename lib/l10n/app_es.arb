@@ -4554,5 +4554,5 @@
   "accountsAddressConfirmAction": "Comprobar dirección",
   "setupWizardTitle": "Configura tu app",
   "setupWizardSubtitle": "Elige la cuenta con la que entrar. Podrás cambiarla luego en Ajustes.",
-  "proxyAuthSystemBrowser": "Abrir en el navegador del sistema"
+  "proxyAuthInAppWebView": "Abrir dentro de la app"
 }
