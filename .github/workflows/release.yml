@@ -11,6 +11,8 @@ concurrency:
 
 jobs:
   validate-release-notes:
+    # INFRA-1218: job del upstream cogwheel0/conduit; queda skipped en el fork
+    if: github.repository == 'cogwheel0/conduit'
     name: Validate Release Notes
     runs-on: ubuntu-latest
     permissions:
@@ -42,6 +44,8 @@ jobs:
           dart run tool/validate_release_notes.dart --version "$VERSION"
 
   generate-release-notes:
+    # INFRA-1218: job del upstream cogwheel0/conduit; queda skipped en el fork
+    if: github.repository == 'cogwheel0/conduit'
     name: Generate Release Notes
     runs-on: ubuntu-latest
     needs: validate-release-notes
@@ -63,6 +67,8 @@ jobs:
           makeLatest: true
 
   build-android:
+    # INFRA-1218: job del upstream cogwheel0/conduit; queda skipped en el fork
+    if: github.repository == 'cogwheel0/conduit'
     name: Build Android
     runs-on: ubuntu-latest
     needs: generate-release-notes
@@ -159,6 +165,8 @@ jobs:
 
 
   build-ios:
+    # INFRA-1218: job del upstream cogwheel0/conduit; queda skipped en el fork
+    if: github.repository == 'cogwheel0/conduit'
     name: Build iOS
     runs-on: macos-26
     needs: generate-release-notes

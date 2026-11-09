@@ -18,6 +18,8 @@ jobs:
   # The gate that matters most during the extraction: the mobile app must stay
   # exactly as it was while code moves out from under it.
   mobile:
+    # INFRA-1218: job del upstream cogwheel0/conduit; queda skipped en el fork
+    if: github.repository == 'cogwheel0/conduit'
     name: Mobile app (analyze + test)
     runs-on: ubuntu-latest
     steps:
@@ -76,6 +78,8 @@ jobs:
   # analyzer and the Dart tests slowed all three, and it would also share
   # their build/ and .dart_tool/ files.
   android:
+    # INFRA-1218: job del upstream cogwheel0/conduit; queda skipped en el fork
+    if: github.repository == 'cogwheel0/conduit'
     name: Android native tests
     runs-on: ubuntu-latest
     steps:
@@ -124,6 +128,8 @@ jobs:
   # one job so setup and codegen run once; one failing does not stop the
   # others.
   packages:
+    # INFRA-1218: job del upstream cogwheel0/conduit; queda skipped en el fork
+    if: github.repository == 'cogwheel0/conduit'
     name: Dart packages
     runs-on: ubuntu-latest
     steps:
@@ -197,6 +203,8 @@ jobs:
   # able to reach dio, drift or conduit_core. Both are cheap to check and
   # expensive to discover late.
   web-safety:
+    # INFRA-1218: job del upstream cogwheel0/conduit; queda skipped en el fork
+    if: github.repository == 'cogwheel0/conduit'
     name: Web-safe packages
     runs-on: ubuntu-latest
     steps:
@@ -224,6 +232,8 @@ jobs:
         run: node build/web_safety_check.js
 
   localization:
+    # INFRA-1218: job del upstream cogwheel0/conduit; queda skipped en el fork
+    if: github.repository == 'cogwheel0/conduit'
     name: Localization
     runs-on: ubuntu-latest
     steps:
