@@ -1,8 +1,5 @@
 import 'package:conduit/l10n/app_localizations.dart';
-import 'package:conduit_core/features/hermes/providers/hermes_providers.dart';
 import 'package:conduit_core/navigation/routes.dart';
-import 'package:conduit_core/persistence/persistence_keys.dart';
-import 'package:conduit_core/persistence/preferences_store.dart';
 import 'package:conduit_core/providers/app_providers.dart';
 import 'package:conduit_core/providers/openwebui_accounts_controller.dart';
 import 'package:conduit_core/utils/debug_logger.dart';
@@ -16,18 +13,12 @@ import 'package:flutter/widgets.dart';
 
 import '../../../shared/theme/theme_extensions.dart';
 import '../../../shared/utils/ui_utils.dart';
-import '../../../shared/widgets/sign_out_options_dialog.dart';
 import '../../../shared/widgets/themed_dialogs.dart';
 import '../../../shared/widgets/user_avatar.dart';
 import '../../../shared/widgets/utility_components.dart';
 import '../../../core/utils/account_display.dart';
-import '../../auth/views/server_connection_page.dart'
-    show ServerConnectionHandoff;
-import '../../hermes/widgets/hermes_connection_switcher.dart';
-import 'account_sheet.dart';
 
 export '../../../core/utils/account_display.dart';
-export 'account_sheet.dart' show AccountKind;
 
 /// The avatar of an account the app is not signed in to: the image saved the
 /// last time it was active when that image travels with it (a data URL, as
@@ -87,8 +78,7 @@ class SavedAccountRow extends ConsumerWidget {
           leading: SavedAccountAvatar(entry: entry, size: IconSize.xl),
           selected: entry.isActive,
           preserveTrailingSemantics: true,
-          // The active account signed out -- its session expired, next to a
-          // usable Hermes or Direct backend that keeps this page open -- is
+          // The active account signed out -- its session expired -- is
           // switched to as any other, which opens its sign-in.
           onTap: entry.isActive && entry.hasSession
               ? null
@@ -120,7 +110,7 @@ class SavedAccountRow extends ConsumerWidget {
   }
 }
 
-/// The check that marks the account or connection in use.
+/// The check that marks the account in use.
 class ActiveCheckmark extends StatelessWidget {
   const ActiveCheckmark({super.key, required this.semanticLabel});
 
@@ -142,50 +132,11 @@ class ActiveCheckmark extends StatelessWidget {
   }
 }
 
-/// Makes [connectionId] the Hermes connection in use, turning Hermes on
-/// when it is off. It is switched to first: a switch that fails leaves
-/// Hermes as it was, rather than on with the connection it was meant to
-/// leave.
-Future<void> useHermesConnection(
-  BuildContext context,
-  WidgetRef ref,
-  String connectionId,
-) async {
-  if (ref.read(hermesActiveConnectionIdProvider) != connectionId) {
-    if (!await switchHermesConnection(context, ref, connectionId)) return;
-    if (!context.mounted) return;
-  }
-  if (ref.read(hermesEnabledProvider)) return;
-  try {
-    await ref.read(hermesConfigProvider.notifier).setEnabled(true);
-  } catch (error, stackTrace) {
-    DebugLogger.error(
-      'hermes-enable-failed',
-      scope: 'profile/accounts',
-      error: error,
-      stackTrace: stackTrace,
-    );
-    if (context.mounted) {
-      UiUtils.showMessage(
-        context,
-        AppLocalizations.of(context)!.errorMessage,
-      );
-    }
-  }
-}
-
-/// Signs out of every account, after asking whether to keep the servers'
-/// details for signing in again.
+/// Signs out of every account. OWU-134: the seeded Chat server stays as the
+/// app's configuration, so the next boot lands on its sign-in.
 Future<void> signOutOfAllAccounts(BuildContext context, WidgetRef ref) async {
-  final keepServerDetails = await showSignOutOptionsDialog(context);
-  if (!context.mounted || keepServerDetails == null) return;
   try {
-    await ref
-        .read(signOutCoordinatorProvider)
-        .signOut(keepServerDetails: keepServerDetails);
-    // OWU-106: cerrar sesión limpia la configuración elegida; el siguiente
-    // arranque vuelve a preguntar con «Configura tu app».
-    await PreferencesStore.put(PreferenceKeys.setupWizardCompleted, false);
+    await ref.read(signOutCoordinatorProvider).signOut();
   } catch (_) {
     if (!context.mounted) return;
     UiUtils.showMessage(context, AppLocalizations.of(context)!.errorMessage);
@@ -243,32 +194,6 @@ Future<bool> confirmLeavingActiveAccount(
   confirm: () => _confirmSwitchStopsReply(context),
 );
 
-/// Whether the address the active account uses may be changed or removed:
-/// at once when no reply is being written, else once the user agrees to
-/// stop it, which this then does. The clients move off the address with the
-/// change, and a reply arriving through them would end without a word.
-Future<bool> confirmChangingAddressInUse(
-  BuildContext context,
-  ProviderContainer container,
-) => _mayStopReply(
-  context,
-  container.read,
-  // Only the replies arriving through the address: a Direct or Hermes one
-  // runs on.
-  guard: addressChangeReplyGuardProvider,
-  stop: addressChangeStopRepliesProvider,
-  confirm: () {
-    final l10n = AppLocalizations.of(context)!;
-    return ThemedDialogs.confirm(
-      context,
-      title: l10n.accountsReplyInProgressTitle,
-      message: l10n.accountsAddressChangeStopsReply,
-      confirmText: l10n.accountsAddressChangeAnyway,
-      isDestructive: true,
-    );
-  },
-);
-
 Future<bool> _mayStopReply(
   BuildContext context,
   T Function<T>(ProviderListenable<T> provider) read, {
@@ -292,11 +217,44 @@ Future<bool> _mayStopReply(
 }
 
 /// Opens sign-in for the active account, which a switch or a sign-out left
-/// signed out. An Open WebUI-first install gets there by redirect, but next
-/// to a usable Hermes or Direct backend the router lets the user stay where
-/// they were, with the account they chose unusable. Sign-in becomes the
-/// router's location, so the router moves on to chat once it succeeds.
+/// signed out. Sign-in becomes the router's location, so the router moves on
+/// to chat once it succeeds.
 void _openSignIn(GoRouter router) => router.go(Routes.authentication);
+
+/// Drops the added account whose sign-in never finished, which makes the
+/// account it was added from active again, and returns to chat.
+///
+/// When it could not be dropped and is still there, signed out, the flow
+/// stays open, with its Cancel: in chat, the router would only open that
+/// account's sign-in again, without one. Returns false then, for the page to
+/// say so.
+Future<bool> abandonAddedAccount(BuildContext context, WidgetRef ref) async {
+  var left = false;
+  try {
+    left = await ref
+        .read(openWebUiAccountsControllerProvider)
+        .abandonPendingSignIn();
+  } catch (error, stackTrace) {
+    DebugLogger.error(
+      'abandon-added-account-failed',
+      scope: 'auth/accounts',
+      error: error,
+      stackTrace: stackTrace,
+    );
+  }
+  if (!context.mounted) return true;
+  if (!left) {
+    // Not dropped because a sign-in reached it is not still pending; read
+    // again, not as last shown. Unreadable, it may be: stay.
+    final stillPending = await ref
+        .read(pendingSignInAbandonableProvider.future)
+        .then((pending) => pending, onError: (Object _) => true);
+    if (!context.mounted) return true;
+    if (stillPending) return false;
+  }
+  context.go(Routes.chat);
+  return true;
+}
 
 Future<bool> _confirmSwitchStopsReply(BuildContext context) {
   final l10n = AppLocalizations.of(context)!;
@@ -345,8 +303,8 @@ Future<void> signOutOfSavedAccount(
       if (!stopReply) return;
       result = await controller.signOut(entry.id, force: true);
     }
-    // With no account left there is nothing to sign in to: the app carries
-    // on with Hermes or Direct, or the router goes back to choosing one.
+    // With no account left the registry re-seeds the Chat server, so the
+    // router goes back to its sign-in.
     if (result == OpenWebUiAccountChangeResult.needsSignIn &&
         await container.read(activeServerProvider.future) != null) {
       _openSignIn(router);
@@ -361,77 +319,3 @@ Future<void> signOutOfSavedAccount(
     if (context.mounted) UiUtils.showMessage(context, l10n.errorMessage);
   }
 }
-
-/// Opens the connection page to add an account on the saved server
-/// [serverId], or on a new one -- carrying on from [handoff] when the
-/// account sheet checked the server first.
-///
-/// The router keeps a signed-in user away from sign-in pages unless an
-/// account is being added, and it decides that as the page opens, so the
-/// addition begins here; the page ends it when it goes. The page becomes
-/// the router's location rather than being pushed: the router redirects
-/// from its location, so over chat a finished sign-in would stay on screen,
-/// and the new account's first, signed-out attempt would replace the stack.
-void openAddAccount(
-  BuildContext context,
-  WidgetRef ref, {
-  String? serverId,
-  ServerConnectionHandoff? handoff,
-}) {
-  ref
-      .read(accountAdditionOriginProvider.notifier)
-      .begin(ref.read(settledActiveAccountIdProvider));
-  context.goNamed(RouteNames.addServer, extra: handoff ?? serverId);
-}
-
-/// Opens the connection page for a first Open WebUI account, next to a
-/// Hermes or Direct backend in use -- carrying on from [handoff] when the
-/// account sheet checked the server first. With no account to come back to
-/// there is no addition to begin.
-void connectFirstOpenWebUiAccount(
-  BuildContext context, {
-  ServerConnectionHandoff? handoff,
-}) => context.goNamed(RouteNames.serverConnection, extra: handoff);
-
-/// Drops the added account whose sign-in never finished, which makes the
-/// account it was added from active again, and returns to chat.
-///
-/// When it could not be dropped and is still there, signed out, the flow
-/// stays open, with its Cancel: in chat, the router would only open that
-/// account's sign-in again, without one. Returns false then, for the page to
-/// say so.
-Future<bool> abandonAddedAccount(BuildContext context, WidgetRef ref) async {
-  var left = false;
-  try {
-    left = await ref
-        .read(openWebUiAccountsControllerProvider)
-        .abandonPendingSignIn();
-  } catch (error, stackTrace) {
-    DebugLogger.error(
-      'abandon-added-account-failed',
-      scope: 'auth/accounts',
-      error: error,
-      stackTrace: stackTrace,
-    );
-  }
-  if (!context.mounted) return true;
-  if (!left) {
-    // Not dropped because a sign-in reached it is not still pending; read
-    // again, not as last shown. Unreadable, it may be: stay.
-    final stillPending = await ref
-        .read(pendingSignInAbandonableProvider.future)
-        .then((pending) => pending, onError: (Object _) => true);
-    if (!context.mounted) return true;
-    if (stillPending) return false;
-  }
-  context.go(Routes.chat);
-  return true;
-}
-
-/// Opens the account sheet to add an account or connection, on the tab for
-/// [kind].
-Future<void> showAddAccountSheet(
-  BuildContext context,
-  WidgetRef ref, {
-  AccountKind kind = AccountKind.openWebUi,
-}) => showAccountSheet(context, AddAccountRequest(kind));

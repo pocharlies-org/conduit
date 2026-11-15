@@ -25,7 +25,6 @@ import '../widgets/customization_tile.dart';
 import '../widgets/settings_page_scaffold.dart';
 import '../../../shared/widgets/utility_components.dart';
 import '../widgets/stt_language_picker.dart';
-import 'voice_provider_settings_page.dart';
 
 bool shouldShowDeviceSttLanguageSetting(
   TargetPlatform platform,
@@ -51,8 +50,6 @@ class AudioSettingsPage extends ConsumerWidget {
         _buildSttSection(context, ref, settings),
         settingsSectionGap,
         _buildTtsSection(context, ref, settings),
-        settingsSectionGap,
-        _buildVoiceProviderTile(context, ref, settings),
       ],
     );
   }
@@ -97,33 +94,6 @@ class AudioSettingsPage extends ConsumerWidget {
             style: theme.bodySmall?.copyWith(color: theme.textSecondary),
           ),
         ],
-      ),
-    );
-  }
-
-  Widget _buildVoiceProviderTile(
-    BuildContext context,
-    WidgetRef ref,
-    AppSettings settings,
-  ) {
-    final l10n = AppLocalizations.of(context)!;
-    return InsetGroupedSection(
-      footer: l10n.voiceProviderDescription,
-      child: CustomizationTile(
-        leading: SettingsIconBadge(
-          icon: UiUtils.platformIcon(
-            ios: CupertinoIcons.waveform,
-            android: Icons.graphic_eq,
-          ),
-          color: context.conduitTheme.buttonPrimary,
-        ),
-        title: l10n.voiceProviderTitle,
-        subtitle: voiceProviderSubtitle(
-          l10n,
-          settings.directVoiceProvider,
-          voiceProviderCandidates(ref),
-        ),
-        onTap: () => context.pushNamed(RouteNames.voiceProviderSettings),
       ),
     );
   }

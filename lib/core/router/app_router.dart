@@ -12,13 +12,8 @@ import 'package:conduit_core/services/performance_profiler.dart';
 import 'package:conduit_core/utils/debug_logger.dart';
 
 import '../../features/auth/views/authentication_page.dart';
-import '../../features/auth/views/backend_chooser_page.dart';
-import '../../features/auth/views/account_chooser_page.dart';
-import '../../features/auth/views/setup_wizard_page.dart';
-import '../../features/auth/views/connect_signin_page.dart';
 import '../../features/auth/views/connection_issue_page.dart';
 import '../../features/auth/views/proxy_auth_page.dart';
-import '../../features/auth/views/server_connection_page.dart';
 import '../../features/auth/views/sso_auth_page.dart';
 import '../../features/chat/views/chat_page.dart';
 import '../../features/navigation/views/folder_page.dart';
@@ -32,24 +27,14 @@ import '../../features/notes/views/note_editor_page.dart';
 import '../../features/profile/views/about_page.dart';
 import '../../features/profile/views/account_settings_page.dart';
 import '../../features/profile/views/manage_accounts_page.dart';
-import '../../features/profile/views/server_addresses_page.dart';
 import '../../features/profile/views/app_customization_page.dart';
 import '../../features/profile/views/audio_settings_page.dart';
-import '../../features/profile/views/voice_provider_settings_page.dart';
-import '../../features/hermes/views/hermes_connections_page.dart';
-import '../../features/hermes/views/hermes_settings_page.dart';
-import '../../features/hermes/views/hermes_jobs_page.dart';
-import '../../features/hermes/views/hermes_mcp_page.dart';
 import '../../features/profile/views/personalization_page.dart';
 import '../../features/profile/views/profile_page.dart';
 import '../../features/notifications/views/notification_settings_page.dart';
 import '../../features/workspace/views/workspace_page.dart';
 import '../../features/workspace/workspace_navigation.dart';
 
-import 'package:conduit_core/features/direct_connections/controllers/direct_connection_editor_draft.dart';
-
-import '../../features/direct_connections/views/direct_connection_editor_page.dart';
-import '../../features/direct_connections/views/direct_connections_page.dart';
 import '../../features/integrations/views/personal_connection_editor_page.dart';
 import '../../features/integrations/views/personal_connections_page.dart';
 import '../../features/automations/views/scheduled_task_detail_page.dart';
@@ -60,20 +45,10 @@ import '../../features/profile/views/chat_data_controls_page.dart';
 
 import 'package:conduit_core/features/integrations/personal_connection_settings.dart';
 
-import '../../features/direct_connections/views/direct_mcp_server_editor_page.dart';
 import '../../l10n/app_localizations.dart';
 
 import 'package:conduit_core/models/server_config.dart';
 import 'package:conduit_core/navigation/route_redirect.dart';
-
-// The redirect policy lives in conduit_core, where it is tested without
-// Flutter. Re-exported for the router policy tests.
-export 'package:conduit_core/navigation/route_redirect.dart'
-    show
-        incompleteHermesDestination,
-        isDirectConnectionsLocation,
-        isDirectOnlyAppLocation,
-        isHermesOnlyAppLocation;
 
 class RouterNotifier extends ChangeNotifier {
   RouterNotifier(this.ref) {
@@ -186,60 +161,6 @@ final goRouterProvider = Provider<GoRouter>((ref) {
       ],
     ),
     GoRoute(
-      path: Routes.login,
-      name: RouteNames.login,
-      pageBuilder: (context, state) =>
-          _buildPlatformPage(state: state, child: const ConnectAndSignInPage()),
-    ),
-    GoRoute(
-      path: Routes.backendChooser,
-      name: RouteNames.backendChooser,
-      pageBuilder: (context, state) =>
-          _buildPlatformPage(state: state, child: const BackendChooserPage()),
-    ),
-    GoRoute(
-      path: Routes.accountChooser,
-      name: RouteNames.accountChooser,
-      pageBuilder: (context, state) =>
-          _buildPlatformPage(state: state, child: const AccountChooserPage()),
-    ),
-    GoRoute(
-      path: Routes.setupWizard,
-      name: RouteNames.setupWizard,
-      pageBuilder: (context, state) =>
-          _buildPlatformPage(state: state, child: const SetupWizardPage()),
-    ),
-    GoRoute(
-      path: Routes.serverConnection,
-      name: RouteNames.serverConnection,
-      pageBuilder: (context, state) => _buildPlatformPage(
-        state: state,
-        child: ServerConnectionPage(
-          handoff: state.extra is ServerConnectionHandoff
-              ? state.extra as ServerConnectionHandoff
-              : null,
-        ),
-      ),
-    ),
-    GoRoute(
-      path: Routes.addServer,
-      name: RouteNames.addServer,
-      pageBuilder: (context, state) => _buildPlatformPage(
-        state: state,
-        child: ServerConnectionPage(
-          addingAccount: true,
-          serverId: switch (state.extra) {
-            final String serverId => serverId,
-            ServerConnectionHandoff(:final serverId) => serverId,
-            _ => null,
-          },
-          handoff: state.extra is ServerConnectionHandoff
-              ? state.extra as ServerConnectionHandoff
-              : null,
-        ),
-      ),
-    ),
-    GoRoute(
       path: Routes.connectionIssue,
       name: RouteNames.connectionIssue,
       pageBuilder: (context, state) =>
@@ -290,7 +211,7 @@ final goRouterProvider = Provider<GoRouter>((ref) {
           // Fallback - should not happen in normal flow
           return _buildPlatformPage(
             state: state,
-            child: const ServerConnectionPage(),
+            child: const AuthenticationPage(),
           );
         }
         return _buildPlatformPage(
@@ -318,14 +239,6 @@ final goRouterProvider = Provider<GoRouter>((ref) {
           _buildPlatformPage(state: state, child: const AudioSettingsPage()),
     ),
     GoRoute(
-      path: Routes.voiceProviderSettings,
-      name: RouteNames.voiceProviderSettings,
-      pageBuilder: (context, state) => _buildPlatformPage(
-        state: state,
-        child: const VoiceProviderSettingsPage(),
-      ),
-    ),
-    GoRoute(
       path: Routes.accountSettings,
       name: RouteNames.accountSettings,
       pageBuilder: (context, state) =>
@@ -336,35 +249,6 @@ final goRouterProvider = Provider<GoRouter>((ref) {
       name: RouteNames.accounts,
       pageBuilder: (context, state) =>
           _buildPlatformPage(state: state, child: const ManageAccountsPage()),
-    ),
-    GoRoute(
-      path: Routes.serverAddresses,
-      name: RouteNames.serverAddresses,
-      pageBuilder: (context, state) {
-        final serverId = state.extra;
-        return _buildPlatformPage(
-          state: state,
-          child: serverId is String
-              ? ServerAddressesPage(serverId: serverId)
-              : const ManageAccountsPage(),
-        );
-      },
-    ),
-    GoRoute(
-      path: Routes.serverAddressEditor,
-      name: RouteNames.serverAddressEditor,
-      pageBuilder: (context, state) {
-        final request = state.extra;
-        return _buildPlatformPage(
-          state: state,
-          child: request is ServerAddressEditorRequest
-              ? ServerConnectionPage(
-                  routesOfServerId: request.serverId,
-                  endpointId: request.endpointId,
-                )
-              : const ManageAccountsPage(),
-        );
-      },
     ),
     GoRoute(
       path: Routes.appearanceSettings,
@@ -472,83 +356,6 @@ final goRouterProvider = Provider<GoRouter>((ref) {
       name: RouteNames.calendar,
       pageBuilder: (context, state) =>
           _buildPlatformPage(state: state, child: const CalendarPage()),
-    ),
-    GoRoute(
-      path: Routes.directConnections,
-      name: RouteNames.directConnections,
-      pageBuilder: (context, state) => _buildPlatformPage(
-        state: state,
-        child: DirectConnectionsPage(
-          isOnboarding: state.uri.queryParameters['onboarding'] == 'true',
-        ),
-      ),
-    ),
-    GoRoute(
-      path: Routes.directMcpServerEditor,
-      name: RouteNames.directMcpServerEditor,
-      pageBuilder: (context, state) => _buildPlatformPage(
-        state: state,
-        child: DirectMcpServerEditorPage(serverId: state.pathParameters['id']!),
-      ),
-    ),
-    GoRoute(
-      path: Routes.directConnectionEditor,
-      name: RouteNames.directConnectionEditor,
-      pageBuilder: (context, state) => _buildPlatformPage(
-        state: state,
-        child: DirectConnectionEditorPage(
-          mode: DirectConnectionEditorMode.fromRoute(
-            profileId: state.pathParameters['id']!,
-            source:
-                state.uri.queryParameters['source'] ==
-                    openWebUiDirectConnectionSourceQueryValue
-                ? DirectConnectionEditorSource.openWebUi
-                : DirectConnectionEditorSource.local,
-          ),
-          isOnboarding: state.uri.queryParameters['onboarding'] == 'true',
-          entry: state.uri.queryParameters['entry'] == 'chooser'
-              ? DirectEditorEntry.chooser
-              : DirectEditorEntry.overview,
-        ),
-      ),
-    ),
-    GoRoute(
-      path: Routes.hermesSettings,
-      name: RouteNames.hermesSettings,
-      pageBuilder: (context, state) => _buildPlatformPage(
-        state: state,
-        // Onboarding sets up the first connection directly; afterwards this
-        // is the list of saved connections.
-        child: state.extra == true
-            ? const HermesSettingsPage(isOnboarding: true)
-            : const HermesConnectionsPage(),
-      ),
-    ),
-    GoRoute(
-      path: Routes.hermesConnectionEditor,
-      name: RouteNames.hermesConnectionEditor,
-      pageBuilder: (context, state) {
-        final id = state.pathParameters['id']!;
-        return _buildPlatformPage(
-          state: state,
-          child: HermesSettingsPage(
-            key: ValueKey<String>('hermes-connection-editor-$id'),
-            connectionId: id == Routes.hermesNewConnectionId ? null : id,
-          ),
-        );
-      },
-    ),
-    GoRoute(
-      path: Routes.hermesJobs,
-      name: RouteNames.hermesJobs,
-      pageBuilder: (context, state) =>
-          _buildPlatformPage(state: state, child: const HermesJobsPage()),
-    ),
-    GoRoute(
-      path: Routes.hermesMcp,
-      name: RouteNames.hermesMcp,
-      pageBuilder: (context, state) =>
-          _buildPlatformPage(state: state, child: const HermesMcpPage()),
     ),
     GoRoute(
       path: Routes.about,

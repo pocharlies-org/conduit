@@ -6,8 +6,6 @@ import 'package:riverpod/riverpod.dart';
 import 'package:conduit_core/database/chat_database_repository.dart';
 import 'package:conduit_core/database/database_provider.dart';
 import 'package:conduit_core/features/chat/providers/chat_providers.dart';
-import 'package:conduit_core/features/hermes/services/hermes_run_transport.dart'
-    show kHermesApprovalMeta, kHermesDecisionMeta, kHermesTransport;
 import 'package:conduit_core/features/tools/providers/tools_providers.dart';
 import 'package:conduit_core/models/chat_message.dart';
 import 'package:conduit_core/models/conversation.dart';
@@ -301,59 +299,12 @@ List<Map<String, String>> realtimeChatSnapshot(List<ChatMessage> messages) {
 
 DelegatedTurnState _answerState(ChatMessage message) {
   if (message.error != null) return DelegatedTurnState.failed;
-  if (findPendingOpenWebUiToolPrompt([message]) != null ||
-      _hermesAwaitsUser(message)) {
+  if (findPendingOpenWebUiToolPrompt([message]) != null) {
     return DelegatedTurnState.approval;
   }
   return assistantMessageResponseCompleted(message)
       ? DelegatedTurnState.completed
       : DelegatedTurnState.working;
-}
-
-/// Whether a Hermes answer waits for the user: an approval, or a question it
-/// asked, both answered in the chat.
-bool _hermesAwaitsUser(ChatMessage message) {
-  final metadata = message.metadata;
-  if (metadata?['transport'] != kHermesTransport) return false;
-  final approval = metadata?[kHermesApprovalMeta];
-  if (approval is Map &&
-      (approval['state'] == null ||
-          approval['state'] == 'pending' ||
-          approval['state'] == 'resolving')) {
-    return true;
-  }
-  final decision = metadata?[kHermesDecisionMeta];
-  return decision is Map && decision['state'] == 'pending';
-}
-
-/// The chat as a GPT-Live voice starts with: the newest messages as plain
-/// text, within the bounds Hermes's own client keeps (24 messages, 1200
-/// characters each, 6000 in all).
-List<Map<String, Object?>> gptLiveHistory(List<ChatMessage> messages) {
-  const maxMessages = 24;
-  const maxMessageCharacters = 1200;
-  var budget = 6000;
-  final history = <Map<String, Object?>>[];
-  for (final message in messages.reversed) {
-    if (history.length >= maxMessages || budget <= 0) break;
-    if (message.metadata?['archivedVariant'] == true) continue;
-    final user = message.role == 'user';
-    if (!user && message.role != 'assistant') continue;
-    if (!user && !assistantMessageResponseCompleted(message)) continue;
-    var text = user ? message.content.trim() : _answerText(message);
-    if (text.isEmpty) continue;
-    final limit = budget < maxMessageCharacters ? budget : maxMessageCharacters;
-    if (text.length > limit) text = text.substring(0, limit);
-    budget -= text.length;
-    history.insert(0, {
-      'type': 'message',
-      'role': message.role,
-      'content': [
-        {'type': user ? 'input_text' : 'output_text', 'text': text},
-      ],
-    });
-  }
-  return history;
 }
 
 /// The answer as the voice should read it: the reply without its reasoning

@@ -3340,6 +3340,18 @@ class OptimizedStorageService {
     _cacheRegistry(registry);
   }
 
+  /// Puts the build's seed (OWU-104) into the registry and stores it: the
+  /// single Chat server the app is pre-configured with. Returns an empty
+  /// registry only when the build carries no seed.
+  Future<OpenWebUiRegistry> _seedRegistryUnlocked() async {
+    final seeded = await OpenWebUiSeed.registryFromSeed();
+    if (seeded != null) {
+      await _saveRegistryUnlocked(seeded);
+      return seeded;
+    }
+    return OpenWebUiRegistry.empty;
+  }
+
   Future<OpenWebUiRegistry> _readRegistryFromStorageUnlocked() async {
     final stored = await _secureCredentialStorage.getOpenWebUiRegistry();
     if (stored != null) {
@@ -3347,7 +3359,15 @@ class OptimizedStorageService {
       if (stored.isEmpty) {
         throw const FormatException('Open WebUI registry payload was empty');
       }
-      return OpenWebUiRegistry.decode(stored);
+      final registry = OpenWebUiRegistry.decode(stored);
+      if (registry.servers.isEmpty) {
+        // OWU-134: a stored registry with no server re-seeds the build's seed.
+        // The app is pre-configured with the one Chat server, so a wipe or the
+        // removal of the last account can never leave it without a server: the
+        // next boot lands on that server's sign-in.
+        return _seedRegistryUnlocked();
+      }
+      return registry;
     }
 
     final legacy = await _secureCredentialStorage.getServerConfigs();
@@ -3355,14 +3375,8 @@ class OptimizedStorageService {
       // Nothing writes the old list any more, so none can appear later.
       _registryMigrationSettled = true;
       // First install (OWU-104): the build's seed enters the accounts here,
-      // before anything was ever stored. A wipe leaves an empty registry
-      // stored, so it never re-seeds.
-      final seeded = await OpenWebUiSeed.registryFromSeed();
-      if (seeded != null) {
-        await _saveRegistryUnlocked(seeded);
-        return seeded;
-      }
-      return OpenWebUiRegistry.empty;
+      // before anything was ever stored.
+      return _seedRegistryUnlocked();
     }
     if (legacy.isEmpty) {
       throw const FormatException('Server configs payload was empty');

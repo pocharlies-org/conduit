@@ -34,7 +34,6 @@ import 'package:conduit_core/utils/debug_logger.dart';
 import 'package:conduit_core/features/chat/providers/chat_providers.dart';
 import 'package:conduit_core/features/chat/realtime_call/bridge_call_engine.dart';
 import 'package:conduit_core/features/chat/realtime_call/bridge_call_host.dart';
-import 'package:conduit_core/features/chat/realtime_call/gpt_live_call_engine.dart';
 import 'package:conduit_core/features/chat/realtime_call/chat_bridge_call_host.dart';
 import 'package:conduit_core/features/chat/realtime_call/realtime_bridge_transport.dart';
 import 'package:conduit_core/features/chat/realtime_call/realtime_call_availability.dart';
@@ -622,23 +621,6 @@ class ChatVoiceModeController extends Notifier<ChatVoiceModeSnapshot> {
             BridgeCallEngine(transport: bridge, audio: audio, host: host);
       }
       await bridge.close();
-    }
-    final hermes = route.hermes;
-    if (hermes != null) {
-      final media = ref.read(realtimeWebRtcMediaFactoryProvider)();
-      if (media != null) {
-        // Built after a new chat has started, so the voice never hears the
-        // chat the call left.
-        return (host) => GptLiveCallEngine(
-          media: media,
-          host: host,
-          history: gptLiveHistory(ref.read(chatMessagesProvider)),
-          open: (offer, history) async => (await hermes.createVoiceLiveSession(
-            sdp: offer,
-            history: history,
-          )).answerSdp,
-        );
-      }
     }
     DebugLogger.log(
       'realtime-unavailable',

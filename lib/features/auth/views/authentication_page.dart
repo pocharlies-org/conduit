@@ -385,10 +385,10 @@ class _AuthenticationPageState extends ConsumerState<AuthenticationPage> {
     }
   }
 
-  /// Back to server setup, except while adding another account: then back
-  /// to where that began, or -- once this sign-in has become the active
-  /// account -- Cancel, which drops it and returns to the previous account.
-  UtilityBackNavigation _backNavigation(
+  /// Back, except while adding another account: then Cancel, which drops it
+  /// and returns to the previous account. At the app's root -- the sign-in
+  /// of the seeded server, OWU-134 -- there is nothing to go back to.
+  UtilityBackNavigation? _backNavigation(
     AppLocalizations l10n, {
     required bool abandonable,
   }) {
@@ -400,18 +400,16 @@ class _AuthenticationPageState extends ConsumerState<AuthenticationPage> {
         onPressed: _cancelAddition,
       );
     }
-    if (ref.watch(accountAdditionOriginProvider) != null && context.canPop()) {
+    if (context.canPop()) {
       return UtilityBackNavigation(
         label: l10n.back,
         buttonKey: key,
         onPressed: () => context.pop(),
       );
     }
-    return UtilityBackNavigation(
-      label: l10n.backToServerSetup,
-      buttonKey: key,
-      onPressed: () => context.go(Routes.serverConnection),
-    );
+    // OWU-134: the sign-in of the seeded server is the app's root when a
+    // session is owed; there is no server setup to go back to.
+    return null;
   }
 
   /// The first attempt makes the server's new account the active one. While

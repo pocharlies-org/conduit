@@ -122,26 +122,8 @@ import 'package:conduit_core/features/auth/providers/unified_auth_providers.dart
 
 import 'package:conduit_core/features/chat/utils/follow_ups_socket_event.dart';
 
-import 'package:conduit_core/features/hermes/models/hermes_chat_input.dart';
-import 'package:conduit_core/features/hermes/models/hermes_capabilities.dart';
-import 'package:conduit_core/features/hermes/models/hermes_config.dart';
-import 'package:conduit_core/features/hermes/models/hermes_connection_profile.dart';
-import 'package:conduit_core/features/hermes/models/hermes_model.dart';
 
-import 'package:conduit_core/features/hermes/controllers/hermes_busy_turn_controller.dart';
 
-import 'package:conduit_core/features/hermes/providers/hermes_providers.dart';
-import 'package:conduit_core/features/hermes/services/hermes_api_service.dart';
-import 'package:conduit_core/features/hermes/services/hermes_backend_service.dart';
-import 'package:conduit_core/features/hermes/services/hermes_local_document_service.dart';
-import 'package:conduit_core/features/hermes/services/hermes_local_document_trust_store.dart';
-import 'package:conduit_core/features/hermes/services/hermes_message_mapper.dart';
-import 'package:conduit_core/features/hermes/services/hermes_run_transport.dart';
-import 'package:conduit_core/features/hermes/services/hermes_session_provenance.dart';
-import 'package:conduit_core/features/direct_connections/direct_connections.dart';
-import 'package:conduit_core/features/direct_connections/providers/direct_mcp_providers.dart';
-import 'package:conduit_core/features/direct_connections/models/direct_mcp_server.dart';
-import 'package:conduit_core/features/direct_connections/services/direct_mcp_client.dart';
 
 import 'package:conduit_core/features/chat/models/chat_context_attachment.dart';
 import 'package:conduit_core/features/chat/providers/context_attachments_provider.dart';
@@ -154,7 +136,6 @@ import 'package:conduit_core/features/integrations/personal_connection_settings.
 import 'package:conduit_core/features/integrations/providers/personal_connections_providers.dart'
     show personalSelectionNoticeProvider;
 import 'package:conduit_core/utils/system_prompt.dart';
-import 'package:conduit_core/features/direct_connections/services/direct_chat_storage.dart';
 import 'package:conduit_core/features/web_search/web_search.dart';
 
 import '../services/chat_transport_dispatch.dart';
@@ -176,14 +157,9 @@ part 'chat_composer_providers.dart';
 part 'chat_context_readers.dart';
 part 'chat_conversation_mutations.dart';
 part 'chat_data_controls_controller.dart';
-part 'chat_direct_routing.dart';
-part 'chat_direct_turns.dart';
 part 'chat_feature_defaults.dart';
 part 'chat_generation_control.dart';
 part 'chat_headless_completion.dart';
-part 'chat_hermes_projection_store.dart';
-part 'chat_hermes_replay.dart';
-part 'chat_hermes_turns.dart';
 part 'chat_message_structure.dart';
 part 'chat_messages_notifier.dart';
 part 'chat_mutation_ownership.dart';

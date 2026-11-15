@@ -114,7 +114,6 @@ class NativeSheetRoutes {
   static const appearance = 'appearance';
   static const chats = 'chats';
   static const voice = 'voice';
-  static const voiceProvider = 'voice-provider';
   static const aiMemory = 'ai-memory';
   static const dataConnection = 'data-connection';
   static const hermes = 'hermes';

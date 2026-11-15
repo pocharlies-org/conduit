@@ -51,11 +51,6 @@ final class PreferenceKeys {
   /// after a process death or incomplete secure-storage cleanup.
   static const String incompleteLogoutFence = 'incomplete_logout_fence_v1';
 
-  /// Set when a user-requested full app-data clear failed part-way. Keeps
-  /// surviving Direct profiles hidden and unusable across restarts until the
-  /// logout fence is cleared.
-  static const String incompleteAppDataClear = 'incomplete_app_data_clear_v1';
-
   /// Set when a full sign-out could not delete every Open WebUI account
   /// database. The next start deletes them before any can open.
   static const String pendingAccountDatabaseWipe =
@@ -79,7 +74,6 @@ final class PreferenceKeys {
   static const String lastSeenReleaseVersion = 'last_seen_release_version_v1';
   static const String releaseNotesExistingInstallAtBootstrap =
       'release_notes_existing_install_at_bootstrap_v1';
-  static const String setupWizardCompleted = 'setup_wizard_completed_v1';
   static const String releaseNotesBannerPreviousVersion =
       'release_notes_banner_previous_version_v1';
   static const String serverVersionWarningDismissed =
@@ -111,60 +105,6 @@ final class PreferenceKeys {
   static const String notificationChannelEnabled =
       'notification_channel_enabled';
 
-  // Hermes Agent (direct second backend) — non-secret config. The API key and
-  // long-term memory session key are secrets and live in SecureCredentialStorage.
-  /// Global master switch; applies to whichever saved connection is active.
-  static const String hermesEnabled = 'hermes_enabled_v1';
-
-  /// Saved, named Hermes connections (`HermesConnectionsDocument`). Kept in
-  /// preferences rather than secure storage because the router reads it
-  /// synchronously; it holds no secrets.
-  static const String hermesConnections = 'hermes_connections_v1';
-
-  /// Id of the saved Hermes connection the runtime uses.
-  static const String hermesActiveConnectionId =
-      'hermes_active_connection_id_v1';
-
-  // Single-connection settings stored before saved connections existed. Only
-  // read to migrate them into [hermesConnections], then removed.
-  static const String hermesBaseUrl = 'hermes_base_url_v1';
-  static const String hermesBackendMode = 'hermes_backend_mode_v1';
-  static const String hermesDesktopAuthKind = 'hermes_desktop_auth_kind_v1';
-  static const String hermesDesktopProfile = 'hermes_desktop_profile_v1';
-  static const String hermesAllowSelfSignedCertificates =
-      'hermes_allow_self_signed_certificates_v1';
-  static const String hermesLocalDocumentTrust =
-      'hermes_local_document_trust_v1';
-
-  /// Legacy global trust principal; migrated into the first saved connection.
-  static const String hermesLocalDocumentTrustPrincipal =
-      'hermes_local_document_trust_principal_v1';
-  static const String hermesMixedSessionBindingTrust =
-      'hermes_mixed_session_binding_trust_v1';
-  static const String hermesPendingDesktopDecisions =
-      'hermes_pending_desktop_decisions_v1';
-
-  /// Keyed by origin, not by saved connection: the WebView cookie store is
-  /// process-global, so two connections on one origin share dashboard cookies.
-  static const String hermesDashboardCookieIdentities =
-      'hermes_dashboard_cookie_identities_v1';
-
-  /// Which backend onboarding completed against
-  /// ('owui' | 'direct' | 'hermes' | unset).
-  /// Read synchronously by the router for boot-deterministic routing.
-  static const String preferredBackend = 'preferred_backend_v1';
-
-  /// Non-secret boot hint only. Direct profile contents and credentials live
-  /// exclusively in SecureCredentialStorage.
-  static const String directConnectionsConfigured =
-      'direct_connections_configured_v1';
-  static const String directHistoryPolicy = 'direct_history_policy_v1';
-  static const String applePccEnabled = 'apple_pcc_enabled_v1';
-  static const String appleOnDeviceEnabled = 'apple_on_device_enabled_v1';
-  static const String applePccOnDeviceFallback =
-      'apple_pcc_on_device_fallback_v1';
-  static const String directContextLengthOverrides =
-      'direct_context_length_overrides_v1';
   static const String reasoningEffortByModel = 'reasoning_effort_by_model_v1';
 
   /// Prefix for the per-server account owner marker that guards reopening an
@@ -181,9 +121,6 @@ final class PreferenceKeys {
   /// [drawerShowRecent]).
   static const String notesListShowPinned = 'notes_list_show_pinned';
   static const String notesListShowRecent = 'notes_list_show_recent';
-
-  /// Bots section visibility in the sidebar Hermes tab.
-  static const String hermesShowBots = 'hermes_show_bots';
 
   static const String sidebarActiveTab = 'sidebar_active_tab';
   static const String sidebarTabletWidth = 'sidebar_tablet_width_v1';

@@ -1,6 +1,4 @@
 import 'package:conduit/l10n/app_localizations.dart';
-import 'package:conduit_core/features/direct_connections/models/direct_connection_profile.dart';
-import 'package:conduit_core/features/hermes/models/hermes_connection_profile.dart';
 import 'package:conduit_core/models/openwebui_registry.dart';
 import 'package:conduit_core/providers/app_providers.dart';
 
@@ -49,68 +47,19 @@ String serverDisplayName(OpenWebUiServer server) {
   return host == null || host.isEmpty ? url : host;
 }
 
-/// What kind of provider a Direct profile reaches.
-String directProviderName(
-  DirectConnectionProfile profile,
-  AppLocalizations l10n,
-) {
-  if (profile.adapterKey == kOllamaAdapterKey) return l10n.ollama;
-  if (profile.isOpenRouter) return l10n.openRouterProviderName;
-  return l10n.openAICompatible;
-}
-
-/// Whom Settings' account card is for.
-enum AccountCardKind { openWebUi, hermes, direct }
-
 /// What Settings' account card says: whom it is for -- the Open WebUI
-/// account signed in, named [signedInName], else the Hermes connection in
-/// use, else Direct -- then where that is, and how many other accounts and
-/// connections there are to switch to.
-///
-/// [hermesInUseId] is null while Hermes is off.
-({AccountCardKind kind, String title, String? subtitle}) accountCardSummary(
+/// account signed in, named [signedInName] -- then where that is, and how
+/// many other accounts there are to switch to.
+({String title, String? subtitle}) accountCardSummary(
   AppLocalizations l10n, {
   required String? signedInName,
   required List<OpenWebUiAccountEntry> accounts,
-  required List<HermesConnectionProfile> hermesConnections,
-  required String? hermesInUseId,
 }) {
-  final hermes = hermesConnections
-      .where((connection) => connection.id == hermesInUseId)
-      .firstOrNull;
-  final AccountCardKind kind;
-  final String title;
-  final String? place;
-  if (signedInName != null) {
-    kind = AccountCardKind.openWebUi;
-    title = signedInName;
-    final active = accounts.where((entry) => entry.isActive).firstOrNull;
-    place = active == null ? null : serverDisplayName(active.server);
-  } else if (hermes != null) {
-    kind = AccountCardKind.hermes;
-    title = hermes.name;
-    place = l10n.hermesAgentSettingsTitle;
-  } else {
-    kind = AccountCardKind.direct;
-    title = l10n.directConnectionsTitle;
-    place = null;
-  }
-  final others =
-      accounts
-          .where(
-            (entry) => kind != AccountCardKind.openWebUi || !entry.isActive,
-          )
-          .length +
-      hermesConnections
-          .where(
-            (connection) =>
-                kind != AccountCardKind.hermes || connection.id != hermes!.id,
-          )
-          .length;
+  final active = accounts.where((entry) => entry.isActive).firstOrNull;
+  final title = signedInName ??
+      (active == null ? l10n.userFallbackName : accountDisplayName(active, l10n));
+  final place = active == null ? null : serverDisplayName(active.server);
+  final others = accounts.where((entry) => !entry.isActive).length;
   final subtitle = [?place, if (others > 0) '+$others'].join(' ');
-  return (
-    kind: kind,
-    title: title,
-    subtitle: subtitle.isEmpty ? null : subtitle,
-  );
+  return (title: title, subtitle: subtitle.isEmpty ? null : subtitle);
 }
