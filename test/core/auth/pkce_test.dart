@@ -1,6 +1,6 @@
 import 'package:conduit_core/auth/owui_oidc.dart';
 import 'package:conduit_core/auth/pkce.dart';
-import 'package:conduit/features/auth/views/authentication_page.dart';
+import 'package:conduit/core/auth/pkce_sign_in.dart';
 import 'package:conduit/core/auth/system_browser_auth.dart';
 import 'package:flutter_test/flutter_test.dart';
 
