@@ -10,8 +10,6 @@ import 'package:conduit_core/database/chat_database_repository.dart';
 import 'package:conduit_core/database/database_provider.dart';
 import 'package:conduit_core/features/auth/providers/unified_auth_providers.dart';
 import 'package:conduit_core/features/chat/providers/chat_providers.dart';
-import 'package:conduit_core/features/direct_connections/models/direct_connection_profile.dart';
-import 'package:conduit_core/features/direct_connections/providers/direct_connection_providers.dart';
 import 'package:conduit_core/models/chat_message.dart';
 import 'package:conduit_core/models/conversation.dart';
 import 'package:conduit_core/models/model.dart';
@@ -106,7 +104,6 @@ void main() {
         comparisonCommandAvailableProvider.overrideWithValue(true),
         folderDraftComparisonModelsProvider.overrideWithValue(savedComparison),
         personalizationSettingsProvider.overrideWith(_Personalization.new),
-        directConnectionProfilesProvider.overrideWith(_NoProfiles.new),
         currentUserProvider2.overrideWithValue(
           const User(
             id: 'me',
@@ -571,11 +568,6 @@ final class _AdvancedSettings extends AppSettingsNotifier {
 final class _Personalization extends PersonalizationSettings {
   @override
   Future<ServerUserSettings> build() async => const ServerUserSettings();
-}
-
-final class _NoProfiles extends DirectConnectionProfilesController {
-  @override
-  Future<List<DirectConnectionProfile>> build() async => const [];
 }
 
 /// A new sign-in session: another account, or the same one signing back in.

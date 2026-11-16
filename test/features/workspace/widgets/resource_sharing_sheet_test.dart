@@ -140,6 +140,7 @@ final class _Server implements HttpClientAdapter {
     for (final r in requests)
       if (r.method == 'POST') r.path,
   ];
+
   /// Reads of the resource's access, not of people's names.
   List<String> get reads => [
     for (final r in requests)

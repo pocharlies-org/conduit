@@ -7,14 +7,12 @@ import 'package:conduit_core/features/auth/providers/unified_auth_providers.dart
 import 'package:conduit_core/features/automations/providers/automation_providers.dart';
 import 'package:conduit_core/features/calendar/providers/calendar_providers.dart';
 import 'package:conduit_core/features/chat/providers/chat_providers.dart';
-import 'package:conduit_core/features/hermes/providers/hermes_providers.dart';
 import 'package:conduit_core/features/integrations/providers/personal_connections_providers.dart';
 import 'package:conduit_core/models/openwebui_registry.dart';
 import 'package:conduit_core/models/server_config.dart';
 import 'package:conduit_core/models/user.dart';
 import 'package:conduit_core/navigation/routes.dart';
 import 'package:conduit_core/providers/app_providers.dart';
-import 'package:conduit_core/providers/backend_mode_providers.dart';
 import 'package:conduit_core/providers/openwebui_accounts_controller.dart';
 import 'package:conduit_core/services/api_service.dart';
 import 'package:conduit_core/services/settings_service.dart';
@@ -75,18 +73,12 @@ final class _RecordingController implements OpenWebUiAccountsController {
   dynamic noSuchMethod(Invocation invocation) => super.noSuchMethod(invocation);
 }
 
-final class _DirectPrimary extends PreferredBackendController {
-  @override
-  PreferredBackend build() => PreferredBackend.direct;
-}
-
 void main() {
   Future<_RecordingController> pumpProfile(
     WidgetTester tester,
     List<OpenWebUiAccountEntry> accounts, {
     Object? accountsError,
     User? user = _alex,
-    bool directPrimary = false,
   }) async {
     final controller = _RecordingController();
     final workerManager = WorkerManager();
@@ -109,8 +101,6 @@ void main() {
         overrides: [
           currentUserProvider2.overrideWithValue(user),
           currentUserProvider.overrideWith((ref) async => user),
-          if (directPrimary)
-            preferredBackendProvider.overrideWith(_DirectPrimary.new),
           isAuthLoadingProvider2.overrideWithValue(false),
           apiServiceProvider.overrideWithValue(
             ApiService(
@@ -132,10 +122,6 @@ void main() {
             return accounts;
           }),
           openWebUiAccountsControllerProvider.overrideWithValue(controller),
-          // No Hermes connections, whatever another test left saved: the
-          // card counts them.
-          hermesConnectionsProvider.overrideWithValue(const []),
-          hermesEnabledProvider.overrideWithValue(false),
         ],
         child: MaterialApp.router(
           localizationsDelegates: conduitLocalizationsDelegates,
@@ -169,7 +155,6 @@ void main() {
 
     check(inCard(find.text('Alex')).evaluate()).isNotEmpty();
     check(inCard(find.text('Home +2')).evaluate()).isNotEmpty();
-    check(inCard(find.text('Add account')).evaluate()).isNotEmpty();
     // The other accounts are on the Accounts page, not listed here.
     check(find.text('Alex (work)').evaluate()).isEmpty();
     check(find.text('Manage accounts').evaluate()).isEmpty();
@@ -179,8 +164,7 @@ void main() {
     check(find.text('accounts page').evaluate()).isNotEmpty();
   });
 
-  testWidgets('the account signed in has its own group, and connections are '
-      'left to Accounts', (tester) async {
+  testWidgets('the account signed in has its own group', (tester) async {
     await pumpProfile(tester, [
       _entry('alex-home', _home, name: 'Alex', isActive: true),
     ]);
@@ -188,13 +172,8 @@ void main() {
     final group = find.byKey(const Key('settings-account-group'));
     check(find.descendant(of: group, matching: find.text('Account')).evaluate())
         .isNotEmpty();
-    check(
-      find.descendant(of: group, matching: find.text('Profile')).evaluate(),
-    ).isNotEmpty();
-    await tester.fling(find.byType(ListView), const Offset(0, -2000), 3000);
-    await tester.pumpAndSettle();
-    check(find.text('Direct Connections').evaluate()).isEmpty();
-    check(find.text('Hermes Agent').evaluate()).isEmpty();
+    check(find.descendant(of: group, matching: find.text('Profile')).evaluate())
+        .isNotEmpty();
   });
 
   testWidgets('with several accounts, Sign out leaves only the active one', (
@@ -239,35 +218,27 @@ void main() {
     await tester.pumpAndSettle();
     check(find.text('Sign out of all accounts').evaluate()).isNotEmpty();
     check(find.text('Sign out').evaluate()).isEmpty();
-    check(
-      find.byKey(const Key('settings-sign-out-account')).evaluate(),
-    ).isEmpty();
+    check(find.byKey(const Key('settings-sign-out-account')).evaluate())
+        .isEmpty();
   });
 
-  // An expired session clears the current user. Next to a usable Direct or
-  // Hermes backend this page stays open, and the other accounts went with
-  // the profile header.
+  // An expired session clears the current user, and the card names the saved
+  // account instead of leaving the page without a way back to the others.
   testWidgets('with the active account signed out, the other accounts are '
       'still a tap away', (tester) async {
-    await pumpProfile(
-      tester,
-      [
-        _entry(
-          'alex-home',
-          _home,
-          name: 'Alex',
-          isActive: true,
-          hasSession: false,
-        ),
-        _entry('alex-work', _work, name: 'Alex (work)', email: 'alex@work'),
-      ],
-      user: null,
-      directPrimary: true,
-    );
+    await pumpProfile(tester, [
+      _entry(
+        'alex-home',
+        _home,
+        name: 'Alex',
+        isActive: true,
+        hasSession: false,
+      ),
+      _entry('alex-work', _work, name: 'Alex (work)', email: 'alex@work'),
+    ], user: null);
 
-    // Direct is what is in use; both accounts are elsewhere.
-    check(inCard(find.text('Direct Connections')).evaluate()).isNotEmpty();
-    check(inCard(find.text('+2')).evaluate()).isNotEmpty();
+    check(inCard(find.text('Alex')).evaluate()).isNotEmpty();
+    check(inCard(find.text('Home +1')).evaluate()).isNotEmpty();
     await tester.tap(find.byKey(const Key('settings-accounts')));
     await tester.pumpAndSettle();
     check(find.text('accounts page').evaluate()).isNotEmpty();

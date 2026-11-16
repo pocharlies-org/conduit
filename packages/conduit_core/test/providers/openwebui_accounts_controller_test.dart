@@ -5,20 +5,13 @@ import 'package:conduit_core/auth/auth_state_manager.dart';
 import 'package:conduit_core/auth/openwebui_account_summaries.dart';
 import 'package:conduit_core/features/chat/providers/chat_providers.dart'
     show isChatStreamingProvider;
-import 'package:conduit_core/features/direct_connections/services/direct_chat_bridge.dart'
-    show kDirectTransport;
 import 'package:conduit_core/models/conversation.dart';
-import 'package:conduit_core/features/direct_connections/models/direct_connection_profile.dart';
-import 'package:conduit_core/features/direct_connections/providers/direct_connection_providers.dart';
-import 'package:conduit_core/features/hermes/models/hermes_config.dart';
-import 'package:conduit_core/features/hermes/providers/hermes_providers.dart';
 import 'package:conduit_core/models/openwebui_registry.dart';
 import 'package:conduit_core/models/user.dart';
 import 'package:conduit_core/persistence/persistence_keys.dart';
 import 'package:conduit_core/persistence/preferences_store.dart';
 import 'package:conduit_core/ports/key_value_store.dart';
 import 'package:conduit_core/providers/app_providers.dart';
-import 'package:conduit_core/providers/backend_mode_providers.dart';
 import 'package:conduit_core/providers/openwebui_accounts_controller.dart';
 import 'package:conduit_core/services/optimized_storage_service.dart';
 import 'package:mocktail/mocktail.dart';
@@ -144,11 +137,6 @@ final class _HeldRegistryStorage implements OptimizedStorageService {
       throw UnimplementedError(invocation.memberName.toString());
 }
 
-final class _EmptyHermes extends HermesConfigController {
-  @override
-  HermesConfig build() => const HermesConfig();
-}
-
 OpenWebUiAccountEntry _accountEntry(
   String id, {
   bool hasSession = true,
@@ -166,36 +154,6 @@ OpenWebUiAccountEntry _accountEntry(
   isActive: false,
   hasSession: hasSession,
 );
-
-/// Signs out of the only account, with Direct profiles still loading
-/// synchronously and resolving to [direct] once awaited.
-Future<PreferredBackend> _signOutOfLastAccount(
-  Future<List<DirectConnectionProfile>> Function() direct, {
-  _LastAccountStorage? storage,
-}) async {
-  final accountStorage = storage ?? _LastAccountStorage();
-  final container = ProviderContainer(
-    overrides: [
-      optimizedStorageServiceProvider.overrideWithValue(accountStorage),
-      authStateManagerProvider.overrideWith(
-        () => _LastAccountAuth(accountStorage),
-      ),
-      hermesConfigProvider.overrideWith(_EmptyHermes.new),
-      openWebUiAccountsProvider.overrideWith((ref) async => const []),
-      accountChangeReplyGuardProvider.overrideWithValue(() => false),
-      effectiveDirectConnectionProfilesProvider.overrideWithValue(
-        const AsyncLoading(),
-      ),
-      effectiveDirectConnectionProfilesFutureProvider.overrideWith(
-        (ref) => direct(),
-      ),
-    ],
-  );
-  addTearDown(container.dispose);
-
-  await container.read(openWebUiAccountsControllerProvider).signOut('a');
-  return container.read(preferredBackendProvider);
-}
 
 /// The decisions the account controller makes before asking auth to act:
 /// whether a reply may be cut off, which account takes over, and which
@@ -362,9 +320,8 @@ void main() {
     });
 
     test('leaves the account the addition began from alone', () async {
-      // Carried over without a known user and signed out, beside a Direct or
-      // Hermes backend: it is active as adding begins, before any new
-      // account is.
+      // Carried over without a known user and signed out: it is active as
+      // adding begins, before any new account is.
       accounts = [
         entry('a', hasSession: false).withUser(null),
         entry('b', lastUsedAt: DateTime(2026, 9)),
@@ -543,44 +500,6 @@ void main() {
     });
   });
 
-  group('with no account left', () {
-    test(
-      'signing out of the last account waits for Direct profiles still loading',
-      () async {
-        final profile = DirectConnectionProfile(
-          id: 'profile',
-          name: 'Provider',
-          adapterKey: kOpenAiCompatibleAdapterKey,
-          baseUrl: 'https://provider.example/v1',
-        );
-        check(profile.isUsable).isTrue();
-
-        check(await _signOutOfLastAccount(() async => [profile]))
-            .equals(PreferredBackend.direct);
-      },
-    );
-
-    test('Direct profiles that fail to load count as no Direct', () async {
-      check(await _signOutOfLastAccount(() async => throw StateError('locked')))
-          .equals(PreferredBackend.unset);
-    });
-
-    test('an account a sign-in makes active while Direct profiles load keeps '
-        'Open WebUI', () async {
-      final storage = _LastAccountStorage();
-
-      final preferred = await _signOutOfLastAccount(() async {
-        storage.active = 'c';
-        return const [];
-      }, storage: storage);
-
-      check(preferred).equals(PreferredBackend.unset);
-      check(
-        PreferencesStore.getString(PreferenceKeys.preferredBackend),
-      ).isNull();
-    });
-  });
-
   test('a duplicate account whose merge fails is not merged again and again',
       () async {
     const userA = User(id: 'user-a', username: 'a', email: 'a@x', role: 'user');
@@ -716,8 +635,7 @@ void main() {
       overrides: [
         optimizedStorageServiceProvider.overrideWithValue(storage),
         authStateManagerProvider.overrideWith(() => auth),
-        hermesConfigProvider.overrideWith(_EmptyHermes.new),
-        openWebUiAccountsProvider.overrideWith(
+          openWebUiAccountsProvider.overrideWith(
           (ref) async => throw StateError('locked'),
         ),
         accountChangeReplyGuardProvider.overrideWithValue(() => false),
@@ -739,8 +657,7 @@ void main() {
       overrides: [
         optimizedStorageServiceProvider.overrideWithValue(storage),
         authStateManagerProvider.overrideWith(() => auth),
-        hermesConfigProvider.overrideWith(_EmptyHermes.new),
-        openWebUiAccountsProvider.overrideWith((ref) async {
+          openWebUiAccountsProvider.overrideWith((ref) async {
           listed++;
           return const [];
         }),
@@ -776,8 +693,7 @@ void main() {
             duringSignOut: () => storage.readError = StateError('locked'),
           ),
         ),
-        hermesConfigProvider.overrideWith(_EmptyHermes.new),
-        openWebUiAccountsProvider.overrideWith((ref) async => const []),
+          openWebUiAccountsProvider.overrideWith((ref) async => const []),
         accountChangeReplyGuardProvider.overrideWithValue(() => false),
       ],
     );
@@ -788,25 +704,6 @@ void main() {
         .signOut('a');
 
     check(result).equals(OpenWebUiAccountChangeResult.needsSignIn);
-    check(PreferencesStore.getString(PreferenceKeys.preferredBackend)).isNull();
-  });
-
-  test('the backend stays when the account in use cannot be read before '
-      'falling back', () async {
-    final storage = _LastAccountStorage();
-    final profile = DirectConnectionProfile(
-      id: 'profile',
-      name: 'Provider',
-      adapterKey: kOpenAiCompatibleAdapterKey,
-      baseUrl: 'https://provider.example/v1',
-    );
-
-    await _signOutOfLastAccount(() async {
-      storage.readError = StateError('locked');
-      return [profile];
-    }, storage: storage);
-
-    check(PreferencesStore.getString(PreferenceKeys.preferredBackend)).isNull();
   });
 
   // Old, then A, then B: B was signed in to last. Another addition is then
@@ -827,8 +724,7 @@ void main() {
         authStateManagerProvider.overrideWith(
           () => _LastAccountAuth(storage, duringAbandon: duringAbandon),
         ),
-        hermesConfigProvider.overrideWith(_EmptyHermes.new),
-        openWebUiAccountsProvider.overrideWith((ref) async {
+          openWebUiAccountsProvider.overrideWith((ref) async {
           final summaries = ref.watch(openWebUiAccountSummariesProvider);
           return [
             for (final id in ['old', 'a', 'b', 'c'])
@@ -889,8 +785,7 @@ void main() {
         overrides: [
           optimizedStorageServiceProvider.overrideWithValue(storage),
           authStateManagerProvider.overrideWith(() => auth),
-          hermesConfigProvider.overrideWith(_EmptyHermes.new),
-          openWebUiAccountsProvider.overrideWith(
+              openWebUiAccountsProvider.overrideWith(
             (ref) async => [
               _accountEntry('a'),
               _accountEntry('b'),
@@ -913,10 +808,6 @@ void main() {
       check(storage.active).equals('c');
       check(hostChanges).isEmpty();
       check(container.read(openWebUiAccountSummariesProvider)).isEmpty();
-      check(container.read(preferredBackendProvider))
-          .equals(PreferredBackend.unset);
-      check(PreferencesStore.getString(PreferenceKeys.preferredBackend))
-          .isNull();
     });
 
     test('account changes run one at a time', () async {
@@ -1038,7 +929,6 @@ void main() {
     }
 
     check(holdsUp(const <String, dynamic>{})).isTrue();
-    check(holdsUp(const {'backend': kDirectTransport})).isFalse();
   });
 
   test('cancelling an addition goes back to the account signed in to last', () async {

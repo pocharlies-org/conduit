@@ -1,5 +1,6 @@
 import 'package:conduit_core/auth/api_auth_interceptor.dart';
 import 'package:conduit_core/network/conduit_user_agent.dart';
+
 import 'dart:typed_data';
 
 import 'package:dio/dio.dart';
@@ -22,34 +23,37 @@ void main() {
       expect(forwarded!.headers.containsKey('Authorization'), isFalse);
     });
 
-    test('two-step sign-in requests reach the server without a session', () async {
-      // They authenticate with the challenge token in their body; the sign-in
-      // they finish has no session yet, and must not send another one.
-      for (final path in [
-        '/api/v1/auths/mfa/verify',
-        '/api/v1/auths/mfa/enroll/start',
-        '/api/v1/auths/mfa/enroll/confirm',
-        '/api/v1/auths/mfa/recover',
-      ]) {
-        for (final token in [null, 'other-session']) {
-          final interceptor = ApiAuthInterceptor(
-            serverUrl: _serverUrl,
-            authToken: token,
-          );
-          final handler = _TestRequestInterceptorHandler();
+    test(
+      'two-step sign-in requests reach the server without a session',
+      () async {
+        // They authenticate with the challenge token in their body; the sign-in
+        // they finish has no session yet, and must not send another one.
+        for (final path in [
+          '/api/v1/auths/mfa/verify',
+          '/api/v1/auths/mfa/enroll/start',
+          '/api/v1/auths/mfa/enroll/confirm',
+          '/api/v1/auths/mfa/recover',
+        ]) {
+          for (final token in [null, 'other-session']) {
+            final interceptor = ApiAuthInterceptor(
+              serverUrl: _serverUrl,
+              authToken: token,
+            );
+            final handler = _TestRequestInterceptorHandler();
 
-          interceptor.onRequest(RequestOptions(path: path), handler);
-          final forwarded = await handler.forwardedRequest;
+            interceptor.onRequest(RequestOptions(path: path), handler);
+            final forwarded = await handler.forwardedRequest;
 
-          expect(forwarded, isNotNull, reason: '$path ($token)');
-          expect(
-            forwarded!.headers.containsKey('Authorization'),
-            isFalse,
-            reason: '$path ($token)',
-          );
+            expect(forwarded, isNotNull, reason: '$path ($token)');
+            expect(
+              forwarded!.headers.containsKey('Authorization'),
+              isFalse,
+              reason: '$path ($token)',
+            );
+          }
         }
-      }
-    });
+      },
+    );
 
     test(
       'optional config request attaches auth header when token exists',
@@ -665,47 +669,50 @@ void main() {
   });
 
   group('session renewal', () {
-    test('a refused request is replayed once with the renewed bearer', () async {
-      final adapter = _StubAdapter([401, 200]);
-      final dio = Dio(BaseOptions(baseUrl: _serverUrl))
-        ..httpClientAdapter = adapter;
-      var renewals = 0;
-      late final ApiAuthInterceptor interceptor;
-      interceptor = ApiAuthInterceptor(
-        serverUrl: _serverUrl,
-        authToken: 'stale',
-        retryClient: dio,
-        onSessionExpired: () async {
-          renewals++;
-          interceptor.updateAuthToken('renewed');
-          return true;
-        },
-      );
-      dio.interceptors.add(interceptor);
+    test(
+      'a refused request is replayed once with the renewed bearer',
+      () async {
+        final adapter = _StubAdapter([401, 200]);
+        final dio = Dio(BaseOptions(baseUrl: _serverUrl))
+          ..httpClientAdapter = adapter;
+        var renewals = 0;
+        late final ApiAuthInterceptor interceptor;
+        interceptor = ApiAuthInterceptor(
+          serverUrl: _serverUrl,
+          authToken: 'stale',
+          retryClient: dio,
+          onSessionExpired: () async {
+            renewals++;
+            interceptor.updateAuthToken('renewed');
+            return true;
+          },
+        );
+        dio.interceptors.add(interceptor);
 
-      final requestHandler = _TestRequestInterceptorHandler();
-      interceptor.onRequest(
-        RequestOptions(path: '/api/v1/chats'),
-        requestHandler,
-      );
-      final dispatched = (await requestHandler.forwardedRequest)!;
-      final handler = _TestErrorInterceptorHandler();
-      interceptor.onError(
-        DioException(
-          requestOptions: dispatched,
-          response: Response<dynamic>(
+        final requestHandler = _TestRequestInterceptorHandler();
+        interceptor.onRequest(
+          RequestOptions(path: '/api/v1/chats'),
+          requestHandler,
+        );
+        final dispatched = (await requestHandler.forwardedRequest)!;
+        final handler = _TestErrorInterceptorHandler();
+        interceptor.onError(
+          DioException(
             requestOptions: dispatched,
-            statusCode: 401,
+            response: Response<dynamic>(
+              requestOptions: dispatched,
+              statusCode: 401,
+            ),
+            type: DioExceptionType.badResponse,
           ),
-          type: DioExceptionType.badResponse,
-        ),
-        handler,
-      );
-      await handler.done;
+          handler,
+        );
+        await handler.done;
 
-      expect(renewals, 1);
-      expect(adapter.authorizations, ['Bearer renewed']);
-    });
+        expect(renewals, 1);
+        expect(adapter.authorizations, ['Bearer renewed']);
+      },
+    );
 
     test('a refusal that cannot be renewed is not replayed', () async {
       final adapter = _StubAdapter([401]);

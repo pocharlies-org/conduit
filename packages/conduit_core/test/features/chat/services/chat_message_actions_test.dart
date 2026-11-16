@@ -114,23 +114,6 @@ void main() {
       ).isNotNull().deepEquals(['f1', 'f2']);
     });
 
-    test('reads file ids, skipping notes and Hermes local references', () {
-      final ids = editedMessageAttachmentIds(
-        _message(
-          'u',
-          'user',
-          files: [
-            {'type': 'note', 'id': 'note-1'},
-            {'source': 'hermes_local', 'id': 'local-1'},
-            {'type': 'file', 'id': 'file-1'},
-            {'type': 'image', 'url': '/api/v1/files/file-2/content'},
-            {'type': 'file', 'id': 'file-1'},
-          ],
-        ),
-      );
-      check(ids).isNotNull().deepEquals(['file-1', 'file-2']);
-    });
-
     test('is null for a text-only message', () {
       check(editedMessageAttachmentIds(_message('u', 'user'))).isNull();
     });

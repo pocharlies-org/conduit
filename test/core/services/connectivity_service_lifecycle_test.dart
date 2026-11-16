@@ -225,25 +225,28 @@ void main() {
 
   // A probe follows an upgrade to HTTPS on the server's host, as the API
   // client does; the route's own headers go with it, and nowhere else.
-  test('health client keeps the route headers on an upgrade to HTTPS', () async {
-    final dio = createConnectivityHealthClient(
-      const ServerConfig(
-        id: 'route',
-        name: 'Route',
-        url: 'http://chat.example',
-        customHeaders: {'CF-Access-Client-Id': 'route-id'},
-      ),
-    );
-    addTearDown(dio.close);
-    final sent = <String, Object?>{};
-    dio.httpClientAdapter = _HeaderRecorder(sent);
+  test(
+    'health client keeps the route headers on an upgrade to HTTPS',
+    () async {
+      final dio = createConnectivityHealthClient(
+        const ServerConfig(
+          id: 'route',
+          name: 'Route',
+          url: 'http://chat.example',
+          customHeaders: {'CF-Access-Client-Id': 'route-id'},
+        ),
+      );
+      addTearDown(dio.close);
+      final sent = <String, Object?>{};
+      dio.httpClientAdapter = _HeaderRecorder(sent);
 
-    await dio.getUri<dynamic>(Uri.parse('https://chat.example/health'));
-    await dio.getUri<dynamic>(Uri.parse('https://other.example/health'));
+      await dio.getUri<dynamic>(Uri.parse('https://chat.example/health'));
+      await dio.getUri<dynamic>(Uri.parse('https://other.example/health'));
 
-    check(sent['https://chat.example/health']).equals('route-id');
-    check(sent['https://other.example/health']).isNull();
-  });
+      check(sent['https://chat.example/health']).equals('route-id');
+      check(sent['https://other.example/health']).isNull();
+    },
+  );
 
   group('a route probe', () {
     /// Serves [handle] on a loopback port for the length of the test.

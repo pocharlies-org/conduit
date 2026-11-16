@@ -5,12 +5,9 @@ import 'package:conduit_core/auth/api_auth_interceptor.dart';
 import 'package:conduit_core/auth/auth_state_manager.dart';
 import 'package:conduit_core/database/database_provider.dart';
 import 'package:conduit_core/features/auth/providers/unified_auth_providers.dart';
-import 'package:conduit_core/features/hermes/models/hermes_config.dart';
-import 'package:conduit_core/features/hermes/providers/hermes_providers.dart';
 import 'package:conduit_core/models/model.dart';
 import 'package:conduit_core/models/server_config.dart';
 import 'package:conduit_core/providers/app_providers.dart';
-import 'package:conduit_core/providers/backend_mode_providers.dart';
 import 'package:conduit_core/services/api_service.dart';
 import 'package:conduit_core/services/optimized_storage_service.dart';
 import 'package:conduit_core/services/settings_service.dart';
@@ -66,16 +63,6 @@ final class _Models extends Models {
   Future<List<Model>> build() async => const [_serverDefault];
 }
 
-final class _Preferred extends PreferredBackendController {
-  @override
-  PreferredBackend build() => PreferredBackend.owui;
-}
-
-final class _Hermes extends HermesConfigController {
-  @override
-  HermesConfig build() => const HermesConfig();
-}
-
 /// A newly signed-in account's default model is looked up while its database
 /// is still being certified. The certification makes that lookup another
 /// owner's, so its answer is dropped -- and the account must not be left
@@ -90,7 +77,6 @@ void main() {
       final container = ProviderContainer(
         overrides: [
           reviewerModeProvider.overrideWithValue(false),
-          preferredBackendProvider.overrideWith(_Preferred.new),
           isAuthenticatedProvider2.overrideWithValue(true),
           isAuthLoadingProvider2.overrideWithValue(false),
           authStatusProvider.overrideWithValue(AuthStatus.authenticated),
@@ -102,7 +88,6 @@ void main() {
           ),
           optimizedStorageServiceProvider.overrideWithValue(_Storage()),
           modelsProvider.overrideWith(_Models.new),
-          hermesConfigProvider.overrideWith(_Hermes.new),
         ],
       );
       addTearDown(() {

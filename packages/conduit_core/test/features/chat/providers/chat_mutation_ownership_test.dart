@@ -12,8 +12,6 @@
 //     conduit-chat://scoped/v1/<32 lowercase hex runtime nonce>/<ChatStorageKind.name>/<Uri.encodeComponent(rawId)>
 //   Unstored direct-transport conversation:
 //     conduit-direct-runtime://<Uri.encodeComponent(rawId)>
-//   Unstored native Hermes conversation:
-//     conduit-hermes-runtime://<Uri.encodeComponent(rawId)>
 
 import 'package:checks/checks.dart';
 import 'package:conduit_core/database/app_database.dart';
@@ -24,8 +22,6 @@ import 'package:conduit_core/services/api_service.dart';
 import 'package:conduit_core/services/socket_service.dart';
 import 'package:conduit_core/services/worker_manager.dart';
 import 'package:conduit_core/features/chat/providers/chat_providers.dart';
-import 'package:conduit_core/features/direct_connections/direct_connections.dart';
-import 'package:conduit_core/features/hermes/services/hermes_session_provenance.dart';
 import 'package:conduit_core/models/chat_message.dart';
 import 'package:conduit_core/models/conversation.dart';
 import 'package:conduit_core/models/server_config.dart';
@@ -99,10 +95,7 @@ Conversation _stored(
 }) => withChatStorageProvenance(_plain(id, metadata: metadata), storage);
 
 Conversation _directRuntime(String id) =>
-    _plain(id, metadata: const <String, dynamic>{'backend': kDirectTransport});
-
-Conversation _hermesRuntime(String id) =>
-    markNativeHermesConversation(_plain(id));
+    _plain(id, metadata: const <String, dynamic>{'backend': kDirectChatBackend});
 
 ChatMessage _assistant(String id) => ChatMessage(
   id: id,
@@ -218,11 +211,6 @@ void main() {
       ).equals(scope);
       check(chatMutationOwnerScopeForConversation(_directRuntime(temporaryId)))
           .equals('conduit-direct-runtime://local%3A9f2c1d3e');
-      check(
-        chatMutationOwnerScopeForConversation(
-          _hermesRuntime('local:hermes_abc'),
-        ),
-      ).equals('conduit-hermes-runtime://local%3Ahermes_abc');
     });
 
     test('unstored direct-transport conversations use a literal scope', () {
@@ -233,38 +221,29 @@ void main() {
           .equals('conduit-direct-runtime://a%2Fb%20c');
     });
 
-    test('unstored native Hermes conversations use a literal scope', () {
-      check(
-        chatMutationOwnerScopeForConversation(_hermesRuntime('hermes-chat')),
-      ).equals('conduit-hermes-runtime://hermes-chat');
-      check(chatMutationOwnerScopeForConversation(_hermesRuntime('a/b c')))
-          .equals('conduit-hermes-runtime://a%2Fb%20c');
-    });
-
     test('unannotated conversations fall back to OpenWebUI ownership', () {
       final conversation = _plain('unannotated');
       check(chatMutationOwnerScopeForConversation(conversation))
           .equals(openWebUiChatMutationOwnerScope('unannotated'));
     });
 
-    test('a hermes backend marker without the runtime mark falls back to OpenWebUI', () {
-      // LOOKS WRONG (pinned as-is): only `isNativeHermesConversation`, an
-      // Expando set by this process, routes to the Hermes namespace. A
-      // deserialized conversation carrying `backend: hermes` is treated as
+    test('an unknown backend marker falls back to OpenWebUI', () {
+      // Only the `direct` backend marker routes to the direct-runtime
+      // namespace. A conversation carrying any other backend value is treated
       // OpenWebUI-owned.
       final conversation = _plain(
-        'hermes-metadata-only',
-        metadata: const <String, dynamic>{'backend': 'hermes'},
+        'unknown-backend-metadata-only',
+        metadata: const <String, dynamic>{'backend': 'unknown-backend'},
       );
       check(chatMutationOwnerScopeForConversation(conversation))
-          .equals(openWebUiChatMutationOwnerScope('hermes-metadata-only'));
+          .equals(openWebUiChatMutationOwnerScope('unknown-backend-metadata-only'));
     });
 
     test('storage provenance outranks the transport backend marker', () {
       final storedOpenWebUi = _stored(
         'direct-turn-in-owui',
         ChatStorageKind.openWebUi,
-        metadata: const <String, dynamic>{'backend': kDirectTransport},
+        metadata: const <String, dynamic>{'backend': kDirectChatBackend},
       );
       check(chatMutationOwnerScopeForConversation(storedOpenWebUi))
           .equals(openWebUiChatMutationOwnerScope('direct-turn-in-owui'));
@@ -272,23 +251,12 @@ void main() {
       final storedDirectLocal = _stored(
         'direct-turn-local',
         ChatStorageKind.directLocal,
-        metadata: const <String, dynamic>{'backend': kDirectTransport},
+        metadata: const <String, dynamic>{'backend': kDirectChatBackend},
       );
       final scope = chatMutationOwnerScopeForConversation(storedDirectLocal);
       check(scope).equals(
         '$_scopedVersionPrefix${_runtimeNonceOf(scope)}/directLocal/direct-turn-local',
       );
-    });
-
-    test('the direct backend branch is checked before the Hermes mark', () {
-      final conversation = markNativeHermesConversation(
-        _plain(
-          'both-markers',
-          metadata: const <String, dynamic>{'backend': kDirectTransport},
-        ),
-      );
-      check(chatMutationOwnerScopeForConversation(conversation))
-          .equals('conduit-direct-runtime://both-markers');
     });
 
     test('the scope ignores everything except id, storage and backend', () {
@@ -378,7 +346,6 @@ void main() {
       for (final conversation in <Conversation>[
         _stored('x', ChatStorageKind.directLocal),
         _directRuntime('x'),
-        _hermesRuntime('x'),
       ]) {
         final token = captureChatMutationOwner(container, conversation);
         check(token.usesOpenWebUiContext).isFalse();
@@ -661,7 +628,7 @@ void main() {
           .mark(
             fromId: 'local-id',
             toId: 'server-id',
-            namespace: ActiveConversationRemapNamespace.hermes,
+            namespace: ActiveConversationRemapNamespace.direct,
           );
       _setActive(container, _stored('server-id', ChatStorageKind.openWebUi));
 
@@ -756,12 +723,6 @@ void main() {
           'conduit-direct-runtime://runtime-chat',
         ),
       ).isTrue();
-      check(
-        chatMutationOwnerScopeIsActive(
-          container,
-          'conduit-hermes-runtime://runtime-chat',
-        ),
-      ).isFalse();
       check(
         chatMutationOwnerScopeIsActive(
           container,

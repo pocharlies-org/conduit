@@ -482,7 +482,9 @@ void main() {
         // The page was opened for the first account; it does not retarget.
         expect(row('chat-data-controls-account-changed'), findsOneWidget);
         expect(
-          find.text('The account changed. Go back and open Data controls again.'),
+          find.text(
+            'The account changed. Go back and open Data controls again.',
+          ),
           findsOneWidget,
         );
         expect(row('chat-data-export'), findsNothing);

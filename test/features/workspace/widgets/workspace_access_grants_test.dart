@@ -47,11 +47,7 @@ List<String> _keys(Iterable<WorkspaceAccessGrantInput>? grants) => [
 /// A lookup that answers from fixed people and groups and records what it was
 /// asked.
 final class _FakeLookup {
-  _FakeLookup({
-    this.users = const {},
-    this.groups = const [],
-    this.owner,
-  });
+  _FakeLookup({this.users = const {}, this.groups = const [], this.owner});
 
   final Object? owner;
   final Map<String, WorkspacePrincipalPreview> users;
@@ -632,7 +628,9 @@ void main() {
       await tester.pumpAndSettle();
       container
           .read(_lookupHolder.notifier)
-          .set(_FakeLookup(users: {'u-alice': alice}, owner: 'account-a').lookup);
+          .set(
+            _FakeLookup(users: {'u-alice': alice}, owner: 'account-a').lookup,
+          );
       await tester.pumpAndSettle();
 
       expect(find.text('Alice Example'), findsOneWidget);
@@ -860,9 +858,7 @@ void main() {
       expect(opened.closedWith, isNull);
     });
 
-    testWidgets('swiping the sheet down with edits asks first', (
-      tester,
-    ) async {
+    testWidgets('swiping the sheet down with edits asks first', (tester) async {
       final l10n = await _loadL10n(tester);
       List<WorkspaceAccessGrantInput>? result;
       var closed = false;
@@ -1027,10 +1023,7 @@ void main() {
       final recording = _RecordingDirectory();
       await openPicker(tester, recording, allowUsers: true, allowGroups: false);
 
-      expect(
-        find.byKey(const Key('workspace-principal-tabs')),
-        findsNothing,
-      );
+      expect(find.byKey(const Key('workspace-principal-tabs')), findsNothing);
       await tester.enterText(find.byType(EditableText), 'ali');
       await tester.pump(const Duration(milliseconds: 301));
       await tester.pumpAndSettle();
@@ -1059,10 +1052,7 @@ void main() {
       await openPicker(tester, recording, allowUsers: false, allowGroups: true);
 
       expect(recording.groupLoads, 1);
-      expect(
-        find.byKey(const Key('workspace-principal-tabs')),
-        findsNothing,
-      );
+      expect(find.byKey(const Key('workspace-principal-tabs')), findsNothing);
       await tester.tap(
         find.byKey(const Key('workspace-principal-group-g-staff')),
       );

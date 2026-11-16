@@ -221,9 +221,9 @@ void main() {
         fireImmediately: true,
       );
       addTearDown(subscription.close);
-      final viaFirstRoute =
-          await container.read(socketServiceManagerProvider.future)
-              as _TestSocketService;
+      final viaFirstRoute = await container.read(
+        socketServiceManagerProvider.future,
+      ) as _TestSocketService;
 
       // Same account id, reached through another address.
       harness.setServer(
@@ -232,9 +232,9 @@ void main() {
           serverA.copyWith(url: 'http://10.0.0.2:3000'),
         ),
       );
-      final viaSecondRoute =
-          await container.read(socketServiceManagerProvider.future)
-              as _TestSocketService;
+      final viaSecondRoute = await container.read(
+        socketServiceManagerProvider.future,
+      ) as _TestSocketService;
       await _flushMicrotasks();
 
       check(viaSecondRoute).not((it) => it.identicalTo(viaFirstRoute));

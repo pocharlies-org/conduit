@@ -56,9 +56,9 @@ void main() {
 
   group('the callback the sheet hands back', () {
     const expectedState = 'the-state';
-    Uri callback(Map<String, String> query) => Uri.parse(
-      'com.morenoibanez.chat://auth/callback',
-    ).replace(queryParameters: query);
+    Uri callback(Map<String, String> query) =>
+        Uri.parse('com.morenoibanez.chat://auth/callback')
+            .replace(queryParameters: query);
 
     test('yields the code', () {
       expect(

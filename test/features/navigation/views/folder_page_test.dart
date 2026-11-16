@@ -28,7 +28,8 @@ import 'package:conduit_core/models/toggle_filter.dart';
 import 'package:conduit_core/models/tool.dart';
 import 'package:conduit_core/providers/app_providers.dart';
 import 'package:conduit_core/services/api_service.dart';
-import 'package:conduit_core/services/connectivity_service.dart' show isOnlineProvider;
+import 'package:conduit_core/services/connectivity_service.dart'
+    show isOnlineProvider;
 import 'package:conduit/shared/services/navigation_service.dart';
 import 'package:conduit_core/services/optimized_storage_service.dart';
 import 'package:conduit_core/services/settings_service.dart';
@@ -1843,7 +1844,9 @@ void main() {
           'm-a',
           'm-b',
         ]);
-        final chat = await tester.runAsync(() => db.chatsDao.getChat(ids.single));
+        final chat = await tester.runAsync(
+          () => db.chatsDao.getChat(ids.single),
+        );
         expect(chat?.folderId, 'work');
         expect(
           NavigationService.router.routerDelegate.currentConfiguration.uri.path,
@@ -1859,9 +1862,8 @@ void main() {
           await tester.tap(sendButton());
           await tester.pump();
           await tester.runAsync(
-            () => api.settingsEntered.future.timeout(
-              const Duration(seconds: 10),
-            ),
+            () =>
+                api.settingsEntered.future.timeout(const Duration(seconds: 10)),
           );
           // Nothing is written and the page has not moved while it waits.
           expect(await chatIds(tester), isEmpty);
@@ -1997,7 +1999,9 @@ void main() {
           pathProvider,
           (call) async => Directory.systemTemp.path,
         );
-        addTearDown(() => messenger.setMockMethodCallHandler(pathProvider, null));
+        addTearDown(
+          () => messenger.setMockMethodCallHandler(pathProvider, null),
+        );
         await openComparing(tester);
 
         await tester.tap(

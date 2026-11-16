@@ -513,11 +513,7 @@ void main() {
   ) async {
     final api = _ChannelApi(
       threadMessages: [
-        {
-          ..._appCardMessageJson(),
-          'id': 'reply-1',
-          'parent_id': 'message-1',
-        },
+        {..._appCardMessageJson(), 'id': 'reply-1', 'parent_id': 'message-1'},
       ],
       interactionResponse: {'type': 'error', 'visibility': 'private'},
     );
@@ -636,9 +632,7 @@ void main() {
   ) async {
     final socket = _AppSocket();
     final api = _ChannelApi(
-      messages: [
-        _messageJson('<@A:app-1|Deploy Bot> deploy'),
-      ],
+      messages: [_messageJson('<@A:app-1|Deploy Bot> deploy')],
     );
     final container = _appRigContainer(api, socket: socket);
     addTearDown(container.dispose);
@@ -738,8 +732,8 @@ void main() {
     await container.read(channelsListProvider.future);
     await _pumpChannelPage(tester, container);
 
-    ConduitAdaptiveToolbarOverflowButton<String> menu() => tester
-        .widget<ConduitAdaptiveToolbarOverflowButton<String>>(
+    ConduitAdaptiveToolbarOverflowButton<String> menu() =>
+        tester.widget<ConduitAdaptiveToolbarOverflowButton<String>>(
           find.byType(ConduitAdaptiveToolbarOverflowButton<String>),
         );
     Map<String, bool> checked() => {
@@ -747,10 +741,7 @@ void main() {
           in menu().items.whereType<AdaptivePopupMenuItem<String>>())
         if (item.value!.startsWith('notify-')) item.value!: item.checked,
     };
-    check(checked()).deepEquals({
-      'notify-all': true,
-      'notify-mentions': false,
-    });
+    check(checked()).deepEquals({'notify-all': true, 'notify-mentions': false});
 
     menu().onSelected('notify-mentions');
     await tester.pump(const Duration(milliseconds: 1));
@@ -760,10 +751,7 @@ void main() {
     check(
       container.read(channelsListProvider).requireValue.single.isChannelMuted,
     ).isTrue();
-    check(checked()).deepEquals({
-      'notify-all': false,
-      'notify-mentions': true,
-    });
+    check(checked()).deepEquals({'notify-all': false, 'notify-mentions': true});
 
     // Choosing the current setting sends nothing.
     menu().onSelected('notify-mentions');

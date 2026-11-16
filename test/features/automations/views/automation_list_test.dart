@@ -320,9 +320,14 @@ void main() {
         findsOneWidget,
       );
       expect(find.text('Last run failed'), findsOneWidget);
-      expect(find.byKey(const Key('scheduled-task-row-failed-b')), findsNothing);
       expect(
-        tester.getSemantics(find.byKey(const Key('scheduled-task-row-a'))).label,
+        find.byKey(const Key('scheduled-task-row-failed-b')),
+        findsNothing,
+      );
+      expect(
+        tester
+            .getSemantics(find.byKey(const Key('scheduled-task-row-a')))
+            .label,
         contains('Last run failed'),
       );
     });

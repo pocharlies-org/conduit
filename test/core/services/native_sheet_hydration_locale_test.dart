@@ -145,56 +145,6 @@ void main() {
         .not((it) => it.equals(english.settingsAppearance));
   });
 
-  testWidgets('the Voice provider page is patched alone, without the voices', (
-    tester,
-  ) async {
-    NativeSheetBridge.instance.debugIsIOSOverride = true;
-    final patches = <PlatformNativeSheetApplyDetailPatchRequest>[];
-    TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger
-        .setMockDecodedMessageHandler<Object?>(_applyDetailPatchChannel, (
-          message,
-        ) async {
-          patches.add(
-            (message! as List<Object?>).single!
-                as PlatformNativeSheetApplyDetailPatchRequest,
-          );
-          return <Object?>[true];
-        });
-
-    final storage = _MockOptimizedStorageService();
-    when(storage.getThemeMode).thenReturn(null);
-    when(storage.getThemePaletteId).thenReturn(null);
-    when(storage.getLocaleCode).thenReturn(null);
-    when(storage.getReviewerMode).thenAnswer((_) async => false);
-    final container = ProviderContainer(
-      overrides: [
-        optimizedStorageServiceProvider.overrideWithValue(storage),
-        modelsProvider.overrideWith(_NoModels.new),
-        textToSpeechServiceProvider.overrideWithValue(
-          _QuietTextToSpeechService(),
-        ),
-      ],
-    );
-    addTearDown(container.dispose);
-    await tester.pumpWidget(
-      UncontrolledProviderScope(
-        container: container,
-        child: const _LocalizedRoot(),
-      ),
-    );
-    await tester.pump();
-
-    final service = container.read(nativeSheetHydrationServiceProvider);
-    final refreshed = service.hydrateDetail(NativeSheetRoutes.voiceProvider);
-    await tester.pump();
-    await refreshed;
-
-    // iOS redraws only the page a patch is for, and the speech voices this
-    // page does not show are not waited for while the user types.
-    check(patches.last.detailId).equals(NativeSheetRoutes.voiceProvider);
-    check(patches.last.detailSheets ?? const []).isEmpty();
-  });
-
   testWidgets('Appearance keeps its pickers when the models request fails', (
     tester,
   ) async {
@@ -370,9 +320,8 @@ void main() {
       check(advanced.items.single.sfSymbol).equals('gearshape.2');
       // The citation titles toggle joins the chat behavior group, as on the
       // Flutter Chat page.
-      final citation = rows(chats).singleWhere(
-        (r) => r.id == 'citation-show-titles',
-      );
+      final citation = rows(chats)
+          .singleWhere((r) => r.id == 'citation-show-titles');
       check(citation.title).equals(l10n.citationShowTitles);
       check(citation.kind).equals(PlatformNativeSheetItemKind.toggle);
       check(citation.value).equals(false);

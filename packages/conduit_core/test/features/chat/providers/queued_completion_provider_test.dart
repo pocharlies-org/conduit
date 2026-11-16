@@ -9,7 +9,6 @@ import 'package:test/test.dart';
 import 'package:conduit_core/database/app_database.dart';
 import 'package:conduit_core/database/daos/outbox_dao.dart';
 import 'package:conduit_core/database/database_provider.dart';
-import 'package:conduit_core/models/chat_message.dart';
 import 'package:conduit_core/models/conversation.dart';
 import 'package:conduit_core/models/server_config.dart';
 import 'package:conduit_core/providers/app_providers.dart';
@@ -18,8 +17,6 @@ import 'package:conduit_core/services/connectivity_service.dart';
 import 'package:conduit_core/services/worker_manager.dart';
 import 'package:conduit_core/sync/sync_engine.dart';
 import 'package:conduit_core/features/chat/providers/queued_completion_provider.dart';
-import 'package:conduit_core/features/chat/providers/chat_providers.dart';
-import 'package:conduit_core/features/hermes/services/hermes_session_provenance.dart';
 import 'package:conduit_core/conduit_core.dart';
 
 class _NoopSyncEngine extends SyncEngine {
@@ -269,68 +266,6 @@ void main() {
     final container = makeContainer(online: true, chatId: chatId);
     check(await firstInfo(container, assistantId)).isNotNull();
   });
-
-  test(
-    'a colliding native Hermes shell never surfaces an OWUI queue',
-    () async {
-      const chatId = 'local:hermes_queued-collision';
-      const assistantId = 'assistant-collision';
-      final seq = await enqueueCompletion(chatId, assistantId);
-      await db.outboxDao.markOfflineDeferred(seq, nextAttemptAt: 0);
-      final container = ProviderContainer(
-        overrides: [
-          appDatabaseProvider.overrideWith((ref) => db),
-          isOnlineProvider.overrideWith((ref) => false),
-        ],
-      );
-      addTearDown(container.dispose);
-      container
-          .read(activeConversationProvider.notifier)
-          .set(markNativeHermesConversation(conv(chatId)));
-
-      check(await firstInfo(container, assistantId)).isNull();
-    },
-  );
-
-  test(
-    'stale OWUI cancel cannot mutate a colliding native Hermes shell',
-    () async {
-      const chatId = 'local:hermes_stale-queued-collision';
-      const assistantId = 'assistant-collision';
-      final seq = await enqueueCompletion(chatId, assistantId);
-      await db.outboxDao.markOfflineDeferred(seq, nextAttemptAt: 0);
-      final container = makeContainer(online: false, chatId: chatId);
-      final info = await firstInfo(container, assistantId);
-      check(info).isNotNull();
-      final assistant = ChatMessage(
-        id: assistantId,
-        role: 'assistant',
-        content: 'Native answer',
-        timestamp: DateTime.now(),
-      );
-      final native = markNativeHermesConversation(
-        conv(chatId).copyWith(messages: <ChatMessage>[assistant]),
-      );
-      container.read(activeConversationProvider.notifier).set(native);
-      container.read(chatMessagesProvider.notifier).setMessages(<ChatMessage>[
-        assistant,
-      ]);
-
-      final removed = await container
-          .read(queuedCompletionActionsProvider)
-          .cancel(info!);
-
-      check(removed).equals(1);
-      check(identical(container.read(activeConversationProvider), native))
-          .isTrue();
-      check(
-        isNativeHermesConversation(container.read(activeConversationProvider)),
-      ).isTrue();
-      check(container.read(chatMessagesProvider)).single
-          .has((message) => message.id, 'id')
-          .equals(assistantId);
-    },
-  );
 
   test(
     'stale database A retry and cancel cannot mutate colliding database B',

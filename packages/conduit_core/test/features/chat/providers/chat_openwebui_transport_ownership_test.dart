@@ -45,8 +45,7 @@ import 'package:conduit_core/features/chat/providers/context_attachments_provide
 import 'package:conduit_core/features/chat/services/request_completion_runner.dart';
 import 'package:conduit_core/features/chat/services/chat_draft_queue.dart';
 import 'package:conduit_core/features/chat/services/chat_transport_dispatch.dart';
-import 'package:conduit_core/features/direct_connections/direct_connections.dart';
-import 'package:conduit_core/features/hermes/models/hermes_model.dart';
+import 'package:conduit_core/services/direct_replay_output.dart';
 import 'package:conduit_core/features/integrations/personal_connection_settings.dart';
 import 'package:conduit_core/features/integrations/personal_tool_execution.dart';
 import 'package:conduit_core/features/integrations/providers/personal_connections_providers.dart';
@@ -158,6 +157,11 @@ class _TestMessagesNotifier extends ChatMessagesNotifier {
 class _FalseTemporaryChat extends TemporaryChatEnabled {
   @override
   bool build() => false;
+}
+
+class _TrueTemporaryChat extends TemporaryChatEnabled {
+  @override
+  bool build() => true;
 }
 
 class _FalseWebSearch extends WebSearchEnabledNotifier {
@@ -734,31 +738,6 @@ typedef _RecordedAdmission = ({
   List<PersonalToolAdmission> connections,
 });
 
-class _CountingDirectAdapter implements DirectProviderAdapter {
-  int completionCalls = 0;
-
-  @override
-  String get key => kOpenAiCompatibleAdapterKey;
-
-  @override
-  Future<List<DirectRemoteModel>> listModels(
-    DirectConnectionProfile profile,
-  ) async => const <DirectRemoteModel>[];
-
-  @override
-  Future<DirectConnectionProbe> probe(DirectConnectionProfile profile) async =>
-      const DirectConnectionProbe(reachable: true);
-
-  @override
-  DirectCompletionRun startCompletion(
-    DirectConnectionProfile profile,
-    DirectCompletionRequest request,
-  ) {
-    completionCalls += 1;
-    throw StateError('Open WebUI direct routing used the native adapter.');
-  }
-}
-
 class _PersistingSyncEngine extends SyncEngine {
   _PersistingSyncEngine(
     this.db,
@@ -1103,6 +1082,7 @@ ProviderContainer _container({
   Model model = const Model(id: 'model-1', name: 'Model 1'),
   String? terminalId,
   bool webSearchAvailable = false,
+  bool temporaryChat = false,
 }) {
   final container = ProviderContainer(
     overrides: [
@@ -1114,7 +1094,9 @@ ProviderContainer _container({
       selectedModelProvider.overrideWithValue(model),
       reviewerModeProvider.overrideWithValue(false),
       socketServiceProvider.overrideWithValue(socket),
-      temporaryChatEnabledProvider.overrideWith(_FalseTemporaryChat.new),
+      temporaryChatEnabledProvider.overrideWith(
+        temporaryChat ? _TrueTemporaryChat.new : _FalseTemporaryChat.new,
+      ),
       webSearchEnabledProvider.overrideWith(_FalseWebSearch.new),
       imageGenerationEnabledProvider.overrideWith(_FalseImageGeneration.new),
       webSearchAvailableProvider.overrideWithValue(webSearchAvailable),
@@ -1629,90 +1611,6 @@ void main() {
           );
 
       check(api.submittedVoiceMode).equals(true);
-    },
-  );
-
-  test(
-    'Open WebUI direct send uses the server pipeline and upstream wire model',
-    () async {
-      const chatId = 'openwebui-direct-chat';
-      await _seedChat(db, chatId);
-      final releasePost = Completer<void>()..complete();
-      final api = _GatedCompletionApi(releasePost);
-      final socket = _CountingPassiveSocketService();
-      final syncEngine = _PersistingSyncEngine(db, api);
-      final profile = DirectConnectionProfile(
-        id: 'openwebui-profile',
-        name: 'Server direct connection',
-        adapterKey: kOpenAiCompatibleAdapterKey,
-        baseUrl: 'https://provider.example.test/v1',
-        modelIdPrefix: 'server-prefix',
-      );
-      final registry = DirectModelRegistry();
-      final selectedModel = registry
-          .replaceProfileModels(
-            profile,
-            <DirectRemoteModel>[
-              DirectRemoteModel(id: 'provider/model', name: 'Provider model'),
-            ],
-            source: DirectModelSource.openWebUi,
-            openWebUiUrlIndex: 3,
-          )
-          .single;
-      final nativeAdapter = _CountingDirectAdapter();
-      final messages = <ChatMessage>[_user('existing-user', 'Existing turn')];
-      final container = ProviderContainer(
-        overrides: [
-          appDatabaseProvider.overrideWith((ref) => db),
-          activeConversationProvider.overrideWith(
-            () => _SeededActive(
-              _conversation(chatId, messages, ChatStorageKind.openWebUi),
-            ),
-          ),
-          chatMessagesProvider.overrideWith(_TestMessagesNotifier.new),
-          apiServiceProvider.overrideWithValue(api),
-          selectedModelProvider.overrideWithValue(selectedModel),
-          reviewerModeProvider.overrideWithValue(false),
-          socketServiceProvider.overrideWithValue(socket),
-          temporaryChatEnabledProvider.overrideWith(_FalseTemporaryChat.new),
-          webSearchEnabledProvider.overrideWith(_FalseWebSearch.new),
-          imageGenerationEnabledProvider.overrideWith(
-            _FalseImageGeneration.new,
-          ),
-          webSearchAvailableProvider.overrideWithValue(false),
-          imageGenerationAvailableProvider.overrideWithValue(false),
-          selectedFilterIdsProvider.overrideWithValue(const <String>[]),
-          selectedTerminalIdProvider.overrideWithValue(null),
-          syncEngineProvider.overrideWith(() => syncEngine),
-          directModelRegistryProvider.overrideWithValue(registry),
-          effectiveDirectConnectionProfilesFutureProvider.overrideWith(
-            (ref) async => <DirectConnectionProfile>[profile],
-          ),
-          directProviderAdapterRegistryProvider.overrideWithValue(
-            DirectProviderAdapterRegistry(<DirectProviderAdapter>[
-              nativeAdapter,
-            ]),
-          ),
-        ],
-      );
-      addTearDown(container.dispose);
-      container.read(chatMessagesProvider.notifier).setMessages(messages);
-
-      await sendMessageWithContainer(container, 'Use the server relay', null);
-
-      check(api.completionCalls).equals(1);
-      check(api.submittedModel).equals('server-prefix.provider/model');
-      check(api.submittedSessionId).equals('passive-socket');
-      final modelItem = api.submittedModelItem!;
-      check(modelItem['id'] as String).equals('server-prefix.provider/model');
-      check(modelItem['direct'] as bool).isTrue();
-      check(modelItem['urlIdx'] as int).equals(3);
-      check(modelItem['openai'] as Map<String, dynamic>)
-          .deepEquals(<String, dynamic>{'id': 'provider/model'});
-      check(modelItem['connection_type'] as String).equals('external');
-      check((api.submittedUserMessage!['models'] as List).cast<String>())
-          .contains('server-prefix.provider/model');
-      check(nativeAdapter.completionCalls).equals(0);
     },
   );
 
@@ -2335,7 +2233,7 @@ void main() {
               'local-direct-turn',
               const <ChatMessage>[],
               ChatStorageKind.openWebUi,
-              backend: kDirectTransport,
+              backend: kConduitDirectTransport,
             ),
           );
 
@@ -2373,7 +2271,7 @@ void main() {
         'server-direct-turn',
         <ChatMessage>[_user('user-direct-turn', 'Hello')],
         ChatStorageKind.openWebUi,
-        backend: kDirectTransport,
+        backend: kConduitDirectTransport,
       );
       final container = ProviderContainer(
         overrides: [
@@ -2391,23 +2289,20 @@ void main() {
     },
   );
 
-  test('Hermes remap cannot disguise a later direct conversation switch', () {
+  test('an Open WebUI remap cannot disguise a later direct-local switch', () {
     final container = ProviderContainer();
     addTearDown(container.dispose);
-    final hermes = Conversation(
-      id: 'shared-from',
-      title: 'Hermes',
-      createdAt: DateTime.utc(2026, 7, 13),
-      updatedAt: DateTime.utc(2026, 7, 13),
-      metadata: const <String, dynamic>{'backend': 'hermes'},
-    );
-    container.read(activeConversationProvider.notifier).set(hermes);
+    container
+        .read(activeConversationProvider.notifier)
+        .set(
+          _conversation('shared-from', const [], ChatStorageKind.openWebUi),
+        );
     container
         .read(activeConversationInPlaceRemapProvider.notifier)
         .mark(
           fromId: 'shared-from',
           toId: 'shared-to',
-          namespace: ActiveConversationRemapNamespace.hermes,
+          namespace: ActiveConversationRemapNamespace.openWebUi,
         );
     container
         .read(activeConversationProvider.notifier)
@@ -2544,7 +2439,7 @@ void main() {
               chatId,
               aMessages,
               ChatStorageKind.openWebUi,
-              backend: kDirectTransport,
+              backend: kConduitDirectTransport,
             ),
           );
       container.read(chatMessagesProvider);
@@ -2564,7 +2459,7 @@ void main() {
               chatId,
               bMessages,
               ChatStorageKind.openWebUi,
-              backend: kDirectTransport,
+              backend: kConduitDirectTransport,
             ),
           );
       container.updateOverrides([
@@ -3331,8 +3226,9 @@ void main() {
               messages: messages,
               api: api,
               syncEngine: _NoDrainSyncEngine(db, api),
-              // Not an Open WebUI model: ordinarily this goes inline.
-              model: hermesSyntheticModel(),
+              // A temporary chat is never persisted: ordinarily this goes
+              // inline.
+              temporaryChat: true,
             );
             addTearDown(container.dispose);
 
@@ -4591,42 +4487,6 @@ void main() {
         check(featuresOf(session.api)['code_interpreter']).equals(false);
       });
     }
-
-    test(
-      'a terminal selected for the turn leaves the interpreter out',
-      () async {
-        await _seedChat(db, chatId);
-        final messages = <ChatMessage>[_user('u0', 'earlier')];
-        // The choice was made before the terminal was selected, which the real
-        // selection would have ended; the request must not depend on that.
-        final session = await open(messages: messages);
-        final withTerminal = _container(
-          db: db,
-          active: _conversation(chatId, messages, ChatStorageKind.openWebUi),
-          messages: messages,
-          api: session.api,
-          syncEngine: _PersistingSyncEngine(db, session.api),
-          terminalId: 'terminal-1',
-          extraOverrides: [
-            currentUserProvider2.overrideWithValue(_accountA),
-            isAuthenticatedProvider2.overrideWithValue(true),
-            openWebUiAuthSessionEpochProvider.overrideWithValue(Object()),
-            backendConfigProvider.overrideWith(
-              () => _FetchedConfig(session.api),
-            ),
-            codeInterpreterEnabledProvider.overrideWith(_AlwaysSelected.new),
-          ],
-        );
-        addTearDown(withTerminal.dispose);
-        await withTerminal.read(backendConfigProvider.future);
-        await withTerminal.read(userPermissionsProvider.future);
-
-        await sendMessageWithContainer(withTerminal, 'run it', null);
-
-        check(featuresOf(session.api)['code_interpreter']).equals(false);
-        check(session.api.sentBody['terminal_id']).equals('terminal-1');
-      },
-    );
 
     test('a model that turns it off is sent without it', () async {
       await _seedChat(db, chatId);

@@ -231,9 +231,8 @@ void main() {
       test('a muted channel message counts as unread without alerting '
           '(${foreground ? 'foreground' : 'background'})', () async {
         final router = build(foreground: foreground);
-        check(
-          await router.route(_channel(), alert: false),
-        ).equals(NotificationSurface.suppressed);
+        check(await router.route(_channel(), alert: false))
+            .equals(NotificationSurface.suppressed);
         check(unreads).length.equals(1);
         check(banners).isEmpty();
         verifyNever(() => sound.play());

@@ -10,41 +10,22 @@ import 'package:conduit_core/models/model.dart';
 import 'package:conduit_core/models/openwebui_chat_prompt.dart';
 import 'package:conduit_core/models/server_config.dart';
 import 'package:conduit_core/providers/app_providers.dart';
-import 'package:conduit_core/auth/api_auth_interceptor.dart' show ApiAuthSnapshot;
+import 'package:conduit_core/auth/api_auth_interceptor.dart'
+    show ApiAuthSnapshot;
 import 'package:conduit_core/services/api_service.dart';
 import 'package:conduit_core/services/socket_service.dart';
 import 'package:conduit_core/services/worker_manager.dart';
 import 'package:conduit_core/features/chat/providers/chat_providers.dart';
-import 'package:conduit_core/features/direct_connections/direct_connections.dart';
-import 'package:conduit_core/features/hermes/services/hermes_run_transport.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:conduit_core/ports/app_lifecycle.dart';
-import 'package:conduit_core/ports/secure_key_value_store.dart';
 import 'package:conduit_core/providers/host_ports.dart';
 import 'package:conduit_core/testing.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:conduit/platform/flutter_secure_key_value_store.dart';
 
-/// Discovery with nothing to report. Run for real, it would prune the
-/// registry to the current direct profiles, which these tests do not model.
-final class _IdleDirectDiscovery extends DirectModelDiscoveryController {
-  @override
-  Future<DirectModelDiscoveryState> build() async =>
-      DirectModelDiscoveryState();
-}
-
 class _TestActiveConversationNotifier extends ActiveConversationNotifier {
   @override
   Conversation? build() => null;
-}
-
-class _FixedModels extends Models {
-  _FixedModels(this.models);
-
-  final List<Model> models;
-
-  @override
-  Future<List<Model>> build() async => models;
 }
 
 class _DeferredModels extends Models {
@@ -208,7 +189,10 @@ class _FakeApiService extends ApiService {
   int getTaskIdsCalls = 0;
 
   @override
-  Future<Conversation> getConversation(String id, {ApiAuthSnapshot? authSnapshot}) async {
+  Future<Conversation> getConversation(
+    String id, {
+    ApiAuthSnapshot? authSnapshot,
+  }) async {
     getConversationCalls++;
     return _conversation;
   }
@@ -276,46 +260,6 @@ Future<void> _drainRemoteTaskStatusCheck(ChatMessagesNotifier notifier) async {
     await pumpMicrotasks();
   }
 }
-
-({DirectModelRegistry registry, Model model, String wireModelId})
-_serverDirectModel() {
-  final profile = DirectConnectionProfile(
-    id: 'server-direct-profile',
-    name: 'Server direct connection',
-    adapterKey: kOpenAiCompatibleAdapterKey,
-    baseUrl: 'https://provider.example.test/v1',
-    modelIdPrefix: 'shared',
-  );
-  final registry = DirectModelRegistry();
-  final model = registry
-      .replaceProfileModels(
-        profile,
-        <DirectRemoteModel>[DirectRemoteModel(id: 'model')],
-        source: DirectModelSource.openWebUi,
-        openWebUiUrlIndex: 2,
-      )
-      .single;
-  return (registry: registry, model: model, wireModelId: 'shared.model');
-}
-
-ProviderContainer _modelRebindContainer({
-  required DirectModelRegistry registry,
-  required List<Model> models,
-}) => ProviderContainer(
-  overrides: [
-    // Its own store: the plugin's mock store is shared with earlier tests.
-    secureStorageProvider.overrideWithValue(InMemorySecureKeyValueStore()),
-    ...openWebUiStorageOpenOverrides(),
-    activeConversationProvider.overrideWith(
-      _TestActiveConversationNotifier.new,
-    ),
-    apiServiceProvider.overrideWithValue(null),
-    socketServiceProvider.overrideWithValue(null),
-    directModelRegistryProvider.overrideWithValue(registry),
-    directModelDiscoveryProvider.overrideWith(_IdleDirectDiscovery.new),
-    modelsProvider.overrideWith(() => _FixedModels(models)),
-  ],
-);
 
 void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
@@ -833,78 +777,6 @@ void main() {
         await pumpMicrotasks();
 
         check(container.read(selectedModelProvider)).identicalTo(modelB);
-      },
-    );
-
-    test('cold reopen rebinds an Open WebUI wire model to its trusted direct model', () async {
-      final direct = _serverDirectModel();
-      const priorSelection = Model(
-        id: 'previous-model',
-        name: 'Previous model',
-      );
-      final container = _modelRebindContainer(
-        registry: direct.registry,
-        models: <Model>[direct.model],
-      );
-      addTearDown(container.dispose);
-      container.read(chatMessagesProvider);
-      container.read(selectedModelProvider.notifier).set(priorSelection);
-
-      container
-          .read(activeConversationProvider.notifier)
-          .set(
-            withChatStorageProvenance(
-              _conversation(
-                'server-direct-chat',
-                const <ChatMessage>[],
-                DateTime.utc(2026, 7, 15),
-              ).copyWith(model: direct.wireModelId),
-              ChatStorageKind.openWebUi,
-            ),
-          );
-      await pumpMicrotasks();
-      await pumpMicrotasks();
-
-      check(direct.model.id).not((it) => it.equals(direct.wireModelId));
-      check(container.read(selectedModelProvider)).identicalTo(direct.model);
-      check(direct.registry.resolve(container.read(selectedModelProvider)!))
-          .isNotNull();
-    });
-
-    test(
-      'cold reopen prefers trusted direct binding over a same-id server model',
-      () async {
-        final direct = _serverDirectModel();
-        final serverCollision = Model(
-          id: direct.wireModelId,
-          name: 'Untrusted server collision',
-        );
-        final container = _modelRebindContainer(
-          registry: direct.registry,
-          models: <Model>[serverCollision, direct.model],
-        );
-        addTearDown(container.dispose);
-        container.read(chatMessagesProvider);
-        container.read(selectedModelProvider.notifier).set(serverCollision);
-
-        container
-            .read(activeConversationProvider.notifier)
-            .set(
-              withChatStorageProvenance(
-                _conversation(
-                  'server-direct-collision-chat',
-                  const <ChatMessage>[],
-                  DateTime.utc(2026, 7, 15),
-                ).copyWith(model: direct.wireModelId),
-                ChatStorageKind.openWebUi,
-              ),
-            );
-        await pumpMicrotasks();
-        await pumpMicrotasks();
-
-        check(container.read(selectedModelProvider)).identicalTo(direct.model);
-        check(container.read(selectedModelProvider))
-            .not((it) => it.identicalTo(serverCollision));
       },
     );
 
@@ -1817,8 +1689,7 @@ void main() {
       check(container.read(chatMessagesProvider).last.isStreaming).isFalse();
     });
 
-    test('Hermes tails never start OpenWebUI task recovery, including in an '
-        'OpenWebUI-backed chat', () async {
+    test('a direct-marked chat never starts OpenWebUI task recovery', () async {
       final timestamp = DateTime.now();
       final api = _FakeApiService(
         _conversation('unused', const <ChatMessage>[], timestamp),
@@ -1838,22 +1709,23 @@ void main() {
 
       final notifier = container.read(chatMessagesProvider.notifier);
       final active = container.read(activeConversationProvider.notifier);
-      final nativeHermesTail = ChatMessage(
-        id: 'native-hermes-assistant',
-        role: 'assistant',
-        content: 'Working',
-        timestamp: timestamp,
-        isStreaming: true,
-        metadata: const <String, dynamic>{'transport': kHermesTransport},
-      );
+
       active.set(
         Conversation(
-          id: 'native-hermes-chat',
-          title: 'Native Hermes',
+          id: 'direct-chat',
+          title: 'Direct chat',
           createdAt: timestamp,
           updatedAt: timestamp,
-          messages: <ChatMessage>[nativeHermesTail],
-          metadata: const <String, dynamic>{'backend': 'hermes'},
+          messages: <ChatMessage>[
+            ChatMessage(
+              id: 'direct-assistant',
+              role: 'assistant',
+              content: 'Working',
+              timestamp: timestamp,
+              isStreaming: true,
+            ),
+          ],
+          metadata: const <String, dynamic>{'backend': kDirectChatBackend},
         ),
       );
       await pumpMicrotasks();
@@ -1861,51 +1733,6 @@ void main() {
 
       check(notifier.debugHasOpenWebUiTaskRecoverableTail).isFalse();
       await notifier.debugSyncRemoteTaskStatus();
-      check(api.getTaskIdsCalls).equals(0);
-
-      final mixedHermesTail = nativeHermesTail.copyWith(
-        id: 'mixed-hermes-assistant',
-      );
-      active.set(
-        withChatStorageProvenance(
-          Conversation(
-            id: 'openwebui-chat-with-hermes-turn',
-            title: 'Mixed transport',
-            createdAt: timestamp,
-            updatedAt: timestamp,
-            messages: <ChatMessage>[mixedHermesTail],
-          ),
-          ChatStorageKind.openWebUi,
-        ),
-      );
-      await pumpMicrotasks();
-      await pumpMicrotasks();
-
-      check(notifier.debugHasOpenWebUiTaskRecoverableTail).isFalse();
-      await notifier.debugSyncRemoteTaskStatus();
-      check(api.getTaskIdsCalls).equals(0);
-
-      final completedMixedHermesTail = mixedHermesTail.copyWith(
-        isStreaming: false,
-      );
-      active.set(
-        withChatStorageProvenance(
-          Conversation(
-            id: 'openwebui-chat-with-completed-hermes-turn',
-            title: 'Completed mixed transport',
-            createdAt: timestamp,
-            updatedAt: timestamp,
-            messages: <ChatMessage>[completedMixedHermesTail],
-          ),
-          ChatStorageKind.openWebUi,
-        ),
-      );
-      await pumpMicrotasks();
-      await pumpMicrotasks();
-
-      // Active-on-open must not reinterpret a completed Hermes turn as an
-      // OpenWebUI task placeholder merely because its chat is stored there.
-      check(container.read(chatMessagesProvider).single.isStreaming).isFalse();
       check(api.getTaskIdsCalls).equals(0);
     });
 

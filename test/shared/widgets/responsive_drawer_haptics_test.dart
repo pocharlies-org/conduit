@@ -174,5 +174,4 @@ void main() {
     expect(layoutKey.currentState!.isOpen, isFalse);
     expect(drawerTestSettleHapticCalls(calls), isEmpty);
   });
-
 }

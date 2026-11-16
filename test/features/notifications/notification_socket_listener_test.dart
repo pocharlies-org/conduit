@@ -370,9 +370,8 @@ void main() {
       }, null);
       await Future<void>.delayed(Duration.zero);
 
-      check(
-        container.read(channelsListProvider).value!.single.isChannelMuted,
-      ).isTrue();
+      check(container.read(channelsListProvider).value!.single.isChannelMuted)
+          .isTrue();
       check(routed).isEmpty();
 
       socket.channel.single.handler(_channelMessage(), null);

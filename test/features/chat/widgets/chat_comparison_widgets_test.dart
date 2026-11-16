@@ -15,8 +15,6 @@ import 'package:conduit/shared/widgets/themed_sheets.dart';
 import 'package:conduit_core/database/app_database.dart';
 import 'package:conduit_core/database/database_provider.dart';
 import 'package:conduit_core/features/auth/providers/unified_auth_providers.dart';
-import 'package:conduit_core/features/direct_connections/models/direct_connection_profile.dart';
-import 'package:conduit_core/features/direct_connections/providers/direct_connection_providers.dart';
 import 'package:conduit_core/models/conversation.dart';
 import 'package:conduit_core/models/model.dart';
 import 'package:conduit_core/models/server_config.dart';
@@ -194,11 +192,6 @@ class _FixedPersonalization extends PersonalizationSettings {
   Future<ServerUserSettings> build() async => const ServerUserSettings();
 }
 
-class _NoProfiles extends DirectConnectionProfilesController {
-  @override
-  Future<List<DirectConnectionProfile>> build() async => const [];
-}
-
 /// The providers a model list reads, with nothing behind them.
 List<dynamic> _pickerOverrides(AppDatabase db) => [
   apiServiceProvider.overrideWithValue(
@@ -213,7 +206,6 @@ List<dynamic> _pickerOverrides(AppDatabase db) => [
   ),
   reviewerModeProvider.overrideWithValue(false),
   personalizationSettingsProvider.overrideWith(_FixedPersonalization.new),
-  directConnectionProfilesProvider.overrideWith(_NoProfiles.new),
   currentUserProvider2.overrideWithValue(
     const User(
       id: 'me',
@@ -731,7 +723,9 @@ void main() {
       final status = tester.widget<Text>(
         find.text(l10n.chatComparisonSlotFailed),
       );
-      final theme = tester.element(find.byType(ChatComparisonTabs)).conduitTheme;
+      final theme = tester
+          .element(find.byType(ChatComparisonTabs))
+          .conduitTheme;
       expect(status.style?.color, theme.error);
       expect(
         find.bySemanticsLabel('Beta, ${l10n.chatComparisonSlotFailed}'),
@@ -747,7 +741,9 @@ void main() {
       final status = tester.widget<Text>(
         find.text(l10n.chatComparisonSlotResponding),
       );
-      final theme = tester.element(find.byType(ChatComparisonTabs)).conduitTheme;
+      final theme = tester
+          .element(find.byType(ChatComparisonTabs))
+          .conduitTheme;
       expect(status.style?.color, isNot(theme.error));
     });
 
@@ -851,20 +847,28 @@ void main() {
       final sheet = find.byType(ChatMergeSourcesSheet);
       expect(
         tester.getSemantics(
-          find.descendant(
-            of: sheet,
-            matching: find.text(l10n.chatMergeResponsesAction),
-          ).first,
+          find
+              .descendant(
+                of: sheet,
+                matching: find.text(l10n.chatMergeResponsesAction),
+              )
+              .first,
         ),
         isSemantics(isHeader: true),
       );
       expect(
-        find.descendant(of: sheet, matching: find.byType(AdaptiveSelectionTile)),
+        find.descendant(
+          of: sheet,
+          matching: find.byType(AdaptiveSelectionTile),
+        ),
         findsNWidgets(3),
       );
       // Every response starts chosen; tapping one leaves the others chosen.
       for (final index in [0, 1, 2]) {
-        expect(tester.widget<AdaptiveSelectionTile>(row(index)).selected, isTrue);
+        expect(
+          tester.widget<AdaptiveSelectionTile>(row(index)).selected,
+          isTrue,
+        );
       }
       await tester.tap(row(1));
       await tester.pumpAndSettle();
@@ -1032,19 +1036,16 @@ void main() {
       );
       // Other languages inflect the verb too.
       expect(
-        refused(
-          ComparisonAdmissionFailure.modelUnavailable,
-          ['gpt-4o', 'claude-x'],
-          localizations: AppLocalizationsDe(),
-        ),
+        refused(ComparisonAdmissionFailure.modelUnavailable, [
+          'gpt-4o',
+          'claude-x',
+        ], localizations: AppLocalizationsDe()),
         'GPT-4o und Claude sind auf diesem Server nicht verfügbar.',
       );
       expect(
-        refused(
-          ComparisonAdmissionFailure.modelUnavailable,
-          ['gpt-4o'],
-          localizations: AppLocalizationsDe(),
-        ),
+        refused(ComparisonAdmissionFailure.modelUnavailable, [
+          'gpt-4o',
+        ], localizations: AppLocalizationsDe()),
         'GPT-4o ist auf diesem Server nicht verfügbar.',
       );
     });

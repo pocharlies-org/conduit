@@ -4,19 +4,15 @@ import 'package:checks/checks.dart';
 import 'package:conduit_core/database/chat_database_repository.dart';
 import 'package:conduit_core/models/conversation.dart';
 import 'package:conduit_core/models/chat_message.dart';
-import 'package:conduit_core/models/model.dart';
 import 'package:conduit_core/models/server_config.dart';
 import 'package:conduit_core/providers/app_providers.dart';
-import 'package:conduit_core/auth/api_auth_interceptor.dart' show ApiAuthSnapshot;
+import 'package:conduit_core/auth/api_auth_interceptor.dart'
+    show ApiAuthSnapshot;
 import 'package:conduit_core/services/api_service.dart';
 import 'package:conduit_core/services/worker_manager.dart';
 import 'package:conduit_core/features/chat/views/chat_bottom_anchor_controller.dart';
 import 'package:conduit/features/chat/views/chat_page.dart';
 import 'package:conduit_core/features/chat/views/chat_turn_render_state.dart';
-import 'package:conduit_core/features/direct_connections/models/direct_connection_profile.dart';
-import 'package:conduit_core/features/direct_connections/models/direct_remote_model.dart';
-import 'package:conduit_core/features/direct_connections/services/direct_model_registry.dart';
-import 'package:conduit_core/features/hermes/services/hermes_session_provenance.dart';
 import 'package:fake_async/fake_async.dart';
 import 'package:material_ui/material_ui.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -870,112 +866,10 @@ void main() {
     },
   );
 
-  test('layout metadata resolves an Open WebUI direct wire model id', () {
-    final registry = DirectModelRegistry();
-    final directModel = registry
-        .replaceProfileModels(
-          DirectConnectionProfile(
-            id: 'server-profile',
-            name: 'Server connection',
-            adapterKey: kOpenAiCompatibleAdapterKey,
-            baseUrl: 'https://provider.example/v1',
-            modelIdPrefix: 'server-prefix',
-          ),
-          [DirectRemoteModel(id: 'model', name: 'Provider model')],
-          source: DirectModelSource.openWebUi,
-          openWebUiUrlIndex: 2,
-        )
-        .single;
-    final messages = <ChatMessage>[
-      ChatMessage(
-        id: 'assistant-1',
-        role: 'assistant',
-        content: 'Visible response',
-        timestamp: DateTime(2026),
-        model: 'server-prefix.model',
-      ),
-    ];
-
-    final summary = debugBuildChatListLayoutSummaryForTesting(
-      messages,
-      models: <Model>[
-        directModel,
-        const Model(id: 'server-prefix.model', name: 'Server collision'),
-      ],
-      directModelRegistry: registry,
-    );
-
-    expect(summary.single.displayModelName, 'server-prefix.Provider model');
-  });
-
-  test('layout cache refreshes when direct model bindings change', () {
-    final registry = DirectModelRegistry();
-    final directModel = registry
-        .replaceProfileModels(
-          DirectConnectionProfile(
-            id: 'server-profile',
-            name: 'Server connection',
-            adapterKey: kOpenAiCompatibleAdapterKey,
-            baseUrl: 'https://provider.example/v1',
-            modelIdPrefix: 'server-prefix',
-          ),
-          [DirectRemoteModel(id: 'model', name: 'Provider model')],
-          source: DirectModelSource.openWebUi,
-          openWebUiUrlIndex: 2,
-        )
-        .single;
-    final models = <Model>[
-      directModel,
-      const Model(id: 'server-prefix.model', name: 'Server collision'),
-    ];
-    final messages = <ChatMessage>[
-      ChatMessage(
-        id: 'assistant-1',
-        role: 'assistant',
-        content: 'Visible response',
-        timestamp: DateTime(2026),
-        model: 'server-prefix.model',
-      ),
-    ];
-    final cache = debugCreateChatListStableLayoutCacheForTesting();
-
-    expect(
-      debugResolveChatListStableLayoutCacheForTesting(
-        cache,
-        messages,
-        models: models,
-        directModelRegistry: registry,
-      ).single.displayModelName,
-      'server-prefix.Provider model',
-    );
-    expect(
-      debugResolveChatListStableLayoutCacheForTesting(
-        cache,
-        messages,
-        models: models,
-        directModelRegistry: registry,
-      ).single.displayModelName,
-      'server-prefix.Provider model',
-    );
-
-    registry.removeProfile('server-profile');
-
-    expect(
-      debugResolveChatListStableLayoutCacheForTesting(
-        cache,
-        messages,
-        models: models,
-        directModelRegistry: registry,
-      ).single.displayModelName,
-      'Server collision',
-    );
-  });
-
   test(
     'layout cache skips structural signature work for an identical list',
     () {
       final cache = debugCreateChatListStableLayoutCacheForTesting();
-      final registry = DirectModelRegistry();
       final messages = <ChatMessage>[
         ChatMessage(
           id: 'assistant-1',
@@ -989,13 +883,11 @@ void main() {
         cache,
         messages,
         models: null,
-        directModelRegistry: registry,
       );
       debugResolveChatListStableLayoutCacheForTesting(
         cache,
         messages,
         models: null,
-        directModelRegistry: registry,
       );
 
       check(debugChatListStableLayoutSignatureBuildCountForTesting(cache))
@@ -1005,7 +897,6 @@ void main() {
         cache,
         List<ChatMessage>.of(messages),
         models: null,
-        directModelRegistry: registry,
       );
       check(debugChatListStableLayoutSignatureBuildCountForTesting(cache))
           .equals(2);
@@ -1640,43 +1531,27 @@ void main() {
     },
   );
 
-  test(
-    'refresh ignores native Hermes and direct-local id collisions',
-    () async {
-      final workerManager = WorkerManager();
-      final api = _GatedConversationRefreshApi(workerManager);
-      final container = ProviderContainer(
-        overrides: [apiServiceProvider.overrideWithValue(api)],
-      );
-      addTearDown(container.dispose);
-      addTearDown(workerManager.dispose);
-      const rawId = 'local:hermes_refresh-collision';
-      final native = markNativeHermesConversation(
-        _refreshConversation(rawId, 'Native Hermes'),
-      );
-      container.read(activeConversationProvider.notifier).set(native);
+  test('refresh ignores a conversation not stored on Open WebUI', () async {
+    final workerManager = WorkerManager();
+    final api = _GatedConversationRefreshApi(workerManager);
+    final container = ProviderContainer(
+      overrides: [apiServiceProvider.overrideWithValue(api)],
+    );
+    addTearDown(container.dispose);
+    addTearDown(workerManager.dispose);
+    const rawId = 'local:refresh-collision';
+    final local = withChatStorageProvenance(
+      _refreshConversation(rawId, 'Local chat'),
+      ChatStorageKind.directLocal,
+    );
+    container.read(activeConversationProvider.notifier).set(local);
 
-      await refreshActiveOpenWebUiConversation(container);
+    await refreshActiveOpenWebUiConversation(container);
 
-      check(api.fetches).equals(0);
-      check(identical(container.read(activeConversationProvider), native))
-          .isTrue();
-      check(
-        isNativeHermesConversation(container.read(activeConversationProvider)),
-      ).isTrue();
-
-      final direct = _refreshConversation(rawId, 'Temporary direct').copyWith(
-        metadata: const <String, dynamic>{'backend': kDirectChatBackend},
-      );
-      container.read(activeConversationProvider.notifier).set(direct);
-
-      await refreshActiveOpenWebUiConversation(container);
-
-      check(api.fetches).equals(0);
-      check(identical(container.read(activeConversationProvider), direct))
-          .isTrue();
-    },
-  );
+    check(api.fetches).equals(0);
+    check(identical(container.read(activeConversationProvider), local))
+        .isTrue();
+  });
 
   test('stale refresh cannot replace a same-id active generation', () async {
     final workerManager = WorkerManager();
@@ -1836,7 +1711,10 @@ final class _GatedConversationRefreshApi extends ApiService {
   int fetches = 0;
 
   @override
-  Future<Conversation> getConversation(String id, {ApiAuthSnapshot? authSnapshot}) {
+  Future<Conversation> getConversation(
+    String id, {
+    ApiAuthSnapshot? authSnapshot,
+  }) {
     fetches++;
     if (!started.isCompleted) started.complete();
     return response.future;

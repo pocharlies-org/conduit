@@ -9,10 +9,6 @@ import 'package:conduit_core/services/worker_manager.dart';
 import 'package:conduit_core/features/auth/providers/unified_auth_providers.dart';
 import 'package:conduit_core/features/chat/providers/chat_providers.dart';
 import 'package:conduit/features/chat/widgets/modern_chat_input.dart';
-import 'package:conduit_core/features/direct_connections/direct_connections.dart';
-import 'package:conduit_core/features/hermes/models/hermes_capabilities.dart';
-import 'package:conduit_core/features/hermes/models/hermes_model.dart';
-import 'package:conduit_core/features/hermes/providers/hermes_providers.dart';
 import 'package:conduit_core/features/workspace/models/workspace_common.dart';
 import 'package:conduit_core/features/workspace/models/workspace_resources.dart';
 import 'package:conduit/l10n/app_localizations.dart';
@@ -210,92 +206,11 @@ void main() {
     await tester.pump();
   });
 
-  testWidgets('model changes during debounce clear the skill overlay', (
-    tester,
-  ) async {
-    final registry = DirectModelRegistry();
-    final directModel = registry.replaceProfileModels(
-      DirectConnectionProfile(
-        id: 'direct',
-        name: 'Direct',
-        adapterKey: kOllamaAdapterKey,
-        baseUrl: 'http://localhost:11434',
-      ),
-      [DirectRemoteModel(id: 'llama3')],
-    ).single;
-    const serverModel = Model(id: 'server-model', name: 'Server Model');
-    final api = _SkillApi((_) async => _skills(_codeReview));
-    await _pumpComposer(
-      tester,
-      api: api,
-      model: serverModel,
-      directRegistry: registry,
-    );
-
-    await tester.enterText(find.byType(TextField), '\$code');
-    final container = ProviderScope.containerOf(
-      tester.element(find.byType(ModernChatInput)),
-    );
-    container.read(selectedModelProvider.notifier).set(directModel);
-    await tester.pump(const Duration(milliseconds: 300));
-    container.read(selectedModelProvider.notifier).set(serverModel);
-    await tester.pump();
-
-    expect(api.queries, isEmpty);
-    expect(find.byKey(const ValueKey('prompt-overlay')), findsNothing);
-  });
-
-  testWidgets('direct chats suppress OpenWebUI skill suggestions', (
-    tester,
-  ) async {
-    final registry = DirectModelRegistry();
-    final model = registry.replaceProfileModels(
-      DirectConnectionProfile(
-        id: 'direct',
-        name: 'Direct',
-        adapterKey: kOllamaAdapterKey,
-        baseUrl: 'http://localhost:11434',
-      ),
-      [DirectRemoteModel(id: 'llama3')],
-    ).single;
-    final api = _SkillApi((_) async => _skills(_codeReview));
-
-    await _pumpComposer(
-      tester,
-      api: api,
-      model: model,
-      directRegistry: registry,
-    );
-    await tester.enterText(find.byType(TextField), '\$code');
-    await tester.pump(const Duration(milliseconds: 300));
-
-    expect(api.queries, isEmpty);
-    expect(find.byKey(const ValueKey('prompt-overlay')), findsNothing);
-  });
-
   testWidgets('signed-out chats suppress OpenWebUI skill suggestions', (
     tester,
   ) async {
     final api = _SkillApi((_) async => _skills(_codeReview));
     await _pumpComposer(tester, api: api, authenticated: false);
-
-    await tester.enterText(find.byType(TextField), '\$code');
-    await tester.pump(const Duration(milliseconds: 300));
-
-    expect(api.queries, isEmpty);
-    expect(find.byKey(const ValueKey('prompt-overlay')), findsNothing);
-  });
-
-  testWidgets('Hermes chats suppress OpenWebUI skill suggestions', (
-    tester,
-  ) async {
-    final api = _SkillApi((_) async => _skills(_codeReview));
-    await _pumpComposer(
-      tester,
-      api: api,
-      model: hermesSyntheticModel(),
-      hermes: true,
-    );
 
     await tester.enterText(find.byType(TextField), '\$code');
     await tester.pump(const Duration(milliseconds: 300));
@@ -323,8 +238,6 @@ Future<void> _pumpComposer(
   required _SkillApi api,
   Model model = const Model(id: 'server-model', name: 'Server Model'),
   ValueChanged<String>? onSend,
-  DirectModelRegistry? directRegistry,
-  bool hermes = false,
   bool authenticated = true,
 }) async {
   await tester.pumpWidget(
@@ -338,14 +251,6 @@ Future<void> _pumpComposer(
         isChatStreamingProvider.overrideWithValue(false),
         webSearchAvailableProvider.overrideWithValue(false),
         imageGenerationAvailableProvider.overrideWithValue(false),
-        if (directRegistry != null) ...[
-          directModelRegistryProvider.overrideWithValue(directRegistry),
-          directModelDiscoveryProvider.overrideWith(_FixedDiscovery.new),
-        ],
-        if (hermes)
-          hermesCapabilitiesProvider.overrideWith(
-            (_) async => const HermesCapabilities(skills: true),
-          ),
       ],
       child: MaterialApp(
         localizationsDelegates: conduitLocalizationsDelegates,
@@ -369,12 +274,6 @@ final class _SeededSelectedModel extends SelectedModel {
 
   @override
   Model build() => model;
-}
-
-final class _FixedDiscovery extends DirectModelDiscoveryController {
-  @override
-  Future<DirectModelDiscoveryState> build() async =>
-      DirectModelDiscoveryState();
 }
 
 final class _SkillApi extends ApiService {

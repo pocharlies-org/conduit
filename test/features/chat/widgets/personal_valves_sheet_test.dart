@@ -352,9 +352,7 @@ void main() {
       );
     });
 
-    testWidgets('going back to the list with edits asks first', (
-      tester,
-    ) async {
+    testWidgets('going back to the list with edits asks first', (tester) async {
       final harness = _Harness(advanced: true, targets: const [_tool, _pipe]);
       await harness.pumpSheet(tester);
       await tester.tap(

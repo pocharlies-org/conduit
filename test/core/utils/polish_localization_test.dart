@@ -64,7 +64,8 @@ void main() {
     final l10n = AppLocalizationsPl();
 
     test('quickActionsSelectedCount follows CLDR Polish rules', () {
-      check(l10n.quickActionsSelectedCount(0)).equals('Nie wybrano żadnych akcji');
+      check(l10n.quickActionsSelectedCount(0))
+          .equals('Nie wybrano żadnych akcji');
       check(l10n.quickActionsSelectedCount(1)).equals('Wybrano 1 akcję');
       check(l10n.quickActionsSelectedCount(2)).equals('Wybrano 2 akcje');
       check(l10n.quickActionsSelectedCount(4)).equals('Wybrano 4 akcje');
@@ -121,20 +122,6 @@ void main() {
       check(l10n.savedMemoriesCount(5)).equals('5 zapisanych wspomnień');
     });
 
-    test('hermesSchedulesSummary and direct probes stay grammatical', () {
-      // active itself is a pluralized count: 1 aktywny / 2 aktywne / 5 aktywnych.
-      check(l10n.hermesSchedulesSummary(1, 1)).equals('1 aktywny · 1 harmonogram');
-      check(l10n.hermesSchedulesSummary(1, 5)).equals('1 aktywny · 5 harmonogramów');
-      check(l10n.hermesSchedulesSummary(2, 3)).equals('2 aktywne · 3 harmonogramy');
-      check(l10n.hermesSchedulesSummary(5, 22)).equals('5 aktywnych · 22 harmonogramy');
-      check(l10n.directConnectionProbeConnectedModels(1))
-          .contains('1 model');
-      check(l10n.directConnectionProbeConnectedModels(3))
-          .contains('3 modele');
-      check(l10n.directConnectionProbeConnectedModels(5))
-          .contains('5 modeli');
-    });
-
     test('new catalog plurals follow Polish one/few/many', () {
       check(l10n.channelUnreadCount(1)).equals('1 nieprzeczytana wiadomość');
       check(l10n.channelUnreadCount(2)).equals('2 nieprzeczytane wiadomości');
@@ -142,9 +129,6 @@ void main() {
       check(l10n.workspaceToolFunctionCount(1)).equals('1 funkcja');
       check(l10n.workspaceToolFunctionCount(3)).equals('3 funkcje');
       check(l10n.workspaceToolFunctionCount(5)).equals('5 funkcji');
-      check(l10n.hermesToolCount(1)).equals('1 narzędzie');
-      check(l10n.hermesToolCount(2)).equals('2 narzędzia');
-      check(l10n.hermesToolCount(5)).equals('5 narzędzi');
       check(l10n.markdownShowMoreLines(1)).equals('Pokaż jeszcze 1 wiersz');
       check(l10n.markdownShowMoreLines(3)).equals('Pokaż jeszcze 3 wiersze');
       check(l10n.markdownShowMoreLines(12)).equals('Pokaż jeszcze 12 wierszy');
@@ -157,10 +141,7 @@ Map<String, dynamic> _readArb(String path) {
 }
 
 Set<String> _readArbKeys(String path) {
-  return _readArb(path)
-      .keys
-      .where((k) => !k.startsWith('@'))
-      .toSet();
+  return _readArb(path).keys.where((k) => !k.startsWith('@')).toSet();
 }
 
 Map<String, Set<String>> _placeholdersByKey(Map<String, dynamic> arb) {

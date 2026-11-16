@@ -11,7 +11,8 @@ import 'package:conduit_core/database/chat_database_repository.dart';
 import 'package:conduit_core/database/database_provider.dart';
 import 'package:conduit_core/providers/app_providers.dart';
 import 'package:conduit/core/providers/app_startup_providers.dart';
-import 'package:conduit_core/auth/api_auth_interceptor.dart' show ApiAuthSnapshot;
+import 'package:conduit_core/auth/api_auth_interceptor.dart'
+    show ApiAuthSnapshot;
 import 'package:conduit_core/services/api_service.dart';
 import 'package:conduit_core/services/connectivity_service.dart';
 import 'package:conduit/core/services/media_upload_controller.dart';
@@ -22,7 +23,6 @@ import 'package:conduit_core/features/chat/providers/knowledge_cache_provider.da
 import 'package:conduit/features/chat/services/file_attachment_service.dart';
 import 'package:conduit/features/navigation/providers/conversation_selection_provider.dart';
 import 'package:conduit_core/features/auth/providers/unified_auth_providers.dart';
-import 'package:conduit_core/features/direct_connections/providers/direct_connection_providers.dart';
 import 'package:flutter_riverpod/misc.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -302,9 +302,8 @@ void main() {
           selectedModelProvider.overrideWith(_NullSelectedModel.new),
           apiServiceProvider.overrideWithValue(null),
           appDatabaseProvider.overrideWithValue(null),
-          loadConversationProvider(
-            conversationScopedId(summary),
-          ).overrideWith((ref) => Completer<Conversation>().future),
+          loadConversationProvider(conversationScopedId(summary))
+              .overrideWith((ref) => Completer<Conversation>().future),
         ],
       );
       addTearDown(container.dispose);
@@ -316,12 +315,11 @@ void main() {
       await _flushMicrotasks(2);
       check(container.read(isLoadingConversationProvider)).isTrue();
 
-      (container.read(settledActiveAccountIdProvider.notifier)
-              as _SettledAccount)
-          .settle('b');
-      check(
-        (await selection).disposition,
-      ).equals(ConversationSelectionDisposition.canceled);
+      (container.read(
+        settledActiveAccountIdProvider.notifier,
+      ) as _SettledAccount).settle('b');
+      check((await selection).disposition)
+          .equals(ConversationSelectionDisposition.canceled);
 
       check(container.read(isLoadingConversationProvider)).isFalse();
     },
@@ -720,42 +718,6 @@ void main() {
     },
   );
 
-  test(
-    'direct completion relay is owned only by an authenticated session',
-    () async {
-      var navState = AuthNavigationState.authenticated;
-      var relayStarts = 0;
-      var relayDisposals = 0;
-      final container = await _createAuthenticatedWarmupContainer(
-        authNavigationOverride: authNavigationStateProvider.overrideWith(
-          (ref) => navState,
-        ),
-        extraOverrides: [
-          openWebUiDirectCompletionSocketRelayProvider.overrideWith((ref) {
-            relayStarts += 1;
-            ref.onDispose(() => relayDisposals += 1);
-          }),
-        ],
-      );
-
-      container.read(appStartupFlowProvider.notifier).activateForTesting();
-      await _flushMicrotasks(4);
-      expect(relayStarts, 1);
-      expect(relayDisposals, 0);
-
-      navState = AuthNavigationState.needsLogin;
-      container.invalidate(authNavigationStateProvider);
-      await _flushMicrotasks(2);
-      expect(relayDisposals, 1);
-
-      navState = AuthNavigationState.authenticated;
-      container.invalidate(authNavigationStateProvider);
-      await _flushMicrotasks(4);
-      expect(relayStarts, 2);
-      expect(relayDisposals, 1);
-    },
-  );
-
   test('resume warmup reuses the foreground conversations refresh', () async {
     final binding = TestWidgetsFlutterBinding.ensureInitialized();
     final container = await _createAuthenticatedWarmupContainer();
@@ -1010,7 +972,10 @@ class _StubApiService extends ApiService {
   final List<String> requestedConversationIds = <String>[];
 
   @override
-  Future<Conversation> getConversation(String id, {ApiAuthSnapshot? authSnapshot}) async {
+  Future<Conversation> getConversation(
+    String id, {
+    ApiAuthSnapshot? authSnapshot,
+  }) async {
     requestedConversationIds.add(id);
     final gate = getConversationGate;
     if (gate != null) {

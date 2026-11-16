@@ -41,10 +41,8 @@ Future<void> _save(WidgetTester tester) async {
 
 /// One segment of the schedule (`scheduled-task-kind`) or destination
 /// (`scheduled-task-target`) control, by its label.
-Finder _segment(String control, String label) => find.descendant(
-  of: find.byKey(Key(control)),
-  matching: find.text(label),
-);
+Finder _segment(String control, String label) =>
+    find.descendant(of: find.byKey(Key(control)), matching: find.text(label));
 
 /// Brings [finder] into the lazily built form and onto the screen.
 Future<void> _reveal(WidgetTester tester, Finder finder) async {
@@ -1067,10 +1065,7 @@ void main() {
     testWidgets('Cancel on an untouched new task leaves without asking', (
       tester,
     ) async {
-      await pumpAutomations(
-        tester,
-        location: '/profile/scheduled-tasks/new',
-      );
+      await pumpAutomations(tester, location: '/profile/scheduled-tasks/new');
 
       await _reveal(tester, find.byKey(const Key('scheduled-task-cancel')));
       await tester.tap(find.byKey(const Key('scheduled-task-cancel')));
@@ -1107,10 +1102,7 @@ void main() {
     });
 
     testWidgets('going back asks too', (tester) async {
-      await pumpAutomations(
-        tester,
-        location: '/profile/scheduled-tasks/new',
-      );
+      await pumpAutomations(tester, location: '/profile/scheduled-tasks/new');
       await tester.enterText(find.byKey(const Key('scheduled-task-name')), 'n');
       await tester.pump();
 
@@ -1285,7 +1277,10 @@ void main() {
     });
 
     testWidgets('the folder picker searches folders', (tester) async {
-      await _edit(tester, folders: [Folder(id: 'f1', name: 'Reports')]);
+      await _edit(
+        tester,
+        folders: [Folder(id: 'f1', name: 'Reports')],
+      );
 
       await _reveal(tester, find.byKey(const Key('scheduled-task-folder')));
       await tester.tap(find.byKey(const Key('scheduled-task-folder')));

@@ -7,7 +7,6 @@ import 'package:conduit_core/features/calendar/providers/calendar_providers.dart
 import 'package:conduit_core/features/chat/providers/chat_providers.dart'
     show chatDataControlsEntryVisibleProvider;
 import 'package:conduit_core/features/integrations/providers/personal_connections_providers.dart';
-import 'package:conduit_core/providers/backend_mode_providers.dart';
 import 'package:conduit_core/models/channel.dart';
 import 'package:conduit_core/models/conversation.dart';
 import 'package:conduit_core/models/note.dart';
@@ -20,14 +19,12 @@ import 'package:conduit_core/features/navigation/models/sidebar_navigation_model
 import 'package:conduit/features/navigation/widgets/conversation_tile.dart';
 import 'package:conduit/features/navigation/widgets/sidebar_page.dart';
 import 'package:conduit/features/navigation/widgets/sidebar_user_pill.dart';
-import 'package:conduit_core/features/hermes/providers/hermes_providers.dart';
 import 'package:conduit/core/services/native_sheet_bridge.dart';
 import 'package:conduit/l10n/app_localizations.dart';
 import 'package:conduit/l10n/conduit_localizations.dart';
 import 'package:conduit/shared/theme/theme_extensions.dart';
 import 'package:conduit/shared/utils/conversation_context_menu.dart';
 import 'package:conduit/shared/widgets/adaptive_toolbar_components.dart';
-import 'package:conduit/shared/widgets/user_avatar.dart';
 import 'package:material_ui/material_ui.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -231,10 +228,10 @@ void main() {
           ),
         )
         .actions;
-    expect(
-      actions.take(2).map((action) => action.label),
-      ['All messages', 'Mentions only'],
-    );
+    expect(actions.take(2).map((action) => action.label), [
+      'All messages',
+      'Mentions only',
+    ]);
     // The current choice carries the check.
     expect(actions[1].materialIcon, Icons.check_rounded);
     expect(actions[0].materialIcon, isNot(Icons.check_rounded));
@@ -351,11 +348,6 @@ void main() {
 
     expect(find.byType(SidebarProfileAppBarLeading), findsOneWidget);
 
-    await tester.tap(sidebarTestBottomNavTabLabel('Terminal'));
-    await tester.pumpAndSettle();
-
-    expect(find.byType(SidebarProfileAppBarLeading), findsOneWidget);
-
     await tester.tap(sidebarTestBottomNavTabLabel('Notes'));
     await tester.pumpAndSettle();
 
@@ -365,114 +357,6 @@ void main() {
     await tester.pumpAndSettle();
 
     expect(find.byType(SidebarProfileAppBarLeading), findsOneWidget);
-  });
-
-  testWidgets('Hermes-only profile entry renders without an OpenWebUI user', (
-    tester,
-  ) async {
-    await tester.pumpWidget(
-      ProviderScope(
-        overrides: [
-          currentUserProvider2.overrideWithValue(null),
-          currentUserProvider.overrideWith((ref) async => null),
-          apiServiceProvider.overrideWithValue(null),
-          hermesOnlyModeProvider.overrideWithValue(true),
-        ],
-        child: MaterialApp(
-          localizationsDelegates: conduitLocalizationsDelegates,
-          supportedLocales: AppLocalizations.supportedLocales,
-          home: const Scaffold(body: SidebarProfileAppBarLeading()),
-        ),
-      ),
-    );
-    await tester.pumpAndSettle();
-
-    expect(
-      find.byKey(const ValueKey<String>('sidebar-profile-button')),
-      findsOneWidget,
-    );
-    expect(find.byType(UserAvatar), findsOneWidget);
-  });
-
-  testWidgets('Hermes-only profile entry shows the active connection', (
-    tester,
-  ) async {
-    await tester.pumpWidget(
-      ProviderScope(
-        overrides: [
-          currentUserProvider2.overrideWithValue(null),
-          currentUserProvider.overrideWith((ref) async => null),
-          apiServiceProvider.overrideWithValue(null),
-          hermesOnlyModeProvider.overrideWithValue(true),
-          hermesActiveConnectionNameProvider.overrideWithValue('Home Lab'),
-        ],
-        child: MaterialApp(
-          localizationsDelegates: conduitLocalizationsDelegates,
-          supportedLocales: AppLocalizations.supportedLocales,
-          home: const Scaffold(body: SidebarProfileAppBarLeading()),
-        ),
-      ),
-    );
-    await tester.pumpAndSettle();
-
-    expect(
-      tester.widget<UserAvatar>(find.byType(UserAvatar)).fallbackText,
-      'HL',
-    );
-  });
-
-  testWidgets('accountless direct profile click opens generic settings', (
-    tester,
-  ) async {
-    var nativePresentationCalls = 0;
-    final router = GoRouter(
-      initialLocation: '/',
-      routes: [
-        GoRoute(
-          path: '/',
-          builder: (_, _) =>
-              const Scaffold(body: SidebarProfileAppBarLeading()),
-        ),
-        GoRoute(
-          path: Routes.profile,
-          name: RouteNames.profile,
-          builder: (_, _) => const Scaffold(body: Text('Settings destination')),
-        ),
-      ],
-    );
-    addTearDown(router.dispose);
-
-    await tester.pumpWidget(
-      ProviderScope(
-        overrides: [
-          currentUserProvider2.overrideWithValue(null),
-          currentUserProvider.overrideWith((ref) async => null),
-          apiServiceProvider.overrideWithValue(null),
-          hermesOnlyModeProvider.overrideWithValue(false),
-          preferredBackendProvider.overrideWith(
-            SidebarTestDirectPreferredBackendController.new,
-          ),
-          sidebarNativeProfilePresenterProvider.overrideWithValue((_) async {
-            nativePresentationCalls++;
-            return false;
-          }),
-        ],
-        child: MaterialApp.router(
-          localizationsDelegates: conduitLocalizationsDelegates,
-          supportedLocales: AppLocalizations.supportedLocales,
-          routerConfig: router,
-        ),
-      ),
-    );
-    await tester.pumpAndSettle();
-
-    await tester.tap(
-      find.byKey(const ValueKey<String>('sidebar-profile-button')),
-    );
-    await tester.pumpAndSettle();
-
-    expect(find.text('Settings destination'), findsOneWidget);
-    expect(nativePresentationCalls, 1);
   });
 
   testWidgets('profile sheet opens on the cached profile and then takes the '
@@ -504,7 +388,6 @@ void main() {
         currentUserProvider2.overrideWithValue(user),
         currentUserProvider.overrideWith((ref) async => user),
         apiServiceProvider.overrideWithValue(null),
-        hermesOnlyModeProvider.overrideWithValue(false),
         accountProfileProvider.overrideWith(_ServerAccountProfile.new),
         sidebarNativeProfilePresenterProvider.overrideWithValue((config) async {
           presented = config;
@@ -561,7 +444,6 @@ void main() {
             currentUserProvider2.overrideWithValue(user),
             currentUserProvider.overrideWith((ref) async => user),
             apiServiceProvider.overrideWithValue(null),
-            hermesOnlyModeProvider.overrideWithValue(false),
             accountProfileProvider.overrideWith(_ServerAccountProfile.new),
             personalConnectionsEntryVisibleProvider.overrideWithValue(visible),
             sidebarNativeProfilePresenterProvider.overrideWithValue((
@@ -629,7 +511,6 @@ void main() {
             currentUserProvider2.overrideWithValue(user),
             currentUserProvider.overrideWith((ref) async => user),
             apiServiceProvider.overrideWithValue(null),
-            hermesOnlyModeProvider.overrideWithValue(false),
             accountProfileProvider.overrideWith(_ServerAccountProfile.new),
             scheduledTasksEntryVisibleProvider.overrideWithValue(visible),
             sidebarNativeProfilePresenterProvider.overrideWithValue((
@@ -697,7 +578,6 @@ void main() {
             currentUserProvider2.overrideWithValue(user),
             currentUserProvider.overrideWith((ref) async => user),
             apiServiceProvider.overrideWithValue(null),
-            hermesOnlyModeProvider.overrideWithValue(false),
             accountProfileProvider.overrideWith(_ServerAccountProfile.new),
             calendarAvailableProvider.overrideWithValue(visible),
             sidebarNativeProfilePresenterProvider.overrideWithValue((
@@ -765,7 +645,6 @@ void main() {
             currentUserProvider2.overrideWithValue(user),
             currentUserProvider.overrideWith((ref) async => user),
             apiServiceProvider.overrideWithValue(null),
-            hermesOnlyModeProvider.overrideWithValue(false),
             accountProfileProvider.overrideWith(_ServerAccountProfile.new),
             chatDataControlsEntryVisibleProvider.overrideWithValue(visible),
             sidebarNativeProfilePresenterProvider.overrideWithValue((
@@ -829,7 +708,6 @@ void main() {
         currentUserProvider2.overrideWithValue(user),
         currentUserProvider.overrideWith((ref) async => user),
         apiServiceProvider.overrideWithValue(null),
-        hermesOnlyModeProvider.overrideWithValue(false),
         accountProfileProvider.overrideWith(_UnreachableAccountProfile.new),
         sidebarNativeProfilePresenterProvider.overrideWithValue((config) async {
           presented = config;
@@ -897,7 +775,6 @@ void main() {
           currentUserProvider2.overrideWithValue(user),
           currentUserProvider.overrideWith((ref) async => user),
           apiServiceProvider.overrideWithValue(null),
-          hermesOnlyModeProvider.overrideWithValue(false),
           // Never loaded, and the refresh fails: no profile to edit.
           accountProfileProvider.overrideWith(_UnloadedAccountProfile.new),
           sidebarNativeProfilePresenterProvider.overrideWithValue((_) async {

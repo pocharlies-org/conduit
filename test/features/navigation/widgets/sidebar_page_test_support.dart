@@ -6,7 +6,6 @@ import 'package:checks/checks.dart';
 import 'package:conduit_core/database/database_provider.dart';
 import 'package:conduit_core/providers/app_providers.dart';
 import 'package:conduit/core/providers/app_startup_providers.dart';
-import 'package:conduit_core/providers/backend_mode_providers.dart';
 import 'package:conduit_core/models/channel.dart';
 import 'package:conduit_core/models/conversation.dart';
 import 'package:conduit_core/models/folder.dart';
@@ -26,13 +25,8 @@ import 'package:conduit_core/features/navigation/models/sidebar_navigation_model
 import 'package:conduit/features/navigation/widgets/chats_drawer.dart';
 import 'package:conduit_core/features/navigation/providers/drawer_section_notifiers.dart';
 import 'package:conduit/features/navigation/widgets/sidebar_page.dart';
-import 'package:conduit_core/features/hermes/providers/hermes_providers.dart';
-import 'package:conduit_core/features/hermes/models/hermes_job.dart';
 import 'package:conduit/features/notes/widgets/notes_list_tab.dart';
 import 'package:conduit/features/notes/providers/notes_providers.dart';
-import 'package:conduit/features/terminal/models/terminal_models.dart';
-import 'package:conduit/features/terminal/providers/terminal_providers.dart';
-import 'package:conduit/features/terminal/widgets/terminal_tab.dart';
 import 'package:conduit/l10n/app_localizations.dart';
 import 'package:conduit/l10n/conduit_localizations.dart';
 import 'package:conduit/shared/widgets/legacy_design_compatibility.dart';
@@ -50,7 +44,7 @@ import 'package:conduit_core/testing.dart';
 Finder sidebarTestBottomNavTabLabel(String label) =>
     find.descendant(of: find.byType(NavigationBar), matching: find.text(label));
 
-enum SidebarTestSidebarTabLayer { chats, terminal, notes, channels }
+enum SidebarTestSidebarTabLayer { chats, notes, channels }
 
 Finder sidebarTestLayerRootFinder(SidebarTestSidebarTabLayer layer) =>
     find.byKey(ValueKey<String>('sidebar-tab-layer-${layer.name}'));
@@ -58,7 +52,6 @@ Finder sidebarTestLayerRootFinder(SidebarTestSidebarTabLayer layer) =>
 Finder sidebarTestLayerOpacityFinder(SidebarTestSidebarTabLayer layer) {
   final childType = switch (layer) {
     SidebarTestSidebarTabLayer.chats => ChatsDrawer,
-    SidebarTestSidebarTabLayer.terminal => TerminalTab,
     SidebarTestSidebarTabLayer.notes => NotesListTab,
     SidebarTestSidebarTabLayer.channels => ChannelListTab,
   };
@@ -125,12 +118,7 @@ Widget sidebarTestBuildHarness({
   bool showRecent = true,
   bool showArchived = false,
   List<Folder> folders = const [],
-  List<TerminalServerInfo>? terminalServers,
-  Object? terminalServersError,
   AppSettings settings = const AppSettings(),
-  bool hermesOnly = false,
-  bool hermesEnabled = false,
-  List<HermesJob> hermesJobs = const [],
   Map<String, Conversation> loadedConversations = const {},
   Map<String, Future<Conversation>> pendingLoadedConversations = const {},
   bool isAuthenticated = true,
@@ -144,8 +132,6 @@ Widget sidebarTestBuildHarness({
   double textScale = 1,
   bool disableAnimations = false,
 }) {
-  final availableTerminalServers =
-      terminalServers ?? sidebarTestDefaultTerminalServers();
   final router = GoRouter(
     initialLocation: '/chat',
     routes: [
@@ -268,27 +254,12 @@ Widget sidebarTestBuildHarness({
       ),
       // ignore: scoped_providers_should_specify_dependencies
       reviewerModeProvider.overrideWithValue(false),
-      hermesOnlyModeProvider.overrideWithValue(hermesOnly),
-      hermesEnabledProvider.overrideWithValue(hermesEnabled),
-      hermesApiServiceProvider.overrideWithValue(null),
-      terminalServiceProvider.overrideWithValue(null),
-      hermesJobsProvider.overrideWith(
-        () => SidebarTestTestHermesJobsController(hermesJobs),
-      ),
       // ignore: scoped_providers_should_specify_dependencies
       notesFeatureEnabledProvider.overrideWith(() => controllers.notesNotifier),
       // ignore: scoped_providers_should_specify_dependencies
       sidebarActiveTabProvider.overrideWith(
         () => controllers.activeTabNotifier,
       ),
-      // ignore: scoped_providers_should_specify_dependencies
-      terminalAvailableServersProvider.overrideWith((ref) async {
-        final error = terminalServersError;
-        if (error != null) {
-          throw error;
-        }
-        return availableTerminalServers;
-      }),
     ],
     child: MaterialApp.router(
       theme: theme,
@@ -391,42 +362,6 @@ final class SidebarTestSeededActiveConversation
 
   @override
   Conversation? build() => conversation;
-}
-
-List<TerminalServerInfo> sidebarTestDefaultTerminalServers() {
-  return <TerminalServerInfo>[
-    TerminalServerInfo(
-      kind: TerminalServerKind.system,
-      selectionId: 'test-terminal',
-      systemServerId: 'test-terminal',
-      baseUrl: Uri.parse('https://example.com/api/v1/terminals/test-terminal'),
-      name: 'Test Terminal',
-    ),
-    TerminalServerInfo(
-      kind: TerminalServerKind.system,
-      selectionId: 'test-terminal-2',
-      systemServerId: 'test-terminal-2',
-      baseUrl: Uri.parse(
-        'https://example.com/api/v1/terminals/test-terminal-2',
-      ),
-      name: 'Test Terminal 2',
-    ),
-  ];
-}
-
-final class SidebarTestDirectPreferredBackendController
-    extends PreferredBackendController {
-  @override
-  PreferredBackend build() => PreferredBackend.direct;
-}
-
-class SidebarTestTestHermesJobsController extends HermesJobsController {
-  SidebarTestTestHermesJobsController(this.jobs);
-
-  final List<HermesJob> jobs;
-
-  @override
-  Future<List<HermesJob>> build() async => jobs;
 }
 
 class SidebarTestSidebarHarnessControllers {

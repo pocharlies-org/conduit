@@ -32,8 +32,7 @@ void main() {
       );
     });
 
-    test('a URL without a parsable host never shows its query or fragment',
-        () {
+    test('a URL without a parsable host never shows its query or fragment', () {
       expect(
         personalConnectionPublicEndpoint('user:token@host/path?api_key=s3cret'),
         'host/path',
@@ -44,12 +43,14 @@ void main() {
       );
     });
 
-    test('an unparsable URL with a scheme keeps it and drops the user info',
-        () {
-      // The unclosed IPv6 bracket makes Uri.tryParse fail.
-      const broken = 'https://user:token@[::1/path?key=1';
-      expect(Uri.tryParse(broken), isNull);
-      expect(personalConnectionPublicEndpoint(broken), 'https://[::1/path');
-    });
+    test(
+      'an unparsable URL with a scheme keeps it and drops the user info',
+      () {
+        // The unclosed IPv6 bracket makes Uri.tryParse fail.
+        const broken = 'https://user:token@[::1/path?key=1';
+        expect(Uri.tryParse(broken), isNull);
+        expect(personalConnectionPublicEndpoint(broken), 'https://[::1/path');
+      },
+    );
   });
 }

@@ -10,8 +10,7 @@ import 'package:conduit_core/services/api_service.dart';
 import 'package:conduit_core/services/socket_service.dart';
 import 'package:conduit_core/services/worker_manager.dart';
 import 'package:conduit_core/features/chat/providers/chat_providers.dart';
-import 'package:conduit_core/features/direct_connections/providers/direct_connection_providers.dart';
-import 'package:conduit_core/features/direct_connections/services/direct_chat_bridge.dart';
+import 'package:conduit_core/services/direct_replay_output.dart';
 import 'package:drift/drift.dart';
 import 'package:drift/native.dart';
 import 'package:riverpod/riverpod.dart';
@@ -98,7 +97,7 @@ Conversation _conversation(
           timestamp: now,
           isStreaming: streaming,
           metadata: streaming
-              ? const {'transport': kDirectTransport}
+              ? const {'transport': kConduitDirectTransport}
               : const {},
         ),
       ],
@@ -230,33 +229,6 @@ void main() {
       expect(api.taskLookups, 0);
     },
   );
-
-  test('stopping reserved direct preflight clears UI without server stop', () {
-    final api = _CountingApi();
-    final socket = _CountingSocket();
-    final container = containerFor(api, socket);
-    final conversation = _conversation(
-      'direct-local:pending',
-      ChatStorageKind.directLocal,
-      'partial',
-      streaming: true,
-    );
-    container.read(activeConversationProvider.notifier).set(conversation);
-    final notifier = container.read(chatMessagesProvider.notifier);
-    notifier.setMessages(conversation.messages);
-    final assistantId = conversation.messages.single.id;
-    final registry = container.read(directRunRegistryProvider);
-    final reservation = registry.reserve((
-      ownerConversationId: directRunOwnerScopeForTest(container, conversation),
-      assistantMessageId: assistantId,
-    ), 'profile');
-
-    container.read(stopGenerationProvider)();
-
-    expect(container.read(chatMessagesProvider).single.isStreaming, isFalse);
-    expect(registry.isCancelled(reservation), isTrue);
-    expect(api.broadStops, 0);
-  });
 
   test('scoped completion cannot finalize a colliding store', () {
     final container = containerFor(_CountingApi(), _CountingSocket());

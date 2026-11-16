@@ -158,6 +158,5 @@ void main() {
         check(InputValidationService.validateUsername(null)).isA<String>();
       });
     });
-
   });
 }

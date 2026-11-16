@@ -425,7 +425,12 @@ void main() {
         tester,
         configureWire: (wire) => wire.events = [
           eventJson('ev-day', 'cal-mine', title: 'Offsite', allDay: true),
-          eventJson('ev-weekly', 'cal-mine', title: 'Sync', rrule: 'FREQ=WEEKLY'),
+          eventJson(
+            'ev-weekly',
+            'cal-mine',
+            title: 'Sync',
+            rrule: 'FREQ=WEEKLY',
+          ),
         ],
       );
 

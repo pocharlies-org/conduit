@@ -5,7 +5,6 @@ import 'package:checks/checks.dart';
 import 'package:conduit_core/database/daos/outbox_dao.dart';
 import 'package:conduit_core/features/auth/providers/unified_auth_providers.dart';
 import 'package:conduit_core/features/chat/providers/chat_providers.dart';
-import 'package:conduit_core/features/hermes/models/hermes_model.dart';
 import 'package:conduit_core/features/tools/providers/tools_providers.dart';
 import 'package:conduit_core/models/backend_config.dart';
 import 'package:conduit_core/models/model.dart';
@@ -492,14 +491,6 @@ void main() {
             taggedFor: null,
             terminal: 'terminal-1',
           ),
-          'a Hermes model, which never reaches the server': (
-            expected: CodeInterpreterBlock.notOpenWebUi,
-            user: _member,
-            model: hermesSyntheticModel(),
-            serve: null,
-            taggedFor: null,
-            terminal: null,
-          ),
         };
 
     for (final MapEntry(:key, :value) in cases.entries) {
@@ -632,7 +623,6 @@ void main() {
           await _Session.start(
             model: _model(capabilities: {'code_interpreter': false}),
           ),
-          await _Session.start(model: hermesSyntheticModel()),
         ]) {
           check(session.container.read(codeInterpreterOfferProvider)).isNull();
         }

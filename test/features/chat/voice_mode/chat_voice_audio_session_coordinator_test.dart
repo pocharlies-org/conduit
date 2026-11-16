@@ -414,9 +414,7 @@ void main() {
     );
 
     test('moves a call Telecom hosts through Telecom', () async {
-      const telecomChannel = MethodChannel(
-        'app.cogwheel.conduit/telecom_call',
-      );
+      const telecomChannel = MethodChannel('app.cogwheel.conduit/telecom_call');
       final messenger =
           TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger;
       final telecomRequests = <Map<Object?, Object?>>[];
@@ -446,13 +444,11 @@ void main() {
 
       await coordinator.setActiveCallKitCallId('call-1');
       check(await coordinator.setSpeakerphoneEnabled(true)).isTrue();
-      check(
-        audioManager.telecomDeviceId,
-      ).equals(_FakeAndroidAudioManagerChannel.speakerId);
+      check(audioManager.telecomDeviceId)
+          .equals(_FakeAndroidAudioManagerChannel.speakerId);
       check(await coordinator.setSpeakerphoneEnabled(false)).isTrue();
-      check(
-        audioManager.telecomDeviceId,
-      ).equals(_FakeAndroidAudioManagerChannel.earpieceId);
+      check(audioManager.telecomDeviceId)
+          .equals(_FakeAndroidAudioManagerChannel.earpieceId);
       check(await coordinator.setSpeakerphoneEnabled(true)).isTrue();
       check(telecomRequests).deepEquals(<Map<Object?, Object?>>[
         {'callId': 'call-1', 'speaker': true},
@@ -463,9 +459,8 @@ void main() {
       // The app's own requests went out alongside, so the call stays on the
       // loudspeaker when Telecom lets go, and the next press moves it itself.
       audioManager.telecomDeviceId = null;
-      check(
-        audioManager.communicationDeviceId,
-      ).equals(_FakeAndroidAudioManagerChannel.speakerId);
+      check(audioManager.communicationDeviceId)
+          .equals(_FakeAndroidAudioManagerChannel.speakerId);
       check(await coordinator.setSpeakerphoneEnabled(false)).isTrue();
       check(audioManager.communicationDeviceId).isNull();
     });

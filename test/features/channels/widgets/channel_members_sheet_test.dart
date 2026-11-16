@@ -164,7 +164,10 @@ void main() {
     );
 
     expect(find.byKey(const Key('channel-members-add')), findsOneWidget);
-    expect(find.byKey(const Key('channel-member-remove-user-2')), findsOneWidget);
+    expect(
+      find.byKey(const Key('channel-member-remove-user-2')),
+      findsOneWidget,
+    );
   });
 
   testWidgets('removing a member sends the remove and shows the refreshed '
@@ -177,10 +180,7 @@ void main() {
     );
 
     // Your own row says so and offers no remove.
-    expect(
-      find.byKey(const Key('channel-member-remove-user-1')),
-      findsNothing,
-    );
+    expect(find.byKey(const Key('channel-member-remove-user-1')), findsNothing);
     expect(find.byKey(const Key('channel-member-self-user-1')), findsWidgets);
     // People are told apart by email, not by their server role.
     expect(find.text('p3@example.com'), findsWidgets);

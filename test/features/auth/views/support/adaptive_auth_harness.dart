@@ -40,9 +40,8 @@ class AdaptiveAuthHarness {
     when(() => _storage.saveLocalUserAvatar(null)).thenAnswer((_) async {});
     when(() => _storage.getReviewerMode()).thenAnswer((_) async => false);
     if (savedServersError case final error?) {
-      when(
-        () => _storage.getOpenWebUiRegistryStrict(),
-      ).thenAnswer((_) async => throw error);
+      when(() => _storage.getOpenWebUiRegistryStrict())
+          .thenAnswer((_) async => throw error);
     }
     if (authActions != null) {
       // A sign-in attempt first saves the server it was opened for.
@@ -172,7 +171,12 @@ class AdaptiveAuthHarness {
         activeServerProvider.overrideWith((_) async => server),
         if (userId case final userId?)
           currentUserProvider2.overrideWithValue(
-            User(id: userId, username: 'ada', email: 'ada@example.com', role: 'user'),
+            User(
+              id: userId,
+              username: 'ada',
+              email: 'ada@example.com',
+              role: 'user',
+            ),
           ),
         ...extraOverrides,
       ],

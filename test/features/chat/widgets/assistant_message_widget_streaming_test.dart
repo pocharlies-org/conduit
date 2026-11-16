@@ -1,6 +1,5 @@
 import 'package:conduit_core/database/app_database.dart';
 import 'package:conduit_core/database/database_provider.dart';
-import 'package:conduit_core/features/hermes/providers/hermes_providers.dart';
 import 'package:conduit_core/models/chat_message.dart';
 import 'package:conduit_core/models/conversation.dart';
 import 'package:conduit_core/persistence/preferences_store.dart';
@@ -85,7 +84,6 @@ void main() {
             activeConversationProvider.overrideWith(_NoActiveConversation.new),
             apiServiceProvider.overrideWithValue(null),
             socketServiceProvider.overrideWithValue(null),
-            hermesApiServiceProvider.overrideWithValue(null),
             textToSpeechControllerProvider.overrideWith(_InactiveTts.new),
             streamingHapticsEnabledProvider.overrideWithValue(false),
             flushSchedulerProvider.overrideWithValue(scheduler),

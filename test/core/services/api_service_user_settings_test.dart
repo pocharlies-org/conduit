@@ -6,7 +6,6 @@ import 'package:checks/checks.dart';
 import 'package:conduit_core/models/server_config.dart';
 import 'package:conduit_core/services/api_service.dart';
 import 'package:conduit_core/services/worker_manager.dart';
-import 'package:conduit/features/terminal/services/terminal_service.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter_test/flutter_test.dart';
 
@@ -31,53 +30,6 @@ void main() {
 
       expect(adapter.requestMethods, isEmpty);
     });
-
-    test(
-      'API and terminal read-modify-write operations serialize without loss',
-      () async {
-        final adapter = _UserSettingsAdapter(<String, dynamic>{
-          'ui': <String, dynamic>{'theme': 'system'},
-          'terminalServers': <Map<String, dynamic>>[
-            <String, dynamic>{'url': 'https://one.example'},
-            <String, dynamic>{'url': 'https://two.example', 'enabled': true},
-          ],
-        });
-        final api = _buildApi(adapter, authToken: 'account-a');
-        final terminal = TerminalService(api);
-
-        final promptUpdate = api.updateUserSystemPrompt('Be concise');
-        await adapter.firstGetEntered.future;
-
-        final terminalUpdate = terminal.updateDirectTerminalSelection(
-          'https://one.example',
-        );
-        await Future<void>.delayed(Duration.zero);
-
-        expect(adapter.requestMethods, <String>['GET']);
-        expect(adapter.maximumConcurrentRequests, 1);
-
-        adapter.releaseFirstGet.complete();
-        await Future.wait<Object?>(<Future<Object?>>[
-          promptUpdate,
-          terminalUpdate,
-        ]);
-
-        expect(adapter.requestMethods, <String>['GET', 'POST', 'GET', 'POST']);
-        expect(adapter.maximumConcurrentRequests, 1);
-        expect(
-          (adapter.settings['ui'] as Map<String, dynamic>)['system'],
-          'Be concise',
-        );
-        expect(
-          (adapter.settings['ui'] as Map<String, dynamic>)['theme'],
-          'system',
-        );
-        final terminals = (adapter.settings['terminalServers'] as List<dynamic>)
-            .cast<Map<String, dynamic>>();
-        expect(terminals[0]['enabled'], isTrue);
-        expect(terminals[1]['enabled'], isFalse);
-      },
-    );
 
     test('a failed operation does not poison the mutation queue', () async {
       final api = _buildApi(

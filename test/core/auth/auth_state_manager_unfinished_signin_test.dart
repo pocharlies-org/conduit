@@ -63,50 +63,53 @@ void main() {
     ('enroll', 'twoStepVerificationRequired'),
     ('pending', 'accountPendingApproval'),
   ]) {
-    test('a saved sign-in answered with next_step $step ends on sign-in', () async {
-      final storage = _Storage();
-      when(() => storage.getAuthTokenStrict()).thenAnswer((_) async => null);
-      when(() => storage.getSavedCredentialsStrict())
-          .thenAnswer((_) async => _saved);
-      when(() => storage.getActiveServerId())
-          .thenAnswer((_) async => 'account-a');
-      when(() => storage.getEffectiveActiveServerId())
-          .thenAnswer((_) async => 'account-a');
-      when(() => storage.captureSavedServerSessionOwnership('account-a'))
-          .thenAnswer(
-            (_) async =>
-                (revision: 1, serverConfig: _server, requireActive: false),
-          );
-      when(() => storage.deleteSavedCredentialsIfMatches(_saved))
-          .thenAnswer((_) async => true);
-      when(() => storage.saveLocalUser(any())).thenAnswer((_) async {});
-      final workerManager = WorkerManager();
-      addTearDown(workerManager.dispose);
-      final api = _ChallengingApi(workerManager, step);
+    test(
+      'a saved sign-in answered with next_step $step ends on sign-in',
+      () async {
+        final storage = _Storage();
+        when(() => storage.getAuthTokenStrict()).thenAnswer((_) async => null);
+        when(() => storage.getSavedCredentialsStrict())
+            .thenAnswer((_) async => _saved);
+        when(() => storage.getActiveServerId())
+            .thenAnswer((_) async => 'account-a');
+        when(() => storage.getEffectiveActiveServerId())
+            .thenAnswer((_) async => 'account-a');
+        when(() => storage.captureSavedServerSessionOwnership('account-a'))
+            .thenAnswer(
+              (_) async =>
+                  (revision: 1, serverConfig: _server, requireActive: false),
+            );
+        when(() => storage.deleteSavedCredentialsIfMatches(_saved))
+            .thenAnswer((_) async => true);
+        when(() => storage.saveLocalUser(any())).thenAnswer((_) async {});
+        final workerManager = WorkerManager();
+        addTearDown(workerManager.dispose);
+        final api = _ChallengingApi(workerManager, step);
 
-      final container = ProviderContainer(
-        overrides: [
-          optimizedStorageServiceProvider.overrideWithValue(storage),
-          apiServiceProvider.overrideWithValue(null),
-          activeServerProvider.overrideWith((ref) async => null),
-          savedCredentialAuthApiFactoryProvider.overrideWithValue(
-            ({required serverConfig, required workerManager}) => api,
-          ),
-        ],
-      );
-      addTearDown(container.dispose);
+        final container = ProviderContainer(
+          overrides: [
+            optimizedStorageServiceProvider.overrideWithValue(storage),
+            apiServiceProvider.overrideWithValue(null),
+            activeServerProvider.overrideWith((ref) async => null),
+            savedCredentialAuthApiFactoryProvider.overrideWithValue(
+              ({required serverConfig, required workerManager}) => api,
+            ),
+          ],
+        );
+        addTearDown(container.dispose);
 
-      final auth = await _settledAuth(container);
+        final auth = await _settledAuth(container);
 
-      check(auth.status).equals(AuthStatus.credentialError);
-      check(auth.error).equals(message);
-      check(auth.token).isNull();
-      check(api.logins).equals(1);
-      // The password can no longer sign in from Conduit, and each try counts
-      // toward the account's sign-in limit, so exactly what was tried goes.
-      verify(() => storage.deleteSavedCredentialsIfMatches(_saved)).called(1);
-      verifyNever(() => storage.deleteSavedCredentials());
-    });
+        check(auth.status).equals(AuthStatus.credentialError);
+        check(auth.error).equals(message);
+        check(auth.token).isNull();
+        check(api.logins).equals(1);
+        // The password can no longer sign in from Conduit, and each try counts
+        // toward the account's sign-in limit, so exactly what was tried goes.
+        verify(() => storage.deleteSavedCredentialsIfMatches(_saved)).called(1);
+        verifyNever(() => storage.deleteSavedCredentials());
+      },
+    );
   }
 
   test('a password sign-in stops at the second step, and its code signs in '
@@ -148,9 +151,10 @@ void main() {
       challenge = e.challenge;
     }
 
-    check(challenge).isNotNull().has((c) => c.kind, 'kind').equals(
-      OpenWebUiTwoStepKind.verify,
-    );
+    check(challenge)
+        .isNotNull()
+        .has((c) => c.kind, 'kind')
+        .equals(OpenWebUiTwoStepKind.verify);
     var state = container.read(authStateManagerProvider).requireValue;
     check(state.status).equals(AuthStatus.unauthenticated);
     check(state.error).isNull();
@@ -158,9 +162,8 @@ void main() {
     check(storage.committedToken).isNull();
 
     final session = await auth.submitTwoStepCode(challenge!, ' 123456 ');
-    check(api.verified).deepEquals([
-      ('user-a.challenge-token-value', '123456', false),
-    ]);
+    check(api.verified)
+        .deepEquals([('user-a.challenge-token-value', '123456', false)]);
 
     // A session the server then refuses is not a wrong password.
     api.rejectsSession = true;
