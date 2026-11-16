@@ -4,13 +4,13 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
 import 'package:conduit_core/auth/owui_oidc.dart';
-import 'package:conduit_core/auth/pkce.dart';
 import 'package:conduit_core/models/backend_config.dart';
 import 'package:conduit_core/models/server_config.dart';
 import 'package:conduit_core/providers/app_providers.dart';
 import 'package:conduit_core/providers/openwebui_accounts_controller.dart';
 import 'package:conduit_core/services/api_service.dart';
 
+import '../../../core/auth/pkce_sign_in.dart';
 import '../../../core/auth/system_browser_auth.dart';
 import '../../../core/services/haptic_service.dart';
 import '../../../shared/theme/theme_extensions.dart';
@@ -83,31 +83,6 @@ bool authenticationApiMatchesSelection(
       authenticationServerMatchesSelection(actual.serverConfig, expected);
 }
 
-/// The authorization code the login sheet handed back, checked against the
-/// `state` this attempt sent.
-///
-/// Keycloak answers errors on the same redirect, and an answer that carries
-/// another attempt's state is not this one's: both are refusals, never a
-/// session.
-@visibleForTesting
-String authorizationCodeFromCallback(
-  Uri callback, {
-  required String expectedState,
-}) {
-  final error = callback.queryParameters['error'];
-  if (error != null && error.isNotEmpty) {
-    throw OwuiLoginException('authorization refused: $error');
-  }
-  if (callback.queryParameters['state'] != expectedState) {
-    throw const OwuiLoginException('authorization answered another attempt');
-  }
-  final code = callback.queryParameters['code'];
-  if (code == null || code.isEmpty) {
-    throw const OwuiLoginException('authorization returned no code');
-  }
-  return code;
-}
-
 /// The product's only sign-in: Keycloak in the system-browser sheet (PKCE),
 /// the token exchange for an Open WebUI JWT, and that JWT as the bearer.
 ///
@@ -178,29 +153,9 @@ class _AuthenticationPageState extends ConsumerState<AuthenticationPage> {
       }
       if (!mounted) return;
 
-      final config = OwuiOidcConfig.live;
-      final pkce = generatePkcePair();
-      final state = generatePkceState();
-      final result = await SystemBrowserAuth.start(
-        config.authorizeUrl(challenge: pkce.challenge, state: state).toString(),
-      );
-      if (!mounted || result.outcome == SystemBrowserAuthOutcome.cancelled) {
-        return;
-      }
-      final callback = result.callbackUrl;
-      if (result.outcome != SystemBrowserAuthOutcome.done || callback == null) {
-        throw const OwuiLoginException('the login sheet failed');
-      }
-      final code = authorizationCodeFromCallback(
-        callback,
-        expectedState: state,
-      );
-
-      final oidc = OwuiOidc(config: config);
-      final tokens = await oidc.redeemCode(code: code, verifier: pkce.verifier);
-      // The edani access token ends here: what the app keeps, and sends as
-      // bearer, is the Open WebUI JWT the exchange answers with.
-      final jwt = await oidc.exchangeForOwuiJwt(tokens.accessToken);
+      final signedIn = await ref.read(pkceSignInProvider)();
+      if (!mounted || signedIn == null) return;
+      final jwt = signedIn.jwt;
 
       if (!await _signInTargetStillSelected()) {
         throw StateError('The selected server changed during sign-in.');
@@ -216,7 +171,7 @@ class _AuthenticationPageState extends ConsumerState<AuthenticationPage> {
       // The refresh token is what renews this session without the sheet. It
       // is filed under the user it belongs to, so a renewal can never mint a
       // token for a different account.
-      final refreshToken = tokens.refreshToken;
+      final refreshToken = signedIn.refreshToken;
       final userId =
           ref.read(currentUserProvider2)?.id ??
           ref.read(authStateManagerProvider).asData?.value.user?.id;
