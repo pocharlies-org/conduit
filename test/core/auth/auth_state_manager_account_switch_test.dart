@@ -591,9 +591,10 @@ void main() {
     verify(() => storage.deleteRefreshToken('user-a')).called(1);
   });
 
-  // The merge keeps an account of the same user, and the token is one per
-  // user: dropping it would cut the session that survives.
-  test('a merge keeps the refresh token its target still uses', () async {
+  // The token is one per user, not per account: another account of the same
+  // user keeps it, even after the one signed out of is gone.
+  test('a sign-out keeps the token another account of the user still names',
+      () async {
     final storage = _Storage();
     final isolation = _RecordingIsolation();
     when(() => storage.getAuthTokenStrict()).thenAnswer((_) async => _tokenA);
@@ -610,6 +611,7 @@ void main() {
         .thenAnswer((_) async => 'account-a');
     when(() => storage.getEffectiveActiveServerId())
         .thenAnswer((_) async => 'account-a');
+    // Before the removal, and after it: the other account is still there.
     when(() => storage.getOpenWebUiRegistryStrict()).thenAnswer(
       (_) async => OpenWebUiRegistry(
         accounts: <OpenWebUiAccount>[
@@ -621,13 +623,15 @@ void main() {
         ],
       ),
     );
+    // Stubbed, so a delete would be recorded rather than swallowed as an
+    // unstubbed call.
+    when(() => storage.deleteRefreshToken(any())).thenAnswer((_) async {});
     when(
-      () => storage.mergeActiveAccountInto(
-        'account-b',
-        expectedSourceAccountId: 'account-a',
-        expectedToken: any(named: 'expectedToken'),
+      () => storage.removeAccount(
+        'account-a',
+        thenActivate: any(named: 'thenActivate'),
       ),
-    ).thenAnswer((_) async => true);
+    ).thenAnswer((_) async => false);
 
     final container = ProviderContainer(
       overrides: [
@@ -641,11 +645,10 @@ void main() {
     container.read(openWebUiAccountStorageIsolationProvider);
     await _settledAuth(container);
 
-    final merged = await container
+    await container
         .read(authStateManagerProvider.notifier)
-        .mergeActiveAccountInto('account-b', expectedSourceAccountId: 'account-a');
+        .signOutAccount('account-a');
 
-    check(merged).isTrue();
     verifyNever(() => storage.deleteRefreshToken(any()));
   });
 
