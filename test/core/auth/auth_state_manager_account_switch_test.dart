@@ -611,18 +611,14 @@ void main() {
         .thenAnswer((_) async => 'account-a');
     when(() => storage.getEffectiveActiveServerId())
         .thenAnswer((_) async => 'account-a');
-    // Before the removal, and after it: the other account is still there.
-    when(() => storage.getOpenWebUiRegistryStrict()).thenAnswer(
-      (_) async => OpenWebUiRegistry(
-        accounts: <OpenWebUiAccount>[
-          OpenWebUiAccount(
-            id: 'account-b',
-            serverId: 'account-b',
-            userId: 'user-a',
-          ),
-        ],
-      ),
-    );
+    // Two accounts of one user: the sign-out names its user before the
+    // removal, and only the account left over keeps the token afterwards.
+    var accounts = <OpenWebUiAccount>[
+      OpenWebUiAccount(id: 'account-a', serverId: 'account-a', userId: 'user-a'),
+      OpenWebUiAccount(id: 'account-b', serverId: 'account-b', userId: 'user-a'),
+    ];
+    when(() => storage.getOpenWebUiRegistryStrict())
+        .thenAnswer((_) async => OpenWebUiRegistry(accounts: accounts));
     // Stubbed, so a delete would be recorded rather than swallowed as an
     // unstubbed call.
     when(() => storage.deleteRefreshToken(any())).thenAnswer((_) async {});
@@ -631,7 +627,16 @@ void main() {
         'account-a',
         thenActivate: any(named: 'thenActivate'),
       ),
-    ).thenAnswer((_) async => false);
+    ).thenAnswer((_) async {
+      accounts = <OpenWebUiAccount>[
+        OpenWebUiAccount(
+          id: 'account-b',
+          serverId: 'account-b',
+          userId: 'user-a',
+        ),
+      ];
+      return false;
+    });
 
     final container = ProviderContainer(
       overrides: [
