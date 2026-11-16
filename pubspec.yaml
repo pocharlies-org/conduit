@@ -16,7 +16,6 @@ environment:
 # pub fails loudly if only one side is updated.
 workspace:
   - packages/conduit_core
-  - packages/conduit_ddgs
   - packages/conduit_markdown
   - packages/conduit_theme
 
@@ -126,7 +125,6 @@ dependencies:
   just_audio: ^0.10.5
   cupertino_native_better: ^1.5.4
   flutter_tex: ^5.2.6
-  xterm: ^4.0.0
   web_socket: ^1.0.1
   web_socket_channel: ^3.0.3
   cached_network_image_ce: ^4.6.4
@@ -188,7 +186,6 @@ flutter:
     - THIRD_PARTY_NOTICES.md
     - assets/seed_accounts.json
     - assets/icons/
-    - assets/model_logos/
     - assets/release_notes/
     - assets/chartjs.min.js
     - assets/flutter_tex.js
