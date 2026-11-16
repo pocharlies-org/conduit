@@ -1245,6 +1245,10 @@ class AuthStateManager extends _$AuthStateManager {
     _activeLogoutOperations++;
     try {
       final storage = ref.read(optimizedStorageServiceProvider);
+      // Read before anything is removed: the Keycloak refresh token is filed
+      // under the Open WebUI user, and once the account is gone only this
+      // record still names it.
+      final refreshTokenUser = await _refreshTokenUserOf(storage, accountId);
       // Before anything is removed: once the account is gone, only this
       // record leads a later start back to data its purge fails to delete.
       // One that cannot be written stops the sign-out here, with the account
@@ -1332,6 +1336,7 @@ class AuthStateManager extends _$AuthStateManager {
       }
 
       await _purgeRemovedAccount(accountId);
+      await _forgetRefreshToken(refreshTokenUser);
       return signedIn;
     } finally {
       _activeLogoutOperations--;
@@ -1469,6 +1474,47 @@ class AuthStateManager extends _$AuthStateManager {
       );
     }
     ref.read(openWebUiAccountSummariesProvider.notifier).reload();
+  }
+
+  /// The Open WebUI user [accountId] signed in as, read while the account is
+  /// still in the registry. Null when it signed in as nobody, or when the
+  /// registry cannot be read: an unnamed token does not stop a sign-out.
+  Future<String?> _refreshTokenUserOf(
+    OptimizedStorageService storage,
+    String accountId,
+  ) async {
+    try {
+      final registry = await storage.getOpenWebUiRegistryStrict();
+      return registry.account(accountId)?.userId;
+    } catch (error, stackTrace) {
+      _logAuthenticationFailure(
+        'account-user-read-failed',
+        error,
+        stackTrace: stackTrace,
+      );
+      return null;
+    }
+  }
+
+  /// Drops the Keycloak refresh token filed under [userId], which no account
+  /// names any more. Left behind, it would renew the session of an account
+  /// that was signed out of. A merge and an abandoned sign-in leave this
+  /// alone: the first keeps an account of the same user, which the token
+  /// belongs to as much; the second never had one.
+  Future<void> _forgetRefreshToken(String? userId) async {
+    if (userId == null) return;
+    try {
+      final storage = ref.read(optimizedStorageServiceProvider);
+      final registry = await storage.getOpenWebUiRegistryStrict();
+      if (registry.accounts.any((account) => account.userId == userId)) return;
+      await storage.deleteRefreshToken(userId);
+    } catch (error, stackTrace) {
+      _logAuthenticationFailure(
+        'refresh-token-forget-failed',
+        error,
+        stackTrace: stackTrace,
+      );
+    }
   }
 
   /// Starts an account boundary: auth tokenless and loading, the storage

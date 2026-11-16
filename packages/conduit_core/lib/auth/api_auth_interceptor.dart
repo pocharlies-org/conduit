@@ -316,6 +316,9 @@ class ApiAuthInterceptor extends Interceptor {
   bool _mayRenewSession(DioException err) {
     if (onSessionExpired == null || retryClient == null) return false;
     final options = err.requestOptions;
+    // A late answer about another account's token says nothing about the
+    // session in use: renewing on it would mint one for the wrong account.
+    if (!_ownsCurrentSession(options)) return false;
     if (options.extra[sessionRetriedExtraKey] == true) return false;
     if (options.extra['suppressAuthFailureNotification'] == true) return false;
     final code = err.response?.statusCode;
@@ -361,6 +364,18 @@ class ApiAuthInterceptor extends Interceptor {
     }
   }
 
+  /// Whether [options] was sent with the session this client holds now. An
+  /// answer that arrives after a sign-out, a switch or a renewal belongs to
+  /// the session it was sent with, not to this one.
+  bool _ownsCurrentSession(RequestOptions options) {
+    final extra = options.extra;
+    final cookieSuppressed = extra[_requestCookieSuppressedExtraKey];
+    return extra[_requestAuthRevisionExtraKey] == _authRevision &&
+        extra[_requestAuthTokenExtraKey] == _authToken &&
+        cookieSuppressed is bool &&
+        cookieSuppressed == cookieCustomHeaderSuppressed;
+  }
+
   void _classifyError(DioException err, ErrorInterceptorHandler handler) {
     final statusCode = err.response?.statusCode;
     // Classify the endpoint-relative path rather than the fully resolved URI.
@@ -370,16 +385,9 @@ class ApiAuthInterceptor extends Interceptor {
 
     final suppressAuthFailureNotification =
         err.requestOptions.extra['suppressAuthFailureNotification'] == true;
-    final requestRevision =
-        err.requestOptions.extra[_requestAuthRevisionExtraKey];
-    final requestToken = err.requestOptions.extra[_requestAuthTokenExtraKey];
-    final requestCookieSuppressed =
-        err.requestOptions.extra[_requestCookieSuppressedExtraKey];
-    final responseOwnsCurrentSession =
-        requestRevision == _authRevision &&
-        requestToken == _authToken &&
-        requestCookieSuppressed is bool &&
-        requestCookieSuppressed == cookieCustomHeaderSuppressed;
+    final responseOwnsCurrentSession = _ownsCurrentSession(
+      err.requestOptions,
+    );
     if (statusCode case final code?
         when !suppressAuthFailureNotification &&
             responseOwnsCurrentSession &&

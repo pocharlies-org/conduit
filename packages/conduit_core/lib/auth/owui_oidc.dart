@@ -152,7 +152,9 @@ final class OwuiOidc {
       throw const OwuiLoginException('token exchange refused');
     }
     if (status < 200 || status >= 300) {
-      throw OwuiLoginException('token exchange: HTTP $status');
+      // Not a verdict on the token: a server that fails (or rate-limits) must
+      // not cost the caller its refresh token.
+      throw Exception('token exchange: HTTP $status');
     }
     final body = response.data;
     if (body is! Map) {
@@ -181,7 +183,8 @@ final class OwuiOidc {
       throw const OwuiLoginException('keycloak rejected the request');
     }
     if (status < 200 || status >= 300) {
-      throw OwuiLoginException('keycloak token: HTTP $status');
+      // As above: only 400/401 say the token is done.
+      throw Exception('keycloak token: HTTP $status');
     }
     final body = response.data;
     if (body is String) {

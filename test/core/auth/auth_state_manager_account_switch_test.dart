@@ -5,6 +5,7 @@ import 'package:conduit/platform/flutter_key_value_store.dart';
 import 'package:conduit_core/auth/auth_state_manager.dart';
 import 'package:conduit_core/database/account_storage_isolation.dart';
 import 'package:conduit_core/auth/api_auth_interceptor.dart';
+import 'package:conduit_core/models/openwebui_registry.dart';
 import 'package:conduit_core/models/server_config.dart';
 import 'package:conduit_core/models/user.dart';
 import 'package:conduit_core/persistence/persistence_keys.dart';
@@ -529,6 +530,123 @@ void main() {
 
     check(signedIn).isFalse();
     check(isolation.purged).deepEquals(['account-a']);
+  });
+
+  // F1 of PR 18's security review: the refresh token is filed under the
+  // Open WebUI user, not the account, so removing the account left it behind
+  // renewing a session that had been signed out of.
+  test('a sign-out drops the refresh token of the user it removed', () async {
+    final storage = _Storage();
+    final isolation = _RecordingIsolation();
+    when(() => storage.getAuthTokenStrict()).thenAnswer((_) async => _tokenA);
+    when(() => storage.getLocalUserWithAvatar())
+        .thenAnswer((_) async => _userA);
+    when(() => storage.saveLocalUser(any())).thenAnswer((_) async {});
+    when(
+      () => storage.saveLocalUserWithAvatar(
+        any(),
+        avatarUrl: any(named: 'avatarUrl'),
+      ),
+    ).thenAnswer((_) async {});
+    var active = 'account-a';
+    when(() => storage.getActiveServerId()).thenAnswer((_) async => active);
+    when(() => storage.getEffectiveActiveServerId())
+        .thenAnswer((_) async => active);
+    var accounts = <OpenWebUiAccount>[
+      OpenWebUiAccount(
+        id: 'account-a',
+        serverId: 'account-a',
+        userId: 'user-a',
+      ),
+    ];
+    when(() => storage.getOpenWebUiRegistryStrict())
+        .thenAnswer((_) async => OpenWebUiRegistry(accounts: accounts));
+    when(() => storage.deleteRefreshToken(any())).thenAnswer((_) async {});
+    when(
+      () => storage.removeAccount(
+        'account-a',
+        thenActivate: any(named: 'thenActivate'),
+      ),
+    ).thenAnswer((_) async {
+      accounts = <OpenWebUiAccount>[];
+      return false;
+    });
+
+    final container = ProviderContainer(
+      overrides: [
+        optimizedStorageServiceProvider.overrideWithValue(storage),
+        apiServiceProvider.overrideWithValue(null),
+        activeServerProvider.overrideWith((ref) async => null),
+        openWebUiAccountStorageIsolationProvider.overrideWith(() => isolation),
+      ],
+    );
+    addTearDown(container.dispose);
+    container.read(openWebUiAccountStorageIsolationProvider);
+    await _settledAuth(container);
+
+    await container
+        .read(authStateManagerProvider.notifier)
+        .signOutAccount('account-a');
+
+    verify(() => storage.deleteRefreshToken('user-a')).called(1);
+  });
+
+  // The merge keeps an account of the same user, and the token is one per
+  // user: dropping it would cut the session that survives.
+  test('a merge keeps the refresh token its target still uses', () async {
+    final storage = _Storage();
+    final isolation = _RecordingIsolation();
+    when(() => storage.getAuthTokenStrict()).thenAnswer((_) async => _tokenA);
+    when(() => storage.getLocalUserWithAvatar())
+        .thenAnswer((_) async => _userA);
+    when(() => storage.saveLocalUser(any())).thenAnswer((_) async {});
+    when(
+      () => storage.saveLocalUserWithAvatar(
+        any(),
+        avatarUrl: any(named: 'avatarUrl'),
+      ),
+    ).thenAnswer((_) async {});
+    when(() => storage.getActiveServerId())
+        .thenAnswer((_) async => 'account-a');
+    when(() => storage.getEffectiveActiveServerId())
+        .thenAnswer((_) async => 'account-a');
+    when(() => storage.getOpenWebUiRegistryStrict()).thenAnswer(
+      (_) async => OpenWebUiRegistry(
+        accounts: <OpenWebUiAccount>[
+          OpenWebUiAccount(
+            id: 'account-b',
+            serverId: 'account-b',
+            userId: 'user-a',
+          ),
+        ],
+      ),
+    );
+    when(
+      () => storage.mergeActiveAccountInto(
+        'account-b',
+        expectedSourceAccountId: 'account-a',
+        expectedToken: any(named: 'expectedToken'),
+      ),
+    ).thenAnswer((_) async => true);
+
+    final container = ProviderContainer(
+      overrides: [
+        optimizedStorageServiceProvider.overrideWithValue(storage),
+        apiServiceProvider.overrideWithValue(null),
+        activeServerProvider.overrideWith((ref) async => null),
+        openWebUiAccountStorageIsolationProvider.overrideWith(() => isolation),
+      ],
+    );
+    addTearDown(container.dispose);
+    container.read(openWebUiAccountStorageIsolationProvider);
+    await _settledAuth(container);
+
+    final merged = await container
+        .read(authStateManagerProvider.notifier)
+        .mergeActiveAccountInto('account-b', expectedSourceAccountId: 'account-a');
+
+    check(merged).isTrue();
+    verifyNever(() => storage.deleteRefreshToken(any()));
   });
 
   test('a merge whose purge fails is still a merge', () async {
