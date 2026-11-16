@@ -670,56 +670,6 @@ void main() {
       });
     });
 
-    // Signed in to it again: its refusals were of the session replaced.
-    test('is taken up again once its proxy session is renewed', () async {
-      // Nothing else answers, so the refused route stays in use, and its
-      // session is signed in to again from the connection issue.
-      answers = {_lan: true, _tailscale: false, _public: false};
-      final routes = await resolver();
-      await routes.resolve();
-      ConnectivityService.reportRouteRejected(Uri.parse(_lan));
-      await until(() => routes.state.noneAnswered);
-
-      routes.proxySessionRenewed(routes.state.endpointId);
-      answers[_public] = true;
-      await routes.resolve(reason: 'resumed');
-
-      check(await routeInUse()).equals(_lan);
-    });
-
-    // The route renewed is the one in use; another route's proxy is no less
-    // expired for it.
-    test("stays remembered when another route's proxy session is renewed",
-        () async {
-      answers = {_lan: true, _tailscale: false, _public: true};
-      final routes = await resolver();
-      await routes.resolve();
-      ConnectivityService.reportRouteRejected(Uri.parse(_lan));
-      await until(() => routes.state.endpointId == 'public');
-
-      routes.proxySessionRenewed(routes.state.endpointId);
-      await routes.resolve(reason: 'resumed');
-
-      check(await routeInUse()).equals(_public);
-    });
-
-    // The app can move away from the route while its sign-in is open; the
-    // renewed session is still that route's.
-    test('is taken up again when renewed after a move away from it', () async {
-      answers = {_lan: true, _tailscale: false, _public: true};
-      final routes = await resolver();
-      await routes.resolve();
-      // In use as its sign-in begins.
-      final renewed = routes.state.endpointId;
-      ConnectivityService.reportRouteRejected(Uri.parse(_lan));
-      await until(() => routes.state.endpointId == 'public');
-
-      routes.proxySessionRenewed(renewed);
-      await routes.resolve(reason: 'resumed');
-
-      check(await routeInUse()).equals(_lan);
-    });
-
     test('moves even while a reply is being written', () async {
       answers = {_lan: false, _tailscale: false, _public: true};
       final routes = await resolver();

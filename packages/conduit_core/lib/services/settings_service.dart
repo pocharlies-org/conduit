@@ -1347,15 +1347,6 @@ class AppSettingsNotifier extends _$AppSettingsNotifier {
     await SettingsService.setChatImageGenerationEnabled(value);
   }
 
-  /// Waits for startup hydration so a write can't be overwritten by the
-  /// stored value it replaces. Returns false if the notifier was disposed.
-  Future<bool> _awaitHydration() async {
-    final pendingLoad = _pendingLoad;
-    if (pendingLoad == null) return true;
-    await pendingLoad;
-    return ref.mounted;
-  }
-
   Future<void> setSendOnEnter(bool value) async {
     state = state.copyWith(sendOnEnter: value);
     await SettingsService.setSendOnEnter(value);

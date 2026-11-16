@@ -9,8 +9,6 @@ class Routes {
   static const String folder = '/folder/:id';
   static const String connectionIssue = '/connection-issue';
   static const String authentication = '/authentication';
-  static const String ssoAuth = '/sso-auth';
-  static const String proxyAuth = '/proxy-auth';
   static const String profile = '/profile';
   static const String personalization = '/profile/personalization';
   static const String audioSettings = '/profile/audio';
@@ -45,8 +43,6 @@ class RouteNames {
   static const String folder = 'folder';
   static const String connectionIssue = 'connection-issue';
   static const String authentication = 'authentication';
-  static const String ssoAuth = 'sso-auth';
-  static const String proxyAuth = 'proxy-auth';
   static const String profile = 'profile';
   static const String personalization = 'personalization';
   static const String audioSettings = 'audio-settings';

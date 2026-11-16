@@ -1,81 +1,73 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
 
-/// Outcome of a system-browser SSO sheet, mapped from the native bridge string.
-enum SystemBrowserAuthOutcome { done, cancelled, failed }
+/// How a system-browser login ended.
+enum SystemBrowserAuthOutcome {
+  /// The page navigated to the app's callback scheme.
+  done,
 
-/// Maps the native completion string to an [SystemBrowserAuthOutcome].
+  /// The person dismissed the sheet.
+  cancelled,
+
+  /// The sheet could not complete (no platform, native failure).
+  failed,
+}
+
+/// What the sheet answered: an outcome, and on [outcome] done the callback URL
+/// it closed on.
+final class SystemBrowserAuthResult {
+  const SystemBrowserAuthResult._(this.outcome, this.callbackUrl);
+
+  const SystemBrowserAuthResult.cancelled()
+    : outcome = SystemBrowserAuthOutcome.cancelled,
+      callbackUrl = null;
+
+  const SystemBrowserAuthResult.failed()
+    : outcome = SystemBrowserAuthOutcome.failed,
+      callbackUrl = null;
+
+  final SystemBrowserAuthOutcome outcome;
+  final Uri? callbackUrl;
+}
+
+/// Maps the native bridge string to a result.
 ///
-/// Pure so the polling loop's decision is unit-testable without a platform.
-SystemBrowserAuthOutcome systemBrowserAuthOutcomeFromNative(String? raw) {
-  switch (raw) {
-    case 'done':
-      return SystemBrowserAuthOutcome.done;
-    case 'cancelled':
-      return SystemBrowserAuthOutcome.cancelled;
-    default:
-      return SystemBrowserAuthOutcome.failed;
+/// The native side answers either the callback URL's absolute string (the
+/// sheet closed on our scheme) or `cancelled`/`error`. Pure, so the mapping is
+/// unit-testable without a platform.
+SystemBrowserAuthResult systemBrowserAuthResultFromNative(String? raw) {
+  if (raw == null || raw.isEmpty) return const SystemBrowserAuthResult.failed();
+  if (raw == 'cancelled') return const SystemBrowserAuthResult.cancelled();
+  final callback = Uri.tryParse(raw);
+  if (callback == null || callback.scheme != SystemBrowserAuth.callbackScheme) {
+    return const SystemBrowserAuthResult.failed();
   }
+  return SystemBrowserAuthResult._(SystemBrowserAuthOutcome.done, callback);
 }
 
-/// Extracts the Open WebUI session token from native cookies, or null.
+/// The system-browser sheet (`ASWebAuthenticationSession`) that runs the
+/// Keycloak login.
 ///
-/// The token cookie holds a JWT: three dot-separated segments, at least 50
-/// chars. This filters out `null`/`undefined`/empty placeholders the frontend
-/// may leave before OAuth completes. Pure and host-agnostic for testing.
-String? ssoTokenFromNativeCookies(Map<String, String> cookies) {
-  final value = cookies['token']?.trim();
-  if (value == null || value.isEmpty) return null;
-  if (value == 'null' || value == 'undefined') return null;
-  if (value.split('.').length != 3 || value.length < 50) return null;
-  return value;
-}
-
-/// Presents the SSO login on iOS, two ways (SC-2799):
-///
-/// - [fullScreen] (Keycloak SSO): an in-app `WKWebView` with no browser chrome
-///   — the system sheet paints a title bar and toolbar, which Dani rejected
-///   (21-10, «MUY feo»). AutoFill and one-time codes work here too (system
-///   AutoFill extension).
-/// - default (proxy login): the system-browser sheet
-///   (`ASWebAuthenticationSession`). Google OAuth rejects embedded WebViews
-///   (`disallowed_useragent`), so that flow needs the real browser.
-///
-/// Both are non-ephemeral: their cookies land in the shared
-/// `WKWebsiteDataStore` that [NativeCookieManager] reads. The caller opens the
-/// screen and polls that store for the session token, then calls [cancel].
+/// A sheet and not a WebView: Google refuses embedded WebViews, and the sheet
+/// is where the person's saved sessions and AutoFill live. The sheet closes
+/// itself when the page lands on [callbackScheme] and hands that URL back;
+/// the caller reads `code` and `state` from it.
 class SystemBrowserAuth {
+  static const callbackScheme = 'com.morenoibanez.chat';
   static const _channel = MethodChannel('com.conduit.app/system_browser_auth');
 
-  /// The system-browser sheet is iOS-only; Android keeps the WebView flow.
+  /// The shell is iOS-only; other platforms have no Keycloak sheet.
   static bool get isSupported =>
       !kIsWeb && defaultTargetPlatform == TargetPlatform.iOS;
 
-  /// Opens the login at [url]. Resolves when it closes: on the OAuth redirect
-  /// ([SystemBrowserAuthOutcome.done]), the user dismissing it
-  /// ([SystemBrowserAuthOutcome.cancelled]) or a native failure. With
-  /// [fullScreen] the login is an in-app WebView without browser chrome.
-  static Future<SystemBrowserAuthOutcome> start(String url,
-      {bool fullScreen = false}) async {
+  static Future<SystemBrowserAuthResult> start(String url) async {
     try {
-      final raw = await _channel.invokeMethod<String>('start',
-          {'url': url, 'fullScreen': fullScreen});
-      return systemBrowserAuthOutcomeFromNative(raw);
+      final raw = await _channel.invokeMethod<String>('start', {'url': url});
+      return systemBrowserAuthResultFromNative(raw);
     } on PlatformException {
-      return SystemBrowserAuthOutcome.failed;
+      return const SystemBrowserAuthResult.failed();
     } on MissingPluginException {
-      return SystemBrowserAuthOutcome.failed;
-    }
-  }
-
-  /// Closes the sheet once the session token is detected by polling.
-  static Future<void> cancel() async {
-    try {
-      await _channel.invokeMethod<void>('cancel');
-    } on PlatformException {
-      // Already dismissed — nothing to do.
-    } on MissingPluginException {
-      // Not iOS — nothing to dismiss.
+      return const SystemBrowserAuthResult.failed();
     }
   }
 }

@@ -42,20 +42,6 @@ class AuthActions {
     );
   }
 
-  Future<bool> commitPrevalidatedProxySession({
-    required ServerConfig serverConfig,
-    required String token,
-    required User user,
-    bool Function()? canCommit,
-  }) {
-    return _auth.commitPrevalidatedProxySession(
-      serverConfig: serverConfig,
-      token: token,
-      user: user,
-      canCommit: canCommit,
-    );
-  }
-
   Future<bool> ldapLogin(
     String username,
     String password, {

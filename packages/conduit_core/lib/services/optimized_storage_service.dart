@@ -852,6 +852,24 @@ class OptimizedStorageService {
   Future<Set<String>> vaultedServerIds() =>
       _secureCredentialStorage.vaultedServerIds();
 
+  /// The Keycloak refresh token of the Open WebUI user [userId], if any.
+  Future<String?> getRefreshToken(String userId) => _retrySecureStorageRead(
+    () => _secureCredentialStorage.getRefreshToken(userId),
+    scope: 'storage/optimized/refresh-token',
+  );
+
+  Future<void> saveRefreshToken(String userId, String token) =>
+      _retrySecureStorageWrite(
+        () => _secureCredentialStorage.saveRefreshToken(userId, token),
+        scope: 'storage/optimized/refresh-token',
+      );
+
+  Future<void> deleteRefreshToken(String userId) =>
+      _retrySecureStorageWrite(
+        () => _secureCredentialStorage.deleteRefreshToken(userId),
+        scope: 'storage/optimized/refresh-token',
+      );
+
   /// Compare-and-delete: deletes the stored auth token ONLY if it still equals
   /// [expected]. Read + conditional delete run under [_authStateLock], so a
   /// superseded login can roll back its own token write without clobbering a

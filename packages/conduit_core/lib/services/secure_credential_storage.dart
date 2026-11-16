@@ -324,13 +324,58 @@ class SecureCredentialStorage {
     try {
       final all = await _secureStorage.readAll();
       for (final key in all.keys) {
-        if (key.startsWith(_serverTokenPrefix)) {
+        if (key.startsWith(_serverTokenPrefix) ||
+            key.startsWith(_refreshTokenPrefix)) {
           await _secureStorage.delete(key: key);
         }
       }
     } catch (e) {
       DebugLogger.error(
         'delete-server-tokens-failed',
+        scope: 'credentials/token',
+        error: e,
+      );
+      rethrow;
+    }
+  }
+
+  // ---------------------------------------------------------------------
+  // Keycloak refresh tokens
+  // ---------------------------------------------------------------------
+  //
+  // The Open WebUI bear
+  // token expires, and the way back without a password is the Keycloak one.
+  // Filed by the Open WebUI user id the session belongs to, not by account
+  // slot: a refresh token is one identity's, and reading another account's
+  // would mint a JWT for the wrong person.
+  static const String _refreshTokenPrefix = 'owui_refresh_v1:';
+
+  static String _refreshTokenKey(String userId) =>
+      '$_refreshTokenPrefix$userId';
+
+  Future<void> saveRefreshToken(String userId, String token) async {
+    try {
+      await _secureStorage.write(key: _refreshTokenKey(userId), value: token);
+    } catch (e) {
+      DebugLogger.error(
+        'save-refresh-token-failed',
+        scope: 'credentials/token',
+        error: e,
+      );
+      rethrow;
+    }
+  }
+
+  /// Strict: a platform read failure must not read as "no refresh token".
+  Future<String?> getRefreshToken(String userId) =>
+      _secureStorage.read(key: _refreshTokenKey(userId));
+
+  Future<void> deleteRefreshToken(String userId) async {
+    try {
+      await _secureStorage.delete(key: _refreshTokenKey(userId));
+    } catch (e) {
+      DebugLogger.error(
+        'delete-refresh-token-failed',
         scope: 'credentials/token',
         error: e,
       );

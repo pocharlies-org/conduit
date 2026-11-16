@@ -196,6 +196,7 @@ abstract class _ApiServiceBase {
       customHeaders: serverConfig.customHeaders,
       suppressCookieCustomHeader: suppressCookieCustomHeader,
       shouldSuppressCookieCustomHeader: shouldSuppressCookieCustomHeader,
+      retryClient: _dio,
     );
 
     // Add interceptors in order of priority:

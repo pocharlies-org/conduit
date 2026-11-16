@@ -108,9 +108,6 @@ String? resolveRouteRedirect(String location, ProviderRead read) {
         // Keep user on the login/authentication flow to show inline errors
         return null;
       }
-      // Proxy re-authentication keeps the token and runs from the
-      // connection issue page; do not bounce it back there.
-      if (location == Routes.proxyAuth) return null;
       // Otherwise show connection issue page for recoverable auth errors
       return location == Routes.connectionIssue ? null : Routes.connectionIssue;
     case AuthNavigationState.authenticated:
@@ -149,7 +146,5 @@ String? _workspaceRedirect(String location, ProviderRead read) {
 
 bool isAuthLocation(String location) {
   return location == Routes.authentication ||
-      location == Routes.connectionIssue ||
-      location == Routes.ssoAuth ||
-      location == Routes.proxyAuth;
+      location == Routes.connectionIssue;
 }
