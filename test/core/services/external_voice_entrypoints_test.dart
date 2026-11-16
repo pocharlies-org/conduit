@@ -31,7 +31,7 @@ void main() {
     PreferencesStore.debugReset();
   });
 
-  test('Android Assistant delegates signed-out Hermes voice calls', () async {
+  test('Android Assistant delegates signed-out voice calls', () async {
     late _RecordingVoiceCallLauncher launcher;
     final container = _buildContainer((ref) {
       return launcher = _RecordingVoiceCallLauncher(ref);
@@ -44,7 +44,7 @@ void main() {
     expect(launcher.startNewConversationCalls, [isTrue]);
   });
 
-  test('Siri intent delegates signed-out Hermes voice calls', () async {
+  test('Siri intent delegates signed-out voice calls', () async {
     late _RecordingVoiceCallLauncher launcher;
     final container = _buildContainer((ref) {
       return launcher = _RecordingVoiceCallLauncher(ref);
@@ -53,7 +53,7 @@ void main() {
 
     final response = await container
         .read(appIntentCoordinatorProvider.notifier)
-        .startVoiceCall('signed-out-hermes-voice');
+        .startVoiceCall('signed-out-voice');
 
     expect(response.success, isTrue);
     expect(launcher.startNewConversationCalls, [isTrue]);

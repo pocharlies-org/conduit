@@ -108,7 +108,6 @@ class ConduitThemeExtension extends ThemeExtension<ConduitThemeExtension> {
   Color get cardBorder => surfaces.border;
   Color get cardShadow => shadows.shadowSm.first.color;
   List<BoxShadow> get cardShadows => shadows.shadowSm;
-  List<BoxShadow> get popoverShadows => shadows.shadowLg;
   List<BoxShadow> get overlayShadows => shadows.shadowXs;
 
   Color get surfaceBackground => surfaces.background;
@@ -166,7 +165,6 @@ class ConduitThemeExtension extends ThemeExtension<ConduitThemeExtension> {
   );
 
   Color get success => statusPalette.success.base;
-  Color get successBackground => statusPalette.success.background;
   Color get error => statusPalette.destructive.base;
   Color get errorBackground => statusPalette.destructive.background;
   Color get warning => statusPalette.warning.base;
@@ -200,8 +198,6 @@ class ConduitThemeExtension extends ThemeExtension<ConduitThemeExtension> {
   Color get textSecondary => tokens.neutralTone80;
   Color get textTertiary => tokens.neutralTone60;
   Color get textInverse => tokens.neutralTone00;
-  Color get textDisabled =>
-      isDark ? tokens.neutralTone40 : tokens.neutralTone60;
 
   Color get iconPrimary => tokens.neutralOnSurface;
   Color get iconSecondary => tokens.neutralTone80;

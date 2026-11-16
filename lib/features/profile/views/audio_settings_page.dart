@@ -9,9 +9,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../core/services/native_sheet_bridge.dart';
 
 import 'package:conduit_core/features/chat/server_speech/server_speech_providers.dart';
-import 'package:conduit_core/navigation/routes.dart';
 import 'package:conduit_core/services/settings_service.dart';
-import 'package:go_router/go_router.dart';
 
 import '../../../core/utils/tts_voice_utils.dart';
 import '../../../l10n/app_localizations.dart';

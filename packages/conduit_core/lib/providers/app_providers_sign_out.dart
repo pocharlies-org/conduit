@@ -29,7 +29,7 @@ final signOutCoordinatorProvider = Provider<SignOutCoordinator>(
   SignOutCoordinator.new,
 );
 
-enum SignOutRequestResult { completed, conflictingRequestIgnored }
+enum SignOutRequestResult { completed }
 
 /// Coordinates a user-requested full local-data sign-out across the auth
 /// providers. OWU-134: the app has the one seeded Open WebUI server, so the

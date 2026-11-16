@@ -9,7 +9,6 @@ import 'package:flutter_riverpod/flutter_riverpod.dart' show Provider;
 import 'package:meta/meta.dart';
 import 'package:path/path.dart' as path;
 import 'package:riverpod_annotation/riverpod_annotation.dart';
-import 'package:synchronized/synchronized.dart';
 import 'package:uuid/uuid.dart';
 
 import '../../features/chat/services/file_attachment_service.dart';
@@ -44,15 +43,6 @@ typedef OwnedStagingConversionReplacer =
     });
 
 const int kUploadImagePrecacheMaxBytes = 4 * 1024 * 1024;
-
-String _localDocumentOpaqueId(File file, FileStat stat) => sha256
-    .convert(
-      utf8.encode(
-        '${file.path}\u0000${stat.size}\u0000'
-        '${stat.modified.microsecondsSinceEpoch}',
-      ),
-    )
-    .toString();
 
 /// Stable native-import identity used to derive a per-server Drift receipt.
 final class NativeShareUploadIdentity {
@@ -316,7 +306,6 @@ class MediaUploadController {
   }
 
   final Ref _ref;
-  final Lock _localAttachmentPreparationLock = Lock();
 
   /// In-flight uploads keyed by the ORIGINAL source [filePath] (the key the UI
   /// + cancellation reference, never the converted temp path). Exact-path

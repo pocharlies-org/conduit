@@ -212,10 +212,6 @@
   "@signIn": {
     "description": "Button/heading for sign-in flows."
   },
-  "credentials": "認証情報",
-  "@credentials": {
-    "description": "Header for credential input section."
-  },
   "apiKey": "API キー",
   "@apiKey": {
     "description": "Label for API key input field."
@@ -225,25 +221,13 @@
     "description": "Label for JWT token input field."
   },
   "jwt": "JWT",
-  "usernameOrEmail": "ユーザー名またはメール",
-  "@usernameOrEmail": {
-    "description": "Label for username/email input field."
-  },
   "password": "パスワード",
   "@password": {
     "description": "Label for password input field."
   },
-  "signInWithToken": "トークンでサインイン",
-  "@signInWithToken": {
-    "description": "Alternative sign-in method using a JWT token."
-  },
   "serverUrl": "サーバー URL",
   "@serverUrl": {
     "description": "Label for server URL field."
-  },
-  "headerName": "ヘッダー名",
-  "@headerName": {
-    "description": "Label for custom header key."
   },
   "connecting": "接続中...",
   "@connecting": {
@@ -264,118 +248,6 @@
   "signInAccountPendingApproval": "アカウントは管理者の承認待ちです。承認されたらもう一度お試しください。",
   "@signInAccountPendingApproval": {
     "description": "Sign-in error when the Open WebUI account still waits for an administrator to approve it."
-  },
-  "signInTwoStepVerificationRequired": "このアカウントは 2 段階認証を使用しています。もう一度サインインして、認証アプリのコードを入力してください。",
-  "@signInTwoStepVerificationRequired": {
-    "description": "Sign-in error when saved credentials met Open WebUI's two-step verification, which needs a code typed in."
-  },
-  "twoStepVerifyTitle": "サインインを確認",
-  "@twoStepVerifyTitle": {
-    "description": "Title of the sign-in step that asks for a two-step verification code."
-  },
-  "twoStepEnrollTitle": "認証アプリを設定",
-  "@twoStepEnrollTitle": {
-    "description": "Title of the sign-in step that adds an authenticator app for two-step verification."
-  },
-  "twoStepRecoverTitle": "認証アプリを復旧",
-  "@twoStepRecoverTitle": {
-    "description": "Title of the sign-in step that redeems an administrator's two-step verification recovery token."
-  },
-  "twoStepVerifyDescription": "認証アプリに表示される 6 桁のコードを入力してください。",
-  "@twoStepVerifyDescription": {
-    "description": "Instruction for entering a two-step verification code."
-  },
-  "twoStepRecoveryCodeDescription": "保存した復旧コードのいずれかを入力してください。",
-  "@twoStepRecoveryCodeDescription": {
-    "description": "Instruction for signing in with a saved two-step verification recovery code."
-  },
-  "twoStepEnrollDescription": "このアカウントを認証アプリに追加し、表示される 6 桁のコードを入力してください。",
-  "@twoStepEnrollDescription": {
-    "description": "Instruction for adding the account to an authenticator app during sign-in."
-  },
-  "twoStepRecoverDescription": "管理者がこのアカウントの 2 段階認証をリセットしました。受け取った復旧トークンを入力してください。",
-  "@twoStepRecoverDescription": {
-    "description": "Instruction for redeeming the recovery token an administrator issued after resetting two-step verification."
-  },
-  "twoStepCodeLabel": "認証コード",
-  "@twoStepCodeLabel": {
-    "description": "Label of the field for an authenticator app code."
-  },
-  "twoStepRecoveryCodeLabel": "復旧コード",
-  "@twoStepRecoveryCodeLabel": {
-    "description": "Label of the field for a two-step verification recovery code."
-  },
-  "twoStepResetTokenLabel": "復旧トークン",
-  "@twoStepResetTokenLabel": {
-    "description": "Label of the field for an administrator's two-step verification recovery token."
-  },
-  "twoStepUseRecoveryCode": "復旧コードを使用",
-  "@twoStepUseRecoveryCode": {
-    "description": "Switches the two-step verification field to a recovery code."
-  },
-  "twoStepUseAuthenticatorCode": "認証コードを使用",
-  "@twoStepUseAuthenticatorCode": {
-    "description": "Switches the two-step verification field back to an authenticator app code."
-  },
-  "twoStepBackToSignIn": "サインインに戻る",
-  "@twoStepBackToSignIn": {
-    "description": "Leaves the two-step verification step for the sign-in form."
-  },
-  "twoStepOpenAuthenticator": "認証アプリに追加",
-  "@twoStepOpenAuthenticator": {
-    "description": "Opens an authenticator app on this device to add the account."
-  },
-  "twoStepSetupKeyLabel": "セットアップキー",
-  "@twoStepSetupKeyLabel": {
-    "description": "Label above the secret key to type into an authenticator app."
-  },
-  "twoStepCopySetupKey": "セットアップキーをコピー",
-  "@twoStepCopySetupKey": {
-    "description": "Copies the authenticator setup key."
-  },
-  "twoStepQrCodeLabel": "認証アプリ用の QR コード",
-  "@twoStepQrCodeLabel": {
-    "description": "Accessibility label of the QR code for an authenticator app."
-  },
-  "twoStepSetupLoading": "認証アプリを準備しています…",
-  "@twoStepSetupLoading": {
-    "description": "Shown while the authenticator setup key loads."
-  },
-  "twoStepSetupFailed": "セットアップキーを読み込めませんでした。",
-  "@twoStepSetupFailed": {
-    "description": "Shown when the authenticator setup key could not be loaded."
-  },
-  "twoStepNoAuthenticatorApp": "追加できるアプリがありませんでした。代わりにセットアップキーを認証アプリにコピーしてください。",
-  "@twoStepNoAuthenticatorApp": {
-    "description": "Shown when no app on the device could open the authenticator link."
-  },
-  "twoStepRecoveryCodesTitle": "復旧コードを保存",
-  "@twoStepRecoveryCodesTitle": {
-    "description": "Title of the screen that shows new two-step verification recovery codes once."
-  },
-  "twoStepRecoveryCodesDescription": "認証アプリを失った場合、各コードで 1 回サインインできます。安全な場所に保管してください。再表示されません。",
-  "@twoStepRecoveryCodesDescription": {
-    "description": "Explains new two-step verification recovery codes before continuing."
-  },
-  "twoStepCopyRecoveryCodes": "復旧コードをコピー",
-  "@twoStepCopyRecoveryCodes": {
-    "description": "Copies the new two-step verification recovery codes."
-  },
-  "twoStepInvalidCode": "このコードは使用できませんでした。確認してもう一度お試しください。",
-  "@twoStepInvalidCode": {
-    "description": "Shown when a two-step verification code or recovery token was not accepted."
-  },
-  "twoStepExpired": "この手順の有効期限が切れました。サインインに戻ってやり直してください。",
-  "@twoStepExpired": {
-    "description": "Shown when the two-step verification step expired or no longer applies."
-  },
-  "twoStepTooManyAttempts": "試行回数が多すぎます。数分待ってから、もう一度サインインしてください。",
-  "@twoStepTooManyAttempts": {
-    "description": "Shown when the server refuses more two-step verification codes for now."
-  },
-  "twoStepFailed": "コードを確認できませんでした。もう一度お試しください。",
-  "@twoStepFailed": {
-    "description": "Shown when a two-step verification code could not be checked, for example offline."
   },
   "serverRedirectingHttps": "サーバーがリクエストをリダイレクトしています。サーバーの HTTPS 設定を確認してください。",
   "@serverRedirectingHttps": {
@@ -1027,29 +899,9 @@
   "@noConversationsYet": {
     "description": "Empty state when the user has no chats."
   },
-  "usernameOrEmailHint": "ユーザー名またはメールを入力",
-  "@usernameOrEmailHint": {
-    "description": "Hint text for username/email input."
-  },
   "passwordHint": "パスワードを入力",
   "@passwordHint": {
     "description": "Hint text for password input."
-  },
-  "tokenHint": "Open WebUI の設定から JWT トークンを取得してください。API キー (sk-...) はストリーミングに対応していません。",
-  "@tokenHint": {
-    "description": "Help text explaining what type of token to use."
-  },
-  "apiKeyNotSupported": "API キー (sk-...) はサポートされていません。代わりに JWT トークンを使用してください。",
-  "@apiKeyNotSupported": {
-    "description": "Error message when user tries to use an API key instead of JWT token."
-  },
-  "apiKeyNoLongerSupported": "API キーはサポートされなくなったためログアウトされました。Open WebUI 設定の JWT トークンでサインインしてください。",
-  "@apiKeyNoLongerSupported": {
-    "description": "Error message shown when user is forced logged out due to using an API key."
-  },
-  "tokenTooShort": "トークンが短すぎます",
-  "@tokenTooShort": {
-    "description": "Error message when token is too short."
   },
   "signingIn": "サインイン中...",
   "@signingIn": {
@@ -1858,10 +1710,6 @@
       }
     }
   },
-  "sso": "SSO",
-  "@sso": {
-    "description": "Label for Single Sign-On authentication option."
-  },
   "ssoDescription": "組織の ID プロバイダーでサインイン",
   "@ssoDescription": {
     "description": "Description text explaining SSO authentication."
@@ -1870,77 +1718,9 @@
   "@signInWithSso": {
     "description": "Button text for SSO sign-in."
   },
-  "ssoAuthenticating": "認証中...",
-  "@ssoAuthenticating": {
-    "description": "Loading message during SSO authentication."
-  },
-  "ssoAuthFailed": "SSO 認証に失敗しました",
-  "@ssoAuthFailed": {
-    "description": "Error message when SSO authentication fails."
-  },
-  "ssoLoadingLogin": "ログインページを読み込み中...",
-  "@ssoLoadingLogin": {
-    "description": "Loading message while SSO login page loads."
-  },
-  "ldap": "LDAP",
-  "@ldap": {
-    "description": "Label for LDAP authentication option."
-  },
-  "ldapDescription": "LDAP ディレクトリの認証情報でサインイン",
-  "@ldapDescription": {
-    "description": "Description text explaining LDAP authentication."
-  },
-  "signInWithLdap": "LDAP でサインイン",
-  "@signInWithLdap": {
-    "description": "Button text for LDAP sign-in."
-  },
-  "ldapUsername": "ユーザー名",
-  "@ldapUsername": {
-    "description": "Label for LDAP username field."
-  },
-  "ldapUsernameHint": "LDAP ユーザー名を入力",
-  "@ldapUsernameHint": {
-    "description": "Hint text for LDAP username field."
-  },
-  "ldapNotEnabled": "このサーバーでは LDAP 認証が有効ではありません",
-  "@ldapNotEnabled": {
-    "description": "Error message when LDAP is not configured on the server."
-  },
-  "ssoPlatformNotSupported": "このプラットフォームでは SSO 認証はサポートされていません。代わりに認証情報または LDAP 認証を使用してください。",
-  "@ssoPlatformNotSupported": {
-    "description": "Error message when SSO is attempted on an unsupported platform (desktop/web)."
-  },
-  "proxyAuthentication": "プロキシ認証",
-  "@proxyAuthentication": {
-    "description": "Title for the proxy authentication page."
-  },
-  "proxyAuthPlatformNotSupported": "プロキシ認証にはモバイルデバイスが必要です。先にブラウザーで認証してください。",
-  "@proxyAuthPlatformNotSupported": {
-    "description": "Error message when proxy auth is attempted on an unsupported platform."
-  },
-  "proxyAuthLoading": "認証ページを読み込み中...",
-  "@proxyAuthLoading": {
-    "description": "Loading message while the proxy login page loads."
-  },
-  "proxyAuthFailed": "プロキシ認証に失敗しました",
-  "@proxyAuthFailed": {
-    "description": "Error message when proxy authentication fails."
-  },
-  "proxyAuthHelpTextSimple": "プロキシでサインインしてください。認証が完了したら、続行をタップしてサインインに進みます。",
-  "@proxyAuthHelpTextSimple": {
-    "description": "Simplified help text for proxy-only authentication flow."
-  },
-  "continueButton": "続行",
-  "@continueButton": {
-    "description": "Generic continue button text."
-  },
   "proxyAuthRequired": "このサーバーにはプロキシ認証が必要です",
   "@proxyAuthRequired": {
     "description": "Message when server is behind an authentication proxy."
-  },
-  "or": "または",
-  "@or": {
-    "description": "Separator text between authentication options."
   },
   "audioAttachment": "音声添付ファイル",
   "@audioAttachment": {
@@ -4178,7 +3958,6 @@
   "hidePassword": "Hide password",
   "openSourceLicenses": "Open source licenses",
   "sidebarButtonLabel": "サイドバー",
-  "ollama": "Ollama",
   "onDevice": "On device",
   "openWebUi": "Open WebUI",
   "moreModels": "More models",
@@ -4192,8 +3971,6 @@
   "reasoningEffortNone": "なし",
   "customReasoningEffort": "Custom effort",
   "customReasoningEffortHint": "Enter a provider-supported effort",
-  "proxyServerVerificationFailed": "Could not verify the Open WebUI server. The proxy session may have expired or be invalid. Please try again.",
-  "proxyManualSignInRequired": "Authentication failed. Please try signing in manually.",
   "sidebarSyncingChats": "Syncing chats",
   "sidebarSyncingNotes": "Syncing notes",
   "sidebarFinishingSync": "Finishing sync",
@@ -4268,7 +4045,6 @@
     }
   },
   "notificationSystemSettingsTitle": "システムの通知設定",
-  "proxyAuthSignInAgain": "プロキシ経由で再度サインイン",
   "readOnly": "読み取り専用",
   "readOnlySharedChat": "このチャットはあなたに共有されました。メッセージを送信できるのは所有者のみです。",
   "reasoningEffortDeep": "深い",
@@ -5078,6 +4854,5 @@
   "accountsSwitchStopsReply": "アカウントを切り替えると停止します。",
   "accountsSignOutStopsReply": "サインアウトすると停止します。",
   "accountsSwitchAnyway": "それでも切り替える",
-  "accountsSignOutAnyway": "それでもサインアウト",
-  "proxyAuthInAppWebView": "アプリ内で開く"
+  "accountsSignOutAnyway": "それでもサインアウト"
 }

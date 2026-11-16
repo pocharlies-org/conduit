@@ -2557,53 +2557,6 @@ class OptimizedStorageService {
     );
   }
 
-  /// Applies [edit] as [editServerEndpoints] does, and in the same write
-  /// keeps the session headers a proxy sign-in captured for [accountId] on
-  /// [routeId], a route the edit saves.
-  ///
-  /// A route behind a proxy is refused without its cookie, so the two are
-  /// saved together or not at all. Returns false, saving neither, once a
-  /// sign-out has revoked cookies since [sessionRevision] was read (see
-  /// [sessionRevocationRevision]), or when [accountId] is not an account of
-  /// the server.
-  Future<bool> editServerEndpointsWithSession(
-    String serverId,
-    List<OpenWebUiEndpoint> Function(List<OpenWebUiEndpoint> endpoints) edit, {
-    required String accountId,
-    required String routeId,
-    required Map<String, String> headers,
-    required int sessionRevision,
-  }) {
-    return _authStateLock.synchronized(
-      () => _serverConfigsLock.synchronized(() async {
-        if (sessionRevision != _sessionRevocationRevision) {
-          DebugLogger.info(
-            'endpoint-cookie-dropped-after-sign-out',
-            scope: 'storage/optimized/registry',
-          );
-          return false;
-        }
-        final account = (await _registryForWriteUnlocked()).account(
-          accountId,
-        );
-        if (account == null || account.serverId != serverId) return false;
-        await _editServerEndpointsUnlocked(
-          serverId,
-          edit,
-          session: (
-            accountId: accountId,
-            routeId: routeId,
-            headers: {
-              for (final entry in headers.entries)
-                if (isCapturedSessionHeader(entry.key)) entry.key: entry.value,
-            },
-          ),
-        );
-        return true;
-      }),
-    );
-  }
-
   Future<void> _editServerEndpointsUnlocked(
     String serverId,
     List<OpenWebUiEndpoint> Function(List<OpenWebUiEndpoint> endpoints) edit, {
@@ -2784,16 +2737,6 @@ class OptimizedStorageService {
       );
     });
   }
-
-  /// The token vaulted for [accountId], an account that is not active, so it
-  /// can be revoked on the server when signing out of that account.
-  Future<String?> vaultedTokenFor(String accountId) =>
-      _authStateLock.synchronized(
-        () => _retrySecureStorageRead(
-          () => _secureCredentialStorage.getServerToken(accountId),
-          scope: 'storage/optimized/token-vault-read',
-        ),
-      );
 
   /// The tokens kept in the vault for [accountIds] (every account when
   /// null), each with the config of the server it was kept for.
@@ -4299,8 +4242,7 @@ class OptimizedStorageService {
   ///
   /// When [preserveServerDetails] is true, only sanitized Open WebUI
   /// connection settings are restored after the broad wipe. Authentication
-  /// artifacts, app preferences, Direct profiles, and Hermes credentials are
-  /// always removed.
+  /// artifacts and app preferences are always removed.
   Future<bool> clearAllIf({
     required bool Function() canClear,
     required bool preserveServerDetails,

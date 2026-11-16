@@ -310,34 +310,4 @@ void main() {
     );
     refused({'type': 'session.update', 'session': <String, Object?>{}});
   });
-
-  test('the voice is configured to wait to be asked', () {
-    final update = directRealtimeSessionUpdate(
-      voice: 'marin',
-      transcriptionModel: 'whisper-1',
-    );
-    final session = update['session'] as Map;
-    final input = (session['audio'] as Map)['input'] as Map;
-
-    check(update['type']).equals('session.update');
-    check(session['instructions']).equals(kRealtimeCallInstructions);
-    check(input['turn_detection']).isA<Map>().deepEquals({
-      'type': 'server_vad',
-      'interrupt_response': false,
-      'create_response': false,
-    });
-    check(input['transcription']).isA<Map>().deepEquals({'model': 'whisper-1'});
-    check(((session['tools'] as List).single as Map)['name'])
-        .equals(kDelegateFunctionName);
-    check(
-          directRealtimeSessionUpdate(
-            voice: 'marin',
-            transcriptionModel: 'whisper-1',
-            instructions: 'Be brief.',
-          )['session'],
-        )
-        .isA<Map>()
-        .has((s) => s['instructions'], 'instructions')
-        .equals('Be brief.');
-  });
 }

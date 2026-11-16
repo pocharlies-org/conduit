@@ -6,7 +6,6 @@ import 'package:flutter_animate/flutter_animate.dart';
 import 'package:conduit_core/models/chat_message.dart';
 import '../../../core/services/native_sheet_bridge.dart';
 import '../../../shared/services/raster_media_policy.dart';
-import '../../../l10n/app_localizations.dart';
 import '../../../shared/theme/theme_extensions.dart';
 import '../../../shared/utils/external_link_launcher.dart';
 import '../../../shared/widgets/themed_sheets.dart';

@@ -15,8 +15,6 @@ import 'package:conduit_core/utils/debug_logger.dart';
 import '../../../shared/theme/conduit_input_styles.dart';
 import '../../../shared/theme/theme_extensions.dart';
 import '../../../shared/utils/conversation_context_menu.dart';
-import '../../../shared/utils/file_type_utils.dart';
-import '../../../shared/utils/locale_display_formatters.dart';
 
 import 'package:conduit_core/features/chat/services/chat_message_actions.dart';
 import 'package:conduit_core/features/chat/utils/file_utils.dart';

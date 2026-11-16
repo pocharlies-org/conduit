@@ -3,7 +3,6 @@ import 'dart:async';
 import 'package:material_ui/material_ui.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_riverpod/misc.dart' show ProviderListenable;
-import 'package:flutter/services.dart';
 import 'package:uuid/uuid.dart';
 
 import 'package:conduit_core/features/tools/providers/tools_providers.dart';
@@ -19,7 +18,6 @@ import 'package:conduit_core/features/chat/providers/chat_providers.dart'
 import 'package:conduit_core/features/chat/providers/reasoning_effort_provider.dart';
 
 import '../../l10n/app_localizations.dart';
-import '../../shared/theme/theme_extensions.dart';
 import '../../shared/theme/tweakcn_themes.dart';
 
 import 'package:conduit_core/models/model.dart';

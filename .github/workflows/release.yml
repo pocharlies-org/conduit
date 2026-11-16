@@ -24,8 +24,8 @@ jobs:
         with:
           persist-credentials: false
 
-      # Only the third_party/ path dependencies; openwebui-src/ and
-      # hermes-src/ are reference sources no build step reads.
+      # Only the third_party/ path dependencies; openwebui-src/ is a
+      # reference source no build step reads.
       - parallel:
           - name: Set Up Flutter
             uses: subosito/flutter-action@1a449444c387b1966244ae4d4f8c696479add0b2 # v2
@@ -83,8 +83,8 @@ jobs:
           persist-credentials: false
 
         #2 Setup Java, Gradle and Flutter side by side
-      # Only the third_party/ path dependencies; openwebui-src/ and
-      # hermes-src/ are reference sources no build step reads.
+      # Only the third_party/ path dependencies; openwebui-src/ is a
+      # reference source no build step reads.
       - parallel:
           - name: Set Up Java
             uses: actions/setup-java@v4
@@ -181,8 +181,8 @@ jobs:
           persist-credentials: false
 
         #2 Setup Flutter
-      # Only the third_party/ path dependencies; openwebui-src/ and
-      # hermes-src/ are reference sources no build step reads.
+      # Only the third_party/ path dependencies; openwebui-src/ is a
+      # reference source no build step reads.
       - parallel:
           - name: Set Up Flutter
             uses: subosito/flutter-action@v2

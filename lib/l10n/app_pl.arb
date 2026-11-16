@@ -319,10 +319,6 @@
   "@signIn": {
     "description": "Button/heading for sign-in flows."
   },
-  "credentials": "Dane logowania",
-  "@credentials": {
-    "description": "Authentication method label for username/password sign-in."
-  },
   "apiKey": "Klucz API",
   "@apiKey": {
     "description": "Label for API key input field."
@@ -334,10 +330,6 @@
   "jwt": "Token",
   "@jwt": {
     "description": "Authentication method label for JWT token sign-in."
-  },
-  "usernameOrEmail": "E-mail lub nazwa użytkownika",
-  "@usernameOrEmail": {
-    "description": "Label for username/email input field."
   },
   "password": "Hasło",
   "@password": {
@@ -351,17 +343,9 @@
   "@hidePassword": {
     "description": "Tooltip for obscuring a password or session token field."
   },
-  "signInWithToken": "Zaloguj się tokenem",
-  "@signInWithToken": {
-    "description": "Alternative sign-in method using a JWT token."
-  },
   "serverUrl": "Adres Open WebUI",
   "@serverUrl": {
     "description": "Label for server URL field."
-  },
-  "headerName": "Nazwa nagłówka",
-  "@headerName": {
-    "description": "Label for custom header key."
   },
   "connecting": "Łączenie…",
   "@connecting": {
@@ -382,118 +366,6 @@
   "signInAccountPendingApproval": "Twoje konto czeka na zatwierdzenie przez administratora. Spróbuj ponownie po jego zatwierdzeniu.",
   "@signInAccountPendingApproval": {
     "description": "Sign-in error when the Open WebUI account still waits for an administrator to approve it."
-  },
-  "signInTwoStepVerificationRequired": "To konto używa weryfikacji dwuetapowej. Zaloguj się ponownie, a następnie wpisz kod z aplikacji uwierzytelniającej.",
-  "@signInTwoStepVerificationRequired": {
-    "description": "Sign-in error when saved credentials met Open WebUI's two-step verification, which needs a code typed in."
-  },
-  "twoStepVerifyTitle": "Potwierdź logowanie",
-  "@twoStepVerifyTitle": {
-    "description": "Title of the sign-in step that asks for a two-step verification code."
-  },
-  "twoStepEnrollTitle": "Skonfiguruj aplikację uwierzytelniającą",
-  "@twoStepEnrollTitle": {
-    "description": "Title of the sign-in step that adds an authenticator app for two-step verification."
-  },
-  "twoStepRecoverTitle": "Odzyskaj aplikację uwierzytelniającą",
-  "@twoStepRecoverTitle": {
-    "description": "Title of the sign-in step that redeems an administrator's two-step verification recovery token."
-  },
-  "twoStepVerifyDescription": "Wpisz sześciocyfrowy kod z aplikacji uwierzytelniającej.",
-  "@twoStepVerifyDescription": {
-    "description": "Instruction for entering a two-step verification code."
-  },
-  "twoStepRecoveryCodeDescription": "Wpisz jeden z zapisanych kodów odzyskiwania.",
-  "@twoStepRecoveryCodeDescription": {
-    "description": "Instruction for signing in with a saved two-step verification recovery code."
-  },
-  "twoStepEnrollDescription": "Dodaj to konto do aplikacji uwierzytelniającej, a następnie wpisz wyświetlony sześciocyfrowy kod.",
-  "@twoStepEnrollDescription": {
-    "description": "Instruction for adding the account to an authenticator app during sign-in."
-  },
-  "twoStepRecoverDescription": "Administrator zresetował weryfikację dwuetapową dla tego konta. Wpisz otrzymany od niego token odzyskiwania.",
-  "@twoStepRecoverDescription": {
-    "description": "Instruction for redeeming the recovery token an administrator issued after resetting two-step verification."
-  },
-  "twoStepCodeLabel": "Kod uwierzytelniający",
-  "@twoStepCodeLabel": {
-    "description": "Label of the field for an authenticator app code."
-  },
-  "twoStepRecoveryCodeLabel": "Kod odzyskiwania",
-  "@twoStepRecoveryCodeLabel": {
-    "description": "Label of the field for a two-step verification recovery code."
-  },
-  "twoStepResetTokenLabel": "Token odzyskiwania",
-  "@twoStepResetTokenLabel": {
-    "description": "Label of the field for an administrator's two-step verification recovery token."
-  },
-  "twoStepUseRecoveryCode": "Użyj kodu odzyskiwania",
-  "@twoStepUseRecoveryCode": {
-    "description": "Switches the two-step verification field to a recovery code."
-  },
-  "twoStepUseAuthenticatorCode": "Użyj kodu uwierzytelniającego",
-  "@twoStepUseAuthenticatorCode": {
-    "description": "Switches the two-step verification field back to an authenticator app code."
-  },
-  "twoStepBackToSignIn": "Wróć do logowania",
-  "@twoStepBackToSignIn": {
-    "description": "Leaves the two-step verification step for the sign-in form."
-  },
-  "twoStepOpenAuthenticator": "Dodaj do aplikacji uwierzytelniającej",
-  "@twoStepOpenAuthenticator": {
-    "description": "Opens an authenticator app on this device to add the account."
-  },
-  "twoStepSetupKeyLabel": "Klucz konfiguracji",
-  "@twoStepSetupKeyLabel": {
-    "description": "Label above the secret key to type into an authenticator app."
-  },
-  "twoStepCopySetupKey": "Kopiuj klucz konfiguracji",
-  "@twoStepCopySetupKey": {
-    "description": "Copies the authenticator setup key."
-  },
-  "twoStepQrCodeLabel": "Kod QR dla aplikacji uwierzytelniającej",
-  "@twoStepQrCodeLabel": {
-    "description": "Accessibility label of the QR code for an authenticator app."
-  },
-  "twoStepSetupLoading": "Przygotowywanie aplikacji uwierzytelniającej…",
-  "@twoStepSetupLoading": {
-    "description": "Shown while the authenticator setup key loads."
-  },
-  "twoStepSetupFailed": "Nie udało się wczytać klucza konfiguracji.",
-  "@twoStepSetupFailed": {
-    "description": "Shown when the authenticator setup key could not be loaded."
-  },
-  "twoStepNoAuthenticatorApp": "Żadna aplikacja nie mogła go dodać. Skopiuj klucz konfiguracji do aplikacji uwierzytelniającej.",
-  "@twoStepNoAuthenticatorApp": {
-    "description": "Shown when no app on the device could open the authenticator link."
-  },
-  "twoStepRecoveryCodesTitle": "Zapisz kody odzyskiwania",
-  "@twoStepRecoveryCodesTitle": {
-    "description": "Title of the screen that shows new two-step verification recovery codes once."
-  },
-  "twoStepRecoveryCodesDescription": "Każdy kod pozwala zalogować się raz, jeśli zgubisz aplikację uwierzytelniającą. Przechowuj je w bezpiecznym miejscu: nie zostaną pokazane ponownie.",
-  "@twoStepRecoveryCodesDescription": {
-    "description": "Explains new two-step verification recovery codes before continuing."
-  },
-  "twoStepCopyRecoveryCodes": "Kopiuj kody odzyskiwania",
-  "@twoStepCopyRecoveryCodes": {
-    "description": "Copies the new two-step verification recovery codes."
-  },
-  "twoStepInvalidCode": "Ten kod nie zadziałał. Sprawdź go i spróbuj ponownie.",
-  "@twoStepInvalidCode": {
-    "description": "Shown when a two-step verification code or recovery token was not accepted."
-  },
-  "twoStepExpired": "Ten krok wygasł. Wróć do logowania i zacznij od nowa.",
-  "@twoStepExpired": {
-    "description": "Shown when the two-step verification step expired or no longer applies."
-  },
-  "twoStepTooManyAttempts": "Zbyt wiele prób. Odczekaj kilka minut, a następnie zaloguj się ponownie.",
-  "@twoStepTooManyAttempts": {
-    "description": "Shown when the server refuses more two-step verification codes for now."
-  },
-  "twoStepFailed": "Nie udało się sprawdzić kodu. Spróbuj ponownie.",
-  "@twoStepFailed": {
-    "description": "Shown when a two-step verification code could not be checked, for example offline."
   },
   "serverRedirectingHttps": "Serwer przekierowuje żądania. Sprawdź konfigurację HTTPS swojego serwera.",
   "@serverRedirectingHttps": {
@@ -1171,29 +1043,9 @@
   "@noConversationsYet": {
     "description": "Empty state when the user has no chats."
   },
-  "usernameOrEmailHint": "E-mail lub nazwa użytkownika",
-  "@usernameOrEmailHint": {
-    "description": "Hint text for username/email input."
-  },
   "passwordHint": "Hasło",
   "@passwordHint": {
     "description": "Hint text for password input."
-  },
-  "tokenHint": "Wklej token sesji Open WebUI z zalogowanej przeglądarki. Klucze API nie są obsługiwane.",
-  "@tokenHint": {
-    "description": "Help text explaining what type of token to use."
-  },
-  "apiKeyNotSupported": "Klucze API nie są tu obsługiwane. Użyj tokena sesji Open WebUI.",
-  "@apiKeyNotSupported": {
-    "description": "Error message when user tries to use an API key instead of JWT token."
-  },
-  "apiKeyNoLongerSupported": "Ten zapisany klucz API nie może już służyć do logowania. Wybierz inną metodę logowania.",
-  "@apiKeyNoLongerSupported": {
-    "description": "Error message shown when user is forced logged out due to using an API key."
-  },
-  "tokenTooShort": "Wpisz prawidłowy token sesji.",
-  "@tokenTooShort": {
-    "description": "Error message when token is too short."
   },
   "signingIn": "Logowanie…",
   "@signingIn": {
@@ -2015,10 +1867,6 @@
       }
     }
   },
-  "sso": "SSO",
-  "@sso": {
-    "description": "Label for Single Sign-On authentication option."
-  },
   "ssoDescription": "Zaloguj się przez dostawcę tożsamości swojej organizacji",
   "@ssoDescription": {
     "description": "Description text explaining SSO authentication."
@@ -2027,86 +1875,9 @@
   "@signInWithSso": {
     "description": "Button text for SSO sign-in."
   },
-  "ssoAuthenticating": "Uwierzytelnianie…",
-  "@ssoAuthenticating": {
-    "description": "Loading message during SSO authentication."
-  },
-  "ssoAuthFailed": "Uwierzytelnianie SSO nie powiodło się",
-  "@ssoAuthFailed": {
-    "description": "Error message when SSO authentication fails."
-  },
-  "ssoLoadingLogin": "Wczytywanie strony logowania…",
-  "@ssoLoadingLogin": {
-    "description": "Loading message while SSO login page loads."
-  },
-  "ldap": "LDAP",
-  "@ldap": {
-    "description": "Label for LDAP authentication option."
-  },
-  "ldapDescription": "Zaloguj się danymi z katalogu LDAP",
-  "@ldapDescription": {
-    "description": "Description text explaining LDAP authentication."
-  },
-  "signInWithLdap": "Zaloguj się przez LDAP",
-  "@signInWithLdap": {
-    "description": "Button text for LDAP sign-in."
-  },
-  "ldapUsername": "Nazwa użytkownika",
-  "@ldapUsername": {
-    "description": "Label for LDAP username field."
-  },
-  "ldapUsernameHint": "Wpisz nazwę użytkownika LDAP",
-  "@ldapUsernameHint": {
-    "description": "Hint text for LDAP username field."
-  },
-  "ldapNotEnabled": "Uwierzytelnianie LDAP nie jest włączone na tym serwerze",
-  "@ldapNotEnabled": {
-    "description": "Error message when LDAP is not configured on the server."
-  },
-  "ssoPlatformNotSupported": "Uwierzytelnianie SSO nie jest obsługiwane na tej platformie. Użyj zamiast tego danych logowania lub uwierzytelniania LDAP.",
-  "@ssoPlatformNotSupported": {
-    "description": "Error message when SSO is attempted on an unsupported platform (desktop/web)."
-  },
-  "proxyAuthentication": "Uwierzytelnianie przez proxy",
-  "@proxyAuthentication": {
-    "description": "Title for the proxy authentication page."
-  },
-  "proxyAuthPlatformNotSupported": "Uwierzytelnianie przez proxy wymaga urządzenia mobilnego. Najpierw zaloguj się przez przeglądarkę.",
-  "@proxyAuthPlatformNotSupported": {
-    "description": "Error message when proxy auth is attempted on an unsupported platform."
-  },
-  "proxyAuthLoading": "Wczytywanie strony uwierzytelniania…",
-  "@proxyAuthLoading": {
-    "description": "Loading message while the proxy login page loads."
-  },
-  "proxyAuthSignInAgain": "Zaloguj się ponownie przez proxy",
-  "proxyAuthFailed": "Uwierzytelnianie przez proxy nie powiodło się",
-  "@proxyAuthFailed": {
-    "description": "Error message when proxy authentication fails."
-  },
-  "proxyServerVerificationFailed": "Nie można zweryfikować serwera Open WebUI. Sesja proxy mogła wygasnąć lub być nieprawidłowa. Spróbuj ponownie.",
-  "@proxyServerVerificationFailed": {
-    "description": "Error shown when a server cannot be verified after proxy authentication."
-  },
-  "proxyManualSignInRequired": "Uwierzytelnianie nie powiodło się. Spróbuj zalogować się ręcznie.",
-  "@proxyManualSignInRequired": {
-    "description": "Error shown when trusted-proxy authentication cannot produce a valid Open WebUI session."
-  },
-  "proxyAuthHelpTextSimple": "Zaloguj się przez swoje proxy. Po uwierzytelnieniu dotknij Kontynuuj, aby przejść do logowania.",
-  "@proxyAuthHelpTextSimple": {
-    "description": "Simplified help text for proxy-only authentication flow."
-  },
-  "continueButton": "Kontynuuj",
-  "@continueButton": {
-    "description": "Generic continue button text."
-  },
   "proxyAuthRequired": "Ten serwer wymaga uwierzytelniania przez proxy",
   "@proxyAuthRequired": {
     "description": "Message when server is behind an authentication proxy."
-  },
-  "or": "lub",
-  "@or": {
-    "description": "Separator text between authentication options."
   },
   "audioAttachment": "Załącznik audio",
   "@audioAttachment": {
@@ -5144,10 +4915,6 @@
     "description": "State label for a boolean valve that is off."
   },
   "sidebarButtonLabel": "Pasek boczny",
-  "ollama": "Ollama",
-  "@ollama": {
-    "description": "Label for an Ollama native API connection."
-  },
   "onDevice": "Na urządzeniu",
   "@onDevice": {
     "description": "Badge for chats and data stored only on this device."
@@ -6225,6 +5992,5 @@
         "example": "gpt-realtime-2.1-mini"
       }
     }
-  },
-  "proxyAuthInAppWebView": "Otwórz w aplikacji"
+  }
 }

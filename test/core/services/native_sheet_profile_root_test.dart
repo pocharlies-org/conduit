@@ -145,9 +145,6 @@ void main() {
       expect(ids, isNot(contains(nativeAccountSignOutActionId)));
       expect(_item(sections, nativeSignOutActionId).title, _l10n.signOut);
     });
-
-    // Next to a usable Hermes or Direct backend Settings stays open with no
-    // Open WebUI account; the card still leads to all of them.
   });
 
   group('native Accounts page', () {

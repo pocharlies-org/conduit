@@ -212,10 +212,6 @@
   "@signIn": {
     "description": "Button/heading for sign-in flows."
   },
-  "credentials": "Přihlašovací údaje",
-  "@credentials": {
-    "description": "Header for credential input section."
-  },
   "apiKey": "Klíč API",
   "@apiKey": {
     "description": "Label for API key input field."
@@ -225,25 +221,13 @@
     "description": "Label for JWT token input field."
   },
   "jwt": "JWT",
-  "usernameOrEmail": "Uživatelské jméno nebo e-mail",
-  "@usernameOrEmail": {
-    "description": "Label for username/email input field."
-  },
   "password": "Heslo",
   "@password": {
     "description": "Label for password input field."
   },
-  "signInWithToken": "Přihlásit se tokenem",
-  "@signInWithToken": {
-    "description": "Alternative sign-in method using a JWT token."
-  },
   "serverUrl": "URL serveru",
   "@serverUrl": {
     "description": "Label for server URL field."
-  },
-  "headerName": "Název hlavičky",
-  "@headerName": {
-    "description": "Label for custom header key."
   },
   "connecting": "Připojování...",
   "@connecting": {
@@ -264,118 +248,6 @@
   "signInAccountPendingApproval": "Váš účet čeká na schválení správcem. Zkuste to znovu, až bude schválen.",
   "@signInAccountPendingApproval": {
     "description": "Sign-in error when the Open WebUI account still waits for an administrator to approve it."
-  },
-  "signInTwoStepVerificationRequired": "Tento účet používá dvoufázové ověření. Přihlaste se znovu a pak zadejte kód z ověřovací aplikace.",
-  "@signInTwoStepVerificationRequired": {
-    "description": "Sign-in error when saved credentials met Open WebUI's two-step verification, which needs a code typed in."
-  },
-  "twoStepVerifyTitle": "Potvrďte přihlášení",
-  "@twoStepVerifyTitle": {
-    "description": "Title of the sign-in step that asks for a two-step verification code."
-  },
-  "twoStepEnrollTitle": "Nastavte ověřovací aplikaci",
-  "@twoStepEnrollTitle": {
-    "description": "Title of the sign-in step that adds an authenticator app for two-step verification."
-  },
-  "twoStepRecoverTitle": "Obnovte ověřovací aplikaci",
-  "@twoStepRecoverTitle": {
-    "description": "Title of the sign-in step that redeems an administrator's two-step verification recovery token."
-  },
-  "twoStepVerifyDescription": "Zadejte šestimístný kód z ověřovací aplikace.",
-  "@twoStepVerifyDescription": {
-    "description": "Instruction for entering a two-step verification code."
-  },
-  "twoStepRecoveryCodeDescription": "Zadejte jeden z kódů pro obnovení, které jste si uložili.",
-  "@twoStepRecoveryCodeDescription": {
-    "description": "Instruction for signing in with a saved two-step verification recovery code."
-  },
-  "twoStepEnrollDescription": "Přidejte tento účet do ověřovací aplikace a pak zadejte šestimístný kód, který zobrazí.",
-  "@twoStepEnrollDescription": {
-    "description": "Instruction for adding the account to an authenticator app during sign-in."
-  },
-  "twoStepRecoverDescription": "Správce pro tento účet resetoval dvoufázové ověření. Zadejte token pro obnovení, který vám dal.",
-  "@twoStepRecoverDescription": {
-    "description": "Instruction for redeeming the recovery token an administrator issued after resetting two-step verification."
-  },
-  "twoStepCodeLabel": "Ověřovací kód",
-  "@twoStepCodeLabel": {
-    "description": "Label of the field for an authenticator app code."
-  },
-  "twoStepRecoveryCodeLabel": "Kód pro obnovení",
-  "@twoStepRecoveryCodeLabel": {
-    "description": "Label of the field for a two-step verification recovery code."
-  },
-  "twoStepResetTokenLabel": "Token pro obnovení",
-  "@twoStepResetTokenLabel": {
-    "description": "Label of the field for an administrator's two-step verification recovery token."
-  },
-  "twoStepUseRecoveryCode": "Použít kód pro obnovení",
-  "@twoStepUseRecoveryCode": {
-    "description": "Switches the two-step verification field to a recovery code."
-  },
-  "twoStepUseAuthenticatorCode": "Použít ověřovací kód",
-  "@twoStepUseAuthenticatorCode": {
-    "description": "Switches the two-step verification field back to an authenticator app code."
-  },
-  "twoStepBackToSignIn": "Zpět na přihlášení",
-  "@twoStepBackToSignIn": {
-    "description": "Leaves the two-step verification step for the sign-in form."
-  },
-  "twoStepOpenAuthenticator": "Přidat do ověřovací aplikace",
-  "@twoStepOpenAuthenticator": {
-    "description": "Opens an authenticator app on this device to add the account."
-  },
-  "twoStepSetupKeyLabel": "Klíč pro nastavení",
-  "@twoStepSetupKeyLabel": {
-    "description": "Label above the secret key to type into an authenticator app."
-  },
-  "twoStepCopySetupKey": "Kopírovat klíč pro nastavení",
-  "@twoStepCopySetupKey": {
-    "description": "Copies the authenticator setup key."
-  },
-  "twoStepQrCodeLabel": "QR kód pro ověřovací aplikaci",
-  "@twoStepQrCodeLabel": {
-    "description": "Accessibility label of the QR code for an authenticator app."
-  },
-  "twoStepSetupLoading": "Připravuje se ověřovací aplikace…",
-  "@twoStepSetupLoading": {
-    "description": "Shown while the authenticator setup key loads."
-  },
-  "twoStepSetupFailed": "Klíč pro nastavení se nepodařilo načíst.",
-  "@twoStepSetupFailed": {
-    "description": "Shown when the authenticator setup key could not be loaded."
-  },
-  "twoStepNoAuthenticatorApp": "Žádná aplikace ho nedokázala přidat. Zkopírujte klíč pro nastavení do ověřovací aplikace.",
-  "@twoStepNoAuthenticatorApp": {
-    "description": "Shown when no app on the device could open the authenticator link."
-  },
-  "twoStepRecoveryCodesTitle": "Uložte si kódy pro obnovení",
-  "@twoStepRecoveryCodesTitle": {
-    "description": "Title of the screen that shows new two-step verification recovery codes once."
-  },
-  "twoStepRecoveryCodesDescription": "Každý kód vás jednou přihlásí, pokud přijdete o ověřovací aplikaci. Uložte je na bezpečné místo: znovu se nezobrazí.",
-  "@twoStepRecoveryCodesDescription": {
-    "description": "Explains new two-step verification recovery codes before continuing."
-  },
-  "twoStepCopyRecoveryCodes": "Kopírovat kódy pro obnovení",
-  "@twoStepCopyRecoveryCodes": {
-    "description": "Copies the new two-step verification recovery codes."
-  },
-  "twoStepInvalidCode": "Tento kód nefungoval. Zkontrolujte ho a zkuste to znovu.",
-  "@twoStepInvalidCode": {
-    "description": "Shown when a two-step verification code or recovery token was not accepted."
-  },
-  "twoStepExpired": "Platnost tohoto kroku vypršela. Vraťte se na přihlášení a začněte znovu.",
-  "@twoStepExpired": {
-    "description": "Shown when the two-step verification step expired or no longer applies."
-  },
-  "twoStepTooManyAttempts": "Příliš mnoho pokusů. Počkejte několik minut a pak se přihlaste znovu.",
-  "@twoStepTooManyAttempts": {
-    "description": "Shown when the server refuses more two-step verification codes for now."
-  },
-  "twoStepFailed": "Kód se nepodařilo ověřit. Zkuste to znovu.",
-  "@twoStepFailed": {
-    "description": "Shown when a two-step verification code could not be checked, for example offline."
   },
   "serverRedirectingHttps": "Server přesměrovává požadavky. Zkontrolujte konfiguraci HTTPS serveru.",
   "@serverRedirectingHttps": {
@@ -1027,29 +899,9 @@
   "@noConversationsYet": {
     "description": "Empty state when the user has no chats."
   },
-  "usernameOrEmailHint": "Zadejte uživatelské jméno nebo e-mail",
-  "@usernameOrEmailHint": {
-    "description": "Hint text for username/email input."
-  },
   "passwordHint": "Zadejte heslo",
   "@passwordHint": {
     "description": "Hint text for password input."
-  },
-  "tokenHint": "Token JWT získáte v nastavení Open WebUI. Klíče API (sk-...) nejsou pro streamování podporovány.",
-  "@tokenHint": {
-    "description": "Help text explaining what type of token to use."
-  },
-  "apiKeyNotSupported": "Klíče API (sk-...) nejsou podporovány. Použijte místo toho token JWT.",
-  "@apiKeyNotSupported": {
-    "description": "Error message when user tries to use an API key instead of JWT token."
-  },
-  "apiKeyNoLongerSupported": "Byli jste odhlášeni, protože klíče API už nejsou podporovány. Přihlaste se tokenem JWT z nastavení Open WebUI.",
-  "@apiKeyNoLongerSupported": {
-    "description": "Error message shown when user is forced logged out due to using an API key."
-  },
-  "tokenTooShort": "Token je příliš krátký",
-  "@tokenTooShort": {
-    "description": "Error message when token is too short."
   },
   "signingIn": "Přihlašování...",
   "@signingIn": {
@@ -1858,10 +1710,6 @@
       }
     }
   },
-  "sso": "SSO",
-  "@sso": {
-    "description": "Label for Single Sign-On authentication option."
-  },
   "ssoDescription": "Přihlášení přes poskytovatele identity vaší organizace",
   "@ssoDescription": {
     "description": "Description text explaining SSO authentication."
@@ -1870,77 +1718,9 @@
   "@signInWithSso": {
     "description": "Button text for SSO sign-in."
   },
-  "ssoAuthenticating": "Ověřování...",
-  "@ssoAuthenticating": {
-    "description": "Loading message during SSO authentication."
-  },
-  "ssoAuthFailed": "Ověření SSO selhalo",
-  "@ssoAuthFailed": {
-    "description": "Error message when SSO authentication fails."
-  },
-  "ssoLoadingLogin": "Načítání přihlašovací stránky...",
-  "@ssoLoadingLogin": {
-    "description": "Loading message while SSO login page loads."
-  },
-  "ldap": "LDAP",
-  "@ldap": {
-    "description": "Label for LDAP authentication option."
-  },
-  "ldapDescription": "Přihlášení pomocí přihlašovacích údajů z adresáře LDAP",
-  "@ldapDescription": {
-    "description": "Description text explaining LDAP authentication."
-  },
-  "signInWithLdap": "Přihlásit se přes LDAP",
-  "@signInWithLdap": {
-    "description": "Button text for LDAP sign-in."
-  },
-  "ldapUsername": "Uživatelské jméno",
-  "@ldapUsername": {
-    "description": "Label for LDAP username field."
-  },
-  "ldapUsernameHint": "Zadejte uživatelské jméno LDAP",
-  "@ldapUsernameHint": {
-    "description": "Hint text for LDAP username field."
-  },
-  "ldapNotEnabled": "Ověřování LDAP není na tomto serveru povoleno",
-  "@ldapNotEnabled": {
-    "description": "Error message when LDAP is not configured on the server."
-  },
-  "ssoPlatformNotSupported": "Ověřování SSO není na této platformě podporováno. Použijte místo toho přihlašovací údaje nebo LDAP.",
-  "@ssoPlatformNotSupported": {
-    "description": "Error message when SSO is attempted on an unsupported platform (desktop/web)."
-  },
-  "proxyAuthentication": "Ověření přes proxy",
-  "@proxyAuthentication": {
-    "description": "Title for the proxy authentication page."
-  },
-  "proxyAuthPlatformNotSupported": "Ověření přes proxy vyžaduje mobilní zařízení. Nejprve se prosím ověřte v prohlížeči.",
-  "@proxyAuthPlatformNotSupported": {
-    "description": "Error message when proxy auth is attempted on an unsupported platform."
-  },
-  "proxyAuthLoading": "Načítání ověřovací stránky...",
-  "@proxyAuthLoading": {
-    "description": "Loading message while the proxy login page loads."
-  },
-  "proxyAuthFailed": "Ověření přes proxy selhalo",
-  "@proxyAuthFailed": {
-    "description": "Error message when proxy authentication fails."
-  },
-  "proxyAuthHelpTextSimple": "Přihlaste se přes proxy. Po ověření pokračujte klepnutím na Pokračovat.",
-  "@proxyAuthHelpTextSimple": {
-    "description": "Simplified help text for proxy-only authentication flow."
-  },
-  "continueButton": "Pokračovat",
-  "@continueButton": {
-    "description": "Generic continue button text."
-  },
   "proxyAuthRequired": "Tento server vyžaduje ověření přes proxy",
   "@proxyAuthRequired": {
     "description": "Message when server is behind an authentication proxy."
-  },
-  "or": "nebo",
-  "@or": {
-    "description": "Separator text between authentication options."
   },
   "audioAttachment": "Zvuková příloha",
   "@audioAttachment": {
@@ -4427,7 +4207,6 @@
   "hidePassword": "Hide password",
   "openSourceLicenses": "Open source licenses",
   "sidebarButtonLabel": "Postranní panel",
-  "ollama": "Ollama",
   "onDevice": "On device",
   "openWebUi": "Open WebUI",
   "moreModels": "More models",
@@ -4441,8 +4220,6 @@
   "reasoningEffortNone": "Žádná",
   "customReasoningEffort": "Custom effort",
   "customReasoningEffortHint": "Enter a provider-supported effort",
-  "proxyServerVerificationFailed": "Could not verify the Open WebUI server. The proxy session may have expired or be invalid. Please try again.",
-  "proxyManualSignInRequired": "Authentication failed. Please try signing in manually.",
   "sidebarSyncingChats": "Syncing chats",
   "sidebarSyncingNotes": "Syncing notes",
   "sidebarFinishingSync": "Finishing sync",
@@ -4517,7 +4294,6 @@
     }
   },
   "notificationSystemSettingsTitle": "Systémové nastavení oznámení",
-  "proxyAuthSignInAgain": "Znovu se přihlásit přes proxy",
   "readOnly": "Jen pro čtení",
   "readOnlySharedChat": "Tento chat byl sdílen s vámi. Zprávy může posílat pouze jeho vlastník.",
   "reasoningEffortDeep": "Hluboké",
@@ -5327,6 +5103,5 @@
   "accountsSwitchStopsReply": "Přepnutí účtu ji zastaví.",
   "accountsSignOutStopsReply": "Odhlášení ji zastaví.",
   "accountsSwitchAnyway": "Přesto přepnout",
-  "accountsSignOutAnyway": "Přesto se odhlásit",
-  "proxyAuthInAppWebView": "Otevřít v aplikaci"
+  "accountsSignOutAnyway": "Přesto se odhlásit"
 }

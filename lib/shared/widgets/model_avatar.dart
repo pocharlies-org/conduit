@@ -49,12 +49,10 @@ class _ModelAvatarPlaceholder extends StatelessWidget {
   const _ModelAvatarPlaceholder({
     required this.size,
     required this.label,
-    this.child,
   });
 
   final double size;
   final String? label;
-  final Widget? child;
 
   @override
   Widget build(BuildContext context) {
@@ -77,21 +75,15 @@ class _ModelAvatarPlaceholder extends StatelessWidget {
         ),
       ),
       alignment: Alignment.center,
-      child:
-          child ??
-          (uppercase != null
-              ? Text(
-                  uppercase,
-                  style: AppTypography.small.copyWith(
-                    color: theme.buttonPrimary,
-                    fontWeight: FontWeight.w600,
-                  ),
-                )
-              : Icon(
-                  Icons.psychology,
-                  color: theme.buttonPrimary,
-                  size: size * 0.5,
-                )),
+      child: uppercase != null
+          ? Text(
+              uppercase,
+              style: AppTypography.small.copyWith(
+                color: theme.buttonPrimary,
+                fontWeight: FontWeight.w600,
+              ),
+            )
+          : Icon(Icons.psychology, color: theme.buttonPrimary, size: size * 0.5),
     );
   }
 }

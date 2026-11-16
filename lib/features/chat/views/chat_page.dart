@@ -3639,7 +3639,6 @@ class _ChatPageState extends ConsumerState<ChatPage> {
       ),
     );
     final isLoadingConversation = ref.watch(isLoadingConversationProvider);
-    final activeConversation = ref.watch(activeConversationProvider);
     final formattedModelName = selectedModel != null
         ? _formatModelDisplayName(selectedModel.name)
         : null;

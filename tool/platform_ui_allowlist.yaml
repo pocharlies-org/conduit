@@ -1,4 +1,4 @@
-# Verified production-main baseline at e47756206: 396 entries, 436 occurrences.
+# Verified production-main baseline at e47756206: 394 entries, 434 occurrences.
 # Generated .g.dart, .freezed.dart and l10n Dart are generator-owned.
 version: 1
 exceptions:
@@ -2053,20 +2053,6 @@ exceptions:
     removal: platform-ui-migration
 
   - path: lib/shared/utils/file_type_utils.dart
-    package: "package:material_ui/material_ui.dart"
-    count: 1
-    owner: shared-widgets
-    reason: "Existing use awaiting migration to the platform UI seam"
-    removal: platform-ui-migration
-
-  - path: lib/shared/utils/platform_page_route.dart
-    package: "package:cupertino_ui/cupertino_ui.dart"
-    count: 1
-    owner: shared-widgets
-    reason: "Existing use awaiting migration to the platform UI seam"
-    removal: platform-ui-migration
-
-  - path: lib/shared/utils/platform_page_route.dart
     package: "package:material_ui/material_ui.dart"
     count: 1
     owner: shared-widgets

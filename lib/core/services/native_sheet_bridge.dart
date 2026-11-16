@@ -116,7 +116,6 @@ class NativeSheetRoutes {
   static const voice = 'voice';
   static const aiMemory = 'ai-memory';
   static const dataConnection = 'data-connection';
-  static const directConnections = 'open-direct-connections';
   static const personalConnections = 'open-personal-connections';
   static const scheduledTasks = 'open-scheduled-tasks';
   static const calendar = 'open-calendar';

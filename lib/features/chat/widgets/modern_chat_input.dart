@@ -318,10 +318,6 @@ class ModernChatInput extends ConsumerStatefulWidget {
     this.composerTextInsertionTargetId,
   });
 
-  @visibleForTesting
-  static TextStyle debugComposerInputTextStyle({required bool isRecording}) =>
-      _composerInputTextStyle(isRecording);
-
   @override
   ConsumerState<ModernChatInput> createState() => _ModernChatInputState();
 }
@@ -3037,13 +3033,6 @@ class _ModernChatInputState extends ConsumerState<ModernChatInput>
       voiceAvailable: voiceAvailable,
       isGenerating: isGenerating,
     );
-    if (_isFallbackAttachmentPanelVisible && !showOverflowButton) {
-      WidgetsBinding.instance.addPostFrameCallback((_) {
-        if (mounted && !_isDeactivated) {
-          _dismissFallbackAttachmentPanel();
-        }
-      });
-    }
     final nativeConnections = !kIsWeb && Platform.isIOS
         ? readComposerPersonalConnections(ref.watch)
         : ComposerPersonalConnections.none;

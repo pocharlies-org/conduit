@@ -30,9 +30,9 @@ void main() {
 
   group('Android cookie expiry', () {
     test('a __Host- cookie is expired Secure, host-only, at /', () {
-      // hermes-src/hermes_cli/dashboard_auth/cookies.py: __Host- on HTTPS.
-      // A Domain attribute or a missing Secure makes Chromium refuse the
-      // deletion, and sign-out fails with the cookie still set.
+      // A `__Host-` cookie is Secure and host-only. A Domain attribute or a
+      // missing Secure makes Chromium refuse the deletion, and sign-out fails
+      // with the cookie still set.
       check(
         androidWebViewCookieExpiries(
           url: Uri.parse('https://hermes.example/'),

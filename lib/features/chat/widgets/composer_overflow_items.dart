@@ -9,7 +9,6 @@ import 'package:conduit_core/models/tool.dart';
 import 'package:conduit_core/features/integrations/personal_connection_settings.dart';
 import 'package:conduit_core/features/integrations/providers/personal_connections_providers.dart';
 import 'package:conduit_core/features/tools/providers/tools_providers.dart';
-import 'package:conduit_core/providers/app_providers.dart';
 
 import 'package:conduit_core/features/chat/providers/chat_providers.dart';
 

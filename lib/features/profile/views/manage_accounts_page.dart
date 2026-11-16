@@ -1,7 +1,5 @@
-import 'package:conduit_core/navigation/routes.dart';
 import 'package:conduit_core/providers/app_providers.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:conduit/shared/widgets/platform_ui/platform_ui.dart';
 import 'package:conduit/shared/widgets/platform_ui/vocabulary.dart';
 import 'package:flutter/widgets.dart';
 

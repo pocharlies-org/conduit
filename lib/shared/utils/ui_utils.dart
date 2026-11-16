@@ -82,9 +82,6 @@ class UiUtils {
   static IconData get globeIcon =>
       platformIcon(ios: CupertinoIcons.globe, android: Icons.public);
 
-  static IconData get folderIcon =>
-      platformIcon(ios: CupertinoIcons.folder, android: Icons.folder);
-
   static IconData get tagIcon =>
       platformIcon(ios: CupertinoIcons.tag, android: Icons.label);
 

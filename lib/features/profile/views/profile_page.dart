@@ -265,7 +265,6 @@ class ProfilePage extends ConsumerWidget {
     required List<OpenWebUiAccountEntry> accounts,
   }) {
     final l10n = AppLocalizations.of(context)!;
-    final theme = context.conduitTheme;
     final signedInName = user == null
         ? null
         : deriveUserDisplayName(user, fallback: l10n.userFallbackName);

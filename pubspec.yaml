@@ -48,9 +48,6 @@ dependencies:
   
   # Network & API
   dio: ^5.9.0
-  ollama_dart: ^2.4.0
-  openai_dart: ^8.1.0
-  mcp_dart: ^2.4.0
   http_parser: ^4.0.2
   
   
@@ -64,8 +61,6 @@ dependencies:
   # UI Components - Markdown Rendering
   markdown: ^7.3.0
   pdfrx: ^2.4.7
-  archive: ^4.0.9
-  xml: ^7.0.1
   flutter_inappwebview: ^6.2.0-beta.3
   flutter_svg: ^2.3.0
   # Native Mermaid renderer. These unpublished workspace packages are pinned
@@ -96,7 +91,6 @@ dependencies:
   path_provider: ^2.1.4
   
   # Utilities
-  clock: ^1.1.2
   collection: ^1.19.1
   meta: ^1.16.0
   path: ^1.9.0
@@ -136,7 +130,6 @@ dependencies:
   fleather: ^1.27.0
   # Document model + markdown/HTML codecs backing the Fleather note editor.
   parchment: ^1.27.0
-  flutter_webrtc: ^1.6.2+hotfix.4
 
 # Required while mermaid_flutter declares mermaid_core from the hosted source:
 # Pub cannot combine that source with Conduit's unpublished path package, even

@@ -57,7 +57,6 @@ import 'core/persistence/hive_bootstrap.dart';
 import 'package:conduit_core/persistence/hive_prefs_migrator.dart';
 
 import 'package:conduit_core/persistence/persistence_migrator.dart';
-import 'package:conduit_core/persistence/persistence_keys.dart';
 
 import 'package:conduit_core/persistence/persistence_providers.dart';
 import 'package:conduit_core/persistence/preferences_store.dart';
@@ -210,7 +209,7 @@ void _registerBundledLicenses() {
 }
 
 /// Whether this device runs realtime voice calls' audio: the native engine
-/// and WebRTC exist on iOS and Android.
+/// exists on iOS and Android.
 bool get _hasRealtimeAudio =>
     !kIsWeb &&
     (defaultTargetPlatform == TargetPlatform.iOS ||
@@ -387,21 +386,6 @@ void main() {
               try {
                 return ref.read(isChatStreamingProvider) ||
                     ref.read(localChatGenerationActiveProvider) ||
-                    BackgroundStreamingHandler.instance.hasActiveReplyStreams;
-              } catch (_) {
-                return false;
-              }
-            };
-          }),
-          // Replies still being written in the background are Open WebUI's,
-          // which arrive through the active account's address.
-          addressChangeReplyGuardProvider.overrideWith((ref) {
-            return () {
-              try {
-                return (ref.read(isChatStreamingProvider) &&
-                        conversationUsesOpenWebUiStorage(
-                          ref.read(activeConversationProvider),
-                        )) ||
                     BackgroundStreamingHandler.instance.hasActiveReplyStreams;
               } catch (_) {
                 return false;

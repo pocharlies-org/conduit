@@ -4,9 +4,8 @@ part of 'chat_providers.dart';
 /// edited messages, fork at a message) are offered for the active chat.
 ///
 /// Saved branches and the everyday response pager work whether or not this is
-/// true; it only decides what the user is offered to change. Hidden for Hermes,
-/// Direct and on-device chats and models, for a chat that exists only in
-/// memory, and for another user's chat.
+/// true; it only decides what the user is offered to change. Hidden for a chat
+/// that exists only in memory and for another user's chat.
 final chatBranchControlsProvider = Provider<bool>((ref) {
   if (ref.watch(reviewerModeProvider)) return false;
   if (ref.watch(apiServiceProvider) == null) return false;

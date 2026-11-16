@@ -61,28 +61,6 @@ List<dynamic> effectivePersonalServerList(
   return const <dynamic>[];
 }
 
-/// Writes [value] into the namespace [effectivePersonalServerList] reads from:
-/// `ui` when it holds a list for [key], otherwise the root list that exists,
-/// otherwise `ui`.
-void writeEffectivePersonalServerList(
-  Map<String, dynamic> settings,
-  String key,
-  List<dynamic> value,
-) {
-  final ui = settings['ui'];
-  if (ui is Map && ui[key] is List) {
-    ui[key] = value;
-    return;
-  }
-  if (settings[key] is List) {
-    settings[key] = value;
-    return;
-  }
-  final nextUi = ui is Map ? normalizeJsonLikeMap(ui) : <String, dynamic>{};
-  nextUi[key] = value;
-  settings['ui'] = nextUi;
-}
-
 Map<String, dynamic>? personalConnectionMap(Object? value) {
   if (value is Map<String, dynamic>) return value;
   if (value is Map) return normalizeJsonLikeMap(value);

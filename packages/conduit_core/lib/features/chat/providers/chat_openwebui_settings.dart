@@ -87,8 +87,7 @@ enum OpenWebUiChatSettingsMenuEntry {
 /// Decides the overflow entry for the active chat or draft.
 ///
 /// Saved settings apply to a chat whether or not this is offered; this only
-/// decides what the user can see and change. Hidden for Hermes and on-device
-/// models (their requests never carry these params), for another user's chat,
+/// decides what the user can see and change. Hidden for another user's chat
 /// and for any chat that is not an Open WebUI chat.
 final openWebUiChatSettingsMenuEntryProvider =
     Provider<OpenWebUiChatSettingsMenuEntry>((ref) {
@@ -359,7 +358,7 @@ OpenWebUiChatSettingsSnapshot _admissionSettingsSnapshot(
 );
 
 enum OpenWebUiChatSettingsFailure {
-  /// Not an Open WebUI chat (Direct, Apple, Hermes) or no longer addressable.
+  /// Not an Open WebUI chat or no longer addressable.
   notEditable,
 
   /// The account may not change what was asked for.

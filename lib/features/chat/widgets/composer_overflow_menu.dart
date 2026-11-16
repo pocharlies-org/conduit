@@ -12,7 +12,6 @@ import '../../../shared/widgets/model_avatar.dart';
 import '../../../shared/widgets/horizontal_overflow_fade.dart';
 
 import 'package:conduit_core/models/toggle_filter.dart';
-import 'package:conduit_core/models/tool.dart';
 import 'package:conduit_core/providers/app_providers.dart';
 import 'package:conduit_core/features/tools/providers/tools_providers.dart';
 

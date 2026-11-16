@@ -8,7 +8,6 @@ import 'dart:ui' as ui;
 import 'package:conduit/shared/widgets/platform_ui/platform_ui.dart';
 import 'package:conduit/l10n/app_localizations.dart';
 import 'package:cupertino_ui/cupertino_ui.dart';
-import 'package:flutter/services.dart' show rootBundle;
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';

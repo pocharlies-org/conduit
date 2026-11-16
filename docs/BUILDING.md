@@ -13,18 +13,7 @@ instead.
 | Flutter SDK | Flutter `3.47.0` or newer, with Dart `3.13.0` or newer |
 | Android | Java 17+, AGP 9.1.0, KGP 2.4.0, Gradle 9.3.1, Android SDK 36, Android 7.0+ (API 24) at runtime |
 | iOS | Xcode with an iOS 16.0+ deployment target |
-| Backend | An Open WebUI instance, an OpenAI-compatible API, an Ollama endpoint, or a Hermes server |
-
-Apple On-Device requires Xcode 26 and an iOS 26 device that supports Apple
-Intelligence. It uses the local SystemLanguageModel with a 4K context window;
-image input, reasoning controls, and tool parameters are rejected.
-
-Apple Private Cloud Compute additionally requires Xcode 27, an iOS 27 device
-that supports Apple Intelligence, and Apple's managed PCC entitlement. The iOS
-build keeps PCC compiled out on older SDKs while retaining the iOS 16 deployment
-target. PCC accepts image data URLs and Direct generation parameters including
-`temperature`, `max_tokens`, `top_p`, `top_k`, `seed`, and OpenAI-style
-`response_format.json_schema`; tool parameters are rejected.
+| Backend | An Open WebUI instance |
 
 ## Clone
 
@@ -33,7 +22,7 @@ git clone --recursive https://github.com/cogwheel0/conduit.git
 cd conduit
 ```
 
-`--recursive` matters. Conduit vendors four submodules:
+`--recursive` matters. Conduit vendors three submodules:
 
 - `third_party/mermaid`: the native Mermaid renderer packages
   (`mermaid_core`, `mermaid_flutter`), referenced by path from `pubspec.yaml`.
@@ -41,10 +30,6 @@ cd conduit
 - `third_party/katex`: KaTeX assets for math rendering.
 - `openwebui-src`: a vendored Open WebUI checkout used **only** as an API
   reference. It is not built or shipped.
-- `hermes-src`: a vendored Hermes Agent checkout (NousResearch/hermes-agent)
-  used **only** as the reference for the Hermes gateway RPC and REST contracts
-  (`tui_gateway/`, `gateway/platforms/api_server.py`). It is not built or
-  shipped.
 
 For an existing clone:
 
@@ -143,21 +128,18 @@ description is the only context a translator gets.
 ```text
 lib/
   core/                 auth, routing, models, networking, database, platform services
-    auth/               token storage, interceptors, cookie + proxy handling
+    auth/               system-browser sign-in (PKCE)
     database/           Drift schema, DAOs, mappers, full-text search
     services/           API client, streaming, widgets, quick actions
   features/
-    auth/               server setup, login, SSO, proxy auth
+    auth/               login and connection issues
     channels/           channel browsing and threaded messaging
     chat/               conversations, attachments, tools, streaming, voice call
-    direct_connections/ OpenAI-compatible, Ollama, and OpenRouter profiles
-    hermes/             Hermes Agent transport, approvals, scheduled jobs
     navigation/         chat shell, drawer, adaptive navigation
     notes/              note editor and AI-assisted note workflows
     notifications/      notification routing and gating
     profile/            theme, preferences, app customization
     prompts/            prompt helpers and prompt variable UI
-    terminal/           WebSocket terminal sessions and file browser
     tools/              tool integration surfaces
     workspace/          native models, knowledge, prompts, tools, skills
   l10n/                 ARB translation sources
@@ -167,7 +149,7 @@ lib/
 ## Conventions
 
 - Diagnostics go through `DebugLogger` (`lib/core/utils/debug_logger.dart`) with
-  slash-scoped `scope:` values like `auth/proxy`, `streaming/helper`, or
+  slash-scoped `scope:` values like `auth/page`, `streaming/helper`, or
   `models/default`. No raw `print` calls.
 - Credentials and auth tokens belong in `flutter_secure_storage` via
   `SecureCredentialStorage`. Auth-bearing headers stay scoped to Dio clients

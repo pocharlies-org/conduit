@@ -18,7 +18,6 @@
 		C073CCD19D2508BCAD536200 /* NativeIosTtsBridge.swift in Sources */ = {isa = PBXBuildFile; fileRef = C07E41E507BC83CDF6A2F806 /* NativeIosTtsBridge.swift */; };
 		C073D293D6D3C0AE42208200 /* AppIntentBridge.swift in Sources */ = {isa = PBXBuildFile; fileRef = C0733DBE0EC21B8BA584F742 /* AppIntentBridge.swift */; };
 		C0778A160B9E0F6B3D0E5C00 /* BackgroundStreamingHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = C07B0ACB6D900F7182D98598 /* BackgroundStreamingHandler.swift */; };
-		C0784AC8CDA88C741E323C00 /* CookieBridge.swift in Sources */ = {isa = PBXBuildFile; fileRef = C073FA4B620A52333B648A35 /* CookieBridge.swift */; };
 		AA11BB22CC33DD44EE550001 /* SystemBrowserAuthBridge.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA11BB22CC33DD44EE550002 /* SystemBrowserAuthBridge.swift */; };
 		C078DBCB5B400CC724551100 /* ConduitBridgeHost.swift in Sources */ = {isa = PBXBuildFile; fileRef = C07202B2AF712D67C45FE1BC /* ConduitBridgeHost.swift */; };
 		C079094EC8D3F2DCA002F300 /* VoiceAudioRouteBridge.swift in Sources */ = {isa = PBXBuildFile; fileRef = C0748D3BCA6CB2E7D24C8438 /* VoiceAudioRouteBridge.swift */; };
@@ -33,7 +32,6 @@
 		D2A0B1E42F5E4D6C7B8A9012 /* NativeSheetBridge.swift in Sources */ = {isa = PBXBuildFile; fileRef = D2A0B1E32F5E4D6C7B8A9012 /* NativeSheetBridge.swift */; };
 		D2A0B1E52F5E4D6C7B8A9012 /* NativeSheetUIFoundation.swift in Sources */ = {isa = PBXBuildFile; fileRef = D2A0B1E62F5E4D6C7B8A9012 /* NativeSheetUIFoundation.swift */; };
 		D2A0B1F42F5E4D6C7B8A9012 /* NativeDropdownBridge.swift in Sources */ = {isa = PBXBuildFile; fileRef = D2A0B1F32F5E4D6C7B8A9012 /* NativeDropdownBridge.swift */; };
-		D2A0B1F62F5E4D6C7B8A9013 /* NativeSymbolImageBridge.swift in Sources */ = {isa = PBXBuildFile; fileRef = D2A0B1F52F5E4D6C7B8A9013 /* NativeSymbolImageBridge.swift */; };
 		D2A0B2042F5E4D6C7B8A9012 /* NativeSttBridge.swift in Sources */ = {isa = PBXBuildFile; fileRef = D2A0B2032F5E4D6C7B8A9012 /* NativeSttBridge.swift */; };
 		D2A0B2062F5E4D6C7B8A9012 /* ConduitSceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = D2A0B2052F5E4D6C7B8A9012 /* ConduitSceneDelegate.swift */; };
 		D2A0B2142F5E4D6C7B8A9012 /* ConduitPlatformApis.g.swift in Sources */ = {isa = PBXBuildFile; fileRef = D2A0B2132F5E4D6C7B8A9012 /* ConduitPlatformApis.g.swift */; };
@@ -126,7 +124,6 @@
 		C07202B2AF712D67C45FE1BC /* ConduitBridgeHost.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConduitBridgeHost.swift; sourceTree = "<group>"; };
 		C0733DBE0EC21B8BA584F742 /* AppIntentBridge.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppIntentBridge.swift; sourceTree = "<group>"; };
 		C073CB9E0C18631B25DCC01B /* ConduitAppIntents.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConduitAppIntents.swift; sourceTree = "<group>"; };
-		C073FA4B620A52333B648A35 /* CookieBridge.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CookieBridge.swift; sourceTree = "<group>"; };
 		AA11BB22CC33DD44EE550002 /* SystemBrowserAuthBridge.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SystemBrowserAuthBridge.swift; sourceTree = "<group>"; };
 		C0748D3BCA6CB2E7D24C8438 /* VoiceAudioRouteBridge.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VoiceAudioRouteBridge.swift; sourceTree = "<group>"; };
 		C076D53F677D9AB9577FCB47 /* ShareImportBridge.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShareImportBridge.swift; sourceTree = "<group>"; };
@@ -139,7 +136,6 @@
 		D2A0B1E32F5E4D6C7B8A9012 /* NativeSheetBridge.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NativeSheetBridge.swift; sourceTree = "<group>"; };
 		D2A0B1E62F5E4D6C7B8A9012 /* NativeSheetUIFoundation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NativeSheetUIFoundation.swift; sourceTree = "<group>"; };
 		D2A0B1F32F5E4D6C7B8A9012 /* NativeDropdownBridge.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NativeDropdownBridge.swift; sourceTree = "<group>"; };
-		D2A0B1F52F5E4D6C7B8A9013 /* NativeSymbolImageBridge.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NativeSymbolImageBridge.swift; sourceTree = "<group>"; };
 		D2A0B2032F5E4D6C7B8A9012 /* NativeSttBridge.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NativeSttBridge.swift; sourceTree = "<group>"; };
 		D2A0B2052F5E4D6C7B8A9012 /* ConduitSceneDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConduitSceneDelegate.swift; sourceTree = "<group>"; };
 		D2A0B2132F5E4D6C7B8A9012 /* ConduitPlatformApis.g.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConduitPlatformApis.g.swift; sourceTree = "<group>"; };
@@ -359,7 +355,6 @@
 				C07D6E81F9707D1BBEDB9BB5 /* PlatformEnvironmentBridge.swift */,
 				C07CD1E93C33B4AE1AD1A0F2 /* FlutterConduitBridgeHost.swift */,
 				C07202B2AF712D67C45FE1BC /* ConduitBridgeHost.swift */,
-				C073FA4B620A52333B648A35 /* CookieBridge.swift */,
 				AA11BB22CC33DD44EE550002 /* SystemBrowserAuthBridge.swift */,
 				C073CB9E0C18631B25DCC01B /* ConduitAppIntents.swift */,
 				C0733DBE0EC21B8BA584F742 /* AppIntentBridge.swift */,
@@ -376,7 +371,6 @@
 				D2A0B1E62F5E4D6C7B8A9012 /* NativeSheetUIFoundation.swift */,
 				D2A0B1F32F5E4D6C7B8A9012 /* NativeDropdownBridge.swift */,
 				E6C41A0B2F9E4D6C7B8A9012 /* NativeImageViewerBridge.swift */,
-				D2A0B1F52F5E4D6C7B8A9013 /* NativeSymbolImageBridge.swift */,
 				D2A0B2032F5E4D6C7B8A9012 /* NativeSttBridge.swift */,
 				D2A0B2502F5E4D6C7B8A9012 /* DisplayBoostBridge.swift */,
 				D2A0B2052F5E4D6C7B8A9012 /* ConduitSceneDelegate.swift */,
@@ -666,7 +660,6 @@
 			files = (
 				D2A0B1F42F5E4D6C7B8A9012 /* NativeDropdownBridge.swift in Sources */,
 				E6C41A0C2F9E4D6C7B8A9012 /* NativeImageViewerBridge.swift in Sources */,
-				D2A0B1F62F5E4D6C7B8A9013 /* NativeSymbolImageBridge.swift in Sources */,
 				D2A0B2062F5E4D6C7B8A9012 /* ConduitSceneDelegate.swift in Sources */,
 				D2A0B2142F5E4D6C7B8A9012 /* ConduitPlatformApis.g.swift in Sources */,
 				D2A0B1E42F5E4D6C7B8A9012 /* NativeSheetBridge.swift in Sources */,
@@ -680,7 +673,6 @@
 				C07FFD404BC56A760606B800 /* PlatformEnvironmentBridge.swift in Sources */,
 				C07CD0FC676C9F75CE320600 /* FlutterConduitBridgeHost.swift in Sources */,
 				C078DBCB5B400CC724551100 /* ConduitBridgeHost.swift in Sources */,
-				C0784AC8CDA88C741E323C00 /* CookieBridge.swift in Sources */,
 				AA11BB22CC33DD44EE550001 /* SystemBrowserAuthBridge.swift in Sources */,
 				C0799EE7361E2F33F8F82200 /* ConduitAppIntents.swift in Sources */,
 				C073D293D6D3C0AE42208200 /* AppIntentBridge.swift in Sources */,

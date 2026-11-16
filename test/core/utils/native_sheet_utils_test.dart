@@ -26,7 +26,7 @@ void main() {
     check(items.map((item) => item.id)).contains('server-version');
   });
 
-  test('the Hermes-only About page has no server rows', () {
+  test('the About page has no server rows without a server name', () {
     final ids = buildNativeAboutItems(
       l10n,
       appVersion: '4.1.8',

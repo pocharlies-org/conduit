@@ -69,9 +69,8 @@ final RegExp _boundary = RegExp(r'\s');
 /// Only a collapsed caret inside the text matches. The token runs back to
 /// the previous whitespace and must start with a trigger in [triggers].
 /// [allowSkills] is false where Open WebUI skills cannot be resolved (no
-/// Open WebUI account, a Hermes or on-device Direct model), and
-/// [allowContext] is false for a Hermes model, which cannot resolve Open
-/// WebUI knowledge or file ids.
+/// Open WebUI account), and [allowContext] is false where Open WebUI
+/// knowledge or file ids cannot be resolved.
 ComposerCommandMatch? resolveComposerCommand(
   String text, {
   required int selectionStart,

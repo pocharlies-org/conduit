@@ -13,44 +13,6 @@ final class RealtimeProtocolException implements Exception {
   String toString() => message;
 }
 
-/// The `session.update` a Direct call configures its voice with.
-///
-/// The voice never answers on its own (`create_response: false`): the call
-/// asks for every reply once the user's words are transcribed, which gives
-/// each delegation the input it answers. Nor does it stop itself when speech
-/// starts (`interrupt_response: false`): the call holds it until the words
-/// are transcribed, so noise does not cut it off. Audio is PCM16 at 24 kHz
-/// both ways.
-Map<String, Object?> directRealtimeSessionUpdate({
-  required String voice,
-  required String transcriptionModel,
-  String? instructions,
-}) => {
-  'type': 'session.update',
-  'session': {
-    'type': 'realtime',
-    'output_modalities': ['audio'],
-    'instructions': instructions ?? kRealtimeCallInstructions,
-    'audio': {
-      'input': {
-        'format': {'type': 'audio/pcm', 'rate': 24000},
-        'transcription': {'model': transcriptionModel},
-        'turn_detection': {
-          'type': 'server_vad',
-          'interrupt_response': false,
-          'create_response': false,
-        },
-      },
-      'output': {
-        'format': {'type': 'audio/pcm', 'rate': 24000},
-        'voice': voice,
-      },
-    },
-    'tools': [delegateFunctionTool()],
-    'tool_choice': 'auto',
-  },
-};
-
 /// The bridge Open WebUI runs on its server, run on the device for a Direct
 /// call: it checks every command the call sends and turns it into the raw
 /// Realtime API events the provider understands.

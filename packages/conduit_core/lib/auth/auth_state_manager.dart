@@ -1236,8 +1236,8 @@ class AuthStateManager extends _$AuthStateManager {
   /// The server is asked to end the session first (best effort: a server
   /// that cannot be reached does not keep the account on this device). Then
   /// its tokens, saved sign-in and record go, and finally its local data.
-  /// Every other account, Hermes and Direct are left alone. When it is the
-  /// active account, [thenActivate] -- another saved account -- takes over;
+  /// Every other account is left alone. When it is the active account,
+  /// [thenActivate] -- another saved account -- takes over;
   /// without one no Open WebUI account is left active.
   ///
   /// Returns whether an account is signed in afterwards.

@@ -3,8 +3,7 @@
 /// [AuthStateManager] owns the session transitions themselves. This is the
 /// layer a UI calls: it refuses to cut off a reply that is still being
 /// written unless told to, picks which account takes over when the active
-/// one is signed out of, and falls back to Hermes or Direct when no Open
-/// WebUI account is left.
+/// one is signed out of.
 library;
 
 import 'dart:async';
@@ -13,14 +12,11 @@ import 'package:riverpod/riverpod.dart';
 
 import 'package:conduit_core/auth/auth_state_manager.dart';
 import 'package:conduit_core/auth/openwebui_account_summaries.dart';
-import 'package:conduit_core/database/account_storage_isolation.dart'
-    show conversationUsesOpenWebUiStorage;
 import 'package:conduit_core/features/chat/providers/chat_providers.dart'
     show
         isChatStreamingProvider,
         localChatGenerationActiveProvider,
-        stopGenerationProvider,
-        stopOpenWebUiMainResponse;
+        stopGenerationProvider;
 import 'package:conduit_core/persistence/persistence_keys.dart';
 import 'package:conduit_core/persistence/preferences_store.dart';
 import 'package:conduit_core/providers/app_providers.dart';
@@ -51,31 +47,6 @@ final accountChangeReplyGuardProvider = Provider<bool Function()>((ref) {
       return false;
     }
   };
-});
-
-/// Whether a reply is arriving through the active Open WebUI account's
-/// address, which changing or removing that address cuts off: the open
-/// chat's, when it is an Open WebUI chat. Direct, Hermes and on-device
-/// replies do not use the address. The host may widen it (Open WebUI replies
-/// it tracks in the background).
-final addressChangeReplyGuardProvider = Provider<bool Function()>((ref) {
-  return () {
-    try {
-      return ref.read(isChatStreamingProvider) &&
-          conversationUsesOpenWebUiStorage(
-            ref.read(activeConversationProvider),
-          );
-    } catch (_) {
-      return false;
-    }
-  };
-});
-
-/// Stops the reply [addressChangeReplyGuardProvider] reported, once the user
-/// has agreed to change the address anyway: the open chat's Open WebUI one,
-/// and no Direct, Hermes or on-device run.
-final addressChangeStopRepliesProvider = Provider<void Function()>((ref) {
-  return () => unawaited(stopOpenWebUiMainResponse(ref));
 });
 
 /// Stops the replies [accountChangeReplyGuardProvider] reported, once the
@@ -221,8 +192,7 @@ class OpenWebUiAccountsController {
   ///
   /// When it is the active account the most recently used remaining one
   /// takes over, preferring one that is still signed in. With none left the
-  /// app carries on with Hermes or Direct when either is usable, and goes
-  /// back to choosing a backend otherwise.
+  /// app goes back to sign-in.
   Future<OpenWebUiAccountChangeResult> signOut(
     String accountId, {
     bool force = false,

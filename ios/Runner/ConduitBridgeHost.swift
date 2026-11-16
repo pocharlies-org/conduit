@@ -86,14 +86,12 @@ enum ConduitBridgeRegistry {
     NativeSheetBridge.shared.attach(to: host)
     NativeDropdownBridge.shared.attach(to: host)
     NativeImageViewerBridge.shared.attach(to: host)
-    NativeSymbolImageBridge.shared.attach(to: host)
     NativeSttBridge.shared.attach(to: host)
     VoiceAudioRouteBridge.shared.attach(to: host)
     RealtimeAudioBridge.shared.attach(to: host)
     NativeIosTtsBridge.shared.attach(to: host)
     BackgroundStreamingHandler.shared.attach(to: host)
     ShareImportBridge.shared.attach(to: host)
-    CookieBridge.shared.attach(to: host)
     SystemBrowserAuthBridge.shared.attach(to: host)
   }
 }

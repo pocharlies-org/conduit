@@ -1,10 +1,6 @@
-import 'dart:async';
-
 import 'package:checks/checks.dart';
 import 'package:conduit/core/services/native_sheet_bridge.dart';
 import 'package:conduit/core/services/native_sheet_hydration_service.dart';
-import 'package:conduit/features/chat/providers/text_to_speech_provider.dart';
-import 'package:conduit/features/chat/services/text_to_speech_service.dart';
 import 'package:conduit/l10n/app_localizations.dart';
 import 'package:conduit/l10n/conduit_localizations.dart';
 import 'package:conduit/platform/conduit_platform_apis.g.dart';
@@ -25,23 +21,6 @@ import 'package:mocktail/mocktail.dart';
 
 class _MockOptimizedStorageService extends Mock
     implements OptimizedStorageService {}
-
-/// Speech settings whose voices never finish loading.
-class _QuietTextToSpeechService extends Fake implements TextToSpeechService {
-  @override
-  Future<void> updateSettings({
-    Object? voice,
-    Object? serverVoice,
-    double? speechRate,
-    double? pitch,
-    double? volume,
-    TtsEngine? engine,
-  }) async {}
-
-  @override
-  Future<List<Map<String, dynamic>>> getAvailableVoices() =>
-      Completer<List<Map<String, dynamic>>>().future;
-}
 
 final _applyDetailPatchChannel = BasicMessageChannel<Object?>(
   'dev.flutter.pigeon.conduit.NativeSheetHostApi.applyDetailPatch',
