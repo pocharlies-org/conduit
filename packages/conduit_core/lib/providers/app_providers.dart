@@ -58,7 +58,6 @@ import 'package:conduit_core/models/knowledge_base.dart';
 
 import 'package:conduit_core/services/settings_service.dart';
 import 'package:conduit_core/services/optimized_storage_service.dart';
-import 'package:conduit_core/services/secure_credential_storage.dart';
 import 'package:conduit_core/services/socket_service.dart';
 import 'package:conduit_core/features/integrations/personal_tool_execution.dart';
 import 'package:conduit_core/features/integrations/providers/personal_connections_providers.dart';

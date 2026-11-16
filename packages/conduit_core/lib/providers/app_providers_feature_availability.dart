@@ -206,7 +206,8 @@ bool _modelSupportsFeature(Model? model, String featureKey) {
 }
 
 final imageGenerationAvailableProvider = Provider<bool>((ref) {
-  final selectedModel = ref.watch(selectedModelProvider);
+  // Rebuilds with the model even though the answer ignores it.
+  ref.watch(selectedModelProvider);
   final perms = ref.watch(userPermissionsProvider);
   return perms.maybeWhen(
     data: (data) {

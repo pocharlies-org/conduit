@@ -15,7 +15,6 @@ import '../../../core/auth/system_browser_auth.dart';
 import '../../../core/services/haptic_service.dart';
 import '../../../shared/theme/theme_extensions.dart';
 import '../../../shared/widgets/conduit_components.dart';
-import '../../../shared/widgets/platform_ui/platform_ui.dart';
 import '../../../shared/widgets/utility_components.dart';
 import '../../profile/widgets/account_actions.dart'
     show abandonAddedAccount, confirmLeavingActiveAccount;
@@ -149,7 +148,9 @@ class _AuthenticationPageState extends ConsumerState<AuthenticationPage> {
         _serverConfigSaved = true;
       }
       if (!await _signInTargetStillSelected()) {
-        throw StateError('The selected server changed before sign-in was ready.');
+        throw StateError(
+          'The selected server changed before sign-in was ready.',
+        );
       }
       if (!mounted) return;
 
