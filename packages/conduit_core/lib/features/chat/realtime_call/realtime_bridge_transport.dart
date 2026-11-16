@@ -6,7 +6,6 @@ import 'package:web_socket_channel/web_socket_channel.dart';
 
 import 'package:conduit_core/models/server_config.dart';
 import 'package:conduit_core/network/no_redirect_web_socket.dart';
-import 'package:conduit_core/services/server_tls_http_client_factory.dart';
 import 'package:conduit_core/services/socket_service.dart';
 
 import 'bridge_commands.dart';
@@ -239,4 +238,3 @@ final class OpenWebUiRealtimeBridge extends _SocketBridge {
   @override
   void send(Map<String, Object?> command) => write(command);
 }
-

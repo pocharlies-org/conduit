@@ -214,12 +214,6 @@ String? localReasoningEffortForModel(ReasoningEffortReader read, Model model) {
   return read(localReasoningEffortsProvider)[key];
 }
 
-String? _localEffortKey(Ref ref) {
-  final model = ref.watch(selectedModelProvider);
-  if (model == null) return null;
-  return localReasoningEffortKeyForModel(ref.watch, model);
-}
-
 final configuredReasoningEffortProvider = Provider<String?>((ref) {
   final model = ref.watch(selectedModelProvider);
   if (model == null) return null;

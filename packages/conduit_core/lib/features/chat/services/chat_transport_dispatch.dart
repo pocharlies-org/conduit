@@ -26,8 +26,6 @@ import 'package:conduit_core/utils/debug_logger.dart';
 import '../providers/chat_providers.dart';
 
 import 'package:conduit_core/features/chat/providers/openwebui_chat_prompt_provider.dart';
-import 'package:conduit_core/features/navigation/models/sidebar_navigation_model.dart';
-import 'package:conduit_core/features/navigation/providers/sidebar_active_tab_provider.dart';
 
 // ---------------------------------------------------------------------------
 // Transport metadata helpers

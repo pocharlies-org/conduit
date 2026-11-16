@@ -16,7 +16,6 @@ library;
 import 'dart:async';
 import 'dart:collection';
 import 'dart:convert';
-import 'dart:io';
 import 'dart:math' as math;
 import 'dart:typed_data';
 
@@ -30,9 +29,7 @@ import 'package:riverpod/riverpod.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:uuid/uuid.dart';
 
-
 import 'package:conduit_core/auth/api_auth_interceptor.dart';
-import 'package:conduit_core/auth/openwebui_account_owner_marker.dart';
 
 import 'package:conduit_core/models/backend_config.dart';
 import 'package:conduit_core/models/chat_comparison.dart';
@@ -121,9 +118,6 @@ import 'package:conduit_markdown/conduit_markdown.dart';
 import 'package:conduit_core/features/auth/providers/unified_auth_providers.dart';
 
 import 'package:conduit_core/features/chat/utils/follow_ups_socket_event.dart';
-
-
-
 
 import 'package:conduit_core/features/chat/models/chat_context_attachment.dart';
 import 'package:conduit_core/features/chat/providers/context_attachments_provider.dart';

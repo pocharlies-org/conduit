@@ -71,7 +71,6 @@ void main() {
     tester,
   ) async {
     await pumpProfile(tester, visible: false);
-    await tester.scrollUntilVisible(find.text('Direct Connections'), 300);
 
     expect(entry, findsNothing);
   });

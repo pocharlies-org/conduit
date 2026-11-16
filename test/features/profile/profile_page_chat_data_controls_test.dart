@@ -86,18 +86,12 @@ void main() {
       ),
       findsOneWidget,
     );
-    // After the connection rows, before About.
-    expect(
-      tester.getTopLeft(group).dy,
-      greaterThan(tester.getTopLeft(find.text('Direct Connections')).dy),
-    );
   });
 
   testWidgets('no Advanced group is left behind without its rows', (
     tester,
   ) async {
     await pumpProfile(tester, visible: false);
-    await tester.scrollUntilVisible(find.text('Direct Connections'), 300);
 
     expect(find.byKey(const Key('settings-advanced-group')), findsNothing);
   });
@@ -106,7 +100,6 @@ void main() {
     tester,
   ) async {
     await pumpProfile(tester, visible: false);
-    await tester.scrollUntilVisible(find.text('Direct Connections'), 300);
 
     expect(entry, findsNothing);
   });

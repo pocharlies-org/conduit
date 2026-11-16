@@ -183,16 +183,14 @@ Future<void> switchToSavedAccount(
 /// Signing in to an added account makes it the active one before the
 /// accounts controller is involved, so this asks what [switchToSavedAccount]
 /// asks when the controller reports a reply in the way.
-Future<bool> confirmLeavingActiveAccount(
-  BuildContext context,
-  WidgetRef ref,
-) => _mayStopReply(
-  context,
-  ref.read,
-  guard: accountChangeReplyGuardProvider,
-  stop: accountChangeStopRepliesProvider,
-  confirm: () => _confirmSwitchStopsReply(context),
-);
+Future<bool> confirmLeavingActiveAccount(BuildContext context, WidgetRef ref) =>
+    _mayStopReply(
+      context,
+      ref.read,
+      guard: accountChangeReplyGuardProvider,
+      stop: accountChangeStopRepliesProvider,
+      confirm: () => _confirmSwitchStopsReply(context),
+    );
 
 Future<bool> _mayStopReply(
   BuildContext context,
@@ -287,7 +285,6 @@ Future<void> signOutOfSavedAccount(
   if (!confirmed || !context.mounted) return;
   // The row this began on goes with the account it showed.
   final router = GoRouter.of(context);
-  final container = ProviderScope.containerOf(context, listen: false);
   final controller = ref.read(openWebUiAccountsControllerProvider);
   try {
     var result = await controller.signOut(entry.id);
@@ -303,10 +300,9 @@ Future<void> signOutOfSavedAccount(
       if (!stopReply) return;
       result = await controller.signOut(entry.id, force: true);
     }
-    // With no account left the registry re-seeds the Chat server, so the
-    // router goes back to its sign-in.
-    if (result == OpenWebUiAccountChangeResult.needsSignIn &&
-        await container.read(activeServerProvider.future) != null) {
+    // OWU-134: sign-in is the only destination a signed-out session has,
+    // whether another account takes over or the last one left.
+    if (result == OpenWebUiAccountChangeResult.needsSignIn) {
       _openSignIn(router);
     }
   } catch (error, stackTrace) {

@@ -61,45 +61,6 @@ List<ChatMessageVersion> _buildReplayVersions(ChatMessage message) {
   return [...message.versions, _buildAssistantVersionSnapshot(message)];
 }
 
-ChatMessage _directRegenerationCompletedBase(ChatMessage message) {
-  final isEmptyPlaceholder =
-      message.content.isEmpty &&
-      message.files?.isNotEmpty != true &&
-      message.output?.isNotEmpty != true &&
-      message.embeds?.isNotEmpty != true &&
-      message.sources.isEmpty &&
-      message.statusHistory.isEmpty &&
-      message.followUps.isEmpty &&
-      message.codeExecutions.isEmpty &&
-      message.usage?.isNotEmpty != true &&
-      message.error == null;
-  if (!message.isStreaming || message.versions.isEmpty || !isEmptyPlaceholder) {
-    return message.copyWith(isStreaming: false);
-  }
-  final completed = message.versions.last;
-  final metadata = <String, dynamic>{...?message.metadata};
-  final modelName = completed.modelName?.trim();
-  if (modelName != null && modelName.isNotEmpty) {
-    metadata['modelName'] = modelName;
-  }
-  return message.copyWith(
-    content: completed.content,
-    timestamp: completed.timestamp,
-    model: completed.model,
-    files: completed.files,
-    output: completed.output,
-    embeds: completed.embeds,
-    sources: completed.sources,
-    followUps: completed.followUps,
-    codeExecutions: completed.codeExecutions,
-    usage: completed.usage,
-    versions: message.versions.sublist(0, message.versions.length - 1),
-    error: completed.error,
-    metadata: metadata.isEmpty ? null : metadata,
-    isStreaming: false,
-  );
-}
-
 // Pre-seed an assistant skeleton message (with a given id or a new one) and
 // return the id. Persisted chats rely on `/api/chat/completions` to update the
 // server-side history; pushing the local buffer back first can truncate chats
@@ -739,4 +700,3 @@ List<Map<String, dynamic>> buildChatCompletionMessagesForTest({
 String? resolveTerminalIdForRequestForTest(String? selectedTerminalId) {
   return _resolveTerminalIdForRequest(selectedTerminalId: selectedTerminalId);
 }
-

@@ -111,10 +111,6 @@ final class ChatSendPlaceholderHandle {
     _ownerConversationId = chatMutationOwnerScopeForConversation(conversation);
   }
 
-  void _bindOwnerScope(String ownerConversationId) {
-    _ownerConversationId = ownerConversationId;
-  }
-
   void _followOpenWebUiRemap(
     ActiveConversationInPlaceRemap? remap,
     Conversation? active,
@@ -196,7 +192,10 @@ void recoverFailedChatSend(
 /// Removes the optimistic rows of a send that never committed, for a caller
 /// that keeps the content to send again. Marking the assistant failed instead
 /// would leave a turn on screen that the retry then sends a second time.
-void discardUncommittedChatSend(dynamic ref, ChatSendPlaceholderHandle? handle) {
+void discardUncommittedChatSend(
+  dynamic ref,
+  ChatSendPlaceholderHandle? handle,
+) {
   if (handle == null) return;
   final active = ref.read(activeConversationProvider) as Conversation?;
   handle._followOpenWebUiRemap(
@@ -294,6 +293,7 @@ Future<void> durableSend(
       voice,
     );
   }
+
   final voiceReply = voice?.reply;
 
   final activeAtSendStart = ref.read(activeConversationProvider);
@@ -832,9 +832,9 @@ _AttachmentTypeMap _durableAttachmentContentTypesFromState(
     // Files of drafts queued behind a response are no longer in the tray.
     for (final file in [
       ...ref.read(attachedFilesProvider) as List<FileUploadState>,
-      for (final held
-          in ref.read(queuedDraftAttachmentsProvider)
-              as List<QueuedDraftAttachment>)
+      for (final held in ref.read(
+        queuedDraftAttachmentsProvider,
+      ) as List<QueuedDraftAttachment>)
         held.upload,
     ]) {
       final fileId = file.fileId;
@@ -940,5 +940,3 @@ Future<void> sendMessageWithContainer(
     isVoiceMode,
   );
 }
-
-

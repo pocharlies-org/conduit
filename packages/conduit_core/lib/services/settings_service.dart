@@ -1,4 +1,3 @@
-import 'dart:convert';
 import 'dart:developer' as developer;
 
 import 'package:riverpod/riverpod.dart';
@@ -725,61 +724,38 @@ class SettingsService {
         PreferencesStore.getStringList(scopedPreferenceReadKey(key));
     return AppSettings(
       reduceMotion: get<bool>(_reduceMotionKey) ?? false,
-      animationSpeed:
-          get<num>(_animationSpeedKey)?.toDouble() ?? 1.0,
+      animationSpeed: get<num>(_animationSpeedKey)?.toDouble() ?? 1.0,
       disableHapticsWhileStreaming:
           get<bool>(_disableHapticsWhileStreamingKey) ?? false,
-      citationShowTitles:
-          get<bool>(PreferenceKeys.citationShowTitles) ??
-          false,
+      citationShowTitles: get<bool>(PreferenceKeys.citationShowTitles) ?? false,
       highContrast: get<bool>(_highContrastKey) ?? false,
       darkMode: get<bool>(_darkModeKey) ?? true,
       defaultModel: get<String>(_defaultModelKey),
       openRouterImageGenerationModel: get<String>(
         _openRouterImageGenerationModelKey,
       ),
-      voiceLocaleId: normalizeVoiceLocaleId(
-        get<String>(_voiceLocaleKey),
-      ),
+      voiceLocaleId: normalizeVoiceLocaleId(get<String>(_voiceLocaleKey)),
       voiceHoldToTalk: get<bool>(_voiceHoldToTalkKey) ?? false,
-      voiceAutoSendFinal:
-          get<bool>(_voiceAutoSendKey) ?? false,
+      voiceAutoSendFinal: get<bool>(_voiceAutoSendKey) ?? false,
       voiceBargeInEnabled:
-          get<bool>(PreferenceKeys.voiceBargeInEnabled) ??
-          false,
+          get<bool>(PreferenceKeys.voiceBargeInEnabled) ?? false,
       voiceCallMode: VoiceCallMode.values.firstWhere(
         (mode) => mode.name == get<String>(PreferenceKeys.voiceCallMode),
         orElse: () => VoiceCallMode.auto,
       ),
-      socketTransportMode:
-          get<String>(_socketTransportModeKey) ?? 'ws',
+      socketTransportMode: get<String>(_socketTransportModeKey) ?? 'ws',
       quickPills: getStringList(_quickPillsKey) ?? const [],
-      chatWebSearchEnabled: get<bool>(
-        _chatWebSearchEnabledKey,
-      ),
-      chatImageGenerationEnabled: get<bool>(
-        _chatImageGenerationEnabledKey,
-      ),
+      chatWebSearchEnabled: get<bool>(_chatWebSearchEnabledKey),
+      chatImageGenerationEnabled: get<bool>(_chatImageGenerationEnabledKey),
       sendOnEnter: get<bool>(_sendOnEnterKey) ?? false,
       ttsVoice: get<String>(PreferenceKeys.ttsVoice),
       ttsVoiceName: get<String>(PreferenceKeys.ttsVoiceName),
-      ttsSpeechRate:
-          get<num>(PreferenceKeys.ttsSpeechRate)?.toDouble() ??
-          0.5,
-      ttsPitch:
-          get<num>(PreferenceKeys.ttsPitch)?.toDouble() ?? 1.0,
-      ttsVolume:
-          get<num>(PreferenceKeys.ttsVolume)?.toDouble() ??
-          1.0,
-      ttsEngine: _parseTtsEngine(
-        get<String>(PreferenceKeys.ttsEngine),
-      ),
-      ttsServerVoiceId: get<String>(
-        PreferenceKeys.ttsServerVoiceId,
-      ),
-      ttsServerVoiceName: get<String>(
-        PreferenceKeys.ttsServerVoiceName,
-      ),
+      ttsSpeechRate: get<num>(PreferenceKeys.ttsSpeechRate)?.toDouble() ?? 0.5,
+      ttsPitch: get<num>(PreferenceKeys.ttsPitch)?.toDouble() ?? 1.0,
+      ttsVolume: get<num>(PreferenceKeys.ttsVolume)?.toDouble() ?? 1.0,
+      ttsEngine: _parseTtsEngine(get<String>(PreferenceKeys.ttsEngine)),
+      ttsServerVoiceId: get<String>(PreferenceKeys.ttsServerVoiceId),
+      ttsServerVoiceName: get<String>(PreferenceKeys.ttsServerVoiceName),
       sttPreference: _parseSttPreference(
         get<String>(PreferenceKeys.voiceSttPreference),
       ),
@@ -790,35 +766,25 @@ class SettingsService {
         get<String>(_androidAssistantTriggerKey),
       ),
       voiceSilenceDuration:
-          (get<int>(_voiceSilenceDurationKey) ??
-                  defaultVoiceSilenceDurationMs)
+          (get<int>(_voiceSilenceDurationKey) ?? defaultVoiceSilenceDurationMs)
               .clamp(minVoiceSilenceDurationMs, maxVoiceSilenceDurationMs),
       temporaryChatByDefault:
-          get<bool>(PreferenceKeys.temporaryChatByDefault) ??
-          false,
+          get<bool>(PreferenceKeys.temporaryChatByDefault) ?? false,
       advancedFeaturesEnabled:
-          get<bool>(PreferenceKeys.advancedFeaturesEnabled) ??
-          false,
+          get<bool>(PreferenceKeys.advancedFeaturesEnabled) ?? false,
       pinnedModels: sanitizePinnedModels(
         getStringList(_pinnedModelsKey) ?? const <String>[],
       ),
-      notificationsEnabled:
-          get<bool>(_notificationsEnabledKey) ?? false,
-      notificationSound:
-          get<bool>(_notificationSoundKey) ?? true,
-      notificationSoundAlways:
-          get<bool>(_notificationSoundAlwaysKey) ?? false,
-      notificationInAppBanner:
-          get<bool>(_notificationInAppBannerKey) ?? true,
-      notificationSystem:
-          get<bool>(_notificationSystemKey) ?? true,
-      notificationChatEnabled:
-          get<bool>(_notificationChatEnabledKey) ?? true,
+      notificationsEnabled: get<bool>(_notificationsEnabledKey) ?? false,
+      notificationSound: get<bool>(_notificationSoundKey) ?? true,
+      notificationSoundAlways: get<bool>(_notificationSoundAlwaysKey) ?? false,
+      notificationInAppBanner: get<bool>(_notificationInAppBannerKey) ?? true,
+      notificationSystem: get<bool>(_notificationSystemKey) ?? true,
+      notificationChatEnabled: get<bool>(_notificationChatEnabledKey) ?? true,
       notificationChannelEnabled:
           get<bool>(_notificationChannelEnabledKey) ?? true,
     );
   }
-
 }
 
 /// Sentinel class to detect when defaultModel parameter is not provided

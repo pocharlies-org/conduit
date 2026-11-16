@@ -28,9 +28,6 @@ Future<void> _sendMessageInternal(
   final reviewerMode = ref.read(reviewerModeProvider);
   final api = ref.read(apiServiceProvider);
   final selectedModelCandidate = ref.read(selectedModelProvider) as Model?;
-  final reasoningEffortAtSendStart = ref.read(
-    configuredReasoningEffortProvider,
-  );
   // Admitted with the account and model this send started under.
   final codeInterpreterAtSendStart = _admitCodeInterpreter(ref);
   if (isSendBlocked(

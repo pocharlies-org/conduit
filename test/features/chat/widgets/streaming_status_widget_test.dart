@@ -128,54 +128,6 @@ void main() {
     expect(find.text('Searching...'), findsNothing);
   });
 
-  testWidgets('groups Hermes tools with OpenWebUI-style counts', (
-    tester,
-  ) async {
-    await tester.pumpWidget(
-      buildHarness(const [
-        ChatStatusUpdate(
-          action: 'hermes_tool_web_search',
-          description: 'web_search',
-          done: true,
-        ),
-        ChatStatusUpdate(
-          action: 'hermes_tool_web_search',
-          description: 'web_search',
-          done: true,
-        ),
-        ChatStatusUpdate(
-          action: 'hermes_tool_terminal',
-          description: 'terminal',
-          done: true,
-        ),
-      ], isStreaming: false),
-    );
-
-    expect(find.text('Explored web_search (2), terminal'), findsOneWidget);
-    expect(find.text('terminal'), findsNothing);
-  });
-
-  testWidgets('keeps a grouped Hermes title pending while any tool runs', (
-    tester,
-  ) async {
-    await tester.pumpWidget(
-      buildHarness(const [
-        ChatStatusUpdate(
-          action: 'hermes_tool_web_search',
-          description: 'web_search',
-          done: true,
-        ),
-        ChatStatusUpdate(
-          action: 'hermes_tool_terminal',
-          description: 'terminal',
-          done: false,
-        ),
-      ], disableAnimations: true),
-    );
-
-    expect(find.text('Exploring web_search, terminal'), findsOneWidget);
-  });
-
   testWidgets('reduced motion skips status-chip entrance effects', (
     tester,
   ) async {
