@@ -31,6 +31,8 @@ import 'package:conduit_core/auth/api_auth_interceptor.dart'
     show ApiAuthSnapshot;
 
 import 'package:conduit_core/auth/auth_state_manager.dart';
+import 'package:conduit_core/auth/owui_oidc.dart';
+import 'package:conduit_core/auth/session_refresher.dart';
 
 import 'package:conduit_core/auth/openwebui_account_owner_marker.dart';
 import 'package:conduit_core/auth/openwebui_account_summaries.dart';
@@ -56,7 +58,6 @@ import 'package:conduit_core/models/knowledge_base.dart';
 
 import 'package:conduit_core/services/settings_service.dart';
 import 'package:conduit_core/services/optimized_storage_service.dart';
-import 'package:conduit_core/services/secure_credential_storage.dart';
 import 'package:conduit_core/services/socket_service.dart';
 import 'package:conduit_core/features/integrations/personal_tool_execution.dart';
 import 'package:conduit_core/features/integrations/providers/personal_connections_providers.dart';
@@ -76,15 +77,6 @@ import 'package:conduit_core/utils/server_version_compat.dart';
 import 'package:conduit_core/services/worker_manager.dart';
 
 import 'package:conduit_core/features/tools/providers/tools_providers.dart';
-import 'package:conduit_core/features/hermes/models/hermes_model.dart';
-import 'package:conduit_core/features/hermes/models/hermes_config.dart';
-import 'package:conduit_core/features/hermes/providers/hermes_providers.dart';
-import 'package:conduit_core/features/hermes/services/hermes_session_provenance.dart';
-import 'package:conduit_core/features/direct_connections/direct_connections.dart';
-import 'package:conduit_core/features/direct_connections/providers/direct_mcp_providers.dart';
-import 'package:conduit_core/features/web_search/services/direct_web_search_mode.dart';
-
-import 'package:conduit_core/providers/backend_mode_providers.dart';
 
 import 'package:conduit_core/models/socket_transport_availability.dart';
 

@@ -1,25 +1,19 @@
 import 'package:meta/meta.dart';
 
 /// Stable, persistence-safe identity for a sidebar destination.
-enum SidebarTabId { chats, hermes, terminal, notes, channels }
+enum SidebarTabId { chats, notes, channels }
 
 /// Data-only capability snapshot used to decide which destinations exist.
 @immutable
 final class SidebarTabAvailability {
   const SidebarTabAvailability({
-    required this.hermesOnly,
     required this.hasOpenWebUi,
-    required this.hermesEnabled,
     required this.notesEnabled,
-    required this.terminalEnabled,
     required this.channelsEnabled,
   });
 
-  final bool hermesOnly;
   final bool hasOpenWebUi;
-  final bool hermesEnabled;
   final bool notesEnabled;
-  final bool terminalEnabled;
   final bool channelsEnabled;
 }
 

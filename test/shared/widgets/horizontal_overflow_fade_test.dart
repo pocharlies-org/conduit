@@ -66,10 +66,7 @@ void main() {
   testWidgets('the fade clears once the row is scrolled to its end', (
     tester,
   ) async {
-    final controller = await _pumpRow(
-      tester,
-      contentWidth: _viewportWidth * 2,
-    );
+    final controller = await _pumpRow(tester, contentWidth: _viewportWidth * 2);
     final end = controller.position.maxScrollExtent;
 
     controller.jumpTo(end);
@@ -80,9 +77,7 @@ void main() {
     check(controller.offset).equals(end);
   });
 
-  testWidgets('a right-to-left row still reports its overflow', (
-    tester,
-  ) async {
+  testWidgets('a right-to-left row still reports its overflow', (tester) async {
     await _pumpRow(
       tester,
       contentWidth: _viewportWidth * 2,

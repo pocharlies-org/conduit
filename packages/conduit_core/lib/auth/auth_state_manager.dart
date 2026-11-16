@@ -1236,8 +1236,8 @@ class AuthStateManager extends _$AuthStateManager {
   /// The server is asked to end the session first (best effort: a server
   /// that cannot be reached does not keep the account on this device). Then
   /// its tokens, saved sign-in and record go, and finally its local data.
-  /// Every other account, Hermes and Direct are left alone. When it is the
-  /// active account, [thenActivate] -- another saved account -- takes over;
+  /// Every other account is left alone. When it is the active account,
+  /// [thenActivate] -- another saved account -- takes over;
   /// without one no Open WebUI account is left active.
   ///
   /// Returns whether an account is signed in afterwards.
@@ -1245,6 +1245,10 @@ class AuthStateManager extends _$AuthStateManager {
     _activeLogoutOperations++;
     try {
       final storage = ref.read(optimizedStorageServiceProvider);
+      // Read before anything is removed: the Keycloak refresh token is filed
+      // under the Open WebUI user, and once the account is gone only this
+      // record still names it.
+      final refreshTokenUser = await _refreshTokenUserOf(storage, accountId);
       // Before anything is removed: once the account is gone, only this
       // record leads a later start back to data its purge fails to delete.
       // One that cannot be written stops the sign-out here, with the account
@@ -1332,6 +1336,7 @@ class AuthStateManager extends _$AuthStateManager {
       }
 
       await _purgeRemovedAccount(accountId);
+      await _forgetRefreshToken(refreshTokenUser);
       return signedIn;
     } finally {
       _activeLogoutOperations--;
@@ -1469,6 +1474,47 @@ class AuthStateManager extends _$AuthStateManager {
       );
     }
     ref.read(openWebUiAccountSummariesProvider.notifier).reload();
+  }
+
+  /// The Open WebUI user [accountId] signed in as, read while the account is
+  /// still in the registry. Null when it signed in as nobody, or when the
+  /// registry cannot be read: an unnamed token does not stop a sign-out.
+  Future<String?> _refreshTokenUserOf(
+    OptimizedStorageService storage,
+    String accountId,
+  ) async {
+    try {
+      final registry = await storage.getOpenWebUiRegistryStrict();
+      return registry.account(accountId)?.userId;
+    } catch (error, stackTrace) {
+      _logAuthenticationFailure(
+        'account-user-read-failed',
+        error,
+        stackTrace: stackTrace,
+      );
+      return null;
+    }
+  }
+
+  /// Drops the Keycloak refresh token filed under [userId], which no account
+  /// names any more. Left behind, it would renew the session of an account
+  /// that was signed out of. A merge and an abandoned sign-in leave this
+  /// alone: the first keeps an account of the same user, which the token
+  /// belongs to as much; the second never had one.
+  Future<void> _forgetRefreshToken(String? userId) async {
+    if (userId == null) return;
+    try {
+      final storage = ref.read(optimizedStorageServiceProvider);
+      final registry = await storage.getOpenWebUiRegistryStrict();
+      if (registry.accounts.any((account) => account.userId == userId)) return;
+      await storage.deleteRefreshToken(userId);
+    } catch (error, stackTrace) {
+      _logAuthenticationFailure(
+        'refresh-token-forget-failed',
+        error,
+        stackTrace: stackTrace,
+      );
+    }
   }
 
   /// Starts an account boundary: auth tokenless and loading, the storage
@@ -1745,181 +1791,6 @@ class AuthStateManager extends _$AuthStateManager {
     }
   }
 
-  /// Commits a proxy/trusted-header session whose token and user were already
-  /// validated with the cookie-scoped discovery client.
-  ///
-  /// This deliberately skips a second network validation after the provisional
-  /// server config is written. The config, active-server id, and token are
-  /// committed as one revision-owned attempt; a persistence failure restores
-  /// the previous config/session, while a newer auth attempt always wins.
-  ///
-  /// [canCommit] lets the caller withdraw the commit while it is saved: once
-  /// it says no, the account active before stays active, as it does when a
-  /// newer auth attempt begins.
-  Future<bool> commitPrevalidatedProxySession({
-    required ServerConfig serverConfig,
-    required String token,
-    required User user,
-    bool Function()? canCommit,
-  }) async {
-    final tokenStr = token.trim();
-    if (tokenStr.isEmpty) {
-      throw Exception('Token cannot be empty');
-    }
-    if (TokenValidator.isApiKey(tokenStr)) {
-      throw Exception('apiKeyNotSupported');
-    }
-    if (!_isValidTokenFormat(tokenStr)) {
-      throw Exception('Invalid token format');
-    }
-    // An interactive proxy commit validated this token with the server during
-    // the current connect attempt; a completed logout's marker no longer
-    // applies. While a logout is still in flight, the marker keeps rejecting
-    // resurrection of the bearer being revoked.
-    _acceptFreshlyIssuedServerToken(tokenStr, source: 'proxy');
-    if (_recentlyRevokedTokens.contains(tokenStr)) {
-      throw Exception(
-        'This sign-in session was already signed out. Please authenticate again.',
-      );
-    }
-    // The proxy discovery client validated this exact pair with the server.
-    _recordValidatedIdentity(tokenStr, user);
-
-    final currentState = _current;
-    final previousState =
-        currentState.isLoading || currentState.status == AuthStatus.loading
-        ? _lastSettledState
-        : currentState;
-    final capturedSessionSafetyEpoch = _sessionSafetyEpoch;
-    final attemptRevision = _beginAuthAttempt();
-    bool superseded() =>
-        _authAttemptSuperseded(attemptRevision) || !_canCommitAuth(canCommit);
-    _update(
-      (current) => current.copyWith(
-        status: AuthStatus.loading,
-        isLoading: true,
-        clearError: true,
-      ),
-    );
-
-    final storage = ref.read(optimizedStorageServiceProvider);
-    // Stopped by the caller rather than by a newer attempt, this one still
-    // owns the state it set loading, and settles it back.
-    void settleStopped() => _restorePrevalidatedProxyAttemptState(
-      attemptRevision: attemptRevision,
-      capturedSessionSafetyEpoch: capturedSessionSafetyEpoch,
-      previousState: previousState,
-    );
-    ServerConfigCandidateSnapshot? candidateSnapshot;
-    try {
-      if (superseded()) {
-        settleStopped();
-        return false;
-      }
-      final snapshot = await storage.stageServerConfigCandidate(serverConfig);
-      candidateSnapshot = snapshot;
-      if (superseded()) {
-        await _restorePrevalidatedProxyConfig(
-          storage: storage,
-          candidate: serverConfig,
-          snapshot: snapshot,
-        );
-        settleStopped();
-        return false;
-      }
-
-      final committed = await _commitSilentLoginResult(
-        storage: storage,
-        token: tokenStr,
-        user: user,
-        canCommit: () => !superseded(),
-        commitPersistenceAndPublish: ({required publish}) {
-          return storage.commitServerConfigCandidateSession(
-            candidate: serverConfig,
-            transactionId: snapshot.transactionId,
-            token: tokenStr,
-            canCommit: () => !superseded(),
-            publish: () async {
-              await publish();
-              ref.invalidate(serverConfigsProvider);
-              _lastTransactionalSessionRevision = attemptRevision;
-            },
-            onRollbackUncertain: () {
-              if (!ref.mounted) return;
-              _poisonUncertainServerSession(
-                failedAttemptRevision: attemptRevision,
-              );
-            },
-          );
-        },
-      );
-      if (!committed) {
-        await _restorePrevalidatedProxyConfig(
-          storage: storage,
-          candidate: serverConfig,
-          snapshot: snapshot,
-        );
-        _restorePrevalidatedProxyAttemptState(
-          attemptRevision: attemptRevision,
-          capturedSessionSafetyEpoch: capturedSessionSafetyEpoch,
-          previousState: previousState,
-        );
-      }
-      return committed;
-    } catch (error, stackTrace) {
-      final rollbackUncertain = error is ServerConfigSessionRollbackException;
-      if (rollbackUncertain &&
-          capturedSessionSafetyEpoch == _sessionSafetyEpoch) {
-        // Poison the prior session before any provider invalidation. A newer
-        // attempt may already be loading while still carrying the old token;
-        // revision checks alone cannot make that cross-origin state safe.
-        _poisonUncertainServerSession(failedAttemptRevision: attemptRevision);
-      }
-      final snapshot = candidateSnapshot;
-      if (snapshot != null) {
-        await _restorePrevalidatedProxyConfig(
-          storage: storage,
-          candidate: serverConfig,
-          snapshot: snapshot,
-        );
-      }
-      if (!rollbackUncertain) {
-        _restorePrevalidatedProxyAttemptState(
-          attemptRevision: attemptRevision,
-          capturedSessionSafetyEpoch: capturedSessionSafetyEpoch,
-          previousState: previousState,
-        );
-      }
-      final failureMessage = _safeLoginFailureMessage(error);
-      _logAuthenticationFailure(
-        'prevalidated-proxy-session-commit-failed',
-        error,
-        stackTrace: stackTrace,
-      );
-      Error.throwWithStackTrace(Exception(failureMessage), stackTrace);
-    }
-  }
-
-  void _restorePrevalidatedProxyAttemptState({
-    required int attemptRevision,
-    required int capturedSessionSafetyEpoch,
-    required AuthState previousState,
-  }) {
-    if (!ref.mounted || _authAttemptRevision != attemptRevision) return;
-    if (capturedSessionSafetyEpoch == _sessionSafetyEpoch) {
-      _set(previousState);
-      _restoreApiServiceTokenToCurrent();
-      return;
-    }
-
-    // Another overlapping proxy attempt encountered an incomplete durable
-    // rollback. This attempt's captured previousState may contain the poisoned
-    // token, so it must settle tokenless if it cannot publish a fresh session.
-    _set(const AuthState(status: AuthStatus.unauthenticated, isLoading: false));
-    _updateApiServiceToken(null);
-    ref.invalidate(apiServiceProvider);
-  }
-
   void _poisonUncertainServerSession({required int failedAttemptRevision}) {
     _sessionSafetyEpoch++;
     final current = _current;
@@ -1950,27 +1821,6 @@ class AuthStateManager extends _$AuthStateManager {
     }
     _updateApiServiceToken(null);
     ref.invalidate(apiServiceProvider);
-  }
-
-  Future<void> _restorePrevalidatedProxyConfig({
-    required OptimizedStorageService storage,
-    required ServerConfig candidate,
-    required ServerConfigCandidateSnapshot snapshot,
-  }) async {
-    try {
-      await storage.discardServerConfigCandidate(
-        candidate: candidate,
-        transactionId: snapshot.transactionId,
-      );
-    } catch (error, stackTrace) {
-      _logAuthenticationFailure(
-        'prevalidated-proxy-config-restore-failed',
-        error,
-        stackTrace: stackTrace,
-      );
-    } finally {
-      if (ref.mounted) ref.invalidate(serverConfigsProvider);
-    }
   }
 
   Future<bool> _loginWithApiKeyInternal(

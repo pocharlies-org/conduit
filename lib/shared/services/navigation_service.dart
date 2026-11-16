@@ -16,15 +16,6 @@ final class NativeSheetNavigationOrigin {
 
 typedef NativeSheetNavigationRequest = ({String routeName, Object extra});
 
-/// Direct Connections is pushed as the native profile sheet starts to slide
-/// away, so the page is already underneath when it has gone. Keep its route and transition marker coupled so this entry point cannot
-/// accidentally restore a second Cupertino transition over the native sheet.
-const NativeSheetNavigationRequest
-directConnectionsNativeSheetNavigationRequest = (
-  routeName: RouteNames.directConnections,
-  extra: NativeSheetNavigationOrigin(),
-);
-
 /// Personal connections open the same way: the list page is pushed as the
 /// native sheet slides away, without a second transition over it.
 const NativeSheetNavigationRequest
@@ -125,20 +116,6 @@ class NavigationService {
     router.go(routeName);
   }
 
-  /// Opens the Open WebUI connect flow from a native sheet.
-  ///
-  /// The router moves a newly authenticated session out of the auth flow only
-  /// when an auth route is the current location. Pushing the flow over
-  /// `/chat` keeps `/chat` as that location, so sign-in succeeds while the
-  /// Sign in page stays on screen. Go to the flow instead, as the chooser and
-  /// the Flutter profile page do.
-  static void openOpenWebUIConnectFromNativeSheet() {
-    router.goNamed(
-      RouteNames.serverConnection,
-      extra: const NativeSheetNavigationOrigin(),
-    );
-  }
-
   /// Push a route while preserving the current page as the back destination.
   static Future<T?> pushTo<T extends Object?>(String routeName) async {
     final router = _router;
@@ -189,15 +166,9 @@ class NavigationService {
   static Future<void> navigateToChat() => navigateTo(Routes.chat);
   static Future<void> navigateToFolder(String folderId) =>
       navigateTo(Routes.folderPath(folderId));
-  static Future<void> navigateToLogin() => navigateTo(Routes.serverConnection);
-  static Future<void> navigateToProfile() => navigateTo(Routes.profile);
-  static Future<void> navigateToServerConnection() =>
-      navigateTo(Routes.serverConnection);
 
-  /// Clear navigation history. With GoRouter this becomes a simple go call.
-  static void clearNavigationStack() {
-    final router = _router;
-    if (router == null) return;
-    router.go(Routes.serverConnection);
-  }
+  /// OWU-134: sign-in is the login of the one seeded server; there is no
+  /// server-connection flow to fall back to.
+  static Future<void> navigateToLogin() => navigateTo(Routes.authentication);
+  static Future<void> navigateToProfile() => navigateTo(Routes.profile);
 }

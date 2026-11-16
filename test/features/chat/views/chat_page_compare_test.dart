@@ -9,8 +9,6 @@ import 'package:conduit_core/database/chat_database_repository.dart';
 import 'package:conduit_core/database/database_provider.dart';
 import 'package:conduit_core/features/auth/providers/unified_auth_providers.dart';
 import 'package:conduit_core/features/chat/providers/chat_providers.dart';
-import 'package:conduit_core/features/direct_connections/models/direct_connection_profile.dart';
-import 'package:conduit_core/features/direct_connections/providers/direct_connection_providers.dart';
 import 'package:conduit_core/features/tools/providers/tools_providers.dart';
 import 'package:conduit_core/models/chat_message.dart';
 import 'package:conduit_core/models/conversation.dart';
@@ -99,7 +97,6 @@ void main() {
         toolsListProvider.overrideWith(_Tools.new),
         comparisonCommandAvailableProvider.overrideWithValue(true),
         personalizationSettingsProvider.overrideWith(_Personalization.new),
-        directConnectionProfilesProvider.overrideWith(_NoProfiles.new),
         currentUserProvider2.overrideWithValue(
           const User(
             id: 'me',
@@ -245,11 +242,6 @@ class _Advanced extends AppSettingsNotifier {
 class _Personalization extends PersonalizationSettings {
   @override
   Future<ServerUserSettings> build() async => const ServerUserSettings();
-}
-
-class _NoProfiles extends DirectConnectionProfilesController {
-  @override
-  Future<List<DirectConnectionProfile>> build() async => const [];
 }
 
 /// Answers the settings read an admission makes, without a network.

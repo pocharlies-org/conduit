@@ -8,7 +8,6 @@ import 'dart:ui' as ui;
 import 'package:conduit/shared/widgets/platform_ui/platform_ui.dart';
 import 'package:conduit/l10n/app_localizations.dart';
 import 'package:cupertino_ui/cupertino_ui.dart';
-import 'package:flutter/services.dart' show rootBundle;
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
@@ -20,17 +19,12 @@ import '../../../core/network/image_header_utils.dart';
 
 import 'package:conduit_core/providers/app_providers.dart';
 
-import 'package:conduit_core/providers/backend_mode_providers.dart';
-
 import 'package:conduit_core/services/api_service.dart';
 
 import '../../../core/services/native_sheet_bridge.dart';
 import '../../../core/services/native_sheet_hydration_service.dart';
-import 'package:conduit_core/features/direct_connections/providers/direct_connection_providers.dart'
-    show directConnectionProfilesProvider;
 import '../../../shared/services/navigation_service.dart';
 
-import 'package:conduit_core/features/chat/server_speech/direct_voice_provider_settings.dart';
 import 'package:conduit_core/features/chat/server_speech/server_speech_providers.dart';
 import 'package:conduit_core/services/settings_service.dart';
 import 'package:conduit_core/features/automations/providers/automation_providers.dart'
@@ -43,16 +37,10 @@ import 'package:conduit_core/features/integrations/providers/personal_connection
 import 'package:conduit_core/utils/debug_logger.dart';
 
 import '../../../core/utils/native_sheet_utils.dart';
-import '../../../core/utils/account_display.dart' show AccountCardKind;
 
 import 'package:conduit_core/utils/user_avatar_utils.dart';
 
 import 'package:conduit_core/utils/user_display_name.dart';
-
-import 'package:conduit_core/features/hermes/models/hermes_connection_profile.dart';
-import 'package:conduit_core/features/hermes/providers/hermes_providers.dart';
-
-import '../../hermes/widgets/hermes_connection_switcher.dart';
 
 import '../../../shared/theme/theme_extensions.dart';
 import '../../../shared/utils/adaptive_glass.dart';
@@ -248,29 +236,6 @@ Future<Uint8List?> sidebarNativeAvatarRaster(
   devicePixelRatio: request.devicePixelRatio,
 );
 
-final _sidebarHermesAvatarBytesProvider = FutureProvider<Uint8List?>((ref) {
-  return _loadHermesAvatarBytes();
-});
-
-/// Cached bytes of the Hermes agent icon, used as the native profile-sheet
-/// avatar in Hermes-only mode (loaded once, then reused).
-Uint8List? _hermesAvatarBytesCache;
-Future<Uint8List?> _loadHermesAvatarBytes() async {
-  if (_hermesAvatarBytesCache != null) return _hermesAvatarBytesCache;
-  try {
-    final data = await rootBundle.load('assets/icons/hermes_agent.png');
-    return _hermesAvatarBytesCache = data.buffer.asUint8List();
-  } catch (error, stackTrace) {
-    DebugLogger.error(
-      'Failed to load Hermes profile avatar asset',
-      error: error,
-      stackTrace: stackTrace,
-      scope: 'navigation/sidebar/hermes-avatar',
-    );
-    return null;
-  }
-}
-
 /// Resolves the best available current user for sidebar UI.
 dynamic resolveSidebarUser(WidgetRef ref) {
   final authUser = ref.watch(currentUserProvider2);
@@ -282,11 +247,8 @@ dynamic resolveSidebarUser(WidgetRef ref) {
 }
 
 /// Route used when the native profile sheet is unavailable or not presented.
-/// Accountless direct-primary installs have no Open WebUI profile surface.
-String sidebarProfileFallbackRouteName({
-  required bool directPrimary,
-  required bool hasOpenWebUiUser,
-}) => RouteNames.profile;
+String sidebarProfileFallbackRouteName({required bool hasOpenWebUiUser}) =>
+    RouteNames.profile;
 
 /// Localized search hint for the active sidebar tab.
 String sidebarSearchHintForActiveTab(WidgetRef ref, AppLocalizations l10n) {
@@ -366,33 +328,21 @@ class SidebarProfileAppBarLeading extends ConsumerWidget {
     final nativeProfilePresenter = ref.watch(
       sidebarNativeProfilePresenterProvider,
     );
-    final hermesOnly = ref.watch(hermesOnlyModeProvider);
-    final directPrimary =
-        ref.watch(preferredBackendProvider) == PreferredBackend.direct;
-    if (user == null && !hermesOnly && !directPrimary) {
+    if (user == null) {
       return const SizedBox.shrink();
     }
 
     final api = ref.watch(apiServiceProvider);
     final l10n = AppLocalizations.of(context)!;
     final canManageWorkspace = canManageAnyWorkspaceSection(ref);
-    final directTitle = l10n.directConnectionsTitle;
-    final hermesName = ref.watch(hermesActiveConnectionNameProvider);
-    final displayName = hermesOnly
-        ? hermesName ?? kHermesDefaultConnectionName
-        : directPrimary && user == null
-        ? directTitle
-        : deriveUserDisplayName(user, fallback: l10n.userFallbackName);
-    final initial = hermesOnly
-        ? hermesConnectionInitials(hermesName)
-        : directPrimary && user == null
-        ? directTitle.characters.first.toUpperCase()
-        : displayName.isEmpty
+    final displayName = deriveUserDisplayName(
+      user,
+      fallback: l10n.userFallbackName,
+    );
+    final initial = displayName.isEmpty
         ? 'U'
         : displayName.characters.first.toUpperCase();
-    final avatarUrl = hermesOnly || user == null
-        ? null
-        : resolveUserAvatarUrlForUser(api, user);
+    final avatarUrl = resolveUserAvatarUrlForUser(api, user);
     final iconColor = context.conduitTheme.textPrimary;
     final useOpaqueFallback = conduitUsesOpaqueGlassFallback();
     final style = useOpaqueFallback
@@ -402,8 +352,6 @@ class SidebarProfileAppBarLeading extends ConsumerWidget {
     final supportsNativeGlass = conduitSupportsNativeGlass();
     final rawNativeAvatarBytes = !supportsNativeGlass
         ? null
-        : hermesOnly
-        ? ref.watch(_sidebarHermesAvatarBytesProvider).asData?.value
         : inlineAvatarBytes ??
               (api == null || avatarUrl == null || avatarUrl.isEmpty
                   ? null
@@ -423,7 +371,7 @@ class SidebarProfileAppBarLeading extends ConsumerWidget {
                 sidebarNativeAvatarRasterProvider(
                   SidebarNativeAvatarRasterRequest(
                     cacheKey:
-                        '${avatarUrl ?? 'hermes'}:'
+                        '$avatarUrl:'
                         '${rawNativeAvatarBytes.length}:'
                         '${identityHashCode(rawNativeAvatarBytes)}',
                     bytes: rawNativeAvatarBytes,
@@ -439,18 +387,11 @@ class SidebarProfileAppBarLeading extends ConsumerWidget {
       if (!context.mounted) return;
 
       if (nativeProfilePresenter != null) {
-        // Pre-load the Hermes avatar bytes (the config builder is sync, and
-        // avatarBytes must be supplied up front): without an Open WebUI
-        // user, the account card may name a Hermes connection.
-        final hermesAvatarBytes = hermesOnly || user == null
-            ? await _loadHermesAvatarBytes()
-            : null;
-        if (!context.mounted) return;
         // The sheet lists the other saved accounts as they are when it opens,
         // so the first open after launch must not beat their load.
         await _loadSavedAccounts(ref);
         if (!context.mounted) return;
-        final hasAccountProfile = !hermesOnly && user != null;
+        final hasAccountProfile = user != null;
         // The profile details editor preselects the stored gender and birth
         // date and saves every field, so it must not open on a profile that
         // was never loaded. A cached one opens the sheet at once; it is
@@ -502,7 +443,6 @@ class SidebarProfileAppBarLeading extends ConsumerWidget {
                 chatDataControlsEntryVisibleProvider,
               ),
             ),
-            hermesAvatarBytes: hermesAvatarBytes,
           );
           ref
               .read(nativeSheetHydrationServiceProvider)
@@ -530,10 +470,7 @@ class SidebarProfileAppBarLeading extends ConsumerWidget {
 
       if (context.mounted) {
         context.pushNamed(
-          sidebarProfileFallbackRouteName(
-            directPrimary: directPrimary,
-            hasOpenWebUiUser: user != null,
-          ),
+          sidebarProfileFallbackRouteName(hasOpenWebUiUser: user != null),
         );
       }
     }
@@ -592,11 +529,9 @@ class SidebarProfileAppBarLeading extends ConsumerWidget {
   /// without them if they fail or take too long; it then lists only this one.
   Future<void> _loadSavedAccounts(WidgetRef ref) async {
     try {
-      await Future.wait([
-        ref.read(openWebUiAccountsProvider.future),
-        // The Accounts page lists them too.
-        ref.read(directConnectionProfilesProvider.future),
-      ]).timeout(const Duration(seconds: 2));
+      await ref.read(openWebUiAccountsProvider.future).timeout(
+        const Duration(seconds: 2),
+      );
     } catch (error) {
       DebugLogger.warning(
         'saved-accounts-load-failed',
@@ -725,17 +660,12 @@ class SidebarProfileAppBarLeading extends ConsumerWidget {
     required NativeProfileRootAccount? rootAccount,
     required NativeProfileRootVisibility visibility,
     bool profilePending = false,
-    Uint8List? hermesAvatarBytes,
   }) {
     final l10n = AppLocalizations.of(context)!;
     final appSettings = ref.read(appSettingsProvider);
     final nativeAudio = buildNativeAudioSheetParts(
       l10n,
       appSettings,
-      voiceProviderCandidates:
-          (ref.read(directConnectionProfilesProvider).value ?? const [])
-              .where(canBeVoiceProvider)
-              .toList(growable: false),
       serverOffersVoiceChoice:
           ref.read(serverSpeechProviderProvider)?.offersVoiceChoice ?? false,
     );
@@ -748,7 +678,7 @@ class SidebarProfileAppBarLeading extends ConsumerWidget {
       l10n,
       account: rootAccount,
       visibility: visibility,
-      card: (title: card.title, subtitle: card.subtitle),
+      card: card,
       otherAccountCount: readNativeOtherAccountCount(ref.read),
     );
     final supportItems = buildNativeSupportItems(l10n);
@@ -763,32 +693,15 @@ class SidebarProfileAppBarLeading extends ConsumerWidget {
       profileMenuTitle: nativeSettingsTitle(l10n),
       // The account card draws this profile's avatar beside its own text,
       // so both name the same one.
-      profile: switch (card.kind) {
-        AccountCardKind.hermes => NativeProfileSheetUser(
-          displayName: card.title,
-          email: _hermesHostLabel(
-            ref,
-            fallback: l10n.hermesSelfHostedAgentLabel,
-          ),
-          initials: hermesConnectionInitials(card.title),
-          avatarBytes: hermesAvatarBytes,
-          avatarIsTemplate: true,
-        ),
-        AccountCardKind.direct => NativeProfileSheetUser(
-          displayName: l10n.directConnectionsTitle,
-          email: l10n.directConnectionsSubtitle,
-          initials: l10n.directConnectionsTitle.characters.first.toUpperCase(),
-        ),
-        AccountCardKind.openWebUi => _nativeAccountProfileUser(
-          ref,
-          l10n: l10n,
-          user: user,
-          api: api,
-          displayName: displayName,
-          initials: initials,
-          accountProfile: accountProfile,
-        ),
-      },
+      profile: _nativeAccountProfileUser(
+        ref,
+        l10n: l10n,
+        user: user,
+        api: api,
+        displayName: displayName,
+        initials: initials,
+        accountProfile: accountProfile,
+      ),
       editProfileLabel: l10n.edit,
       editProfileSheet: NativeEditProfileSheetConfig(
         title: l10n.profileDetails,
@@ -857,7 +770,6 @@ class SidebarProfileAppBarLeading extends ConsumerWidget {
           sections: nativeAudio.mainSections,
         ),
         nativeAudio.voicePickerDetail,
-        nativeAudio.voiceProviderDetail,
         buildNativeLoadingDetail(
           l10n: l10n,
           id: NativeSheetRoutes.chats,
@@ -890,14 +802,6 @@ class SidebarProfileAppBarLeading extends ConsumerWidget {
         ),
       ],
     );
-  }
-
-  /// Header subtitle for the Hermes-only profile sheet: the configured agent's
-  /// host, falling back to a generic label.
-  String _hermesHostLabel(WidgetRef ref, {required String fallback}) {
-    final baseUrl = ref.read(hermesConfigProvider).baseUrl;
-    final host = Uri.tryParse(baseUrl)?.host;
-    return host != null && host.isNotEmpty ? host : fallback;
   }
 
   static final LinkedHashMap<String, Uint8List> _dataImageBytesCache =

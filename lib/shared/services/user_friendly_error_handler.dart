@@ -389,7 +389,7 @@ class ErrorCard extends StatelessWidget {
         break;
       case ErrorActionType.signIn:
         // Navigate to sign in page
-        NavigationService.navigateToServerConnection();
+        NavigationService.navigateToLogin();
         break;
       case ErrorActionType.openSettings:
         // Open app settings - would need platform-specific implementation

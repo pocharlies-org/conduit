@@ -3,9 +3,7 @@ import 'package:conduit_core/providers/app_providers.dart';
 import 'package:conduit_core/features/chat/providers/chat_providers.dart';
 import 'package:conduit/features/chat/widgets/modern_chat_input.dart';
 import 'package:conduit/features/chat/widgets/openwebui_prompt_overlay.dart';
-import 'package:conduit_core/features/hermes/models/hermes_capabilities.dart';
-import 'package:conduit_core/features/hermes/models/hermes_model.dart';
-import 'package:conduit_core/features/hermes/providers/hermes_providers.dart';
+import 'package:conduit_core/models/model.dart';
 import 'package:conduit/l10n/app_localizations.dart';
 import 'package:conduit/l10n/conduit_localizations.dart';
 import 'package:conduit/shared/theme/app_theme.dart';
@@ -107,11 +105,10 @@ void main() {
     await tester.pumpWidget(
       ProviderScope(
         overrides: [
-          selectedModelProvider.overrideWithValue(hermesSyntheticModel()),
-          isChatStreamingProvider.overrideWithValue(false),
-          hermesCapabilitiesProvider.overrideWith(
-            (_) => Future.value(const HermesCapabilities()),
+          selectedModelProvider.overrideWithValue(
+            const Model(id: 'gpt', name: 'GPT'),
           ),
+          isChatStreamingProvider.overrideWithValue(false),
           apiServiceProvider.overrideWithValue(null),
           webSearchAvailableProvider.overrideWithValue(false),
           imageGenerationAvailableProvider.overrideWithValue(false),

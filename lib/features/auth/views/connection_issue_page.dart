@@ -3,52 +3,20 @@ import 'dart:io' show Platform;
 import 'package:cupertino_ui/cupertino_ui.dart';
 import 'package:material_ui/material_ui.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:go_router/go_router.dart';
 
 import 'package:conduit_core/auth/auth_state_manager.dart';
 
-import '../../../platform/webview_cookie_helper.dart';
-
-import 'package:conduit_core/auth/proxy_session.dart';
-import 'package:conduit_core/models/openwebui_registry.dart';
 import 'package:conduit_core/models/server_config.dart';
 import 'package:conduit_core/providers/app_providers.dart';
-import 'package:conduit_core/providers/openwebui_route_resolver.dart'
-    show openWebUiRouteResolverProvider;
-import 'package:conduit_core/services/api_service.dart';
 import 'package:conduit_core/services/connectivity_service.dart';
-
-import '../../../shared/services/navigation_service.dart';
-
-import 'package:conduit_core/services/worker_manager.dart';
-import 'package:conduit_core/utils/debug_logger.dart';
 
 import '../../../l10n/app_localizations.dart';
 
-import 'package:conduit_core/features/auth/providers/unified_auth_providers.dart';
-
-import 'proxy_auth_page.dart';
 import '../../../shared/theme/theme_extensions.dart';
 import '../../../shared/widgets/conduit_components.dart';
-import '../../../shared/widgets/sign_out_options_dialog.dart';
+import '../../../shared/widgets/themed_dialogs.dart';
 import '../../../shared/widgets/connection_components.dart';
 import '../../../shared/widgets/utility_components.dart';
-
-/// The route a renewed proxy session of [account] is saved to: the one its
-/// projection was read from, found by the connection it carries as saving
-/// it does, though the app may since have selected another.
-@visibleForTesting
-String? renewedProxyRouteId(
-  OpenWebUiRegistry registry,
-  ServerConfig account, {
-  required Map<String, String> selection,
-}) {
-  final saved = registry.account(account.id);
-  final server = saved == null ? null : registry.server(saved.serverId);
-  return server
-      ?.routeForConnection(account, selectedEndpointId: selection[server.id])
-      .id;
-}
 
 class ConnectionIssuePage extends ConsumerStatefulWidget {
   const ConnectionIssuePage({super.key});
@@ -56,13 +24,6 @@ class ConnectionIssuePage extends ConsumerStatefulWidget {
   @override
   ConsumerState<ConnectionIssuePage> createState() =>
       _ConnectionIssuePageState();
-}
-
-/// Whether [config] carries a reverse-proxy session cookie, i.e. was set up
-/// through the proxy sign-in flow and can be re-authenticated in place.
-bool serverConfigHasProxyCookie(ServerConfig? config) {
-  if (config == null) return false;
-  return config.customHeaders.keys.any((key) => key.toLowerCase() == 'cookie');
 }
 
 class _ConnectionIssuePageState extends ConsumerState<ConnectionIssuePage> {
@@ -87,7 +48,7 @@ class _ConnectionIssuePageState extends ConsumerState<ConnectionIssuePage> {
         children: [
           UtilityIdentityHeader(
             leading: const OpenWebUiConnectionMark(),
-            title: l10n.backendChooserOpenWebUITitle,
+            title: l10n.openWebUi,
             subtitle: l10n.connectionIssueSubtitle,
           ),
           const SizedBox(height: Spacing.xl),
@@ -134,29 +95,15 @@ class _ConnectionIssuePageState extends ConsumerState<ConnectionIssuePage> {
     AppLocalizations l10n,
     ServerConfig? activeServer,
   ) {
-    final canReauthenticateProxy =
-        isWebViewSupported && serverConfigHasProxyCookie(activeServer);
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
-        if (canReauthenticateProxy) ...[
-          ConduitButton(
-            text: l10n.proxyAuthSignInAgain,
-            onPressed: _busy
-                ? null
-                : () => _reauthenticateProxy(activeServer!, l10n),
-            icon: Platform.isIOS ? CupertinoIcons.lock_shield : Icons.shield,
-            isFullWidth: true,
-          ),
-          const SizedBox(height: Spacing.sm),
-        ],
         ConduitButton(
           text: l10n.retry,
           onPressed: _busy ? null : _retryConnection,
           isLoading: _isRetrying,
           icon: Platform.isIOS ? CupertinoIcons.refresh : Icons.refresh_rounded,
           isFullWidth: true,
-          isSecondary: canReauthenticateProxy,
         ),
         const SizedBox(height: Spacing.sm),
         ConduitButton(
@@ -172,107 +119,6 @@ class _ConnectionIssuePageState extends ConsumerState<ConnectionIssuePage> {
         ),
       ],
     );
-  }
-
-  /// Reopens the reverse-proxy sign-in for the current server and stores the
-  /// fresh cookies in place, so an expired proxy session is renewed without
-  /// signing out of Conduit (issues #690, #698).
-  Future<void> _reauthenticateProxy(
-    ServerConfig activeServer,
-    AppLocalizations l10n,
-  ) async {
-    final result = await context.pushNamed<ProxyAuthResult>(
-      RouteNames.proxyAuth,
-      extra: ProxyAuthConfig(serverConfig: activeServer),
-    );
-    if (!mounted) return;
-    final cookies = result?.cookies ?? const <String, String>{};
-    if (result == null ||
-        !result.success ||
-        (cookies.isEmpty && !result.isFullyAuthenticated)) {
-      setState(() => _statusMessage = l10n.proxyAuthFailed);
-      return;
-    }
-
-    setState(() {
-      _isRetrying = true;
-      _statusMessage = null;
-    });
-    try {
-      final updatedServer = activeServer.copyWith(
-        customHeaders: mergeCapturedProxyCookiesIntoHeaders(
-          headers: activeServer.customHeaders,
-          capturedCookies: cookies,
-        ),
-      );
-      final storage = ref.read(optimizedStorageServiceProvider);
-      final configs = await storage.getServerConfigsStrict();
-      // Where the save below files the cookies; the app can have moved to
-      // another route while the sign-in was open.
-      final renewedRoute = renewedProxyRouteId(
-        await storage.getOpenWebUiRegistryStrict(),
-        activeServer,
-        selection: storage.endpointSelection,
-      );
-      // Same server identity: the storage layer keeps the account session
-      // when only custom headers change.
-      await storage.saveServerConfigs([
-        for (final config in configs)
-          if (config.id == updatedServer.id) updatedServer else config,
-      ]);
-      ref.invalidate(serverConfigsProvider);
-      ref.invalidate(activeServerProvider);
-      // Its refusals were of the session just replaced.
-      ref
-          .read(openWebUiRouteResolverProvider.notifier)
-          .proxySessionRenewed(renewedRoute);
-      await ref.read(activeServerProvider.future);
-      if (!mounted) return;
-
-      final authManager = ref.read(authStateManagerProvider.notifier);
-      authManager.resetRetryCounter();
-      if (result.isFullyAuthenticated) {
-        // The proxy WebView completed Open WebUI SSO too; adopt that session
-        // the same way the first-time connect flow does.
-        final api = ApiService(
-          serverConfig: updatedServer,
-          workerManager: ref.read(workerManagerProvider),
-          authToken: result.jwtToken,
-        );
-        try {
-          final user = await api.getCurrentUser(
-            suppressAuthFailureNotification: true,
-          );
-          await ref
-              .read(authActionsProvider)
-              .commitPrevalidatedProxySession(
-                serverConfig: updatedServer,
-                token: result.jwtToken!,
-                user: user,
-              );
-        } finally {
-          api.dispose();
-        }
-      } else {
-        await authManager.refresh();
-      }
-      DebugLogger.auth(
-        'Proxy session renewed in place',
-        scope: 'auth/connection',
-      );
-    } catch (error) {
-      DebugLogger.error(
-        'proxy-reauth-failed',
-        scope: 'auth/connection',
-        data: {'errorType': error.runtimeType.toString()},
-      );
-      if (!mounted) return;
-      setState(() => _statusMessage = l10n.couldNotConnectGeneric);
-    } finally {
-      if (mounted) {
-        setState(() => _isRetrying = false);
-      }
-    }
   }
 
   Future<void> _retryConnection() async {
@@ -322,10 +168,14 @@ class _ConnectionIssuePageState extends ConsumerState<ConnectionIssuePage> {
   }
 
   Future<void> _logout(AppLocalizations l10n) async {
-    final keepServerDetails = await showSignOutOptionsDialog(context);
-
-    if (!mounted) return;
-    if (keepServerDetails == null) return;
+    final confirmed = await ThemedDialogs.confirm(
+      context,
+      title: l10n.signOut,
+      message: l10n.signOutOptionsDescription,
+      confirmText: l10n.signOut,
+      isDestructive: true,
+    );
+    if (!confirmed || !mounted) return;
 
     setState(() {
       _isLoggingOut = true;
@@ -333,9 +183,7 @@ class _ConnectionIssuePageState extends ConsumerState<ConnectionIssuePage> {
     });
 
     try {
-      await ref
-          .read(signOutCoordinatorProvider)
-          .signOut(keepServerDetails: keepServerDetails);
+      await ref.read(signOutCoordinatorProvider).signOut();
     } catch (_) {
       if (!mounted) return;
       setState(() {
@@ -353,7 +201,7 @@ class _ConnectionIssuePageState extends ConsumerState<ConnectionIssuePage> {
   String _resolveHost(ServerConfig? config) {
     final url = config?.url;
     if (url == null || url.isEmpty) {
-      return AppLocalizations.of(context)!.backendChooserOpenWebUITitle;
+      return AppLocalizations.of(context)!.openWebUi;
     }
 
     try {

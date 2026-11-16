@@ -20,8 +20,8 @@ final class SseFrame {
 /// - Split SSE frames across decoded chunks
 /// - CRLF normalization, including a CRLF split across two chunks
 /// - Multiple `data:` lines joined with `\n`
-/// - The `event:` field, so consumers that key off event type (e.g. the Hermes
-///   runs API) can route without re-implementing the scanner
+/// - The `event:` field, so consumers that key off event type can route
+///   without re-implementing the scanner
 ///
 /// A frame is only emitted once a blank-line boundary is reached and the frame
 /// contained at least one `data:` line. Event-only and unterminated EOF frames

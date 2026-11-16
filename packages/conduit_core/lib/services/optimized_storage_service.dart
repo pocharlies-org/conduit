@@ -852,6 +852,24 @@ class OptimizedStorageService {
   Future<Set<String>> vaultedServerIds() =>
       _secureCredentialStorage.vaultedServerIds();
 
+  /// The Keycloak refresh token of the Open WebUI user [userId], if any.
+  Future<String?> getRefreshToken(String userId) => _retrySecureStorageRead(
+    () => _secureCredentialStorage.getRefreshToken(userId),
+    scope: 'storage/optimized/refresh-token',
+  );
+
+  Future<void> saveRefreshToken(String userId, String token) =>
+      _retrySecureStorageWrite(
+        () => _secureCredentialStorage.saveRefreshToken(userId, token),
+        scope: 'storage/optimized/refresh-token',
+      );
+
+  Future<void> deleteRefreshToken(String userId) =>
+      _retrySecureStorageWrite(
+        () => _secureCredentialStorage.deleteRefreshToken(userId),
+        scope: 'storage/optimized/refresh-token',
+      );
+
   /// Compare-and-delete: deletes the stored auth token ONLY if it still equals
   /// [expected]. Read + conditional delete run under [_authStateLock], so a
   /// superseded login can roll back its own token write without clobbering a
@@ -2539,53 +2557,6 @@ class OptimizedStorageService {
     );
   }
 
-  /// Applies [edit] as [editServerEndpoints] does, and in the same write
-  /// keeps the session headers a proxy sign-in captured for [accountId] on
-  /// [routeId], a route the edit saves.
-  ///
-  /// A route behind a proxy is refused without its cookie, so the two are
-  /// saved together or not at all. Returns false, saving neither, once a
-  /// sign-out has revoked cookies since [sessionRevision] was read (see
-  /// [sessionRevocationRevision]), or when [accountId] is not an account of
-  /// the server.
-  Future<bool> editServerEndpointsWithSession(
-    String serverId,
-    List<OpenWebUiEndpoint> Function(List<OpenWebUiEndpoint> endpoints) edit, {
-    required String accountId,
-    required String routeId,
-    required Map<String, String> headers,
-    required int sessionRevision,
-  }) {
-    return _authStateLock.synchronized(
-      () => _serverConfigsLock.synchronized(() async {
-        if (sessionRevision != _sessionRevocationRevision) {
-          DebugLogger.info(
-            'endpoint-cookie-dropped-after-sign-out',
-            scope: 'storage/optimized/registry',
-          );
-          return false;
-        }
-        final account = (await _registryForWriteUnlocked()).account(
-          accountId,
-        );
-        if (account == null || account.serverId != serverId) return false;
-        await _editServerEndpointsUnlocked(
-          serverId,
-          edit,
-          session: (
-            accountId: accountId,
-            routeId: routeId,
-            headers: {
-              for (final entry in headers.entries)
-                if (isCapturedSessionHeader(entry.key)) entry.key: entry.value,
-            },
-          ),
-        );
-        return true;
-      }),
-    );
-  }
-
   Future<void> _editServerEndpointsUnlocked(
     String serverId,
     List<OpenWebUiEndpoint> Function(List<OpenWebUiEndpoint> endpoints) edit, {
@@ -2766,16 +2737,6 @@ class OptimizedStorageService {
       );
     });
   }
-
-  /// The token vaulted for [accountId], an account that is not active, so it
-  /// can be revoked on the server when signing out of that account.
-  Future<String?> vaultedTokenFor(String accountId) =>
-      _authStateLock.synchronized(
-        () => _retrySecureStorageRead(
-          () => _secureCredentialStorage.getServerToken(accountId),
-          scope: 'storage/optimized/token-vault-read',
-        ),
-      );
 
   /// The tokens kept in the vault for [accountIds] (every account when
   /// null), each with the config of the server it was kept for.
@@ -3340,6 +3301,18 @@ class OptimizedStorageService {
     _cacheRegistry(registry);
   }
 
+  /// Puts the build's seed (OWU-104) into the registry and stores it: the
+  /// single Chat server the app is pre-configured with. Returns an empty
+  /// registry only when the build carries no seed.
+  Future<OpenWebUiRegistry> _seedRegistryUnlocked() async {
+    final seeded = await OpenWebUiSeed.registryFromSeed();
+    if (seeded != null) {
+      await _saveRegistryUnlocked(seeded);
+      return seeded;
+    }
+    return OpenWebUiRegistry.empty;
+  }
+
   Future<OpenWebUiRegistry> _readRegistryFromStorageUnlocked() async {
     final stored = await _secureCredentialStorage.getOpenWebUiRegistry();
     if (stored != null) {
@@ -3347,7 +3320,15 @@ class OptimizedStorageService {
       if (stored.isEmpty) {
         throw const FormatException('Open WebUI registry payload was empty');
       }
-      return OpenWebUiRegistry.decode(stored);
+      final registry = OpenWebUiRegistry.decode(stored);
+      if (registry.servers.isEmpty) {
+        // OWU-134: a stored registry with no server re-seeds the build's seed.
+        // The app is pre-configured with the one Chat server, so a wipe or the
+        // removal of the last account can never leave it without a server: the
+        // next boot lands on that server's sign-in.
+        return _seedRegistryUnlocked();
+      }
+      return registry;
     }
 
     final legacy = await _secureCredentialStorage.getServerConfigs();
@@ -3355,14 +3336,8 @@ class OptimizedStorageService {
       // Nothing writes the old list any more, so none can appear later.
       _registryMigrationSettled = true;
       // First install (OWU-104): the build's seed enters the accounts here,
-      // before anything was ever stored. A wipe leaves an empty registry
-      // stored, so it never re-seeds.
-      final seeded = await OpenWebUiSeed.registryFromSeed();
-      if (seeded != null) {
-        await _saveRegistryUnlocked(seeded);
-        return seeded;
-      }
-      return OpenWebUiRegistry.empty;
+      // before anything was ever stored.
+      return _seedRegistryUnlocked();
     }
     if (legacy.isEmpty) {
       throw const FormatException('Server configs payload was empty');
@@ -4267,8 +4242,7 @@ class OptimizedStorageService {
   ///
   /// When [preserveServerDetails] is true, only sanitized Open WebUI
   /// connection settings are restored after the broad wipe. Authentication
-  /// artifacts, app preferences, Direct profiles, and Hermes credentials are
-  /// always removed.
+  /// artifacts and app preferences are always removed.
   Future<bool> clearAllIf({
     required bool Function() canClear,
     required bool preserveServerDetails,

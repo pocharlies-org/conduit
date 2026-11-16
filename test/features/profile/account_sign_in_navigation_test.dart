@@ -5,17 +5,13 @@ import 'package:conduit/l10n/conduit_localizations.dart';
 import 'package:conduit_core/auth/auth_state_manager.dart';
 import 'package:conduit_core/auth/openwebui_account_summaries.dart';
 import 'package:conduit_core/features/auth/providers/unified_auth_providers.dart';
-import 'package:conduit_core/features/direct_connections/models/direct_connection_profile.dart';
-import 'package:conduit_core/features/direct_connections/providers/direct_connection_providers.dart';
-import 'package:conduit_core/features/hermes/models/hermes_config.dart';
-import 'package:conduit_core/features/hermes/providers/hermes_providers.dart';
+import 'package:conduit_core/features/workspace/models/workspace_capabilities.dart';
+import 'package:conduit_core/features/workspace/providers/workspace_capabilities_provider.dart';
 import 'package:conduit_core/models/openwebui_registry.dart';
 import 'package:conduit_core/models/server_config.dart';
 import 'package:conduit_core/navigation/route_redirect.dart';
 import 'package:conduit_core/navigation/routes.dart';
 import 'package:conduit_core/providers/app_providers.dart';
-import 'package:conduit_core/providers/backend_mode_providers.dart';
-import 'package:conduit_core/providers/chat_entry_readiness_providers.dart';
 import 'package:conduit_core/providers/openwebui_accounts_controller.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -47,17 +43,9 @@ final _homeEntry = OpenWebUiAccountEntry(
   hasSession: true,
 );
 
-final _ollama = DirectConnectionProfile(
-  id: 'direct-profile',
-  name: 'Local Ollama',
-  adapterKey: 'ollama',
-  baseUrl: 'http://localhost:11434',
-  manualModelIds: const ['llama3'],
-);
-
-/// Next to a usable Direct backend the router lets a user stay on the
-/// profile with an Open WebUI account that is not signed in, so switching to
-/// one, or signing out into one, has to open its sign-in itself.
+/// Switching to an Open WebUI account that is not signed in, or signing out
+/// into one, has to open its sign-in: the app is Open WebUI only, so the
+/// router sends a signed-out session to that server's authentication page.
 void main() {
   // What the router sees of the active account; the accounts controller
   // moves these as a switch or a sign-out does.
@@ -95,12 +83,7 @@ void main() {
         reviewerModeProvider: false,
         activeServerProvider: AsyncData<ServerConfig?>(active),
         authNavigationStateProvider: auth,
-        preferredBackendProvider: PreferredBackend.direct,
-        hermesConfigProvider: const HermesConfig(),
-        hermesSecretsLoadingProvider: false,
-        effectiveDirectConnectionProfilesProvider:
-            AsyncData<List<DirectConnectionProfile>>([_ollama]),
-        accountlessPrimaryBackendUsableProvider: true,
+        workspaceCapabilitiesProvider: const AsyncData(WorkspaceCapabilities()),
         authStateManagerProvider: const AsyncData<AuthState>(
           AuthState(status: AuthStatus.unauthenticated),
         ),
@@ -193,7 +176,7 @@ void main() {
     check(location()).equals(Routes.authentication);
   });
 
-  testWidgets('signing out of the last account carries on without it', (
+  testWidgets('signing out of the last account opens the sign-in', (
     tester,
   ) async {
     await pumpProfile(tester, next: null);
@@ -203,8 +186,10 @@ void main() {
     await tester.tap(find.text('Sign out'));
     await tester.pumpAndSettle();
 
-    check(location()).equals(Routes.profile);
-    expect(find.text('sign in'), findsNothing);
+    // OWU-134: there is no other backend to fall back on; a signed-out session
+    // goes to the seeded server's sign-in.
+    check(location()).equals(Routes.authentication);
+    expect(find.text('sign in'), findsOneWidget);
   });
 }
 

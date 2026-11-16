@@ -3,8 +3,7 @@
 /// Settings that name a server's data -- a default model id, pinned models,
 /// a server voice -- mean nothing on another account, so they are stored
 /// under a per-account key. Look-and-feel settings stay device-wide. With no
-/// Open WebUI account (Direct or Hermes only) the device-wide key is used, so
-/// those setups keep working exactly as before.
+/// Open WebUI account the device-wide key is used.
 library;
 
 import 'dart:convert';

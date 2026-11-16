@@ -26,8 +26,6 @@ import 'package:conduit_core/auth/openwebui_account_owner_marker.dart';
 import 'package:conduit_core/auth/openwebui_account_summaries.dart';
 import 'package:conduit_core/database/database_provider.dart';
 import 'package:conduit_core/database/chat_database_repository.dart';
-import 'package:conduit_core/features/direct_connections/services/direct_chat_bridge.dart';
-import 'package:conduit_core/features/hermes/services/hermes_session_provenance.dart';
 import 'package:conduit_core/models/conversation.dart';
 import 'package:conduit_core/models/server_config.dart';
 import 'package:conduit_core/models/user.dart';
@@ -43,18 +41,12 @@ typedef _OpenWebUiAccountIdentity = ({String token, String? userId});
 /// Whether [conversation] lives in the Open WebUI database.
 ///
 /// Moved here from the mobile chat layer along with the isolation notifier
-/// that is its only caller. Every symbol it needs -- the storage kind, the
-/// direct transport marker, the Hermes test -- was already in the core, so it
-/// travelled rather than becoming a seam.
+/// that is its only caller.
 bool conversationUsesOpenWebUiStorage(Conversation? conversation) {
   if (conversation == null) return false;
   final storage = chatStorageKindOf(conversation);
   if (storage == ChatStorageKind.openWebUi) return true;
   if (storage == ChatStorageKind.directLocal) return false;
-  final backend = conversation.metadata['backend'];
-  if (backend == kDirectTransport || isNativeHermesConversation(conversation)) {
-    return false;
-  }
   return true;
 }
 
@@ -419,8 +411,8 @@ class OpenWebUiAccountStorageIsolation extends Notifier<void> {
     );
   }
 
-  /// Deletes [accountId]'s local data: its database, owner marker, Hermes
-  /// session trust and account-scoped settings.
+  /// Deletes [accountId]'s local data: its database, owner marker and
+  /// account-scoped settings.
   ///
   /// For signing out of an account, after storage has removed it. Only
   /// [accountId]'s files are touched, never whichever account the providers
@@ -479,27 +471,8 @@ class OpenWebUiAccountStorageIsolation extends Notifier<void> {
     _purgesRunning.add(accountId);
     try {
       await _recordPendingPurge(accountId, ledger: ledger);
-      final trustForgotten = await attempt(() async {
-        final ownerMarker = ref
-            .read(openWebUiAccountOwnerMarkerStoreProvider)
-            .read(accountId);
-        final ownerUserId = ownerMarker?.userId.trim();
-        if (ownerMarker != null &&
-            ownerUserId != null &&
-            ownerUserId.isNotEmpty) {
-          await HermesMixedSessionBindingTrustStore.forgetStorageAccount(
-            HermesMixedSessionBindingTrustStore.durableStorageAccountIdentity(
-              serverId: accountId,
-              userId: ownerUserId,
-              tokenFingerprint: ownerMarker.tokenFingerprint,
-            ),
-          );
-        }
-      });
       await attempt(() => ref.read(openWebUiDatabasePurgeProvider)(accountId));
-      // The marker is how a retry finds that trust again, so it stays until
-      // the trust is gone.
-      if (trustForgotten) await attempt(() => _removeOwnerMarker(accountId));
+      await attempt(() => _removeOwnerMarker(accountId));
       if (!keepsRecord) {
         await attempt(
           () => ref.read(openWebUiAccountPrivateDataClearProvider)(accountId),
@@ -838,38 +811,12 @@ class OpenWebUiAccountStorageIsolation extends Notifier<void> {
   }) async {
     Object? lastError;
     StackTrace? lastStackTrace;
-    final revokedStorageAccountIdentities = <String>{};
     for (var attempt = 1; attempt <= 3; attempt++) {
       // Superseded by a switch or another purge, it tries no more: a purge
       // since may have opened this account's database again, and a retry
       // would delete it from under that.
       if (attempt > 1 && (_disposed || generation != _purgeGeneration)) return;
       try {
-        final ownerMarker = ref
-            .read(openWebUiAccountOwnerMarkerStoreProvider)
-            .read(serverId);
-        final ownerUserId = ownerMarker?.userId.trim();
-        if (ownerMarker != null &&
-            ownerUserId != null &&
-            ownerUserId.isNotEmpty) {
-          final storageAccountIdentity =
-              HermesMixedSessionBindingTrustStore.durableStorageAccountIdentity(
-                serverId: serverId,
-                userId: ownerUserId,
-                tokenFingerprint: ownerMarker.tokenFingerprint,
-              );
-          // If later cleanup fails, retry it without turning an already
-          // committed trust revocation into another fallible preference write.
-          // A changed owner is still revoked independently in this generation.
-          if (!revokedStorageAccountIdentities.contains(
-            storageAccountIdentity,
-          )) {
-            await HermesMixedSessionBindingTrustStore.forgetStorageAccount(
-              storageAccountIdentity,
-            );
-            revokedStorageAccountIdentities.add(storageAccountIdentity);
-          }
-        }
         // The cache clear acts on whichever account is active when it runs,
         // not on [serverId]. A switch since this purge began made another
         // account active; clearing now would empty that account's cache. The

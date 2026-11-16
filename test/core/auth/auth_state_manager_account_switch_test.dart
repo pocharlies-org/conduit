@@ -5,6 +5,7 @@ import 'package:conduit/platform/flutter_key_value_store.dart';
 import 'package:conduit_core/auth/auth_state_manager.dart';
 import 'package:conduit_core/database/account_storage_isolation.dart';
 import 'package:conduit_core/auth/api_auth_interceptor.dart';
+import 'package:conduit_core/models/openwebui_registry.dart';
 import 'package:conduit_core/models/server_config.dart';
 import 'package:conduit_core/models/user.dart';
 import 'package:conduit_core/persistence/persistence_keys.dart';
@@ -130,199 +131,211 @@ void main() {
     check(after.user?.id).equals(_userB.id);
   });
 
-  test('choosing the account in use takes up a session left in its vault',
-      () async {
-    final storage = _Storage();
-    final isolation = _RecordingIsolation();
-    // A switch to A failed part-way: A is active with nothing live, and its
-    // session is still in the vault.
-    String? token;
-    when(() => storage.getAuthTokenStrict()).thenAnswer((_) async => token);
-    when(() => storage.getAuthToken()).thenAnswer((_) async => token);
-    when(() => storage.getSavedCredentials()).thenAnswer((_) async => null);
-    when(() => storage.getSavedCredentialsStrict())
-        .thenAnswer((_) async => null);
-    when(() => storage.getLocalUserWithAvatar())
-        .thenAnswer((_) async => _userA);
-    when(() => storage.saveLocalUser(any())).thenAnswer((_) async {});
-    when(
-      () => storage.saveLocalUserWithAvatar(
-        any(),
-        avatarUrl: any(named: 'avatarUrl'),
-      ),
-    ).thenAnswer((_) async {});
-    when(() => storage.getActiveServerId())
-        .thenAnswer((_) async => 'account-a');
-    when(() => storage.getEffectiveActiveServerId())
-        .thenAnswer((_) async => 'account-a');
-    when(
-      () => storage.switchActiveServer(
-        fromServerId: 'account-a',
-        toServerId: 'account-a',
-      ),
-    ).thenAnswer((_) async {
-      token = _tokenA;
-      return true;
-    });
+  test(
+    'choosing the account in use takes up a session left in its vault',
+    () async {
+      final storage = _Storage();
+      final isolation = _RecordingIsolation();
+      // A switch to A failed part-way: A is active with nothing live, and its
+      // session is still in the vault.
+      String? token;
+      when(() => storage.getAuthTokenStrict()).thenAnswer((_) async => token);
+      when(() => storage.getAuthToken()).thenAnswer((_) async => token);
+      when(() => storage.getSavedCredentials()).thenAnswer((_) async => null);
+      when(() => storage.getSavedCredentialsStrict())
+          .thenAnswer((_) async => null);
+      when(() => storage.getLocalUserWithAvatar())
+          .thenAnswer((_) async => _userA);
+      when(() => storage.saveLocalUser(any())).thenAnswer((_) async {});
+      when(
+        () => storage.saveLocalUserWithAvatar(
+          any(),
+          avatarUrl: any(named: 'avatarUrl'),
+        ),
+      ).thenAnswer((_) async {});
+      when(() => storage.getActiveServerId())
+          .thenAnswer((_) async => 'account-a');
+      when(() => storage.getEffectiveActiveServerId())
+          .thenAnswer((_) async => 'account-a');
+      when(
+        () => storage.switchActiveServer(
+          fromServerId: 'account-a',
+          toServerId: 'account-a',
+        ),
+      ).thenAnswer((_) async {
+        token = _tokenA;
+        return true;
+      });
 
-    final container = ProviderContainer(
-      overrides: [
-        optimizedStorageServiceProvider.overrideWithValue(storage),
-        apiServiceProvider.overrideWithValue(null),
-        activeServerProvider.overrideWith((ref) async => null),
-        openWebUiAccountStorageIsolationProvider.overrideWith(() => isolation),
-      ],
-    );
-    addTearDown(container.dispose);
-    container.read(openWebUiAccountStorageIsolationProvider);
-    check((await _settledAuth(container)).isAuthenticated).isFalse();
+      final container = ProviderContainer(
+        overrides: [
+          optimizedStorageServiceProvider.overrideWithValue(storage),
+          apiServiceProvider.overrideWithValue(null),
+          activeServerProvider.overrideWith((ref) async => null),
+          openWebUiAccountStorageIsolationProvider.overrideWith(
+            () => isolation,
+          ),
+        ],
+      );
+      addTearDown(container.dispose);
+      container.read(openWebUiAccountStorageIsolationProvider);
+      check((await _settledAuth(container)).isAuthenticated).isFalse();
 
-    final signedIn = await container
-        .read(authStateManagerProvider.notifier)
-        .switchToAccount('account-a');
+      final signedIn = await container
+          .read(authStateManagerProvider.notifier)
+          .switchToAccount('account-a');
 
-    check(signedIn).isTrue();
-    check(container.read(authStateManagerProvider).requireValue.token)
-        .equals(_tokenA);
-  });
+      check(signedIn).isTrue();
+      check(container.read(authStateManagerProvider).requireValue.token)
+          .equals(_tokenA);
+    },
+  );
 
-  test('taking up a kept session leaves a sign-in started meanwhile alone',
-      () async {
-    final storage = _Storage();
-    final isolation = _RecordingIsolation();
-    String? token;
-    var tokenReads = 0;
-    when(() => storage.getAuthTokenStrict()).thenAnswer((_) async {
-      tokenReads++;
-      return token;
-    });
-    when(() => storage.getAuthToken()).thenAnswer((_) async => token);
-    when(() => storage.getSavedCredentials()).thenAnswer((_) async => null);
-    when(() => storage.getSavedCredentialsStrict())
-        .thenAnswer((_) async => null);
-    when(() => storage.getLocalUserWithAvatar())
-        .thenAnswer((_) async => _userA);
-    when(() => storage.saveLocalUser(any())).thenAnswer((_) async {});
-    when(
-      () => storage.saveLocalUserWithAvatar(
-        any(),
-        avatarUrl: any(named: 'avatarUrl'),
-      ),
-    ).thenAnswer((_) async {});
-    when(() => storage.getActiveServerId())
-        .thenAnswer((_) async => 'account-a');
-    when(() => storage.getEffectiveActiveServerId())
-        .thenAnswer((_) async => 'account-a');
-    late final ProviderContainer container;
-    Future<void>? newer;
-    when(
-      () => storage.switchActiveServer(
-        fromServerId: 'account-a',
-        toServerId: 'account-a',
-      ),
-    ).thenAnswer((_) async {
-      token = _tokenA;
-      // A sign-in starts while storage takes the session up.
-      newer = container.read(authStateManagerProvider.notifier).refresh();
-      return true;
-    });
-
-    container = ProviderContainer(
-      overrides: [
-        optimizedStorageServiceProvider.overrideWithValue(storage),
-        apiServiceProvider.overrideWithValue(null),
-        activeServerProvider.overrideWith((ref) async => null),
-        openWebUiAccountStorageIsolationProvider.overrideWith(() => isolation),
-      ],
-    );
-    addTearDown(container.dispose);
-    container.read(openWebUiAccountStorageIsolationProvider);
-    await _settledAuth(container);
-    tokenReads = 0;
-
-    await container
-        .read(authStateManagerProvider.notifier)
-        .switchToAccount('account-a');
-    await newer;
-
-    // Only the newer sign-in read the session; a second restore would have
-    // cancelled it.
-    check(tokenReads).equals(1);
-  });
-
-  test('a sign-in started before a kept session is looked for is left alone',
-      () async {
-    final storage = _Storage();
-    final isolation = _RecordingIsolation();
-    String? token;
-    var tokenReads = 0;
-    when(() => storage.getAuthTokenStrict()).thenAnswer((_) async {
-      tokenReads++;
-      return token;
-    });
-    when(() => storage.getAuthToken()).thenAnswer((_) async => token);
-    when(() => storage.getSavedCredentials()).thenAnswer((_) async => null);
-    when(() => storage.getSavedCredentialsStrict())
-        .thenAnswer((_) async => null);
-    when(() => storage.getLocalUserWithAvatar())
-        .thenAnswer((_) async => _userA);
-    when(() => storage.saveLocalUser(any())).thenAnswer((_) async {});
-    when(
-      () => storage.saveLocalUserWithAvatar(
-        any(),
-        avatarUrl: any(named: 'avatarUrl'),
-      ),
-    ).thenAnswer((_) async {});
-    when(() => storage.getActiveServerId())
-        .thenAnswer((_) async => 'account-a');
-    late final ProviderContainer container;
-    Future<void>? newer;
-    var looked = false;
-    // A sign-in starts while the account in use is read.
-    when(() => storage.getEffectiveActiveServerId()).thenAnswer((_) async {
-      if (!looked) {
-        looked = true;
+  test(
+    'taking up a kept session leaves a sign-in started meanwhile alone',
+    () async {
+      final storage = _Storage();
+      final isolation = _RecordingIsolation();
+      String? token;
+      var tokenReads = 0;
+      when(() => storage.getAuthTokenStrict()).thenAnswer((_) async {
+        tokenReads++;
+        return token;
+      });
+      when(() => storage.getAuthToken()).thenAnswer((_) async => token);
+      when(() => storage.getSavedCredentials()).thenAnswer((_) async => null);
+      when(() => storage.getSavedCredentialsStrict())
+          .thenAnswer((_) async => null);
+      when(() => storage.getLocalUserWithAvatar())
+          .thenAnswer((_) async => _userA);
+      when(() => storage.saveLocalUser(any())).thenAnswer((_) async {});
+      when(
+        () => storage.saveLocalUserWithAvatar(
+          any(),
+          avatarUrl: any(named: 'avatarUrl'),
+        ),
+      ).thenAnswer((_) async {});
+      when(() => storage.getActiveServerId())
+          .thenAnswer((_) async => 'account-a');
+      when(() => storage.getEffectiveActiveServerId())
+          .thenAnswer((_) async => 'account-a');
+      late final ProviderContainer container;
+      Future<void>? newer;
+      when(
+        () => storage.switchActiveServer(
+          fromServerId: 'account-a',
+          toServerId: 'account-a',
+        ),
+      ).thenAnswer((_) async {
+        token = _tokenA;
+        // A sign-in starts while storage takes the session up.
         newer = container.read(authStateManagerProvider.notifier).refresh();
-      }
-      return 'account-a';
-    });
-    when(
-      () => storage.switchActiveServer(
-        fromServerId: 'account-a',
-        toServerId: 'account-a',
-      ),
-    ).thenAnswer((_) async {
-      token = _tokenA;
-      return true;
-    });
+        return true;
+      });
 
-    container = ProviderContainer(
-      overrides: [
-        optimizedStorageServiceProvider.overrideWithValue(storage),
-        apiServiceProvider.overrideWithValue(null),
-        activeServerProvider.overrideWith((ref) async => null),
-        openWebUiAccountStorageIsolationProvider.overrideWith(() => isolation),
-      ],
-    );
-    addTearDown(container.dispose);
-    container.read(openWebUiAccountStorageIsolationProvider);
-    await _settledAuth(container);
-    tokenReads = 0;
+      container = ProviderContainer(
+        overrides: [
+          optimizedStorageServiceProvider.overrideWithValue(storage),
+          apiServiceProvider.overrideWithValue(null),
+          activeServerProvider.overrideWith((ref) async => null),
+          openWebUiAccountStorageIsolationProvider.overrideWith(
+            () => isolation,
+          ),
+        ],
+      );
+      addTearDown(container.dispose);
+      container.read(openWebUiAccountStorageIsolationProvider);
+      await _settledAuth(container);
+      tokenReads = 0;
 
-    await container
-        .read(authStateManagerProvider.notifier)
-        .switchToAccount('account-a');
-    await newer;
+      await container
+          .read(authStateManagerProvider.notifier)
+          .switchToAccount('account-a');
+      await newer;
 
-    // Only the newer sign-in read the session; storage was not even asked.
-    check(tokenReads).equals(1);
-    verifyNever(
-      () => storage.switchActiveServer(
-        fromServerId: 'account-a',
-        toServerId: 'account-a',
-      ),
-    );
-  });
+      // Only the newer sign-in read the session; a second restore would have
+      // cancelled it.
+      check(tokenReads).equals(1);
+    },
+  );
+
+  test(
+    'a sign-in started before a kept session is looked for is left alone',
+    () async {
+      final storage = _Storage();
+      final isolation = _RecordingIsolation();
+      String? token;
+      var tokenReads = 0;
+      when(() => storage.getAuthTokenStrict()).thenAnswer((_) async {
+        tokenReads++;
+        return token;
+      });
+      when(() => storage.getAuthToken()).thenAnswer((_) async => token);
+      when(() => storage.getSavedCredentials()).thenAnswer((_) async => null);
+      when(() => storage.getSavedCredentialsStrict())
+          .thenAnswer((_) async => null);
+      when(() => storage.getLocalUserWithAvatar())
+          .thenAnswer((_) async => _userA);
+      when(() => storage.saveLocalUser(any())).thenAnswer((_) async {});
+      when(
+        () => storage.saveLocalUserWithAvatar(
+          any(),
+          avatarUrl: any(named: 'avatarUrl'),
+        ),
+      ).thenAnswer((_) async {});
+      when(() => storage.getActiveServerId())
+          .thenAnswer((_) async => 'account-a');
+      late final ProviderContainer container;
+      Future<void>? newer;
+      var looked = false;
+      // A sign-in starts while the account in use is read.
+      when(() => storage.getEffectiveActiveServerId()).thenAnswer((_) async {
+        if (!looked) {
+          looked = true;
+          newer = container.read(authStateManagerProvider.notifier).refresh();
+        }
+        return 'account-a';
+      });
+      when(
+        () => storage.switchActiveServer(
+          fromServerId: 'account-a',
+          toServerId: 'account-a',
+        ),
+      ).thenAnswer((_) async {
+        token = _tokenA;
+        return true;
+      });
+
+      container = ProviderContainer(
+        overrides: [
+          optimizedStorageServiceProvider.overrideWithValue(storage),
+          apiServiceProvider.overrideWithValue(null),
+          activeServerProvider.overrideWith((ref) async => null),
+          openWebUiAccountStorageIsolationProvider.overrideWith(
+            () => isolation,
+          ),
+        ],
+      );
+      addTearDown(container.dispose);
+      container.read(openWebUiAccountStorageIsolationProvider);
+      await _settledAuth(container);
+      tokenReads = 0;
+
+      await container
+          .read(authStateManagerProvider.notifier)
+          .switchToAccount('account-a');
+      await newer;
+
+      // Only the newer sign-in read the session; storage was not even asked.
+      check(tokenReads).equals(1);
+      verifyNever(
+        () => storage.switchActiveServer(
+          fromServerId: 'account-a',
+          toServerId: 'account-a',
+        ),
+      );
+    },
+  );
 
   test('an account without a session settles signed out', () async {
     final storage = _Storage();
@@ -466,9 +479,8 @@ void main() {
     );
     verifyNever(() => storage.removeInactiveAccount(any()));
     check(isolation.purged).isEmpty();
-    check(
-      container.read(authStateManagerProvider).requireValue.token,
-    ).equals(_tokenA);
+    check(container.read(authStateManagerProvider).requireValue.token)
+        .equals(_tokenA);
   });
 
   // The account is gone by then; its purge is recorded for the next start.
@@ -518,6 +530,131 @@ void main() {
 
     check(signedIn).isFalse();
     check(isolation.purged).deepEquals(['account-a']);
+  });
+
+  // F1 of PR 18's security review: the refresh token is filed under the
+  // Open WebUI user, not the account, so removing the account left it behind
+  // renewing a session that had been signed out of.
+  test('a sign-out drops the refresh token of the user it removed', () async {
+    final storage = _Storage();
+    final isolation = _RecordingIsolation();
+    when(() => storage.getAuthTokenStrict()).thenAnswer((_) async => _tokenA);
+    when(() => storage.getLocalUserWithAvatar())
+        .thenAnswer((_) async => _userA);
+    when(() => storage.saveLocalUser(any())).thenAnswer((_) async {});
+    when(
+      () => storage.saveLocalUserWithAvatar(
+        any(),
+        avatarUrl: any(named: 'avatarUrl'),
+      ),
+    ).thenAnswer((_) async {});
+    var active = 'account-a';
+    when(() => storage.getActiveServerId()).thenAnswer((_) async => active);
+    when(() => storage.getEffectiveActiveServerId())
+        .thenAnswer((_) async => active);
+    var accounts = <OpenWebUiAccount>[
+      OpenWebUiAccount(
+        id: 'account-a',
+        serverId: 'account-a',
+        userId: 'user-a',
+      ),
+    ];
+    when(() => storage.getOpenWebUiRegistryStrict())
+        .thenAnswer((_) async => OpenWebUiRegistry(accounts: accounts));
+    when(() => storage.deleteRefreshToken(any())).thenAnswer((_) async {});
+    when(
+      () => storage.removeAccount(
+        'account-a',
+        thenActivate: any(named: 'thenActivate'),
+      ),
+    ).thenAnswer((_) async {
+      accounts = <OpenWebUiAccount>[];
+      return false;
+    });
+
+    final container = ProviderContainer(
+      overrides: [
+        optimizedStorageServiceProvider.overrideWithValue(storage),
+        apiServiceProvider.overrideWithValue(null),
+        activeServerProvider.overrideWith((ref) async => null),
+        openWebUiAccountStorageIsolationProvider.overrideWith(() => isolation),
+      ],
+    );
+    addTearDown(container.dispose);
+    container.read(openWebUiAccountStorageIsolationProvider);
+    await _settledAuth(container);
+
+    await container
+        .read(authStateManagerProvider.notifier)
+        .signOutAccount('account-a');
+
+    verify(() => storage.deleteRefreshToken('user-a')).called(1);
+  });
+
+  // The token is one per user, not per account: another account of the same
+  // user keeps it, even after the one signed out of is gone.
+  test('a sign-out keeps the token another account of the user still names',
+      () async {
+    final storage = _Storage();
+    final isolation = _RecordingIsolation();
+    when(() => storage.getAuthTokenStrict()).thenAnswer((_) async => _tokenA);
+    when(() => storage.getLocalUserWithAvatar())
+        .thenAnswer((_) async => _userA);
+    when(() => storage.saveLocalUser(any())).thenAnswer((_) async {});
+    when(
+      () => storage.saveLocalUserWithAvatar(
+        any(),
+        avatarUrl: any(named: 'avatarUrl'),
+      ),
+    ).thenAnswer((_) async {});
+    when(() => storage.getActiveServerId())
+        .thenAnswer((_) async => 'account-a');
+    when(() => storage.getEffectiveActiveServerId())
+        .thenAnswer((_) async => 'account-a');
+    // Two accounts of one user: the sign-out names its user before the
+    // removal, and only the account left over keeps the token afterwards.
+    var accounts = <OpenWebUiAccount>[
+      OpenWebUiAccount(id: 'account-a', serverId: 'account-a', userId: 'user-a'),
+      OpenWebUiAccount(id: 'account-b', serverId: 'account-b', userId: 'user-a'),
+    ];
+    when(() => storage.getOpenWebUiRegistryStrict())
+        .thenAnswer((_) async => OpenWebUiRegistry(accounts: accounts));
+    // Stubbed, so a delete would be recorded rather than swallowed as an
+    // unstubbed call.
+    when(() => storage.deleteRefreshToken(any())).thenAnswer((_) async {});
+    when(
+      () => storage.removeAccount(
+        'account-a',
+        thenActivate: any(named: 'thenActivate'),
+      ),
+    ).thenAnswer((_) async {
+      accounts = <OpenWebUiAccount>[
+        OpenWebUiAccount(
+          id: 'account-b',
+          serverId: 'account-b',
+          userId: 'user-a',
+        ),
+      ];
+      return false;
+    });
+
+    final container = ProviderContainer(
+      overrides: [
+        optimizedStorageServiceProvider.overrideWithValue(storage),
+        apiServiceProvider.overrideWithValue(null),
+        activeServerProvider.overrideWith((ref) async => null),
+        openWebUiAccountStorageIsolationProvider.overrideWith(() => isolation),
+      ],
+    );
+    addTearDown(container.dispose);
+    container.read(openWebUiAccountStorageIsolationProvider);
+    await _settledAuth(container);
+
+    await container
+        .read(authStateManagerProvider.notifier)
+        .signOutAccount('account-a');
+
+    verifyNever(() => storage.deleteRefreshToken(any()));
   });
 
   test('a merge whose purge fails is still a merge', () async {
@@ -741,10 +878,8 @@ void main() {
     when(() => storage.getEffectiveActiveServerId())
         .thenAnswer((_) async => active);
     when(
-      () => storage.removePendingAccount(
-        'account-a',
-        thenActivate: 'account-b',
-      ),
+      () =>
+          storage.removePendingAccount('account-a', thenActivate: 'account-b'),
     ).thenAnswer((_) async {
       active = 'account-b';
       token = _tokenB;
@@ -803,10 +938,8 @@ void main() {
     when(() => storage.getEffectiveActiveServerId())
         .thenAnswer((_) async => 'account-a');
     when(
-      () => storage.removePendingAccount(
-        'account-a',
-        thenActivate: 'account-b',
-      ),
+      () =>
+          storage.removePendingAccount('account-a', thenActivate: 'account-b'),
     ).thenAnswer((_) async => null);
 
     final container = ProviderContainer(
@@ -877,9 +1010,8 @@ void main() {
       ),
     );
     check(isolation.switches).equals(0);
-    check(
-      container.read(authStateManagerProvider).requireValue.token,
-    ).equals(_tokenA);
+    check(container.read(authStateManagerProvider).requireValue.token)
+        .equals(_tokenA);
   });
 
   test('a merge leaves a sign-in started while it looks for the account '
@@ -942,58 +1074,62 @@ void main() {
 
   // After a password change: signed in again as the same user, the account
   // keeps its settings, but not chats cached under the old session.
-  test("the plain logout deletes the account's chats and keeps the account",
-      () async {
-    final storage = _Storage();
-    final isolation = _RecordingIsolation();
-    when(() => storage.getAuthTokenStrict()).thenAnswer((_) async => _tokenA);
-    when(() => storage.getLocalUserWithAvatar())
-        .thenAnswer((_) async => _userA);
-    when(() => storage.saveLocalUser(any())).thenAnswer((_) async {});
-    when(
-      () => storage.saveLocalUserWithAvatar(
-        any(),
-        avatarUrl: any(named: 'avatarUrl'),
-      ),
-    ).thenAnswer((_) async {});
-    when(() => storage.getActiveServerId())
-        .thenAnswer((_) async => 'account-a');
-    when(() => storage.getEffectiveActiveServerId())
-        .thenAnswer((_) async => 'account-a');
-    when(
-      () => storage.clearActiveAccountAuthDataIf(
-        canClear: any(named: 'canClear'),
-      ),
-    ).thenAnswer(
-      (invocation) async =>
-          (invocation.namedArguments[#canClear] as bool Function())(),
-    );
-
-    final container = ProviderContainer(
-      overrides: [
-        optimizedStorageServiceProvider.overrideWithValue(storage),
-        apiServiceProvider.overrideWithValue(null),
-        activeServerProvider.overrideWith(
-          (ref) async => const ServerConfig(
-            id: 'account-a',
-            name: 'A',
-            url: 'https://a.example',
-          ),
+  test(
+    "the plain logout deletes the account's chats and keeps the account",
+    () async {
+      final storage = _Storage();
+      final isolation = _RecordingIsolation();
+      when(() => storage.getAuthTokenStrict()).thenAnswer((_) async => _tokenA);
+      when(() => storage.getLocalUserWithAvatar())
+          .thenAnswer((_) async => _userA);
+      when(() => storage.saveLocalUser(any())).thenAnswer((_) async {});
+      when(
+        () => storage.saveLocalUserWithAvatar(
+          any(),
+          avatarUrl: any(named: 'avatarUrl'),
         ),
-        openWebUiAccountStorageIsolationProvider.overrideWith(() => isolation),
-      ],
-    );
-    addTearDown(container.dispose);
-    container.read(openWebUiAccountStorageIsolationProvider);
-    await container.read(activeServerProvider.future);
-    await _settledAuth(container);
+      ).thenAnswer((_) async {});
+      when(() => storage.getActiveServerId())
+          .thenAnswer((_) async => 'account-a');
+      when(() => storage.getEffectiveActiveServerId())
+          .thenAnswer((_) async => 'account-a');
+      when(
+        () => storage.clearActiveAccountAuthDataIf(
+          canClear: any(named: 'canClear'),
+        ),
+      ).thenAnswer(
+        (invocation) async =>
+            (invocation.namedArguments[#canClear] as bool Function())(),
+      );
 
-    await container.read(authStateManagerProvider.notifier).logout();
+      final container = ProviderContainer(
+        overrides: [
+          optimizedStorageServiceProvider.overrideWithValue(storage),
+          apiServiceProvider.overrideWithValue(null),
+          activeServerProvider.overrideWith(
+            (ref) async => const ServerConfig(
+              id: 'account-a',
+              name: 'A',
+              url: 'https://a.example',
+            ),
+          ),
+          openWebUiAccountStorageIsolationProvider.overrideWith(
+            () => isolation,
+          ),
+        ],
+      );
+      addTearDown(container.dispose);
+      container.read(openWebUiAccountStorageIsolationProvider);
+      await container.read(activeServerProvider.future);
+      await _settledAuth(container);
 
-    check(isolation.purgedKeepingRecord).deepEquals(['account-a']);
-    check(isolation.purged).isEmpty();
-    verifyNever(() => storage.removeAccount(any()));
-  });
+      await container.read(authStateManagerProvider.notifier).logout();
+
+      check(isolation.purgedKeepingRecord).deepEquals(['account-a']);
+      check(isolation.purged).isEmpty();
+      verifyNever(() => storage.removeAccount(any()));
+    },
+  );
 
   test('the plain logout deletes the chats of the account stored as active '
       'while the one in use loads', () async {
@@ -1104,60 +1240,68 @@ void main() {
     check(isolation.purgedKeepingRecord).deepEquals(['account-b']);
   });
 
-  test('a sign-out overtaken by a switch leaves the account now in use', () async {
-    final storage = _Storage();
-    final isolation = _RecordingIsolation();
-    var active = 'account-a';
-    var token = _tokenA;
-    when(() => storage.getAuthTokenStrict()).thenAnswer((_) async => token);
-    when(() => storage.getLocalUserWithAvatar())
-        .thenAnswer((_) async => active == 'account-a' ? _userA : _userB);
-    when(() => storage.saveLocalUser(any())).thenAnswer((_) async {});
-    when(
-      () => storage.saveLocalUserWithAvatar(
-        any(),
-        avatarUrl: any(named: 'avatarUrl'),
-      ),
-    ).thenAnswer((_) async {});
-    when(() => storage.getActiveServerId()).thenAnswer((_) async => active);
-    when(() => storage.getEffectiveActiveServerId())
-        .thenAnswer((_) async => active);
-    when(() => storage.removeInactiveAccount('account-a'))
-        .thenAnswer((_) async => true);
-    final workerManager = WorkerManager();
-    // A switch to B finishes while the server is asked to end A's session.
-    final api = _LoggingOutApi(workerManager, onLogout: () {
-      active = 'account-b';
-      token = _tokenB;
-    });
-    addTearDown(() {
-      api.dispose();
-      workerManager.dispose();
-    });
+  test(
+    'a sign-out overtaken by a switch leaves the account now in use',
+    () async {
+      final storage = _Storage();
+      final isolation = _RecordingIsolation();
+      var active = 'account-a';
+      var token = _tokenA;
+      when(() => storage.getAuthTokenStrict()).thenAnswer((_) async => token);
+      when(() => storage.getLocalUserWithAvatar())
+          .thenAnswer((_) async => active == 'account-a' ? _userA : _userB);
+      when(() => storage.saveLocalUser(any())).thenAnswer((_) async {});
+      when(
+        () => storage.saveLocalUserWithAvatar(
+          any(),
+          avatarUrl: any(named: 'avatarUrl'),
+        ),
+      ).thenAnswer((_) async {});
+      when(() => storage.getActiveServerId()).thenAnswer((_) async => active);
+      when(() => storage.getEffectiveActiveServerId())
+          .thenAnswer((_) async => active);
+      when(() => storage.removeInactiveAccount('account-a'))
+          .thenAnswer((_) async => true);
+      final workerManager = WorkerManager();
+      // A switch to B finishes while the server is asked to end A's session.
+      final api = _LoggingOutApi(
+        workerManager,
+        onLogout: () {
+          active = 'account-b';
+          token = _tokenB;
+        },
+      );
+      addTearDown(() {
+        api.dispose();
+        workerManager.dispose();
+      });
 
-    final container = ProviderContainer(
-      overrides: [
-        optimizedStorageServiceProvider.overrideWithValue(storage),
-        apiServiceProvider.overrideWithValue(api),
-        activeServerProvider.overrideWith((ref) async => null),
-        openWebUiAccountStorageIsolationProvider.overrideWith(() => isolation),
-      ],
-    );
-    addTearDown(container.dispose);
-    container.read(openWebUiAccountStorageIsolationProvider);
-    await _settledAuth(container);
+      final container = ProviderContainer(
+        overrides: [
+          optimizedStorageServiceProvider.overrideWithValue(storage),
+          apiServiceProvider.overrideWithValue(api),
+          activeServerProvider.overrideWith((ref) async => null),
+          openWebUiAccountStorageIsolationProvider.overrideWith(
+            () => isolation,
+          ),
+        ],
+      );
+      addTearDown(container.dispose);
+      container.read(openWebUiAccountStorageIsolationProvider);
+      await _settledAuth(container);
 
-    await container
-        .read(authStateManagerProvider.notifier)
-        .signOutAccount('account-a');
+      await container
+          .read(authStateManagerProvider.notifier)
+          .signOutAccount('account-a');
 
-    // B's session was never touched: no boundary, no signed-out B.
-    check(isolation.switches).equals(0);
-    check(container.read(authStateManagerProvider).requireValue.status)
-        .not((it) => it.equals(AuthStatus.unauthenticated));
-    check(isolation.purged).deepEquals(['account-a']);
-    verify(() => storage.removeInactiveAccount('account-a')).called(1);
-  });
+      // B's session was never touched: no boundary, no signed-out B.
+      check(isolation.switches).equals(0);
+      check(container.read(authStateManagerProvider).requireValue.status)
+          .not((it) => it.equals(AuthStatus.unauthenticated));
+      check(isolation.purged).deepEquals(['account-a']);
+      verify(() => storage.removeInactiveAccount('account-a')).called(1);
+    },
+  );
 
   test('a sign-out of an inactive account overtaken by a switch to it '
       'settles tokenless', () async {
@@ -1178,20 +1322,19 @@ void main() {
     when(() => storage.getActiveServerId()).thenAnswer((_) async => active);
     when(() => storage.getEffectiveActiveServerId())
         .thenAnswer((_) async => active);
-    when(
-      () => storage.vaultedSessions(accountIds: any(named: 'accountIds')),
-    ).thenAnswer(
-      (_) async => [
-        (
-          config: const ServerConfig(
-            id: 'account-b',
-            name: 'B',
-            url: 'https://b.example',
-          ),
-          token: _tokenB,
-        ),
-      ],
-    );
+    when(() => storage.vaultedSessions(accountIds: any(named: 'accountIds')))
+        .thenAnswer(
+          (_) async => [
+            (
+              config: const ServerConfig(
+                id: 'account-b',
+                name: 'B',
+                url: 'https://b.example',
+              ),
+              token: _tokenB,
+            ),
+          ],
+        );
     when(
       () => storage.switchActiveServer(
         fromServerId: 'account-a',
@@ -1288,7 +1431,10 @@ final class _RecordingIsolation extends OpenWebUiAccountStorageIsolation {
   }
 
   @override
-  Future<void> purgeAccount(String accountId, {bool keepsRecord = false}) async {
+  Future<void> purgeAccount(
+    String accountId, {
+    bool keepsRecord = false,
+  }) async {
     (keepsRecord ? purgedKeepingRecord : purged).add(accountId);
     if (purgeError case final error?) throw error;
   }

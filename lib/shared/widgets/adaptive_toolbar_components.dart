@@ -1011,8 +1011,7 @@ class ConduitAdaptiveAppBarModelSelector extends StatelessWidget {
   final TextStyle? textStyle;
 
   /// Whether to show the dropdown chevron and allow tapping to change models.
-  /// Hidden for single-agent backends (e.g. the Hermes agent) where there is
-  /// nothing to pick.
+  /// Hidden where there is nothing to pick.
   final bool showChevron;
 
   @override

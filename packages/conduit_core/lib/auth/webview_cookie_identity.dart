@@ -34,9 +34,9 @@ typedef WebViewCookieExpiry = ({String path, String? domain, bool secure});
 ///  * the host-only cookie (no `Domain`) and, when given, the [domain]
 ///    cookie; never a `Domain` for `__Host-`, which forbids one;
 ///  * [path], `/` and [url]'s own path (a server behind a proxy prefix sets
-///    `Path=<prefix>`, as Hermes' dashboard does), each with and without a
-///    trailing slash, since a cookie stored with `Path=/prefix/` is replaced
-///    only by that exact path; only `/` for `__Host-`.
+///    `Path=<prefix>`), each with and without a trailing slash, since a
+///    cookie stored with `Path=/prefix/` is replaced only by that exact path;
+///    only `/` for `__Host-`.
 ///
 /// Android's cookie manager reports only a cookie's name and value, so the
 /// path and domain of a tracked cookie cannot be told apart from another

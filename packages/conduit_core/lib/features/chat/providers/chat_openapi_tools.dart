@@ -207,23 +207,12 @@ List<Map<String, dynamic>> _convertOpenApiToToolPayload(
 /// filter resolution, and action dispatch.
 Map<String, dynamic> _buildLocalModelItem(
   dynamic selectedModel, {
-  DirectModelBinding? trustedDirectBinding,
   String? wireModelId,
 }) {
   final meta = selectedModel.metadata as Map<String, dynamic>?;
-  final openWebUiDirectBinding =
-      trustedDirectBinding?.source == DirectModelSource.openWebUi
-      ? trustedDirectBinding
-      : null;
   return {
     'id': wireModelId ?? selectedModel.id,
     'name': selectedModel.name,
-    if (openWebUiDirectBinding != null) ...{
-      'direct': true,
-      'urlIdx': openWebUiDirectBinding.openWebUiUrlIndex,
-      'openai': {'id': openWebUiDirectBinding.remoteModelId},
-      'connection_type': 'external',
-    },
     'supported_parameters':
         selectedModel.supportedParameters ??
         [

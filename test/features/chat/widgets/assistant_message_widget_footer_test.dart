@@ -626,9 +626,7 @@ void main() {
     await tester.pump(const Duration(milliseconds: 500));
   });
 
-  testWidgets('a voice reply names itself in the app language', (
-    tester,
-  ) async {
+  testWidgets('a voice reply names itself in the app language', (tester) async {
     final message = ChatMessage(
       id: 'voice-reply',
       role: 'assistant',

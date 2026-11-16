@@ -593,9 +593,8 @@ Future<CalendarSession> pumpCalendar(
         localizationsDelegates: conduitLocalizationsDelegates,
         supportedLocales: AppLocalizations.supportedLocales,
         builder: (context, child) => MediaQuery(
-          data: MediaQuery.of(
-            context,
-          ).copyWith(alwaysUse24HourFormat: alwaysUse24HourFormat),
+          data: MediaQuery.of(context)
+              .copyWith(alwaysUse24HourFormat: alwaysUse24HourFormat),
           child: child!,
         ),
       ),

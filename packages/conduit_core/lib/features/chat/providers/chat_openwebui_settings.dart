@@ -87,8 +87,7 @@ enum OpenWebUiChatSettingsMenuEntry {
 /// Decides the overflow entry for the active chat or draft.
 ///
 /// Saved settings apply to a chat whether or not this is offered; this only
-/// decides what the user can see and change. Hidden for Hermes and on-device
-/// models (their requests never carry these params), for another user's chat,
+/// decides what the user can see and change. Hidden for another user's chat
 /// and for any chat that is not an Open WebUI chat.
 final openWebUiChatSettingsMenuEntryProvider =
     Provider<OpenWebUiChatSettingsMenuEntry>((ref) {
@@ -96,11 +95,7 @@ final openWebUiChatSettingsMenuEntryProvider =
         return OpenWebUiChatSettingsMenuEntry.none;
       }
       final model = ref.watch(selectedModelProvider);
-      if (model == null || isHermesModel(model)) {
-        return OpenWebUiChatSettingsMenuEntry.none;
-      }
-      final binding = ref.watch(directModelRegistryProvider).resolve(model);
-      if (binding != null && binding.source != DirectModelSource.openWebUi) {
+      if (model == null) {
         return OpenWebUiChatSettingsMenuEntry.none;
       }
       if (ref.watch(apiServiceProvider) == null) {
@@ -363,7 +358,7 @@ OpenWebUiChatSettingsSnapshot _admissionSettingsSnapshot(
 );
 
 enum OpenWebUiChatSettingsFailure {
-  /// Not an Open WebUI chat (Direct, Apple, Hermes) or no longer addressable.
+  /// Not an Open WebUI chat or no longer addressable.
   notEditable,
 
   /// The account may not change what was asked for.
@@ -547,12 +542,6 @@ OpenWebUiReasoningPickTarget captureOpenWebUiReasoningPickTarget(dynamic ref) {
   );
 }
 
-/// Whether a pick on [model] is also saved on the chat: only Open WebUI server
-/// models are. Direct, Apple and Hermes keep their device-local pick.
-bool _reasoningPickIsSavedOnChat(dynamic ref, Model model) =>
-    !isHermesModel(model) &&
-    (ref.read(directModelRegistryProvider)).resolve(model) == null;
-
 /// The reasoning picker's selection: records the per-model pick, then, for an
 /// Open WebUI model, saves it on the chat too (see
 /// [persistOpenWebUiReasoningPick]). The one entry point every picker UI uses.
@@ -567,19 +556,15 @@ Future<void> selectReasoningEffortForModel(
   OpenWebUiReasoningPickTarget? target,
 }) async {
   final pickTarget = target ?? captureOpenWebUiReasoningPickTarget(ref);
-  final savedOnChat = _reasoningPickIsSavedOnChat(ref, model);
   await setReasoningEffortForModel(ref.read, model, effort);
-  if (savedOnChat) {
-    await persistOpenWebUiReasoningPick(ref, model, effort, target: pickTarget);
-  }
+  await persistOpenWebUiReasoningPick(ref, model, effort, target: pickTarget);
 }
 
 /// An explicit reasoning pick on an Open WebUI model also becomes the target
 /// chat's (or the next new chat's) saved override, so it outranks whatever the
-/// picker held before and travels to other Open WebUI clients. Direct, Apple
-/// and Hermes models keep their device-local pick only. "Automatic" saves an
-/// explicit default (null), which the server skips. A failure here never
-/// undoes the pick itself.
+/// picker held before and travels to other Open WebUI clients. "Automatic"
+/// saves an explicit default (null), which the server skips. A failure here
+/// never undoes the pick itself.
 ///
 /// [target] is the chat and account the pick was made for; without one it is
 /// the chat and account active when this is called.
@@ -589,7 +574,6 @@ Future<void> persistOpenWebUiReasoningPick(
   String effort, {
   OpenWebUiReasoningPickTarget? target,
 }) async {
-  if (!_reasoningPickIsSavedOnChat(ref, model)) return;
   final pickTarget = target ?? captureOpenWebUiReasoningPickTarget(ref);
   final String? value;
   try {

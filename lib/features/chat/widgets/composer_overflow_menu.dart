@@ -12,14 +12,8 @@ import '../../../shared/widgets/model_avatar.dart';
 import '../../../shared/widgets/horizontal_overflow_fade.dart';
 
 import 'package:conduit_core/models/toggle_filter.dart';
-import 'package:conduit_core/models/tool.dart';
 import 'package:conduit_core/providers/app_providers.dart';
 import 'package:conduit_core/features/tools/providers/tools_providers.dart';
-
-import '../../terminal/providers/terminal_providers.dart';
-
-import 'package:conduit_core/features/direct_connections/direct_connections.dart';
-import 'package:conduit_core/features/direct_connections/providers/direct_mcp_providers.dart';
 
 import 'package:conduit_core/features/chat/providers/chat_providers.dart';
 import 'package:conduit_core/features/integrations/personal_connection_settings.dart';
@@ -183,7 +177,6 @@ List<Widget> withHorizontalSpacing(List<Widget> children, double gap) {
 class ComposerAttachmentKeyboard extends ConsumerStatefulWidget {
   const ComposerAttachmentKeyboard({
     super.key,
-    this.localAttachmentsOnly = false,
     this.height = 300,
     this.onDismiss,
     this.onFileAttachment,
@@ -191,16 +184,11 @@ class ComposerAttachmentKeyboard extends ConsumerStatefulWidget {
     this.onImageAttachment,
     this.onCameraCapture,
     this.onWebAttachment,
-    this.onMcpContent,
     this.onToolSettings,
     this.onCompareModels,
     this.compareModelsHasMessage = true,
   });
 
-  /// Restricts the sheet to device-local attachment actions supplied by the
-  /// caller. Used by backends such as Hermes that cannot resolve OpenWebUI
-  /// server files, web pages, feature toggles, tools, integrations, or filters.
-  final bool localAttachmentsOnly;
   final double height;
   final VoidCallback? onDismiss;
   final VoidCallback? onFileAttachment;
@@ -208,7 +196,6 @@ class ComposerAttachmentKeyboard extends ConsumerStatefulWidget {
   final VoidCallback? onImageAttachment;
   final VoidCallback? onCameraCapture;
   final VoidCallback? onWebAttachment;
-  final VoidCallback? onMcpContent;
 
   /// Opens the personal tool settings sheet. Null hides the Advanced command.
   final VoidCallback? onToolSettings;
@@ -248,46 +235,17 @@ class _ComposerAttachmentKeyboardState
     final l10n = AppLocalizations.of(context)!;
     final theme = context.conduitTheme;
     final selectedModel = ref.watch(selectedModelProvider);
-    final directBinding = selectedModel == null
-        ? null
-        : ref.watch(directModelRegistryProvider).resolve(selectedModel);
-    final directMode = directBinding != null;
-    final directToolsAvailable = directBindingSupportsLocalMcp(directBinding);
-    final restrictedMode = directMode || widget.localAttachmentsOnly;
-    // Direct and local-only backends have no OpenWebUI integrations to
-    // discover. Resolve the request lazily because direct provenance is only
-    // available once providers can be read during build.
-    final userSettingsFuture = restrictedMode
-        ? null
-        : (_userSettingsFuture ??= _loadUserSettings());
-    final attachmentItems =
-        buildComposerOverflowAttachmentItems(
-          l10n: l10n,
-          attachmentAvailability: ComposerOverflowAttachmentAvailability(
-            file: widget.onFileAttachment != null,
-            serverFile:
-                !restrictedMode && widget.onServerFileAttachment != null,
-            photo: widget.onImageAttachment != null,
-            camera: widget.onCameraCapture != null,
-            web: !restrictedMode && widget.onWebAttachment != null,
-            mcpContent: directMode && widget.onMcpContent != null,
-          ),
-        ).where((item) {
-          if (widget.localAttachmentsOnly) {
-            return item.enabled &&
-                (item.id == ComposerOverflowActionIds.file ||
-                    item.id == ComposerOverflowActionIds.photo ||
-                    item.id == ComposerOverflowActionIds.camera);
-          }
-          if (!directMode) {
-            return true;
-          }
-          return item.enabled &&
-              (item.id == ComposerOverflowActionIds.file ||
-                  item.id == ComposerOverflowActionIds.photo ||
-                  item.id == ComposerOverflowActionIds.camera ||
-                  item.id == ComposerOverflowActionIds.mcpContent);
-        });
+    final userSettingsFuture = _userSettingsFuture ??= _loadUserSettings();
+    final attachmentItems = buildComposerOverflowAttachmentItems(
+      l10n: l10n,
+      attachmentAvailability: ComposerOverflowAttachmentAvailability(
+        file: widget.onFileAttachment != null,
+        serverFile: widget.onServerFileAttachment != null,
+        photo: widget.onImageAttachment != null,
+        camera: widget.onCameraCapture != null,
+        web: widget.onWebAttachment != null,
+      ),
+    );
 
     final attachments = attachmentItems
         .map(
@@ -296,18 +254,10 @@ class _ComposerAttachmentKeyboardState
         )
         .toList();
 
-    // Trusted direct providers can expose Conduit-managed server tools even
-    // though they cannot use OpenWebUI-managed tools.
-    final webSearchAvailable =
-        !widget.localAttachmentsOnly && ref.watch(webSearchAvailableProvider);
-    final webSearchEnabled =
-        !widget.localAttachmentsOnly && ref.watch(webSearchEnabledProvider);
-    final imageGenAvailable =
-        !widget.localAttachmentsOnly &&
-        ref.watch(imageGenerationAvailableProvider);
-    final imageGenEnabled =
-        !widget.localAttachmentsOnly &&
-        ref.watch(imageGenerationEnabledProvider);
+    final webSearchAvailable = ref.watch(webSearchAvailableProvider);
+    final webSearchEnabled = ref.watch(webSearchEnabledProvider);
+    final imageGenAvailable = ref.watch(imageGenerationAvailableProvider);
+    final imageGenEnabled = ref.watch(imageGenerationEnabledProvider);
     final featureTiles =
         buildComposerOverflowFeatureItems(
           l10n: l10n,
@@ -315,10 +265,7 @@ class _ComposerAttachmentKeyboardState
           webSearchEnabled: webSearchEnabled,
           imageGenerationAvailable: imageGenAvailable,
           imageGenerationEnabled: imageGenEnabled,
-          // Only an Open WebUI server runs the interpreter.
-          codeInterpreter: restrictedMode
-              ? null
-              : ref.watch(codeInterpreterOfferProvider),
+          codeInterpreter: ref.watch(codeInterpreterOfferProvider),
         ).map((item) {
           return _buildOverflowItemTile(
             item: item,
@@ -332,28 +279,9 @@ class _ComposerAttachmentKeyboardState
           );
         }).toList();
 
-    final selectedToolIds = widget.localAttachmentsOnly
-        ? const <String>[]
-        : ref.watch(selectedToolIdsProvider);
-    final selectedTerminalId = restrictedMode
-        ? null
-        : ref.watch(selectedTerminalIdProvider);
-    final clearedConnections = restrictedMode
-        ? const <String>[]
-        : ref.watch(personalSelectionNoticeProvider);
-    final availableTerminalServersAsync = restrictedMode
-        ? null
-        : ref.watch(terminalAvailableServersProvider);
-    final toolsAsync = widget.localAttachmentsOnly
-        ? null
-        : directMode
-        ? directToolsAvailable
-              ? ref.watch(directMcpToolsProvider)
-              : const AsyncData<List<Tool>>([])
-        : ref.watch(toolsListProvider);
-    final toolsSection = widget.localAttachmentsOnly
-        ? const SizedBox.shrink()
-        : toolsAsync!.when(
+    final selectedToolIds = ref.watch(selectedToolIdsProvider);
+    final clearedConnections = ref.watch(personalSelectionNoticeProvider);
+    final toolsSection = ref.watch(toolsListProvider).when(
             data: (tools) {
               final toolItems = buildComposerOverflowToolItems(
                 availableTools: tools,
@@ -376,19 +304,15 @@ class _ComposerAttachmentKeyboardState
               }).toList();
               return Column(children: withVerticalSpacing(tiles, Spacing.xxs));
             },
-            loading: () => directMode
-                ? const SizedBox.shrink()
-                : const Center(
-                    child: ConduitLoadingIndicator(
-                      size: IconSize.lg,
-                      isCompact: true,
-                    ),
-                  ),
+            loading: () => const Center(
+              child: ConduitLoadingIndicator(
+                size: IconSize.lg,
+                isCompact: true,
+              ),
+            ),
             error: (_, _) => _buildInfoCard(l10n.failedToLoadTools),
           );
-    final integrationsSection = restrictedMode
-        ? const SizedBox.shrink()
-        : FutureBuilder<Map<String, dynamic>?>(
+    final integrationsSection = FutureBuilder<Map<String, dynamic>?>(
             future: userSettingsFuture,
             builder: (context, snapshot) {
               final settings = snapshot.data;
@@ -434,32 +358,7 @@ class _ComposerAttachmentKeyboardState
                 );
               }
 
-              final terminalTiles = availableTerminalServersAsync!.maybeWhen(
-                data: (servers) {
-                  return servers
-                      .map((server) {
-                        final isSelected =
-                            selectedTerminalId == server.selectionId;
-                        return _buildToggleTile(
-                          icon: Platform.isIOS
-                              ? CupertinoIcons.chevron_left_slash_chevron_right
-                              : Icons.terminal_rounded,
-                          title: server.displayName,
-                          subtitle: server.subtitle,
-                          value: isSelected,
-                          onChanged: (_) async {
-                            await ref
-                                .read(terminalSelectionControllerProvider)
-                                .toggle(server);
-                          },
-                        );
-                      })
-                      .toList(growable: false);
-                },
-                orElse: () => const <Widget>[],
-              );
-
-              if (directToolTiles.isEmpty && terminalTiles.isEmpty) {
+              if (directToolTiles.isEmpty) {
                 return const SizedBox.shrink();
               }
 
@@ -476,19 +375,6 @@ class _ComposerAttachmentKeyboardState
                     ),
                   );
               }
-              if (terminalTiles.isNotEmpty) {
-                if (children.isNotEmpty) {
-                  children.add(const SizedBox(height: Spacing.sm));
-                }
-                children
-                  ..add(_buildSectionLabel(l10n.terminal))
-                  ..add(
-                    Column(
-                      children: withVerticalSpacing(terminalTiles, Spacing.xxs),
-                    ),
-                  );
-              }
-
               return Column(children: children);
             },
           );
@@ -521,15 +407,11 @@ class _ComposerAttachmentKeyboardState
         const SizedBox(height: Spacing.sm),
         ...featureTiles,
       ],
-      if (!restrictedMode && widget.onCompareModels != null)
-        ..._buildCompareModelsTiles(l10n),
-      if (!widget.localAttachmentsOnly) ...[
-        const SizedBox(height: Spacing.sm),
-        _buildSectionLabel(l10n.tools),
-        toolsSection,
-        if (!restrictedMode && widget.onToolSettings != null)
-          ..._buildToolSettingsTiles(l10n),
-      ],
+      if (widget.onCompareModels != null) ..._buildCompareModelsTiles(l10n),
+      const SizedBox(height: Spacing.sm),
+      _buildSectionLabel(l10n.tools),
+      toolsSection,
+      if (widget.onToolSettings != null) ..._buildToolSettingsTiles(l10n),
       if (clearedConnections.isNotEmpty) ...[
         const SizedBox(height: Spacing.sm),
         _buildInfoCard(
@@ -547,11 +429,11 @@ class _ComposerAttachmentKeyboardState
           ),
         ),
       ],
-      if (!restrictedMode) ...[integrationsSection],
+      integrationsSection,
     ];
 
     final toggleFilters = selectedModel?.filters ?? const <ToggleFilter>[];
-    if (!restrictedMode && toggleFilters.isNotEmpty) {
+    if (toggleFilters.isNotEmpty) {
       final selectedFilterIds = ref.watch(selectedFilterIdsProvider);
       final filterTiles = toggleFilters.map((filter) {
         final isSelected = selectedFilterIds.contains(filter.id);
@@ -768,8 +650,6 @@ class _ComposerAttachmentKeyboardState
         return widget.onCameraCapture;
       case ComposerOverflowActionIds.web:
         return widget.onWebAttachment;
-      case ComposerOverflowActionIds.mcpContent:
-        return widget.onMcpContent;
       default:
         return null;
     }

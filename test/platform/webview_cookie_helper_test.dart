@@ -5,7 +5,6 @@ import 'package:conduit/platform/webview_cookie_helper.dart';
 import 'package:conduit_core/persistence/persistence_keys.dart';
 import 'package:conduit_core/persistence/preferences_store.dart';
 import 'package:conduit_core/providers/app_providers.dart';
-import 'package:conduit_core/features/hermes/services/hermes_dashboard_cookie_registry.dart';
 import 'package:flutter_inappwebview/flutter_inappwebview.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter/services.dart';
@@ -14,21 +13,6 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:conduit/platform/flutter_key_value_store.dart';
 
 void main() {
-  test('Hermes auth cookies remain tracked across automatic sign-in', () {
-    final hermes = WebViewCookieHelper.cookieIdentityParts(
-      name: '__Host-hermes_session_at',
-    );
-    final openWebUi = WebViewCookieHelper.cookieIdentityParts(name: 'token');
-
-    check(
-      hermesDashboardCookieIdentityDelta(
-        current: {hermes, openWebUi},
-        baseline: {hermes, openWebUi},
-        retainedNames: const {'hermes_session_at'},
-      ),
-    ).deepEquals({hermes});
-  });
-
   test('exact-host cleanup preserves shared parent-domain cookies', () {
     check(webViewCookieBelongsToExactHost(null, 'hermes.example.com')).isTrue();
     check(

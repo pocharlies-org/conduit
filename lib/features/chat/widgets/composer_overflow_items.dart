@@ -6,15 +6,9 @@ import 'package:flutter_riverpod/misc.dart' show ProviderListenable;
 
 import 'package:conduit_core/models/toggle_filter.dart';
 import 'package:conduit_core/models/tool.dart';
-import 'package:conduit_core/features/direct_connections/providers/direct_mcp_providers.dart';
 import 'package:conduit_core/features/integrations/personal_connection_settings.dart';
 import 'package:conduit_core/features/integrations/providers/personal_connections_providers.dart';
-import 'package:conduit_core/features/terminal/models/terminal_models.dart';
-import 'package:conduit_core/features/terminal/providers/terminal_providers.dart';
-import 'package:conduit_core/features/terminal/services/terminal_service.dart';
 import 'package:conduit_core/features/tools/providers/tools_providers.dart';
-import 'package:conduit_core/features/web_search/services/direct_web_search_mode.dart';
-import 'package:conduit_core/providers/app_providers.dart';
 
 import 'package:conduit_core/features/chat/providers/chat_providers.dart';
 
@@ -26,7 +20,6 @@ class ComposerOverflowActionIds {
   static const photo = 'photo';
   static const camera = 'camera';
   static const web = 'web';
-  static const mcpContent = 'mcpContent';
   static const webSearch = 'webSearch';
   static const imageGeneration = 'imageGeneration';
   static const codeInterpreter = 'codeInterpreter';
@@ -34,26 +27,10 @@ class ComposerOverflowActionIds {
   static const compareModels = 'compareModels';
   static const _filterPrefix = 'filter:';
   static const _toolPrefix = 'tool:';
-  static const _terminalPrefix = 'terminal:';
 
   static String filter(String filterId) => '$_filterPrefix$filterId';
 
   static String tool(String toolId) => '$_toolPrefix$toolId';
-
-  /// A terminal row. The id carries a digest of the terminal's selection id,
-  /// never the id itself: a direct terminal is selected by its URL, which can
-  /// hold credentials.
-  static String terminal(TerminalServerInfo server) =>
-      '$_terminalPrefix${composerTerminalToken(server)}';
-
-  static String? terminalTokenFrom(String actionId) {
-    if (!actionId.startsWith(_terminalPrefix)) {
-      return null;
-    }
-
-    final token = actionId.substring(_terminalPrefix.length);
-    return token.isEmpty ? null : token;
-  }
 
   static String? filterIdFrom(String actionId) {
     if (!actionId.startsWith(_filterPrefix)) {
@@ -114,7 +91,6 @@ class ComposerOverflowAttachmentAvailability {
     this.photo = false,
     this.camera = false,
     this.web = false,
-    this.mcpContent = false,
   });
 
   final bool file;
@@ -122,7 +98,6 @@ class ComposerOverflowAttachmentAvailability {
   final bool photo;
   final bool camera;
   final bool web;
-  final bool mcpContent;
 }
 
 class ComposerOverflowItem {
@@ -267,16 +242,6 @@ List<ComposerOverflowItem> buildComposerOverflowAttachmentItems({
       sfSymbol: 'globe',
       enabled: attachmentAvailability.web,
     ),
-    if (attachmentAvailability.mcpContent)
-      ComposerOverflowItem(
-        id: ComposerOverflowActionIds.mcpContent,
-        kind: ComposerOverflowItemKind.attachment,
-        section: ComposerOverflowSection.attachments,
-        label: l10n.directMcpContentAction,
-        cupertinoIcon: CupertinoIcons.text_quote,
-        materialIcon: Icons.text_snippet_outlined,
-        sfSymbol: 'text.quote',
-      ),
   ];
 }
 
@@ -380,32 +345,27 @@ typedef ComposerRead = T Function<T>(ProviderListenable<T> provider);
 /// The account a set of connection rows was built for.
 ///
 /// Native panel taps arrive after the row was drawn, so one can land once
-/// another account is signed in. The personal session and the terminal service
-/// are each rebuilt when the account, server or token changes, so holding the
-/// two tells the accounts apart even when both own a connection with the same
-/// name or key.
+/// another account is signed in. The personal session is rebuilt when the
+/// account, server or token changes, so holding it tells the accounts apart
+/// even when both own a connection with the same name or key.
 @immutable
 class ComposerConnectionsOwner {
-  const ComposerConnectionsOwner({this.session, this.terminalService});
+  const ComposerConnectionsOwner({this.session});
 
   final PersonalConnectionsSession? session;
-  final TerminalService? terminalService;
 
   bool isCurrent(ComposerRead read) =>
       identical(read(personalConnectionsSessionProvider), session) &&
-      identical(read(terminalServiceProvider), terminalService) &&
       (session?.isCurrent() ?? true);
 }
 
-/// The personal tool servers and terminals the signed-in account can choose
-/// in the composer, with the owner they were read for.
+/// The personal tool servers the signed-in account can choose in the
+/// composer, with the owner they were read for.
 @immutable
 class ComposerPersonalConnections {
   const ComposerPersonalConnections({
     required this.owner,
     this.toolServers = const <PersonalConnectionEntry>[],
-    this.terminals = const <TerminalServerInfo>[],
-    this.selectedTerminalId,
   });
 
   static const none = ComposerPersonalConnections(
@@ -416,42 +376,28 @@ class ComposerPersonalConnections {
 
   /// Enabled tool servers only.
   final List<PersonalConnectionEntry> toolServers;
-  final List<TerminalServerInfo> terminals;
-  final String? selectedTerminalId;
 }
 
 /// Reads the connections of the account that is signed in now.
 ///
-/// Settings and terminals count only once they have resolved for this account.
-/// `asData` is null while a provider reloads after an account change, so the
-/// value it kept from the previous account is never offered.
+/// Settings count only once they have resolved for this account. `asData` is
+/// null while a provider reloads after an account change, so the value it kept
+/// from the previous account is never offered.
 ComposerPersonalConnections readComposerPersonalConnections(ComposerRead read) {
   final session = read(personalConnectionsSessionProvider);
   final snapshot = session == null
       ? null
       : read(personalConnectionsProvider).asData?.value;
   return ComposerPersonalConnections(
-    owner: ComposerConnectionsOwner(
-      session: session,
-      terminalService: read(terminalServiceProvider),
-    ),
+    owner: ComposerConnectionsOwner(session: session),
     toolServers: snapshot != null && identical(snapshot.session, session)
         ? <PersonalConnectionEntry>[
             for (final entry in snapshot.toolServers)
               if (entry.enabled) entry,
           ]
         : const <PersonalConnectionEntry>[],
-    terminals:
-        read(terminalAvailableServersProvider).asData?.value ??
-        const <TerminalServerInfo>[],
-    selectedTerminalId: read(selectedTerminalIdProvider),
   );
 }
-
-/// Digest that stands for [server] in a native action id. It only has to tell
-/// the account's terminals apart, and keeps the URL out of the id.
-String composerTerminalToken(TerminalServerInfo server) =>
-    personalToolServerFingerprint(<String, dynamic>{'url': server.selectionId});
 
 /// Indices, in the list the tool servers were read from, of the servers that
 /// [selectedToolIds] name.
@@ -466,8 +412,8 @@ Set<int> _selectedToolServerIndices(
   ).matchedIndices.toSet();
 }
 
-/// Personal tool servers and terminals, in the tools section like the ordinary
-/// tools, so the native panel renders them without a new section.
+/// Personal tool servers, in the tools section like the ordinary tools, so the
+/// native panel renders them without a new section.
 List<ComposerOverflowItem> buildComposerOverflowConnectionItems({
   required AppLocalizations l10n,
   required ComposerPersonalConnections connections,
@@ -494,19 +440,6 @@ List<ComposerOverflowItem> buildComposerOverflowConnectionItems({
         selected: selectedServers.contains(entry.index),
         dismissesKeyboard: false,
       ),
-    for (final server in connections.terminals)
-      ComposerOverflowItem(
-        id: ComposerOverflowActionIds.terminal(server),
-        kind: ComposerOverflowItemKind.toggle,
-        section: ComposerOverflowSection.tools,
-        label: server.displayName,
-        subtitle: server.subtitle,
-        cupertinoIcon: CupertinoIcons.chevron_left_slash_chevron_right,
-        materialIcon: Icons.terminal_rounded,
-        sfSymbol: 'terminal',
-        selected: connections.selectedTerminalId == server.selectionId,
-        dismissesKeyboard: false,
-      ),
   ];
 }
 
@@ -524,12 +457,11 @@ String? _toolServerSubtitle(PersonalConnectionEntry entry) {
   return host.isEmpty ? null : host;
 }
 
-/// Whether [actionId] names a personal tool server or a terminal, whose
-/// selection is validated against the signed-in account before it applies.
+/// Whether [actionId] names a personal tool server, whose selection is
+/// validated against the signed-in account before it applies.
 bool isComposerConnectionAction(String actionId) {
   final toolId = ComposerOverflowActionIds.toolIdFrom(actionId);
-  return (toolId?.startsWith(kDirectServerSelectionPrefix) ?? false) ||
-      ComposerOverflowActionIds.terminalTokenFrom(actionId) != null;
+  return toolId?.startsWith(kDirectServerSelectionPrefix) ?? false;
 }
 
 /// Applies a personal connection choice made in the native panel.
@@ -550,17 +482,7 @@ Future<void> toggleComposerConnectionSelection(
   final toolId = ComposerOverflowActionIds.toolIdFrom(actionId);
   if (toolId != null) {
     _toggleToolServer(ref, connections.toolServers, toolId);
-    return;
   }
-
-  final token = ComposerOverflowActionIds.terminalTokenFrom(actionId);
-  if (token == null) return;
-  final matches = connections.terminals
-      .where((server) => composerTerminalToken(server) == token)
-      .toList(growable: false);
-  // Two terminals sharing a digest cannot be told apart, so neither is chosen.
-  if (matches.length != 1) return;
-  await ref.read(terminalSelectionControllerProvider).toggle(matches.single);
 }
 
 void _toggleToolServer(
@@ -683,13 +605,9 @@ void setComposerOverflowSelection(
   switch (actionId) {
     case ComposerOverflowActionIds.webSearch:
       ref.read(webSearchEnabledProvider.notifier).set(selected);
-      if (selected && !_webSearchCoexistsWithLocalTools(ref)) {
-        _clearLocalMcpTools(ref);
-      }
       return;
     case ComposerOverflowActionIds.imageGeneration:
       ref.read(imageGenerationEnabledProvider.notifier).set(selected);
-      if (selected) _clearLocalMcpTools(ref);
       return;
     case ComposerOverflowActionIds.codeInterpreter:
       // The notifier refuses a choice the server, account or model cannot
@@ -727,32 +645,11 @@ void setComposerOverflowSelection(
     if (!alreadySelected) {
       current.add(toolId);
     }
-    if (toolId.startsWith(kDirectMcpToolIdPrefix)) {
-      ref.read(imageGenerationEnabledProvider.notifier).set(false);
-      if (!_webSearchCoexistsWithLocalTools(ref)) {
-        ref.read(webSearchEnabledProvider.notifier).set(false);
-      }
-    }
   } else if (alreadySelected) {
     current.remove(toolId);
   }
 
   ref.read(selectedToolIdsProvider.notifier).set(current);
-}
-
-/// On-device web search is just another local tool, so it can run beside
-/// MCP tools; a provider-hosted search tool can't share their request.
-bool _webSearchCoexistsWithLocalTools(WidgetRef ref) =>
-    ref.read(selectedDirectWebSearchModeProvider) ==
-    DirectWebSearchMode.onDevice;
-
-void _clearLocalMcpTools(WidgetRef ref) {
-  final tools = ref.read(selectedToolIdsProvider);
-  ref
-      .read(selectedToolIdsProvider.notifier)
-      .set(
-        tools.where((id) => !id.startsWith(kDirectMcpToolIdPrefix)).toList(),
-      );
 }
 
 void toggleComposerOverflowSelection(WidgetRef ref, String actionId) {

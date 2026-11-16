@@ -1,5 +1,4 @@
 import 'package:checks/checks.dart';
-import 'package:conduit_core/database/chat_database_repository.dart';
 import 'package:conduit_core/models/conversation.dart';
 import 'package:conduit_core/models/server_config.dart';
 import 'package:conduit_core/models/user.dart';
@@ -9,7 +8,6 @@ import 'package:conduit_core/services/worker_manager.dart';
 import 'package:conduit_core/features/auth/providers/unified_auth_providers.dart';
 import 'package:conduit/core/services/native_sheet_bridge.dart';
 import 'package:conduit/features/chat/widgets/chat_share_sheet.dart';
-import 'package:conduit_core/features/hermes/services/hermes_session_provenance.dart';
 import 'package:conduit/l10n/app_localizations.dart';
 import 'package:conduit/l10n/conduit_localizations.dart';
 import 'package:conduit/platform/conduit_platform_apis.g.dart';
@@ -238,127 +236,6 @@ void main() {
     check(shareAction.lastText).equals('https://example.com/s/share-1');
   });
 
-  testWidgets('sharing a scoped collision never mutates native Hermes', (
-    tester,
-  ) async {
-    final api = _RecordingShareApiService();
-    const rawId = 'local:hermes_share-collision';
-    final selected = withChatStorageProvenance(
-      Conversation(
-        id: rawId,
-        title: 'Server row',
-        createdAt: DateTime.utc(2026, 4, 26),
-        updatedAt: DateTime.utc(2026, 4, 26),
-        shareId: 'existing-share',
-      ),
-      ChatStorageKind.openWebUi,
-    );
-    final native = markNativeHermesConversation(
-      Conversation(
-        id: rawId,
-        title: 'Native Hermes',
-        createdAt: DateTime.utc(2026, 4, 26),
-        updatedAt: DateTime.utc(2026, 4, 26),
-      ),
-    );
-
-    await tester.pumpWidget(
-      ProviderScope(
-        overrides: [
-          isAuthenticatedProvider2.overrideWithValue(true),
-          apiServiceProvider.overrideWithValue(api),
-          conversationsProvider.overrideWith(_TestConversations.new),
-        ],
-        child: MaterialApp(
-          theme: AppTheme.light(TweakcnThemes.t3Chat),
-          localizationsDelegates: conduitLocalizationsDelegates,
-          supportedLocales: AppLocalizations.supportedLocales,
-          home: Scaffold(body: ChatShareSheet(conversation: selected)),
-        ),
-      ),
-    );
-    final container = ProviderScope.containerOf(
-      tester.element(find.byType(ChatShareSheet)),
-    );
-    container.read(activeConversationProvider.notifier).set(native);
-
-    await tester.tap(find.text('Update and copy link'));
-    await tester.pump(const Duration(milliseconds: 100));
-
-    check(api.sharedConversationIds).deepEquals(<String>[rawId]);
-    check(identical(container.read(activeConversationProvider), native))
-        .isTrue();
-    check(
-      isNativeHermesConversation(container.read(activeConversationProvider)),
-    ).isTrue();
-  });
-
-  testWidgets('deleting a scoped share never mutates native Hermes', (
-    tester,
-  ) async {
-    final api = _RecordingShareApiService();
-    const rawId = 'local:hermes_delete-share-collision';
-    final selected = withChatStorageProvenance(
-      Conversation(
-        id: rawId,
-        title: 'Server row',
-        createdAt: DateTime.utc(2026, 4, 26),
-        updatedAt: DateTime.utc(2026, 4, 26),
-        shareId: 'existing-share',
-      ),
-      ChatStorageKind.openWebUi,
-    );
-    final native = markNativeHermesConversation(
-      Conversation(
-        id: rawId,
-        title: 'Native Hermes',
-        createdAt: DateTime.utc(2026, 4, 26),
-        updatedAt: DateTime.utc(2026, 4, 26),
-        shareId: 'native-share',
-      ),
-    );
-
-    await tester.pumpWidget(
-      ProviderScope(
-        overrides: [
-          isAuthenticatedProvider2.overrideWithValue(true),
-          apiServiceProvider.overrideWithValue(api),
-          conversationsProvider.overrideWith(_TestConversations.new),
-        ],
-        child: MaterialApp(
-          theme: AppTheme.light(TweakcnThemes.t3Chat),
-          localizationsDelegates: conduitLocalizationsDelegates,
-          supportedLocales: AppLocalizations.supportedLocales,
-          home: Scaffold(body: ChatShareSheet(conversation: selected)),
-        ),
-      ),
-    );
-    final container = ProviderScope.containerOf(
-      tester.element(find.byType(ChatShareSheet)),
-    );
-    container.read(activeConversationProvider.notifier).set(native);
-
-    final deleteRow = find.byKey(const Key('chat-share-delete'));
-    expect(
-      find.descendant(
-        of: deleteRow,
-        matching: find.text(l10n.shareChatDeleteLink),
-      ),
-      findsOneWidget,
-    );
-    await tester.tap(deleteRow);
-    await tester.pump(const Duration(milliseconds: 100));
-
-    check(api.deletedConversationIds).deepEquals(<String>[rawId]);
-    check(identical(container.read(activeConversationProvider), native))
-        .isTrue();
-    check(container.read(activeConversationProvider)?.shareId)
-        .equals('native-share');
-    check(
-      isNativeHermesConversation(container.read(activeConversationProvider)),
-    ).isTrue();
-  });
-
   testWidgets(
     'an existing link lists Copy and Share, then Who has access, then Delete '
     'last',
@@ -413,44 +290,38 @@ void main() {
     },
   );
 
-  testWidgets(
-    'on iOS, Who has access appears as soon as a link is created',
-    (tester) async {
-      debugDefaultTargetPlatformOverride = TargetPlatform.iOS;
-      PlatformUiCapabilities.debugIOSMajorVersionOverride = 18;
-      try {
-        final api = _RecordingShareApiService();
-        await _pumpSignedInSheet(
-          tester,
-          api: api,
-          conversation: _chat(),
-        );
+  testWidgets('on iOS, Who has access appears as soon as a link is created', (
+    tester,
+  ) async {
+    debugDefaultTargetPlatformOverride = TargetPlatform.iOS;
+    PlatformUiCapabilities.debugIOSMajorVersionOverride = 18;
+    try {
+      final api = _RecordingShareApiService();
+      await _pumpSignedInSheet(tester, api: api, conversation: _chat());
 
-        expect(find.byKey(const Key('chat-share-audience')), findsNothing);
-        expect(find.byKey(const Key('chat-share-delete')), findsNothing);
+      expect(find.byKey(const Key('chat-share-audience')), findsNothing);
+      expect(find.byKey(const Key('chat-share-delete')), findsNothing);
 
-        await tester.tap(find.text(l10n.copyLink));
-        await tester.pump();
-        await tester.pump(const Duration(milliseconds: 100));
+      await tester.tap(find.text(l10n.copyLink));
+      await tester.pump();
+      await tester.pump(const Duration(milliseconds: 100));
 
-        check(api.shareCalls).equals(1);
-        expect(find.byKey(const Key('chat-share-audience')), findsOneWidget);
-        expect(find.text(l10n.chatShareAudience), findsOneWidget);
-        expect(find.byKey(const Key('chat-share-delete')), findsOneWidget);
-        expect(find.text(l10n.updateAndCopyLink), findsOneWidget);
-        check(
-          tester.getTopLeft(find.byKey(const Key('chat-share-audience'))).dy,
-        ).isLessThan(
-          tester.getTopLeft(find.byKey(const Key('chat-share-delete'))).dy,
-        );
+      check(api.shareCalls).equals(1);
+      expect(find.byKey(const Key('chat-share-audience')), findsOneWidget);
+      expect(find.text(l10n.chatShareAudience), findsOneWidget);
+      expect(find.byKey(const Key('chat-share-delete')), findsOneWidget);
+      expect(find.text(l10n.updateAndCopyLink), findsOneWidget);
+      check(tester.getTopLeft(find.byKey(const Key('chat-share-audience'))).dy)
+          .isLessThan(
+            tester.getTopLeft(find.byKey(const Key('chat-share-delete'))).dy,
+          );
 
-        await _settleToasts(tester);
-      } finally {
-        debugDefaultTargetPlatformOverride = null;
-        PlatformUiCapabilities.debugIOSMajorVersionOverride = null;
-      }
-    },
-  );
+      await _settleToasts(tester);
+    } finally {
+      debugDefaultTargetPlatformOverride = null;
+      PlatformUiCapabilities.debugIOSMajorVersionOverride = null;
+    }
+  });
 
   testWidgets(
     'the native iOS sheet comes back with Who has access after creating a '

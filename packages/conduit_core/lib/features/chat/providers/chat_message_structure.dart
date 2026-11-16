@@ -171,7 +171,7 @@ final _localChatGenerationCountProvider =
       _LocalChatGenerationCount.new,
     );
 
-/// True while any Direct, Hermes, or outbox generation owned by this process
+/// True while any outbox generation owned by this process
 /// is still running, regardless of which chat is visible.
 final localChatGenerationActiveProvider = Provider<bool>(
   (ref) => ref.watch(_localChatGenerationCountProvider) > 0,
@@ -207,12 +207,12 @@ class _LocalChatGenerationCount extends Notifier<int> {
 }
 
 /// Keeps the screen awake only while an assistant response is thinking or
-/// streaming (#681). Direct and Hermes generations live in this process, so
-/// letting the device lock mid-response drops the transport and loses the
-/// reply. The hold follows both the visible chat's streaming message and the
-/// process-owned generation count, so switching chats mid-response keeps the
-/// lock until that run finishes. Toggles are serialized so a fast
-/// enable/disable pair cannot land out of order on the platform side.
+/// streaming (#681). Generations live in this process, so letting the device
+/// lock mid-response drops the transport and loses the reply. The hold follows
+/// both the visible chat's streaming message and the process-owned generation
+/// count, so switching chats mid-response keeps the lock until that run
+/// finishes. Toggles are serialized so a fast enable/disable pair cannot land
+/// out of order on the platform side.
 final chatWakelockCoordinatorProvider = Provider<void>((ref) {
   final toggle = ref.watch(chatWakelockToggleProvider);
   var queue = Future<void>.value();

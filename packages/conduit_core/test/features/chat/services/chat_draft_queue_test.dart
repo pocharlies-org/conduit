@@ -11,11 +11,6 @@ import 'package:conduit_core/features/chat/providers/attached_files_provider.dar
 import 'package:conduit_core/features/chat/providers/chat_providers.dart';
 import 'package:conduit_core/features/chat/providers/context_attachments_provider.dart';
 import 'package:conduit_core/features/chat/services/chat_draft_queue.dart';
-import 'package:conduit_core/features/direct_connections/services/direct_chat_bridge.dart'
-    show kDirectTransport;
-import 'package:conduit_core/features/hermes/models/hermes_model.dart';
-import 'package:conduit_core/features/hermes/services/hermes_run_transport.dart'
-    show kHermesTransport;
 import 'package:conduit_core/models/chat_comparison.dart'
     show kMessageModelIdxMetadataKey;
 import 'package:conduit_core/models/chat_message.dart';
@@ -499,10 +494,6 @@ void main() {
       check(offered()).isFalse();
       s.container.read(temporaryChatEnabledProvider.notifier).set(false);
       check(offered()).isTrue();
-
-      (s.container.read(selectedModelProvider.notifier) as _Picked)
-          .use(hermesSyntheticModel());
-      check(offered()).isFalse();
     });
 
     test('is hidden from another sign-in on the same chat', () async {
@@ -1222,27 +1213,6 @@ void main() {
       check(s.container.read(chatDraftQueueProvider).single.drafts)
           .length
           .equals(1);
-    });
-
-    test('the awaitable stop leaves a Hermes or Direct response alone',
-        () async {
-      final s = await _Session.start();
-      final stop = Provider<Future<bool> Function()>(
-        (ref) => () => stopOpenWebUiMainResponse(ref),
-      );
-      for (final transport in [kHermesTransport, kDirectTransport]) {
-        final running = _runningTurn();
-        running[1] = running[1].copyWith(
-          metadata: <String, dynamic>{'transport': transport},
-        );
-        s.container.read(chatMessagesProvider.notifier).setMessages(running);
-
-        check(await s.container.read(stop)()).isFalse();
-
-        check(s.container.read(chatMessagesProvider).last.isStreaming)
-            .isTrue();
-      }
-      check(s.api.stoppedChats).isEmpty();
     });
 
     test('refuses a draft whose file is still uploading', () async {

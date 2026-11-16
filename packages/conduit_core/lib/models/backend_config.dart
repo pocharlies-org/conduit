@@ -45,18 +45,6 @@ class OAuthProviders {
     if (feishu != null) 'feishu',
   ];
 
-  /// Returns the display name for a provider.
-  String getProviderDisplayName(String key) {
-    return switch (key) {
-      'google' => google ?? 'Google',
-      'microsoft' => microsoft ?? 'Microsoft',
-      'github' => github ?? 'GitHub',
-      'oidc' => oidc ?? 'SSO',
-      'feishu' => feishu ?? 'Feishu',
-      _ => key,
-    };
-  }
-
   factory OAuthProviders.fromJson(Map<String, dynamic>? json) {
     if (json == null) return const OAuthProviders();
     return OAuthProviders(
@@ -227,9 +215,6 @@ class BackendConfig {
 
   /// Whether the standard login form (email/password) is enabled.
   final bool enableLoginForm;
-
-  /// Whether SSO (OAuth) login is available.
-  bool get hasSsoEnabled => oauthProviders.hasAnyProvider;
 
   /// Whether the reported [version] is within the range this app supports.
   ///

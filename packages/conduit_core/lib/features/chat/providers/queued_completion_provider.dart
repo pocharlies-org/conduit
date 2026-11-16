@@ -18,8 +18,6 @@ import 'package:conduit_core/sync/sync_engine.dart';
 
 import 'package:conduit_core/utils/debug_logger.dart';
 
-import 'package:conduit_core/features/hermes/services/hermes_session_provenance.dart';
-
 import 'chat_providers.dart'
     show chatMessagesProvider, conversationUsesOpenWebUiStorage;
 
@@ -362,10 +360,7 @@ class QueuedCompletionActions {
         _ref.read(chatMessagesProvider.notifier).setMessages(updatedMessages);
       }
 
-      final updatedActive = inheritNativeHermesConversationProvenance(
-        active,
-        active.copyWith(messages: updatedMessages, updatedAt: DateTime.now()),
-      );
+      final updatedActive = active.copyWith(messages: updatedMessages, updatedAt: DateTime.now());
       _ref.read(activeConversationProvider.notifier).set(updatedActive);
       _ref
           .read(conversationsProvider.notifier)

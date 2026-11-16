@@ -4,11 +4,8 @@ import 'dart:io';
 
 import 'package:web_socket_channel/web_socket_channel.dart';
 
-import 'package:conduit_core/features/direct_connections/models/direct_connection_profile.dart';
-import 'package:conduit_core/features/direct_connections/services/direct_http_client.dart';
 import 'package:conduit_core/models/server_config.dart';
 import 'package:conduit_core/network/no_redirect_web_socket.dart';
-import 'package:conduit_core/services/server_tls_http_client_factory.dart';
 import 'package:conduit_core/services/socket_service.dart';
 
 import 'bridge_commands.dart';
@@ -66,22 +63,6 @@ Uri openWebUiRealtimeUri(String serverUrl) {
     path: '$path/api/v1/audio/realtime',
     query: null,
     fragment: null,
-  );
-}
-
-/// The Realtime API socket of [profile] for [model].
-Uri directRealtimeUri(DirectConnectionProfile profile, String model) {
-  final base = profile.requestBaseUri();
-  final apiVersion = profile.apiVersion;
-  return base.replace(
-    scheme: base.scheme == 'http' ? 'ws' : 'wss',
-    path: '${base.path}realtime',
-    queryParameters: {
-      'model': model,
-      if (profile.adapterKey == kOpenAiCompatibleAdapterKey &&
-          apiVersion != null)
-        'api-version': apiVersion,
-    },
   );
 }
 
@@ -256,98 +237,4 @@ final class OpenWebUiRealtimeBridge extends _SocketBridge {
 
   @override
   void send(Map<String, Object?> command) => write(command);
-}
-
-/// A call straight to a Direct connection's Realtime API, with Open WebUI's
-/// bridge run on the device by [RealtimeCallProtocol].
-final class DirectRealtimeBridge extends _SocketBridge {
-  DirectRealtimeBridge({
-    required this.profile,
-    required this.model,
-    required this.voice,
-    required this.transcriptionModel,
-    this.instructions,
-    RealtimeSocketConnector connect = connectNoRedirectWebSocket,
-  }) : super(connect);
-
-  final DirectConnectionProfile profile;
-  final String model;
-  final String voice;
-  final String transcriptionModel;
-  final String? instructions;
-  final _protocol = RealtimeCallProtocol();
-  var _configuring = false;
-
-  @override
-  Uri get uri => directRealtimeUri(profile, model);
-
-  @override
-  Map<String, String> get headers => directRequestHeaders(profile);
-
-  @override
-  HttpClient? get httpClient {
-    final tls = directTlsServerConfig(profile);
-    return ServerTlsHttpClientFactory.requiresCustomHttpClient(tls)
-        ? ServerTlsHttpClientFactory.createHttpClient(tls)
-        : null;
-  }
-
-  @override
-  Duration get readyTimeout => const Duration(seconds: 30);
-
-  @override
-  void onOpen() {}
-
-  @override
-  void onFrame(Map<String, Object?> frame) {
-    final type = frame['type'];
-    if (!isReady) {
-      if (type == 'session.created' && !_configuring) {
-        _configuring = true;
-        write(
-          directRealtimeSessionUpdate(
-            voice: voice,
-            transcriptionModel: transcriptionModel,
-            instructions: instructions,
-          ),
-        );
-      } else if (type == 'session.updated' && _configuring) {
-        markReady((model: model, voice: voice));
-      } else {
-        finish(
-          'The voice provider rejected the call. Check the Voice '
-          "provider's realtime model, voice and transcription model.",
-        );
-      }
-      return;
-    }
-    if (type == 'error') {
-      final error = frame['error'];
-      // The voice may finish a cancellation before the call's own arrives.
-      if (error is Map && error['code'] == 'response_cancel_not_active') return;
-      // Provider error text can carry prompts or keys, so it is not shown.
-      return finish('The voice provider rejected a request.');
-    }
-    final cleanup = _protocol.observe(frame);
-    if (cleanup != null) write(cleanup);
-    if (type is String &&
-        (type.startsWith('response.') ||
-            type.startsWith('conversation.item.') ||
-            type.startsWith('input_audio_buffer.'))) {
-      emit(frame);
-    }
-  }
-
-  @override
-  void send(Map<String, Object?> command) {
-    if (command['type'] == 'bridge.ping' && command.length == 1) {
-      // Nothing between the call and its bridge to check: answer at once.
-      return scheduleMicrotask(() => emit(const {'type': 'bridge.pong'}));
-    }
-    try {
-      _protocol.command(command).forEach(write);
-    } on RealtimeProtocolException catch (error) {
-      finish(error.message);
-    }
-  }
 }

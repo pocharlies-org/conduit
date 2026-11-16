@@ -173,13 +173,17 @@ void main() {
   test('validated active server id reuses cached server configs across repeated lookups', () async {
     await saveServerConfigs(['server-a']);
     await storage.setActiveServerId('server-a');
-    final readsAfterSetup = secureStorageReadCounts['openwebui_registry_v1'] ?? 0;
+    final readsAfterSetup =
+        secureStorageReadCounts['openwebui_registry_v1'] ?? 0;
 
     expect(await storage.getActiveServerId(), 'server-a');
     expect(await storage.getActiveServerId(), 'server-a');
     expect(await storage.getActiveServerId(), 'server-a');
 
-    expect(secureStorageReadCounts['openwebui_registry_v1'] ?? 0, readsAfterSetup);
+    expect(
+      secureStorageReadCounts['openwebui_registry_v1'] ?? 0,
+      readsAfterSetup,
+    );
   });
 
   test('server config read failures are not cached as an empty list', () async {
@@ -401,9 +405,13 @@ void main() {
 
       expect(await oldRead, [oldConfig]);
       await save;
-      final readsAfterSave = secureStorageReadCounts['openwebui_registry_v1'] ?? 0;
+      final readsAfterSave =
+          secureStorageReadCounts['openwebui_registry_v1'] ?? 0;
       expect(await storage.getServerConfigs(), [newConfig]);
-      expect(secureStorageReadCounts['openwebui_registry_v1'] ?? 0, readsAfterSave);
+      expect(
+        secureStorageReadCounts['openwebui_registry_v1'] ?? 0,
+        readsAfterSave,
+      );
     },
   );
 
@@ -1505,7 +1513,10 @@ void main() {
       target.copyWith(apiKey: null, isActive: true),
     ]);
     // The account being left stays signed in, in the vault.
-    expect(secureStorageValues['auth_token_server_v1:server-a'], 'previous-token');
+    expect(
+      secureStorageValues['auth_token_server_v1:server-a'],
+      'previous-token',
+    );
     expect(
       jsonDecode(secureStorageValues['user_credentials_server_v1:server-a']!)
           as Map<String, dynamic>,
@@ -1587,53 +1598,56 @@ void main() {
     expect(await storage.getAuthToken(), 'previous-token');
   });
 
-  test('a superseded server selection puts back the registry it found', () async {
-    final registry = OpenWebUiRegistry(
-      servers: [
-        OpenWebUiServer(
-          id: 'server-chat',
-          name: 'Chat',
-          endpoints: [
-            OpenWebUiEndpoint(id: 'route-lan', url: 'https://chat.lan'),
-          ],
-        ),
-      ],
-      accounts: [
-        OpenWebUiAccount(
-          id: 'account-a',
-          serverId: 'server-chat',
-          userId: 'user-a',
-          isActive: true,
-          capturedHeaders: const {
-            'route-lan': {'Cookie': 'proxy=a'},
-          },
-        ),
-        OpenWebUiAccount(
-          id: 'account-b',
-          serverId: 'server-chat',
-          userId: 'user-b',
-        ),
-      ],
-    );
-    secureStorageValues['openwebui_registry_v1'] = registry.encode();
-    await PreferencesStore.putChecked(
-      PreferenceKeys.activeServerId,
-      'account-a',
-    );
-    var commitAllowed = true;
+  test(
+    'a superseded server selection puts back the registry it found',
+    () async {
+      final registry = OpenWebUiRegistry(
+        servers: [
+          OpenWebUiServer(
+            id: 'server-chat',
+            name: 'Chat',
+            endpoints: [
+              OpenWebUiEndpoint(id: 'route-lan', url: 'https://chat.lan'),
+            ],
+          ),
+        ],
+        accounts: [
+          OpenWebUiAccount(
+            id: 'account-a',
+            serverId: 'server-chat',
+            userId: 'user-a',
+            isActive: true,
+            capturedHeaders: const {
+              'route-lan': {'Cookie': 'proxy=a'},
+            },
+          ),
+          OpenWebUiAccount(
+            id: 'account-b',
+            serverId: 'server-chat',
+            userId: 'user-b',
+          ),
+        ],
+      );
+      secureStorageValues['openwebui_registry_v1'] = registry.encode();
+      await PreferencesStore.putChecked(
+        PreferenceKeys.activeServerId,
+        'account-a',
+      );
+      var commitAllowed = true;
 
-    final selected = await storage.selectUnauthenticatedServerConfig(
-      _serverConfig('server-new'),
-      canCommit: () => commitAllowed,
-      publish: () => commitAllowed = false,
-    );
+      final selected = await storage.selectUnauthenticatedServerConfig(
+        _serverConfig('server-new'),
+        canCommit: () => commitAllowed,
+        publish: () => commitAllowed = false,
+      );
 
-    check(selected).isFalse();
-    check(
-      OpenWebUiRegistry.decode(secureStorageValues['openwebui_registry_v1']!),
-    ).equals(registry);
-    check(await storage.getActiveServerId()).equals('account-a');
-  });
+      check(selected).isFalse();
+      check(
+        OpenWebUiRegistry.decode(secureStorageValues['openwebui_registry_v1']!),
+      ).equals(registry);
+      check(await storage.getActiveServerId()).equals('account-a');
+    },
+  );
 
   test('logout scrubs proxy cookies and legacy bearer but preserves connection '
       'settings', () async {
@@ -1740,7 +1754,10 @@ void main() {
     expect(preserved.mtlsPrivateKeyPem, 'standalone-private-key');
     expect(preserved.mtlsPrivateKeyLabel, 'standalone.key');
     expect(preserved.mtlsPrivateKeyPassword, 'standalone-password');
-    expect(secureStorageOperations, isNot(contains('write:openwebui_registry_v1')));
+    expect(
+      secureStorageOperations,
+      isNot(contains('write:openwebui_registry_v1')),
+    );
   });
 
   test(
@@ -2351,7 +2368,6 @@ void main() {
     await storage.saveServerConfigs([config]);
     await storage.setActiveServerId(config.id);
     await PreferencesStore.putChecked(PreferenceKeys.themeMode, 'dark');
-    await PreferencesStore.putChecked(PreferenceKeys.hermesEnabled, true);
     await PreferencesStore.putChecked(
       PreferenceKeys.incompleteLogoutFence,
       true,
@@ -2382,7 +2398,6 @@ void main() {
     expect(await storage.getActiveServerId(), config.id);
 
     expect(PreferencesStore.getString(PreferenceKeys.themeMode), isNull);
-    expect(PreferencesStore.getBool(PreferenceKeys.hermesEnabled), isNull);
     expect(
       PreferencesStore.getBool(PreferenceKeys.incompleteLogoutFence),
       isTrue,
@@ -2394,56 +2409,10 @@ void main() {
     );
   });
 
-  test('a sign-out that keeps server details keeps every route of a server', () async {
-    secureStorageValues['openwebui_registry_v1'] = OpenWebUiRegistry(
-      servers: [
-        OpenWebUiServer(
-          id: 'server-chat',
-          name: 'Chat',
-          endpoints: [
-            OpenWebUiEndpoint(
-              id: 'route-lan',
-              url: 'https://chat.lan',
-              label: 'Home',
-              customHeaders: const {'X-Tenant': 'tenant'},
-              mtlsPrivateKeyPem: 'private-key',
-            ),
-            OpenWebUiEndpoint(
-              id: 'route-away',
-              url: 'https://chat.example.com',
-              label: 'Away',
-              allowSelfSignedCertificates: true,
-            ),
-          ],
-        ),
-      ],
-      accounts: [
-        OpenWebUiAccount(
-          id: 'account-a',
-          serverId: 'server-chat',
-          userId: 'user-a',
-          isActive: true,
-          capturedHeaders: const {
-            'route-away': {'Cookie': 'proxy=a'},
-          },
-        ),
-      ],
-    ).encode();
-    await PreferencesStore.putChecked(
-      PreferenceKeys.activeServerId,
-      'account-a',
-    );
-
-    final cleared = await storage.clearAllIf(
-      canClear: () => true,
-      preserveServerDetails: true,
-    );
-
-    check(cleared).isTrue();
-    check(
-      OpenWebUiRegistry.decode(secureStorageValues['openwebui_registry_v1']!),
-    ).equals(
-      OpenWebUiRegistry(
+  test(
+    'a sign-out that keeps server details keeps every route of a server',
+    () async {
+      secureStorageValues['openwebui_registry_v1'] = OpenWebUiRegistry(
         servers: [
           OpenWebUiServer(
             id: 'server-chat',
@@ -2453,6 +2422,8 @@ void main() {
                 id: 'route-lan',
                 url: 'https://chat.lan',
                 label: 'Home',
+                customHeaders: const {'X-Tenant': 'tenant'},
+                mtlsPrivateKeyPem: 'private-key',
               ),
               OpenWebUiEndpoint(
                 id: 'route-away',
@@ -2467,13 +2438,60 @@ void main() {
           OpenWebUiAccount(
             id: 'account-a',
             serverId: 'server-chat',
+            userId: 'user-a',
             isActive: true,
+            capturedHeaders: const {
+              'route-away': {'Cookie': 'proxy=a'},
+            },
           ),
         ],
-      ),
-    );
-    check(await storage.getActiveServerId()).equals('account-a');
-  });
+      ).encode();
+      await PreferencesStore.putChecked(
+        PreferenceKeys.activeServerId,
+        'account-a',
+      );
+
+      final cleared = await storage.clearAllIf(
+        canClear: () => true,
+        preserveServerDetails: true,
+      );
+
+      check(cleared).isTrue();
+      check(
+        OpenWebUiRegistry.decode(secureStorageValues['openwebui_registry_v1']!),
+      ).equals(
+        OpenWebUiRegistry(
+          servers: [
+            OpenWebUiServer(
+              id: 'server-chat',
+              name: 'Chat',
+              endpoints: [
+                OpenWebUiEndpoint(
+                  id: 'route-lan',
+                  url: 'https://chat.lan',
+                  label: 'Home',
+                ),
+                OpenWebUiEndpoint(
+                  id: 'route-away',
+                  url: 'https://chat.example.com',
+                  label: 'Away',
+                  allowSelfSignedCertificates: true,
+                ),
+              ],
+            ),
+          ],
+          accounts: [
+            OpenWebUiAccount(
+              id: 'account-a',
+              serverId: 'server-chat',
+              isActive: true,
+            ),
+          ],
+        ),
+      );
+      check(await storage.getActiveServerId()).equals('account-a');
+    },
+  );
 
   // sign-out blocks preference writes before the wipe, and the restore of
   // the kept active server id ran into that barrier, so the kept address was
@@ -2730,10 +2748,10 @@ void main() {
     final stored = OpenWebUiRegistry.decode(
       secureStorageValues['openwebui_registry_v1']!,
     );
-    check(stored.account('account-a')).isNotNull().has(
-      (account) => account.userId,
-      'userId',
-    ).isNull();
+    check(stored.account('account-a'))
+        .isNotNull()
+        .has((account) => account.userId, 'userId')
+        .isNull();
   });
 
   test('a write after a failed wipe that kept server details builds on '
@@ -2808,10 +2826,7 @@ void main() {
     await expectLater(storage.clearAll(), throwsA(isA<PlatformException>()));
     check(secureStorageValues).containsKey('openwebui_registry_v1');
 
-    await storage.clearAllIf(
-      canClear: () => true,
-      preserveServerDetails: true,
-    );
+    await storage.clearAllIf(canClear: () => true, preserveServerDetails: true);
 
     final stored = OpenWebUiRegistry.decode(
       secureStorageValues['openwebui_registry_v1']!,
@@ -2930,6 +2945,5 @@ ServerConfig _serverConfig(String id) {
 
 /// The accounts persisted in the secure registry, as the configs the app sees.
 List<ServerConfig> _storedServerConfigs(Map<String, String> secureValues) =>
-    OpenWebUiRegistry.decode(
-      secureValues['openwebui_registry_v1']!,
-    ).projectAll();
+    OpenWebUiRegistry.decode(secureValues['openwebui_registry_v1']!)
+        .projectAll();

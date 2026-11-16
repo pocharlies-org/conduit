@@ -9,22 +9,13 @@ import 'package:conduit_core/features/chat/realtime_call/realtime_call_availabil
 import 'package:conduit_core/features/chat/realtime_call/realtime_call_ports.dart';
 import 'package:conduit_core/features/chat/voice_call/voice_call_eligibility.dart';
 import 'package:conduit_core/features/chat/voice_mode/chat_voice_mode_controller.dart';
-import 'package:conduit_core/features/direct_connections/models/direct_connection_profile.dart';
-import 'package:conduit_core/features/direct_connections/models/direct_remote_model.dart';
-import 'package:conduit_core/features/direct_connections/providers/direct_connection_providers.dart';
-import 'package:conduit_core/features/direct_connections/services/direct_chat_bridge.dart'
-    show kDirectTransport;
-import 'package:conduit_core/features/direct_connections/services/direct_model_registry.dart';
-import 'package:conduit_core/features/hermes/models/hermes_config.dart';
-import 'package:conduit_core/features/hermes/models/hermes_model.dart';
-import 'package:conduit_core/features/hermes/providers/hermes_providers.dart';
 import 'package:conduit_core/models/chat_message.dart';
 import 'package:conduit_core/models/conversation.dart';
 import 'package:conduit_core/models/model.dart';
 import 'package:conduit_core/models/server_config.dart';
 import 'package:conduit_core/ports/app_lifecycle.dart';
 import 'package:conduit_core/providers/app_providers.dart';
-import 'package:conduit_core/providers/backend_mode_providers.dart';
+import 'package:conduit_core/services/direct_replay_output.dart';
 import 'package:conduit_core/providers/host_ports.dart';
 import 'package:conduit_core/services/optimized_storage_service.dart';
 import 'package:conduit_core/services/settings_service.dart';
@@ -41,15 +32,6 @@ import 'package:test/test.dart';
 const _model = Model(id: 'test-model', name: 'Test Model');
 const _fallbackModel = Model(id: 'fallback-model', name: 'Fallback Model');
 
-final _voiceReadinessTestProvider = FutureProvider<VoiceCallEligibility>(
-  resolveVoiceCallEligibility,
-);
-final _boundedVoiceReadinessTestProvider = FutureProvider<VoiceCallEligibility>(
-  (ref) => resolveVoiceCallEligibility(
-    ref,
-    readinessTimeout: const Duration(milliseconds: 10),
-  ),
-);
 final _voiceSocketTestProvider =
     NotifierProvider<_VoiceSocketTestController, SocketService?>(
       _VoiceSocketTestController.new,
@@ -118,8 +100,7 @@ void main() {
     },
   );
 
-  test('voice call follows model and socket ownership changes', () async {
-    final hermesModel = hermesSyntheticModel();
+  test('voice call follows socket ownership changes', () async {
     final firstSocket = SocketService(
       serverConfig: const ServerConfig(
         id: 'voice-socket-lease-a',
@@ -136,10 +117,12 @@ void main() {
     );
     final container = ProviderContainer(
       overrides: [
-        preferredBackendProvider.overrideWith(_DirectPreferredBackend.new),
-        selectedModelProvider.overrideWith(
-          () => _SeededSelectedModel(hermesModel),
+        ...openWebUiStorageOpenOverrides(),
+        authNavigationStateProvider.overrideWithValue(
+          AuthNavigationState.authenticated,
         ),
+        reviewerModeProvider.overrideWithValue(false),
+        selectedModelProvider.overrideWith(() => _SeededSelectedModel(_model)),
         socketServiceProvider.overrideWith(
           (ref) => ref.watch(_voiceSocketTestProvider),
         ),
@@ -162,35 +145,18 @@ void main() {
     check(
       await controller.start(
         startNewConversation: false,
-        admittedModel: hermesModel,
+        admittedModel: _model,
       ),
     ).equals(ChatVoiceModeStartResult.started);
     check(firstSocket.backgroundActivityLeaseCount).equals(0);
 
     container.read(_voiceSocketTestProvider.notifier).set(firstSocket);
     await pumpEventQueue();
-    check(firstSocket.backgroundActivityLeaseCount).equals(0);
-
-    container
-        .read(selectedModelProvider.notifier)
-        .set(_model, allowHidden: true);
-    await pumpEventQueue();
     check(firstSocket.backgroundActivityLeaseCount).equals(1);
 
     container.read(_voiceSocketTestProvider.notifier).set(replacementSocket);
     await pumpEventQueue();
     check(firstSocket.backgroundActivityLeaseCount).equals(0);
-    check(replacementSocket.backgroundActivityLeaseCount).equals(1);
-
-    container
-        .read(selectedModelProvider.notifier)
-        .set(hermesModel, allowHidden: true);
-    await pumpEventQueue();
-    check(replacementSocket.backgroundActivityLeaseCount).equals(1);
-    container
-        .read(selectedModelProvider.notifier)
-        .set(_model, allowHidden: true);
-    await pumpEventQueue();
     check(replacementSocket.backgroundActivityLeaseCount).equals(1);
 
     await controller.pause();
@@ -265,7 +231,6 @@ void main() {
           AuthNavigationState.loading,
         ),
         reviewerModeProvider.overrideWithValue(false),
-        preferredBackendProvider.overrideWith(_OwuiPreferredBackend.new),
         selectedModelProvider.overrideWith(_NullSelectedModel.new),
         voiceModeInputProvider.overrideWithValue(input),
         voiceModeSpeechProvider.overrideWithValue(_FakeTextToSpeechService()),
@@ -575,30 +540,6 @@ void main() {
     },
   );
 
-  test('voice eligibility allows trusted device Direct while signed out', () {
-    final registry = DirectModelRegistry();
-    final model = registry.replaceProfileModels(_directProfile, [
-      DirectRemoteModel(id: 'voice-model'),
-    ]).single;
-    final container = ProviderContainer(
-      overrides: [
-        authNavigationStateProvider.overrideWithValue(
-          AuthNavigationState.needsLogin,
-        ),
-        reviewerModeProvider.overrideWithValue(false),
-        selectedModelProvider.overrideWithValue(model),
-        directModelRegistryProvider.overrideWithValue(registry),
-        directModelDiscoveryProvider.overrideWith(_DirectDiscoverySignal.new),
-      ],
-    );
-    addTearDown(container.dispose);
-
-    final eligibility = container.read(voiceCallEligibilityProvider);
-
-    check(eligibility.canStart).isTrue();
-    check(eligibility.model).identicalTo(model);
-  });
-
   test('voice eligibility still rejects signed-out OpenWebUI', () {
     final container = ProviderContainer(
       overrides: [
@@ -618,182 +559,6 @@ void main() {
         .equals(VoiceCallEligibilityReason.authenticationRequired);
     check(eligibility.errorMessage).equals('Sign in to start a voice call.');
   });
-
-  test('voice eligibility explains incomplete Hermes configuration', () {
-    final container = ProviderContainer(
-      overrides: [
-        authNavigationStateProvider.overrideWithValue(
-          AuthNavigationState.needsLogin,
-        ),
-        reviewerModeProvider.overrideWithValue(false),
-        selectedModelProvider.overrideWithValue(hermesSyntheticModel()),
-        hermesConfigProvider.overrideWith(
-          () => _FixedHermesConfig(
-            const HermesConfig(
-              enabled: true,
-              baseUrl: 'https://hermes.example/v1',
-            ),
-          ),
-        ),
-        hermesSecretsLoadingProvider.overrideWith(_SettledHermesSecrets.new),
-      ],
-    );
-    addTearDown(container.dispose);
-
-    final eligibility = container.read(voiceCallEligibilityProvider);
-
-    check(eligibility.canStart).isFalse();
-    check(eligibility.reason)
-        .equals(VoiceCallEligibilityReason.backendUnavailable);
-    check(eligibility.errorMessage).isNotNull().contains('Hermes');
-  });
-
-  test('voice readiness waits for Hermes secrets to hydrate', () async {
-    final container = ProviderContainer(
-      overrides: [
-        authNavigationStateProvider.overrideWithValue(
-          AuthNavigationState.needsLogin,
-        ),
-        reviewerModeProvider.overrideWithValue(false),
-        selectedModelProvider.overrideWithValue(hermesSyntheticModel()),
-        hermesConfigProvider.overrideWith(_HydratingHermesConfig.new),
-        hermesSecretsLoadingProvider.overrideWith(_LoadingHermesSecrets.new),
-      ],
-    );
-    addTearDown(container.dispose);
-
-    var completed = false;
-    final readiness = container.read(_voiceReadinessTestProvider.future).then((
-      value,
-    ) {
-      completed = true;
-      return value;
-    });
-    await Future<void>.delayed(Duration.zero);
-    check(completed).isFalse();
-
-    (container.read(hermesConfigProvider.notifier) as _HydratingHermesConfig)
-        .finishHydration();
-    container.read(hermesSecretsLoadingProvider.notifier).set(false);
-    final eligibility = await readiness;
-
-    check(eligibility.canStart).isTrue();
-  });
-
-  test(
-    'voice readiness restores Hermes model after cold-start hydration',
-    () async {
-      final container = ProviderContainer(
-        overrides: [
-          authNavigationStateProvider.overrideWithValue(
-            AuthNavigationState.loading,
-          ),
-          reviewerModeProvider.overrideWithValue(false),
-          preferredBackendProvider.overrideWith(_HermesPreferredBackend.new),
-          selectedModelProvider.overrideWith(_NullSelectedModel.new),
-          isManualModelSelectionProvider.overrideWith(
-            _ManualModelSelection.new,
-          ),
-          hermesConfigProvider.overrideWith(_HydratingHermesConfig.new),
-          hermesSecretsLoadingProvider.overrideWith(_LoadingHermesSecrets.new),
-        ],
-      );
-      addTearDown(container.dispose);
-
-      var completed = false;
-      final readiness = container.read(_voiceReadinessTestProvider.future).then(
-        (value) {
-          completed = true;
-          return value;
-        },
-      );
-      await Future<void>.delayed(Duration.zero);
-      check(completed).isFalse();
-
-      (container.read(hermesConfigProvider.notifier) as _HydratingHermesConfig)
-          .finishHydration();
-      container.read(hermesSecretsLoadingProvider.notifier).set(false);
-      final eligibility = await readiness;
-
-      check(eligibility.canStart).isTrue();
-      check(eligibility.model)
-          .isNotNull()
-          .has((model) => model.id, 'id')
-          .equals(hermesSyntheticModel().id);
-      check(container.read(isManualModelSelectionProvider)).isFalse();
-    },
-  );
-
-  test(
-    'voice readiness restores device Direct model while OWUI auth loads',
-    () async {
-      final registry = DirectModelRegistry();
-      final model = registry.replaceProfileModels(_directProfile, [
-        DirectRemoteModel(id: 'cold-start-voice-model'),
-      ]).single;
-      final container = ProviderContainer(
-        overrides: [
-          authNavigationStateProvider.overrideWithValue(
-            AuthNavigationState.loading,
-          ),
-          reviewerModeProvider.overrideWithValue(false),
-          preferredBackendProvider.overrideWith(_DirectPreferredBackend.new),
-          selectedModelProvider.overrideWith(_NullSelectedModel.new),
-          isManualModelSelectionProvider.overrideWith(
-            _ManualModelSelection.new,
-          ),
-          directModelRegistryProvider.overrideWithValue(registry),
-          directModelDiscoveryProvider.overrideWith(
-            () => _FixedDirectDiscovery(model),
-          ),
-          appSettingsProvider.overrideWithValue(
-            AppSettings(defaultModel: model.id),
-          ),
-        ],
-      );
-      addTearDown(container.dispose);
-
-      final eligibility = await container.read(
-        _voiceReadinessTestProvider.future,
-      );
-
-      check(eligibility.canStart).isTrue();
-      check(eligibility.model?.id).equals(model.id);
-      check(container.read(isManualModelSelectionProvider)).isFalse();
-    },
-  );
-
-  test(
-    'voice readiness stops when Hermes model restoration is rejected',
-    () async {
-      final container = ProviderContainer(
-        overrides: [
-          authNavigationStateProvider.overrideWithValue(
-            AuthNavigationState.loading,
-          ),
-          reviewerModeProvider.overrideWithValue(false),
-          preferredBackendProvider.overrideWith(_HermesPreferredBackend.new),
-          selectedModelProvider.overrideWith(_IgnoringSelectedModel.new),
-          isManualModelSelectionProvider.overrideWith(
-            _ManualModelSelection.new,
-          ),
-          hermesConfigProvider.overrideWith(
-            () => _FixedHermesConfig(_usableHermesConfig),
-          ),
-          hermesSecretsLoadingProvider.overrideWith(_SettledHermesSecrets.new),
-        ],
-      );
-      addTearDown(container.dispose);
-
-      final eligibility = await container
-          .read(_boundedVoiceReadinessTestProvider.future)
-          .timeout(const Duration(seconds: 1));
-
-      check(eligibility.canStart).isFalse();
-      check(eligibility.reason)
-          .equals(VoiceCallEligibilityReason.modelRequired);
-    },
-  );
 
   test(
     'sends transcript through chat voice mode and resumes listening',
@@ -2703,10 +2468,9 @@ void main() {
             onRouteAsked?.call();
             await routeFound;
             return offersRealtime
-                ? (bridge: bridge, hermes: null, block: null)
+                ? (bridge: bridge, block: null)
                 : (
                     bridge: null,
-                    hermes: null,
                     block: RealtimeCallBlock.standardChosen,
                   );
           }),
@@ -2771,31 +2535,6 @@ void main() {
       // A chat the user opens is not the call's, even before it has one.
       check(realtimeCallChatAfter(null, 'chat-2').ends).isTrue();
       check(realtimeCallChatAfter('local:new', 'chat-2').ends).isTrue();
-    });
-
-    test('opening another chat ends a realtime call', () async {
-      // Direct chats, which this container keeps open.
-      Conversation chat(String id) => Conversation(
-        id: id,
-        title: 'Chat',
-        createdAt: DateTime.utc(2026),
-        updatedAt: DateTime.utc(2026),
-        metadata: const {'backend': kDirectTransport},
-      );
-      final container = realtimeContainer();
-      final active = container.read(activeConversationProvider.notifier)
-        ..set(chat('direct-local:a'));
-      await container
-          .read(chatVoiceModeControllerProvider.notifier)
-          .start(startNewConversation: false, admittedModel: _model);
-      check(container.read(chatVoiceModeControllerProvider).isActive)
-          .isTrue();
-
-      active.set(chat('direct-local:b'));
-      await _until(
-        () => !container.read(chatVoiceModeControllerProvider).isActive,
-      );
-      check(bridge.wasClosed).isTrue();
     });
 
     test('hanging up while it connects ends the call at once', () async {
@@ -2879,7 +2618,7 @@ void main() {
         title: 'Chat',
         createdAt: DateTime.utc(2026),
         updatedAt: DateTime.utc(2026),
-        metadata: const {'backend': kDirectTransport},
+        metadata: const {'backend': kConduitDirectTransport},
       );
       final container = realtimeContainer();
       final active = container.read(activeConversationProvider.notifier)
@@ -2895,13 +2634,13 @@ void main() {
     });
 
     test('a chat opened while the call sets up cancels it', () async {
-      // Direct chats, which this container keeps open.
+      // Chats this container keeps open.
       Conversation chat(String id) => Conversation(
         id: id,
         title: 'Chat',
         createdAt: DateTime.utc(2026),
         updatedAt: DateTime.utc(2026),
-        metadata: const {'backend': kDirectTransport},
+        metadata: const {'backend': kConduitDirectTransport},
       );
       final routeFound = Completer<void>();
       var routeAsked = false;
@@ -2957,44 +2696,6 @@ void main() {
   });
 }
 
-const _usableHermesConfig = HermesConfig(
-  enabled: true,
-  baseUrl: 'https://hermes.example/v1',
-  apiKey: 'hermes-key',
-);
-
-final _directProfile = DirectConnectionProfile(
-  id: 'voice-direct-profile',
-  name: 'Voice Direct',
-  adapterKey: 'ollama',
-  baseUrl: 'http://localhost:11434',
-);
-
-class _FixedHermesConfig extends HermesConfigController {
-  _FixedHermesConfig(this._config);
-
-  final HermesConfig _config;
-
-  @override
-  HermesConfig build() => _config;
-}
-
-class _DirectDiscoverySignal extends DirectModelDiscoveryController {
-  @override
-  Future<DirectModelDiscoveryState> build() async =>
-      DirectModelDiscoveryState();
-}
-
-class _FixedDirectDiscovery extends DirectModelDiscoveryController {
-  _FixedDirectDiscovery(this.model);
-
-  final Model model;
-
-  @override
-  Future<DirectModelDiscoveryState> build() async =>
-      DirectModelDiscoveryState(models: [model]);
-}
-
 class _NullSelectedModel extends SelectedModel {
   @override
   Model? build() => null;
@@ -3007,11 +2708,6 @@ class _SeededSelectedModel extends SelectedModel {
 
   @override
   Model build() => _model;
-}
-
-class _IgnoringSelectedModel extends _NullSelectedModel {
-  @override
-  void set(Model? model, {bool allowHidden = false}) {}
 }
 
 class _FixedModels extends Models {
@@ -3029,41 +2725,6 @@ class _FakeOptimizedStorageService extends Fake
 class _ManualModelSelection extends IsManualModelSelection {
   @override
   bool build() => true;
-}
-
-class _HermesPreferredBackend extends PreferredBackendController {
-  @override
-  PreferredBackend build() => PreferredBackend.hermes;
-}
-
-class _DirectPreferredBackend extends PreferredBackendController {
-  @override
-  PreferredBackend build() => PreferredBackend.direct;
-}
-
-class _OwuiPreferredBackend extends PreferredBackendController {
-  @override
-  PreferredBackend build() => PreferredBackend.owui;
-}
-
-class _HydratingHermesConfig extends HermesConfigController {
-  @override
-  HermesConfig build() =>
-      const HermesConfig(enabled: true, baseUrl: 'https://hermes.example/v1');
-
-  void finishHydration() {
-    state = _usableHermesConfig;
-  }
-}
-
-class _LoadingHermesSecrets extends HermesSecretsLoading {
-  @override
-  bool build() => true;
-}
-
-class _SettledHermesSecrets extends HermesSecretsLoading {
-  @override
-  bool build() => false;
 }
 
 class _FakeVoiceInputService implements VoiceModeInput {

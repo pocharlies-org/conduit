@@ -34,9 +34,7 @@ Widget _harness(Widget child) {
       localizationsDelegates: conduitLocalizationsDelegates,
       supportedLocales: AppLocalizations.supportedLocales,
       home: Scaffold(
-        body: SingleChildScrollView(
-          child: SizedBox(width: 400, child: child),
-        ),
+        body: SingleChildScrollView(child: SizedBox(width: 400, child: child)),
       ),
     ),
   );
@@ -51,9 +49,8 @@ void main() {
       streaming: false,
     );
     final document = compilePreparedMarkdownSync(prepared);
-    check(
-      document.blocks.length,
-    ).isGreaterThan(markdownChunkedPartInflationThreshold);
+    check(document.blocks.length)
+        .isGreaterThan(markdownChunkedPartInflationThreshold);
 
     await tester.pumpWidget(
       _harness(ConduitMarkdownWidget(compiledDocument: document)),
@@ -68,15 +65,13 @@ void main() {
       findRichText: true,
     );
     check(tester.any(initiallyVisible)).isTrue();
-    check(
-      tester.any(find.textContaining(_lastParagraph, findRichText: true)),
-    ).isFalse();
+    check(tester.any(find.textContaining(_lastParagraph, findRichText: true)))
+        .isFalse();
 
     // Subsequent frames stream in the rest; settle bounds the reveal loop.
     await tester.pumpAndSettle();
-    check(
-      tester.any(find.textContaining(_lastParagraph, findRichText: true)),
-    ).isTrue();
+    check(tester.any(find.textContaining(_lastParagraph, findRichText: true)))
+        .isTrue();
   });
 
   testWidgets('small documents keep the single-frame column', (tester) async {
@@ -91,40 +86,35 @@ void main() {
     );
 
     check(tester.any(find.byType(ChunkedBlockColumn))).isFalse();
-    check(
-      tester.any(find.textContaining('Paragraph 9 ', findRichText: true)),
-    ).isTrue();
+    check(tester.any(find.textContaining('Paragraph 9 ', findRichText: true)))
+        .isTrue();
   });
 
-  testWidgets(
-    'settled chat bodies chunk the display-part column',
-    (tester) async {
-      // The chat path splits a document into ONE display part per root block,
-      // so per-part documents never cross ConduitMarkdownWidget's own block
-      // threshold — the parts column itself must chunk (the 5.4s freeze).
-      await tester.pumpWidget(
-        _harness(
-          StreamingMarkdownWidget(
-            content: _manyParagraphs(_largeParagraphCount),
-            isStreaming: false,
-          ),
+  testWidgets('settled chat bodies chunk the display-part column', (
+    tester,
+  ) async {
+    // The chat path splits a document into ONE display part per root block,
+    // so per-part documents never cross ConduitMarkdownWidget's own block
+    // threshold — the parts column itself must chunk (the 5.4s freeze).
+    await tester.pumpWidget(
+      _harness(
+        StreamingMarkdownWidget(
+          content: _manyParagraphs(_largeParagraphCount),
+          isStreaming: false,
         ),
-      );
+      ),
+    );
 
-      check(tester.any(find.byType(ChunkedBlockColumn))).isTrue();
-      check(
-        tester.any(find.textContaining('Paragraph 0 ', findRichText: true)),
-      ).isTrue();
-      check(
-        tester.any(find.textContaining(_lastParagraph, findRichText: true)),
-      ).isFalse();
+    check(tester.any(find.byType(ChunkedBlockColumn))).isTrue();
+    check(tester.any(find.textContaining('Paragraph 0 ', findRichText: true)))
+        .isTrue();
+    check(tester.any(find.textContaining(_lastParagraph, findRichText: true)))
+        .isFalse();
 
-      await tester.pumpAndSettle();
-      check(
-        tester.any(find.textContaining(_lastParagraph, findRichText: true)),
-      ).isTrue();
-    },
-  );
+    await tester.pumpAndSettle();
+    check(tester.any(find.textContaining(_lastParagraph, findRichText: true)))
+        .isTrue();
+  });
 
   test('render gate tracks incomplete regions and notifies on edges', () {
     final gate = MarkdownRenderGate();

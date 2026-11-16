@@ -348,7 +348,8 @@ void main() {
       expect(find.byKey(const Key('personal-tool-add')), findsOneWidget);
       expect(find.byKey(const Key('personal-terminal-add')), findsOneWidget);
       expect(
-        tester.widget<UtilityRow>(find.byKey(const Key('personal-tool-add')))
+        tester
+            .widget<UtilityRow>(find.byKey(const Key('personal-tool-add')))
             .semanticLabel,
         startsWith('Add tool server. '),
       );
@@ -559,20 +560,24 @@ void main() {
       identity: personalConnectionNewRouteValue,
     );
 
-    Finder fieldText(String key, String text) => find.descendant(
-      of: find.byKey(Key(key)),
-      matching: find.text(text),
-    );
+    Finder fieldText(String key, String text) =>
+        find.descendant(of: find.byKey(Key(key)), matching: find.text(text));
 
     testWidgets('each field shows its own issue after the first Save, and '
         'the issue clears as it is fixed', (tester) async {
       await pumpPage(tester, newTool);
-      await tester.enterText(find.byKey(const Key('personal-connection-path')), '');
+      await tester.enterText(
+        find.byKey(const Key('personal-connection-path')),
+        '',
+      );
 
       expect(find.text('Enter a URL.'), findsNothing);
       await tapKey(tester, 'personal-connection-save');
 
-      expect(fieldText('personal-connection-url', 'Enter a URL.'), findsOneWidget);
+      expect(
+        fieldText('personal-connection-url', 'Enter a URL.'),
+        findsOneWidget,
+      );
       expect(
         fieldText('personal-connection-path', 'Enter a path.'),
         findsOneWidget,
@@ -943,10 +948,7 @@ void main() {
       );
       await tapKey(tester, 'personal-connection-save');
 
-      expect(
-        server.log.skip(mark).where((r) => r.method == 'POST'),
-        isEmpty,
-      );
+      expect(server.log.skip(mark).where((r) => r.method == 'POST'), isEmpty);
       final stored = _storedTools(server).single;
       expect(stored['info']['name'], 'Beta tools');
       expect(stored['key'], 'secret-beta');

@@ -53,21 +53,6 @@ protocol ConduitBridge: AnyObject {
   @MainActor func attach(to host: ConduitBridgeHost)
 }
 
-/// Supplies the bridge host to entry points the host does not own, such as
-/// the CarPlay scene. The application delegate of every host conforms.
-protocol ConduitBridgeHostProvider: AnyObject {
-  /// Returns the running host, starting it first if necessary, or nil when
-  /// it could not start.
-  @MainActor func ensureBridgeHost() -> ConduitBridgeHost?
-}
-
-extension UIApplication {
-  /// The host provider, when the application delegate is one.
-  var conduitBridgeHostProvider: ConduitBridgeHostProvider? {
-    delegate as? ConduitBridgeHostProvider
-  }
-}
-
 /// App group lookup shared by every host and extension.
 enum ConduitAppGroup {
   static let infoDictionaryKey = "AppGroupId"
@@ -98,19 +83,15 @@ enum ConduitBridgeRegistry {
   static func attachAll(to host: ConduitBridgeHost) {
     PlatformEnvironmentBridge.shared.attach(to: host)
     AppIntentBridge.attach(to: host)
-    ConduitCarPlayBridge.shared.attach(to: host)
     NativeSheetBridge.shared.attach(to: host)
     NativeDropdownBridge.shared.attach(to: host)
     NativeImageViewerBridge.shared.attach(to: host)
-    NativeSymbolImageBridge.shared.attach(to: host)
     NativeSttBridge.shared.attach(to: host)
-    PccBridge.shared.attach(to: host)
     VoiceAudioRouteBridge.shared.attach(to: host)
     RealtimeAudioBridge.shared.attach(to: host)
     NativeIosTtsBridge.shared.attach(to: host)
     BackgroundStreamingHandler.shared.attach(to: host)
     ShareImportBridge.shared.attach(to: host)
-    CookieBridge.shared.attach(to: host)
     SystemBrowserAuthBridge.shared.attach(to: host)
   }
 }

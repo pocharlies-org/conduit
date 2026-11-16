@@ -30,6 +30,10 @@ class ApiAuthInterceptor extends Interceptor {
   static const String _requestCookieSuppressedExtraKey =
       'conduit.api.request_cookie_suppressed';
 
+  /// Set on the replay of a request whose session was just renewed, so the
+  /// renewal happens at most once per request.
+  static const String sessionRetriedExtraKey = 'conduit.api.session_retried';
+
   String? _authToken;
   int _authRevision = 0;
   final Uri _serverUri;
@@ -40,6 +44,15 @@ class ApiAuthInterceptor extends Interceptor {
   // Callbacks for auth events
   void Function()? onAuthTokenInvalid;
   Future<void> Function()? onTokenInvalidated;
+
+  /// Renews the session without the password (Keycloak refresh + exchange) and
+  /// answers whether the failed request may be replayed. Null when the app has
+  /// no renewal path, in which case an expired session is handled as before.
+  Future<bool> Function()? onSessionExpired;
+
+  /// The client's own Dio: the replay runs through this interceptor again, so
+  /// the renewed bearer is applied exactly as on a fresh request.
+  Dio? retryClient;
 
   // Public endpoints that don't require authentication. The two-step sign-in
   // routes (Open WebUI 0.12) authenticate with the challenge token in their
@@ -77,6 +90,8 @@ class ApiAuthInterceptor extends Interceptor {
     this.customHeaders = const {},
     bool suppressCookieCustomHeader = false,
     bool Function()? shouldSuppressCookieCustomHeader,
+    this.onSessionExpired,
+    this.retryClient,
   }) : _serverUri = Uri.parse(serverUrl),
        _authToken = authToken,
        _suppressCookieCustomHeader = suppressCookieCustomHeader,
@@ -284,6 +299,84 @@ class ApiAuthInterceptor extends Interceptor {
       return;
     }
 
+    if (_mayRenewSession(err)) {
+      unawaited(_renewThenReplay(err, handler));
+      return;
+    }
+
+    _classifyError(err, handler);
+  }
+
+  /// A refused or bounced request whose session can still be renewed.
+  ///
+  /// This interceptor never follows redirects, so on this server a 3xx can
+  /// only mean the session in front of the API is gone; 401/403 on an endpoint
+  /// that requires the bearer say the same. Public endpoints are excluded:
+  /// their failures are answers about credentials, not about a session.
+  bool _mayRenewSession(DioException err) {
+    if (onSessionExpired == null || retryClient == null) return false;
+    final options = err.requestOptions;
+    // A late answer about another account's token says nothing about the
+    // session in use: renewing on it would mint one for the wrong account.
+    if (!_ownsCurrentSession(options)) return false;
+    if (options.extra[sessionRetriedExtraKey] == true) return false;
+    if (options.extra['suppressAuthFailureNotification'] == true) return false;
+    final code = err.response?.statusCode;
+    if (code == null) return false;
+    final expired =
+        code == 401 || code == 403 || (code >= 300 && code < 400);
+    if (!expired) return false;
+    return _authModeFor(_endpointPath(options.path)) !=
+        _EndpointAuthMode.public;
+  }
+
+  Future<void> _renewThenReplay(
+    DioException err,
+    ErrorInterceptorHandler handler,
+  ) async {
+    final renew = onSessionExpired;
+    final client = retryClient;
+    if (renew == null || client == null) {
+      _classifyError(err, handler);
+      return;
+    }
+    final bool renewed;
+    try {
+      renewed = await renew();
+    } catch (error) {
+      DebugLogger.auth('session renewal failed: $error');
+      _classifyError(err, handler);
+      return;
+    }
+    if (!renewed) {
+      _classifyError(err, handler);
+      return;
+    }
+
+    final replay = err.requestOptions;
+    replay.extra = Map<String, dynamic>.of(replay.extra)
+      ..[sessionRetriedExtraKey] = true;
+    try {
+      handler.resolve(await client.fetch<dynamic>(replay));
+    } on DioException catch (replayError) {
+      // Already retried once: this answer is the real one.
+      _classifyError(replayError, handler);
+    }
+  }
+
+  /// Whether [options] was sent with the session this client holds now. An
+  /// answer that arrives after a sign-out, a switch or a renewal belongs to
+  /// the session it was sent with, not to this one.
+  bool _ownsCurrentSession(RequestOptions options) {
+    final extra = options.extra;
+    final cookieSuppressed = extra[_requestCookieSuppressedExtraKey];
+    return extra[_requestAuthRevisionExtraKey] == _authRevision &&
+        extra[_requestAuthTokenExtraKey] == _authToken &&
+        cookieSuppressed is bool &&
+        cookieSuppressed == cookieCustomHeaderSuppressed;
+  }
+
+  void _classifyError(DioException err, ErrorInterceptorHandler handler) {
     final statusCode = err.response?.statusCode;
     // Classify the endpoint-relative path rather than the fully resolved URI.
     // The latter includes a configured Open WebUI base-path prefix and would
@@ -292,16 +385,9 @@ class ApiAuthInterceptor extends Interceptor {
 
     final suppressAuthFailureNotification =
         err.requestOptions.extra['suppressAuthFailureNotification'] == true;
-    final requestRevision =
-        err.requestOptions.extra[_requestAuthRevisionExtraKey];
-    final requestToken = err.requestOptions.extra[_requestAuthTokenExtraKey];
-    final requestCookieSuppressed =
-        err.requestOptions.extra[_requestCookieSuppressedExtraKey];
-    final responseOwnsCurrentSession =
-        requestRevision == _authRevision &&
-        requestToken == _authToken &&
-        requestCookieSuppressed is bool &&
-        requestCookieSuppressed == cookieCustomHeaderSuppressed;
+    final responseOwnsCurrentSession = _ownsCurrentSession(
+      err.requestOptions,
+    );
     if (statusCode case final code?
         when !suppressAuthFailureNotification &&
             responseOwnsCurrentSession &&

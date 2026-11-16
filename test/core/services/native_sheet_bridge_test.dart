@@ -304,17 +304,6 @@ void main() {
     });
   });
 
-  test('sheet item serializes a branded icon asset', () {
-    const item = NativeSheetItemConfig(
-      id: 'hermes',
-      title: 'Hermes Agent',
-      sfSymbol: 'sparkles',
-      iconAsset: 'assets/icons/hermes_agent.png',
-    );
-
-    check(item.toMap()['iconAsset']).equals('assets/icons/hermes_agent.png');
-  });
-
   test('sign-out item serializes native checkbox copy', () {
     const item = NativeSheetItemConfig(
       id: 'sign-out',
@@ -378,7 +367,6 @@ void main() {
         check(item.dismissOnSelect).isTrue();
         check(item.actionId).equals('open-workspace');
         check(item.actionValue).equals('models');
-        check(item.iconAsset).equals('assets/icons/hermes_agent.png');
         return wrapResponse(result: true);
       },
     );
@@ -403,7 +391,6 @@ void main() {
                 dismissOnSelect: true,
                 actionId: 'open-workspace',
                 actionValue: 'models',
-                iconAsset: 'assets/icons/hermes_agent.png',
               ),
             ],
           ),

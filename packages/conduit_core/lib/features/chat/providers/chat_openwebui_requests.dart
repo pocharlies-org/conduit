@@ -61,45 +61,6 @@ List<ChatMessageVersion> _buildReplayVersions(ChatMessage message) {
   return [...message.versions, _buildAssistantVersionSnapshot(message)];
 }
 
-ChatMessage _directRegenerationCompletedBase(ChatMessage message) {
-  final isEmptyPlaceholder =
-      message.content.isEmpty &&
-      message.files?.isNotEmpty != true &&
-      message.output?.isNotEmpty != true &&
-      message.embeds?.isNotEmpty != true &&
-      message.sources.isEmpty &&
-      message.statusHistory.isEmpty &&
-      message.followUps.isEmpty &&
-      message.codeExecutions.isEmpty &&
-      message.usage?.isNotEmpty != true &&
-      message.error == null;
-  if (!message.isStreaming || message.versions.isEmpty || !isEmptyPlaceholder) {
-    return message.copyWith(isStreaming: false);
-  }
-  final completed = message.versions.last;
-  final metadata = <String, dynamic>{...?message.metadata};
-  final modelName = completed.modelName?.trim();
-  if (modelName != null && modelName.isNotEmpty) {
-    metadata['modelName'] = modelName;
-  }
-  return message.copyWith(
-    content: completed.content,
-    timestamp: completed.timestamp,
-    model: completed.model,
-    files: completed.files,
-    output: completed.output,
-    embeds: completed.embeds,
-    sources: completed.sources,
-    followUps: completed.followUps,
-    codeExecutions: completed.codeExecutions,
-    usage: completed.usage,
-    versions: message.versions.sublist(0, message.versions.length - 1),
-    error: completed.error,
-    metadata: metadata.isEmpty ? null : metadata,
-    isStreaming: false,
-  );
-}
-
 // Pre-seed an assistant skeleton message (with a given id or a new one) and
 // return the id. Persisted chats rely on `/api/chat/completions` to update the
 // server-side history; pushing the local buffer back first can truncate chats
@@ -405,8 +366,7 @@ List<Map<String, dynamic>>? _extractTopLevelRequestFiles(
 }
 
 bool _isDirectServerToolSelection(String id) {
-  return id.startsWith('direct_server:') ||
-      id.startsWith(kDirectMcpToolIdPrefix);
+  return id.startsWith(kDirectServerSelectionPrefix);
 }
 
 List<String> _extractToolIdsForApi(Iterable<String> selectedToolIds) {
@@ -571,7 +531,7 @@ Future<List<Map<String, dynamic>>> _buildCompletionRequestMessages({
   for (final msg in messages) {
     if (_isArchivedAssistantVariant(msg)) continue;
     if (!_shouldIncludeConversationHistoryMessage(msg)) continue;
-    final cleaned = outboundProviderReplayText(msg);
+    final cleaned = ToolCallsParser.sanitizeForApi(msg.content);
     final attachments = msg.attachmentIds ?? const <String>[];
     if (attachments.isNotEmpty) {
       final messageMap = await _buildMessagePayloadWithAttachments(
@@ -739,26 +699,4 @@ List<Map<String, dynamic>> buildChatCompletionMessagesForTest({
 @visibleForTesting
 String? resolveTerminalIdForRequestForTest(String? selectedTerminalId) {
   return _resolveTerminalIdForRequest(selectedTerminalId: selectedTerminalId);
-}
-
-/// Stops the Hermes run owned by the visible assistant and clears its session
-/// binding before a navigation/reset replaces the message list.
-void _observeDetachedCancellation(
-  Future<void>? cancellation, {
-  required String scope,
-}) {
-  if (cancellation == null) return;
-  unawaited(
-    cancellation.then<void>(
-      (_) {},
-      onError: (Object _, StackTrace _) {
-        // Cancellation is best-effort after registry ownership was revoked.
-        // Observe hostile transport cleanup futures so they cannot surface as
-        // uncaught zone errors from synchronous UI actions.
-        try {
-          DebugLogger.error('detached-cancellation-failed', scope: scope);
-        } catch (_) {}
-      },
-    ),
-  );
 }

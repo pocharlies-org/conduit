@@ -3,7 +3,6 @@ import 'dart:async';
 import 'package:material_ui/material_ui.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_riverpod/misc.dart' show ProviderListenable;
-import 'package:flutter/services.dart';
 import 'package:uuid/uuid.dart';
 
 import 'package:conduit_core/features/tools/providers/tools_providers.dart';
@@ -19,7 +18,6 @@ import 'package:conduit_core/features/chat/providers/chat_providers.dart'
 import 'package:conduit_core/features/chat/providers/reasoning_effort_provider.dart';
 
 import '../../l10n/app_localizations.dart';
-import '../../shared/theme/theme_extensions.dart';
 import '../../shared/theme/tweakcn_themes.dart';
 
 import 'package:conduit_core/models/model.dart';
@@ -28,8 +26,6 @@ import 'package:conduit_core/models/tool.dart';
 import '../network/image_header_utils.dart';
 
 import 'package:conduit_core/providers/app_providers.dart';
-import 'package:conduit_core/features/hermes/providers/hermes_providers.dart';
-import 'package:conduit_core/features/hermes/models/hermes_model.dart';
 import 'package:conduit_core/features/automations/providers/automation_providers.dart'
     show scheduledTasksEntryVisibleProvider;
 import 'package:conduit_core/features/auth/providers/unified_auth_providers.dart'
@@ -48,22 +44,14 @@ import 'package:conduit_core/features/workspace/providers/workspace_capabilities
 import 'package:conduit_core/utils/debug_logger.dart';
 
 import '../utils/model_icon_utils.dart';
-import '../utils/model_logos.dart';
 
 import 'package:conduit_core/utils/model_sort_utils.dart';
-import 'package:conduit_core/features/direct_connections/providers/direct_connection_providers.dart'
-    show
-        appleOnDeviceEnabledProvider,
-        applePccEnabledProvider,
-        applePccPlatformSupportedProvider,
-        directConnectionProfilesProvider;
 
 import '../utils/native_sheet_utils.dart';
 import 'native_sheet_avatar_bytes_hydrator.dart';
 import 'native_sheet_bridge.dart';
 import '../../shared/services/navigation_service.dart';
 
-import 'package:conduit_core/features/chat/server_speech/direct_voice_provider_settings.dart';
 import 'package:conduit_core/features/chat/server_speech/server_speech_providers.dart';
 import 'package:conduit_core/services/settings_service.dart';
 
@@ -127,7 +115,7 @@ NativeProfileRootVisibility readNativeProfileRootVisibility(
 
 /// Whom the account card atop the native Settings root is for, and what it
 /// says, read now.
-({AccountCardKind kind, String title, String? subtitle}) readNativeAccountCard(
+({String title, String? subtitle}) readNativeAccountCard(
   NativeSheetProviderReader read,
   AppLocalizations l10n, {
   required NativeProfileRootAccount? account,
@@ -136,10 +124,6 @@ NativeProfileRootVisibility readNativeProfileRootVisibility(
     l10n,
     signedInName: account?.displayName,
     accounts: read(openWebUiAccountsProvider).value ?? const [],
-    hermesConnections: read(hermesConnectionsProvider),
-    hermesInUseId: read(hermesEnabledProvider)
-        ? read(hermesActiveConnectionIdProvider)
-        : null,
   );
 }
 
@@ -154,19 +138,9 @@ NativeSheetDetailConfig readNativeAccountsDetail(
   NativeSheetProviderReader read,
   AppLocalizations l10n,
 ) {
-  // The Apple toggles default to on: only where Apple Intelligence can exist
-  // are they rows.
-  final apple = read(applePccPlatformSupportedProvider);
   return buildNativeAccountsDetail(
     l10n,
     accounts: read(openWebUiAccountsProvider).value,
-    hermesConnections: read(hermesConnectionsProvider),
-    hermesInUseId: read(hermesEnabledProvider)
-        ? read(hermesActiveConnectionIdProvider)
-        : null,
-    directProfiles: read(directConnectionProfilesProvider).value,
-    appleOnDevice: apple && read(appleOnDeviceEnabledProvider),
-    applePcc: apple && read(applePccEnabledProvider),
   );
 }
 
@@ -276,16 +250,11 @@ class NativeSheetHydrationService {
         l10n,
         account: root.account,
         visibility: readNativeProfileRootVisibility(_ref.read),
-        card: switch (readNativeAccountCard(
+        card: readNativeAccountCard(
           _ref.read,
           l10n,
           account: root.account,
-        )) {
-          (:final title, :final subtitle, kind: _) => (
-            title: title,
-            subtitle: subtitle,
-          ),
-        },
+        ),
         otherAccountCount: readNativeOtherAccountCount(_ref.read),
       ),
     );
@@ -381,73 +350,10 @@ class NativeSheetHydrationService {
       final allowsCustomEffort = effortPolicy.allowsCustom;
       final effortOptions = effortPolicy.options;
 
-      Uint8List? hermesAvatarBytes;
-      if (orderedModels.any(isHermesModel)) {
-        try {
-          final data = await rootBundle.load(kHermesModelAvatarAsset);
-          hermesAvatarBytes = data.buffer.asUint8List(
-            data.offsetInBytes,
-            data.lengthInBytes,
-          );
-        } catch (_) {
-          DebugLogger.warning(
-            'hermes-model-avatar-load-failed',
-            scope: 'native-sheet/models',
-          );
-        }
-        if (!context.mounted) return null;
-      }
-
-      // The native sheet can't draw SVG, so bundled model logos go over as
-      // PNG bytes, rendered once per logo in the current theme's ink.
-      // Rendered in parallel and cached across openings, so only the first
-      // opening with a new logo waits for it.
-      final logoInk = context.conduitTheme.textPrimary;
-      final logoIds = {
-        for (final model in orderedModels)
-          ?modelLogoIdFromUrl(resolveModelIconUrlForModel(api, model)),
-      };
-      final rendered = await Future.wait(
-        logoIds.map((id) => rasterizeModelLogo(id, color: logoInk)),
-      );
-      final logoBytes = Map.fromIterables(logoIds, rendered);
-      if (!context.mounted) return null;
-
       final modelOptions = [
         ...leadingOptions,
         ...orderedModels.map((model) {
-          if (isHermesModel(model)) {
-            return NativeSheetModelOption(
-              id: model.id,
-              name: model.name,
-              subtitle: model.description,
-              avatarBytes: hermesAvatarBytes,
-              tags: model.modelTags,
-            );
-          }
           final avatarUrl = resolveModelIconUrlForModel(api, model);
-          // A system symbol is UIKit's to draw, so hand the native sheet the
-          // symbol name instead of an image reference it cannot fetch.
-          final symbolName = nativeSymbolNameFromUrl(avatarUrl);
-          if (symbolName != null) {
-            return NativeSheetModelOption(
-              id: model.id,
-              name: model.name,
-              subtitle: model.description,
-              sfSymbol: symbolName,
-              tags: model.modelTags,
-            );
-          }
-          final logoId = modelLogoIdFromUrl(avatarUrl);
-          if (logoId != null) {
-            return NativeSheetModelOption(
-              id: model.id,
-              name: model.name,
-              subtitle: model.description,
-              avatarBytes: logoBytes[logoId],
-              tags: model.modelTags,
-            );
-          }
           final avatarHeaders = avatarUrl == null
               ? const <String, String>{}
               : buildImageHeadersForUrlFromContainer(container, avatarUrl) ??
@@ -657,8 +563,8 @@ class NativeSheetHydrationService {
 
     switch (detailId) {
       case nativeAccountsDetailId:
-        // As they are now: the Direct providers may have been read since the
-        // sheet opened, and a pushed page comes back to this one.
+        // As they are now: the accounts may have been read since the sheet
+        // opened, and a pushed page comes back to this one.
         final accounts = readNativeAccountsDetail(_ref.read, l10n);
         await NativeSheetBridge.instance.applyDetailPatch(
           detailId: nativeAccountsDetailId,
@@ -682,7 +588,6 @@ class NativeSheetHydrationService {
         await _hydrateNativeAiMemoryDetail(ctx, l10n);
         return;
       case NativeSheetRoutes.voice:
-      case NativeSheetRoutes.voiceProvider:
         await _hydrateNativeVoiceDetail(l10n, detailId: detailId);
         return;
       case NativeSheetRoutes.helpAbout:
@@ -731,13 +636,8 @@ class NativeSheetHydrationService {
     String detailId = NativeSheetRoutes.about,
   }) async {
     try {
-      // Hermes-only has no Open WebUI server, so skip the server lookup and omit
-      // the server name/version rows entirely.
-      final hermesOnly = _ref.read(hermesOnlyModeProvider);
       final packageInfo = await _ref.read(packageInfoProvider.future);
-      final about = hermesOnly
-          ? null
-          : await _ref.read(serverAboutInfoProvider.future);
+      final about = await _ref.read(serverAboutInfoProvider.future);
       if (!context.mounted) return;
 
       final appVersionLabel = packageInfo.buildNumber.isEmpty
@@ -759,8 +659,8 @@ class NativeSheetHydrationService {
           items: buildNativeAboutItems(
             l10n,
             appVersion: appVersionLabel,
-            serverName: hermesOnly ? null : serverName,
-            serverVersion: hermesOnly ? null : serverVersion,
+            serverName: serverName,
+            serverVersion: serverVersion,
           ),
         ),
       );
@@ -1189,35 +1089,19 @@ class NativeSheetHydrationService {
 
   /// The Voice pages, with [detailId] as the one patched: iOS redraws only
   /// the page a patch is for, so the page on screen must be that one.
-  ///
-  /// The Voice provider page shows no speech voices, so it is patched alone
-  /// and at once: waiting for the voices would let the patch land over text
-  /// the user is typing. The Voice page redraws itself when it reappears.
   Future<void> _hydrateNativeVoiceDetail(
     AppLocalizations l10n, {
     required String detailId,
   }) async {
     final appSettings = _ref.read(appSettingsProvider);
-    final providerOnly = detailId == NativeSheetRoutes.voiceProvider;
-    var ttsVoices = const <Map<String, dynamic>>[];
-    if (!providerOnly) {
-      ttsVoices = await _loadNativeTtsVoices(appSettings);
-    }
+    final ttsVoices = await _loadNativeTtsVoices(appSettings);
     final nativeAudio = buildNativeAudioSheetParts(
       l10n,
       appSettings,
       ttsVoices: ttsVoices,
-      voiceProviderCandidates:
-          (_ref.read(directConnectionProfilesProvider).value ?? const [])
-              .where(canBeVoiceProvider)
-              .toList(growable: false),
       serverOffersVoiceChoice:
           _ref.read(serverSpeechProviderProvider)?.offersVoiceChoice ?? false,
     );
-    if (providerOnly) {
-      await _applyNativeDetail(nativeAudio.voiceProviderDetail);
-      return;
-    }
     final pages = [
       NativeSheetDetailConfig(
         id: NativeSheetRoutes.voice,
@@ -1225,7 +1109,6 @@ class NativeSheetHydrationService {
         sections: nativeAudio.mainSections,
       ),
       nativeAudio.voicePickerDetail,
-      nativeAudio.voiceProviderDetail,
     ];
     final patched = pages.firstWhere(
       (page) => page.id == detailId,

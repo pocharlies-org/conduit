@@ -3,18 +3,12 @@ import 'dart:async';
 import 'package:checks/checks.dart';
 import 'package:conduit_core/auth/auth_state_manager.dart';
 import 'package:conduit_core/features/auth/providers/unified_auth_providers.dart';
-import 'package:conduit_core/features/direct_connections/models/direct_connection_profile.dart';
-import 'package:conduit_core/features/direct_connections/providers/direct_connection_providers.dart';
-import 'package:conduit_core/features/hermes/models/hermes_config.dart';
-import 'package:conduit_core/features/hermes/providers/hermes_providers.dart';
+import 'package:conduit_core/features/workspace/models/workspace_capabilities.dart';
+import 'package:conduit_core/features/workspace/providers/workspace_capabilities_provider.dart';
 import 'package:conduit_core/models/server_config.dart';
 import 'package:conduit_core/navigation/route_redirect.dart';
 import 'package:conduit_core/navigation/routes.dart';
 import 'package:conduit_core/providers/app_providers.dart';
-import 'package:conduit_core/providers/backend_mode_providers.dart';
-import 'package:conduit_core/providers/chat_entry_readiness_providers.dart';
-import 'package:conduit_core/providers/openwebui_accounts_controller.dart';
-import 'package:conduit_core/providers/openwebui_route_resolver.dart';
 import 'package:riverpod/misc.dart';
 import 'package:riverpod/riverpod.dart';
 import 'package:test/test.dart';
@@ -28,36 +22,27 @@ const _server = ServerConfig(
 /// A [ProviderRead] over fixed values, so the policy runs with no container
 /// and no Flutter binding. A provider the case did not set throws, which
 /// shows up as a failing test when the policy starts reading something new.
+///
+/// OWU-134: the app is Open WebUI only, pre-configured with the one seeded
+/// server. There is no backend chooser, no setup wizard and no account
+/// chooser, so the only providers the redirect reads are the reviewer flag,
+/// the active server, the auth navigation state, the auth snapshot and (for
+/// workspace routes) the workspace capabilities.
 ProviderRead _reader({
   bool reviewerMode = false,
   AsyncValue<ServerConfig?> activeServer = const AsyncData(_server),
   AuthNavigationState auth = AuthNavigationState.authenticated,
-  PreferredBackend preferred = PreferredBackend.owui,
-  HermesConfig hermes = const HermesConfig(),
-  bool hermesSecretsLoading = false,
-  bool accountless = false,
-  List<DirectConnectionProfile> directProfiles = const [],
-  String? addingAccountFrom,
   AuthState authSnapshot = const AuthState(status: AuthStatus.unauthenticated),
-  String? settledAccount,
-  bool proxySignInForRouteEditing = false,
-  List<ServerConfig> serverConfigs = const [_server],
+  AsyncValue<WorkspaceCapabilities> capabilities = const AsyncData(
+    WorkspaceCapabilities(),
+  ),
 }) {
   final values = <ProviderListenable<Object?>, Object?>{
-    accountAdditionOriginProvider: addingAccountFrom,
-    settledActiveAccountIdProvider: settledAccount,
-    proxySignInForRouteEditingProvider: proxySignInForRouteEditing,
     reviewerModeProvider: reviewerMode,
     activeServerProvider: activeServer,
     authNavigationStateProvider: auth,
-    preferredBackendProvider: preferred,
-    hermesConfigProvider: hermes,
-    hermesSecretsLoadingProvider: hermesSecretsLoading,
-    effectiveDirectConnectionProfilesProvider:
-        AsyncData<List<DirectConnectionProfile>>(directProfiles),
-    accountlessPrimaryBackendUsableProvider: accountless,
     authStateManagerProvider: AsyncData<AuthState>(authSnapshot),
-    serverConfigsProvider: AsyncData<List<ServerConfig>>(serverConfigs),
+    workspaceCapabilitiesProvider: capabilities,
   };
   return <T>(ProviderListenable<T> provider) {
     if (!values.containsKey(provider)) {
@@ -86,7 +71,7 @@ Future<AsyncValue<ServerConfig?>> _refreshing(ServerConfig server) async {
 }
 
 void main() {
-  group('resolveRouteRedirect', () {
+  group('resolveRouteRedirect (OWU-134: Open WebUI only)', () {
     test('reviewer mode pins the app to chat', () {
       final read = _reader(reviewerMode: true);
 
@@ -94,6 +79,8 @@ void main() {
       check(resolveRouteRedirect(Routes.chat, read)).isNull();
     });
 
+    // The boot the story asks for: a signed-in session leaves the login for
+    // chat, and a signed-out one lands on the login of the seeded server.
     test('an authenticated session leaves auth pages for chat', () {
       final read = _reader();
 
@@ -103,101 +90,37 @@ void main() {
       check(resolveRouteRedirect(Routes.chat, read)).isNull();
     });
 
-    group('adding another account', () {
-      test('stays in the sign-in flow while the first account is active', () {
-        final read = _reader(addingAccountFrom: _server.id);
-
-        check(resolveRouteRedirect(Routes.addServer, read)).isNull();
-        check(resolveRouteRedirect(Routes.authentication, read)).isNull();
-        check(resolveRouteRedirect(Routes.proxyAuth, read)).isNull();
-        check(resolveRouteRedirect(Routes.ssoAuth, read)).isNull();
-      });
-
-      test('lands in chat once the new account is the active one', () {
-        final read = _reader(addingAccountFrom: 'the-account-it-began-from');
-
-        check(resolveRouteRedirect(Routes.authentication, read))
-            .equals(Routes.chat);
-        check(resolveRouteRedirect(Routes.addServer, read)).equals(Routes.chat);
-      });
-
-      test('outside the flow an add-server visit goes to chat', () {
-        final read = _reader();
-
-        check(resolveRouteRedirect(Routes.addServer, read)).equals(Routes.chat);
-      });
-
-      // A profile refresh for the account it began from was refused: that
-      // account's error, its token kept.
-      test('stays in the sign-in flow through an error of the first '
-          'account', () {
-        final read = _reader(
-          auth: AuthNavigationState.error,
-          authSnapshot: const AuthState(
-            status: AuthStatus.error,
-            token: 'token-a',
-            error: 'refused',
-          ),
-          addingAccountFrom: _server.id,
-        );
-
-        check(resolveRouteRedirect(Routes.addServer, read)).isNull();
-        check(resolveRouteRedirect(Routes.authentication, read)).isNull();
-        // Outside the addition's pages, the error shows as before.
-        check(resolveRouteRedirect(Routes.chat, read))
-            .equals(Routes.connectionIssue);
-      });
-
-      // The Keychain can refuse a read for a moment.
-      test('stays in the sign-in flow when the active server cannot be '
-          'read', () {
-        final read = _reader(
-          activeServer: AsyncError<ServerConfig?>('locked', StackTrace.empty),
-          addingAccountFrom: _server.id,
-          settledAccount: _server.id,
-        );
-
-        check(resolveRouteRedirect(Routes.addServer, read)).isNull();
-        check(resolveRouteRedirect(Routes.authentication, read)).isNull();
-        check(resolveRouteRedirect(Routes.chat, read))
-            .equals(Routes.connectionIssue);
-      });
-
-      test('the new account, signed out, stays on its sign-in', () {
-        final read = _reader(
-          auth: AuthNavigationState.needsLogin,
-          addingAccountFrom: 'the-account-it-began-from',
-        );
-
-        check(resolveRouteRedirect(Routes.addServer, read)).isNull();
-        check(resolveRouteRedirect(Routes.authentication, read)).isNull();
-      });
-    });
-
-    group('checking a proxy-protected address', () {
-      test('opens the proxy sign-in while the address editor waits on it', () {
-        final read = _reader(proxySignInForRouteEditing: true);
-
-        check(resolveRouteRedirect(Routes.proxyAuth, read)).isNull();
-        // Only that screen.
-        check(resolveRouteRedirect(Routes.authentication, read))
-            .equals(Routes.chat);
-        check(routeRedirectDependencies)
-            .contains(proxySignInForRouteEditingProvider);
-      });
-
-      test('a signed-in visit to the proxy sign-in otherwise goes to chat', () {
-        final read = _reader();
-
-        check(resolveRouteRedirect(Routes.proxyAuth, read)).equals(Routes.chat);
-      });
-    });
-
-    test('a signed-out session is sent to authentication', () {
+    test('needsLogin sends the user to the authentication page', () {
       final read = _reader(auth: AuthNavigationState.needsLogin);
+
+      // From any non-auth route the destination is the sign-in, never a
+      // chooser or a wizard.
+      check(resolveRouteRedirect(Routes.chat, read))
+          .equals(Routes.authentication);
+      check(resolveRouteRedirect(Routes.splash, read))
+          .equals(Routes.authentication);
+      check(resolveRouteRedirect(Routes.profile, read))
+          .equals(Routes.authentication);
+      // Already on the sign-in: stay there.
+      check(resolveRouteRedirect(Routes.authentication, read)).isNull();
+    });
+
+    // The stored registry re-seeds the single Chat server when it is empty, so
+    // "no active server" is only a transient state; the destination is still
+    // that server's sign-in, never a backend chooser or a setup wizard.
+    test('no active server goes to authentication, never a chooser', () {
+      final read = _reader(
+        activeServer: const AsyncData(null),
+        auth: AuthNavigationState.needsLogin,
+      );
 
       check(resolveRouteRedirect(Routes.chat, read))
           .equals(Routes.authentication);
+      check(resolveRouteRedirect(Routes.splash, read))
+          .equals(Routes.authentication);
+      check(resolveRouteRedirect(Routes.profile, read))
+          .equals(Routes.authentication);
+      // An auth route is left alone.
       check(resolveRouteRedirect(Routes.authentication, read)).isNull();
     });
 
@@ -214,6 +137,19 @@ void main() {
       check(resolveRouteRedirect(Routes.chat, read))
           .equals(Routes.connectionIssue);
       check(resolveRouteRedirect(Routes.connectionIssue, read)).isNull();
+    });
+
+    test('a stale apiKey error sends an explicit auth flow to authentication',
+        () {
+      final read = _reader(
+        authSnapshot: const AuthState(
+          status: AuthStatus.error,
+          error: 'apiKey is missing',
+        ),
+      );
+
+      check(resolveRouteRedirect(Routes.chat, read))
+          .equals(Routes.authentication);
     });
 
     test(
@@ -241,308 +177,6 @@ void main() {
           .equals(Routes.connectionIssue);
       check(resolveRouteRedirect(Routes.chat, loading)).equals(Routes.splash);
       check(resolveRouteRedirect(Routes.authentication, loading)).isNull();
-    });
-
-    test('no server sends onboarding to the backend chooser', () {
-      final read = _reader(
-        activeServer: const AsyncData(null),
-        auth: AuthNavigationState.needsLogin,
-      );
-
-      check(resolveRouteRedirect(Routes.chat, read))
-          .equals(Routes.backendChooser);
-      check(resolveRouteRedirect(Routes.serverConnection, read)).isNull();
-    });
-
-    test('Hermes-only setup waits on secrets, then recovers in settings', () {
-      const hermes = HermesConfig(enabled: true);
-      final loading = _reader(
-        activeServer: const AsyncData(null),
-        auth: AuthNavigationState.needsLogin,
-        preferred: PreferredBackend.hermes,
-        hermes: hermes,
-        hermesSecretsLoading: true,
-      );
-      final settled = _reader(
-        activeServer: const AsyncData(null),
-        auth: AuthNavigationState.needsLogin,
-        preferred: PreferredBackend.hermes,
-        hermes: hermes,
-      );
-
-      check(resolveRouteRedirect(Routes.chat, loading)).isNull();
-      check(resolveRouteRedirect(Routes.notes, loading)).equals(Routes.splash);
-      check(resolveRouteRedirect(Routes.notes, settled))
-          .equals(Routes.hermesSettings);
-      check(resolveRouteRedirect(Routes.hermesSettings, settled)).isNull();
-      // Adding or editing a saved connection is part of recovering.
-      for (final editor in [
-        Routes.hermesConnectionEditorPath(Routes.hermesNewConnectionId),
-        Routes.hermesConnectionEditorPath(
-          'aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaaa',
-        ),
-      ]) {
-        check(resolveRouteRedirect(editor, settled)).isNull();
-        check(isHermesOnlyAppLocation(editor)).isTrue();
-      }
-    });
-
-    test('a usable accountless backend never needs an account', () {
-      final read = _reader(
-        activeServer: const AsyncData(null),
-        auth: AuthNavigationState.needsLogin,
-        preferred: PreferredBackend.unset,
-        accountless: true,
-      );
-
-      check(resolveRouteRedirect(Routes.chat, read)).isNull();
-      check(resolveRouteRedirect(Routes.authentication, read)).isNull();
-    });
-
-    // An expired session leaves the saved accounts on the device, and the
-    // profile offers Manage accounts next to a usable Hermes or Direct
-    // backend. The router sent that to chat.
-    test('Manage accounts opens with the active account signed out next to '
-        'a usable accountless backend', () {
-      final hermes = _reader(
-        auth: AuthNavigationState.needsLogin,
-        preferred: PreferredBackend.hermes,
-        hermes: const HermesConfig(
-          enabled: true,
-          baseUrl: 'https://hermes.example',
-          apiKey: 'key',
-        ),
-        accountless: true,
-      );
-      final direct = _reader(
-        auth: AuthNavigationState.needsLogin,
-        preferred: PreferredBackend.direct,
-        accountless: true,
-        directProfiles: [
-          DirectConnectionProfile(
-            id: 'direct',
-            name: 'Direct',
-            adapterKey: kOpenAiCompatibleAdapterKey,
-            baseUrl: 'https://api.example/v1',
-            apiKey: 'key',
-          ),
-        ],
-      );
-
-      check(resolveRouteRedirect(Routes.accounts, hermes)).isNull();
-      check(resolveRouteRedirect(Routes.accounts, direct)).isNull();
-      // Manage accounts opens a server's addresses.
-      for (final location in [
-        Routes.serverAddresses,
-        Routes.serverAddressEditor,
-      ]) {
-        check(resolveRouteRedirect(location, hermes)).isNull();
-        check(resolveRouteRedirect(location, direct)).isNull();
-      }
-    });
-
-    group('the Hermes MCP page', () {
-      const gateway = HermesConfig(
-        enabled: true,
-        baseUrl: 'https://hermes.example',
-        mode: HermesBackendMode.desktopGateway,
-      );
-      const responses = HermesConfig(
-        enabled: true,
-        baseUrl: 'https://hermes.example',
-        apiKey: 'key',
-      );
-
-      ProviderRead accountless(
-        PreferredBackend preferred,
-        HermesConfig hermes,
-      ) => _reader(
-        activeServer: const AsyncData(null),
-        auth: AuthNavigationState.needsLogin,
-        preferred: preferred,
-        hermes: hermes,
-        accountless: true,
-        directProfiles: preferred == PreferredBackend.direct
-            ? [
-                DirectConnectionProfile(
-                  id: 'direct',
-                  name: 'Direct',
-                  adapterKey: kOpenAiCompatibleAdapterKey,
-                  baseUrl: 'https://api.example/v1',
-                  apiKey: 'key',
-                ),
-              ]
-            : const [],
-      );
-
-      test('opens where the Desktop Gateway is configured', () {
-        for (final preferred in [
-          PreferredBackend.hermes,
-          PreferredBackend.direct,
-        ]) {
-          check(
-            because: '$preferred',
-            resolveRouteRedirect(
-              Routes.hermesMcp,
-              accountless(preferred, gateway),
-            ),
-          ).isNull();
-        }
-      });
-
-      test('is not offered in Responses API mode', () {
-        check(
-          resolveRouteRedirect(
-            Routes.hermesMcp,
-            accountless(PreferredBackend.hermes, responses),
-          ),
-        ).equals(Routes.chat);
-      });
-
-      test('is not offered to a Direct-primary install without Hermes', () {
-        check(
-          resolveRouteRedirect(
-            Routes.hermesMcp,
-            accountless(PreferredBackend.direct, const HermesConfig()),
-          ),
-        ).equals(Routes.chat);
-      });
-
-      test('is in no location-only allowlist', () {
-        // Such a list answers for every Hermes configuration, including the
-        // loading branches that run before the mode is known to be usable.
-        check(isHermesOnlyAppLocation(Routes.hermesMcp)).isFalse();
-        check(isDirectOnlyAppLocation(Routes.hermesMcp)).isFalse();
-      });
-
-      test('is not offered while the gateway configuration is unusable', () {
-        // Desktop Gateway mode with no valid endpoint is not a usable
-        // backend, so the user is sent to finish setting it up instead.
-        const incomplete = HermesConfig(
-          enabled: true,
-          mode: HermesBackendMode.desktopGateway,
-        );
-        final read = _reader(
-          activeServer: const AsyncData(null),
-          auth: AuthNavigationState.needsLogin,
-          preferred: PreferredBackend.hermes,
-          hermes: incomplete,
-        );
-
-        check(resolveRouteRedirect(Routes.hermesMcp, read))
-            .equals(Routes.hermesSettings);
-      });
-
-      test('is not offered while Hermes secrets are still loading', () {
-        final read = _reader(
-          activeServer: const AsyncData(null),
-          auth: AuthNavigationState.needsLogin,
-          preferred: PreferredBackend.hermes,
-          hermes: const HermesConfig(enabled: true),
-          hermesSecretsLoading: true,
-        );
-
-        check(resolveRouteRedirect(Routes.hermesMcp, read))
-            .equals(Routes.splash);
-      });
-    });
-
-    group('first-run setup wizard (OWU-105)', () {
-      test('the first launch shows the wizard even with a single account', () {
-        setupWizardPending = true;
-        addTearDown(() => setupWizardPending = false);
-        final read = _reader(auth: AuthNavigationState.needsLogin);
-
-        check(resolveRouteRedirect(Routes.splash, read))
-            .equals(Routes.setupWizard);
-      });
-
-      test('with nothing seeded the backend chooser still decides', () {
-        setupWizardPending = true;
-        addTearDown(() => setupWizardPending = false);
-        final read = _reader(
-          activeServer: const AsyncData(null),
-          auth: AuthNavigationState.needsLogin,
-          serverConfigs: const [],
-        );
-
-        check(resolveRouteRedirect(Routes.splash, read))
-            .equals(Routes.backendChooser);
-      });
-
-      test('the wizard stays while pending, signed in or not', () {
-        setupWizardPending = true;
-        addTearDown(() => setupWizardPending = false);
-        final signedIn = _reader();
-        final signedOut = _reader(auth: AuthNavigationState.needsLogin);
-
-        check(resolveRouteRedirect(Routes.setupWizard, signedIn)).isNull();
-        check(resolveRouteRedirect(Routes.setupWizard, signedOut)).isNull();
-      });
-
-      test('once completed the cold start enters directly', () {
-        setupWizardPending = false;
-        final read = _reader();
-
-        check(resolveRouteRedirect(Routes.splash, read)).equals(Routes.chat);
-      });
-    });
-
-    group('account chooser on cold start (OWU-104)', () {
-      const second = ServerConfig(
-        id: 'server-2',
-        name: 'Second',
-        url: 'https://owui2.example',
-      );
-
-      test('more than one account sends the cold start to the chooser', () {
-        accountChooserPending = true;
-        addTearDown(() => accountChooserPending = false);
-        final read = _reader(
-          activeServer: const AsyncData(null),
-          auth: AuthNavigationState.needsLogin,
-          serverConfigs: const [_server, second],
-        );
-        check(resolveRouteRedirect(Routes.splash, read))
-            .equals(Routes.accountChooser);
-      });
-
-      test('a single account enters directly, no chooser', () {
-        accountChooserPending = true;
-        addTearDown(() => accountChooserPending = false);
-        final read = _reader();
-        check(resolveRouteRedirect(Routes.splash, read)).equals(Routes.chat);
-      });
-
-      test('the chooser stays while pending, even signed in', () {
-        accountChooserPending = true;
-        addTearDown(() => accountChooserPending = false);
-        final read = _reader();
-        check(resolveRouteRedirect(Routes.accountChooser, read)).isNull();
-      });
-
-      test('the chooser stays when the chosen account still needs login', () {
-        accountChooserPending = true;
-        addTearDown(() => accountChooserPending = false);
-        final read = _reader(
-          activeServer: const AsyncData(null),
-          auth: AuthNavigationState.needsLogin,
-          serverConfigs: const [_server, second],
-        );
-        check(resolveRouteRedirect(Routes.accountChooser, read)).isNull();
-      });
-
-      test('once consumed, the chooser no longer intercepts the splash', () {
-        accountChooserPending = false;
-        final read = _reader(
-          activeServer: const AsyncData(null),
-          auth: AuthNavigationState.needsLogin,
-          serverConfigs: const [_server, second],
-        );
-        // No active server and nothing pending: the old setup chooser.
-        check(resolveRouteRedirect(Routes.splash, read))
-            .equals(Routes.backendChooser);
-      });
     });
   });
 }

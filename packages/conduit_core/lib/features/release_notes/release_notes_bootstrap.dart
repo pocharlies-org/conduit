@@ -44,14 +44,5 @@ bool _hasExistingConfiguration() {
   final activeServerId = PreferencesStore.getString(
     PreferenceKeys.activeServerId,
   );
-  final preferredBackend = PreferencesStore.getString(
-    PreferenceKeys.preferredBackend,
-  );
-  return (activeServerId != null && activeServerId.trim().isNotEmpty) ||
-      preferredBackend == 'owui' ||
-      preferredBackend == 'direct' ||
-      preferredBackend == 'hermes' ||
-      PreferencesStore.getBool(PreferenceKeys.directConnectionsConfigured) ==
-          true ||
-      PreferencesStore.getBool(PreferenceKeys.hermesEnabled) == true;
+  return activeServerId != null && activeServerId.trim().isNotEmpty;
 }

@@ -16,6 +16,7 @@ mixin _AuthApi on _ApiServiceBase {
   void setAuthCallbacks({
     void Function()? onAuthTokenInvalid,
     Future<void> Function()? onTokenInvalidated,
+    Future<bool> Function()? onSessionExpired,
   }) {
     if (onAuthTokenInvalid != null) {
       this.onAuthTokenInvalid = onAuthTokenInvalid;
@@ -24,6 +25,9 @@ mixin _AuthApi on _ApiServiceBase {
     if (onTokenInvalidated != null) {
       this.onTokenInvalidated = onTokenInvalidated;
       _authInterceptor.onTokenInvalidated = onTokenInvalidated;
+    }
+    if (onSessionExpired != null) {
+      _authInterceptor.onSessionExpired = onSessionExpired;
     }
   }
 

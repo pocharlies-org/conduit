@@ -49,8 +49,24 @@ final apiServiceProvider = Provider<ApiService?>((ref) {
         reportsRouteRefusals: true,
       );
 
+      // One renewal at a time for this client: parallel requests sharing an
+      // expired bearer share the refresh instead of racing for it.
+      Future<String?>? renewing;
+      Future<String?> renewSession() =>
+          renewing ??= _renewOpenWebUiSession(ref).whenComplete(
+            () => renewing = null,
+          );
+
       // Keep callbacks in sync so interceptor can notify auth manager
       apiService.setAuthCallbacks(
+        onSessionExpired: () async {
+          final jwt = await renewSession();
+          if (jwt == null) return false;
+          // The interceptor holds this client's bearer: rotating it here is
+          // what the replayed request will carry.
+          apiService.updateAuthToken(jwt);
+          return true;
+        },
         onAuthTokenInvalid: () {
           // Called when auth errors occur (401/403)
           // Show connection issue page instead of logging out
@@ -84,6 +100,22 @@ final apiServiceProvider = Provider<ApiService?>((ref) {
     orElse: () => null,
   );
 });
+
+/// One renewal of the active session through Keycloak's refresh token.
+///
+/// Keyed by the Open WebUI user the session belongs to: the refresh token is
+/// filed under that id, so a renewal can never mint a JWT for a different
+/// account than the one signed in.
+Future<String?> _renewOpenWebUiSession(Ref ref) async {
+  final userId = ref.read(currentUserProvider2)?.id;
+  if (userId == null) return null;
+  return SessionRefresher(
+    storage: ref.read(optimizedStorageServiceProvider),
+    oidc: OwuiOidc(config: OwuiOidcConfig.live),
+    userId: userId,
+    stillCurrent: () => ref.read(currentUserProvider2)?.id == userId,
+  ).refreshOnce();
+}
 
 /// Whether server-backed Open WebUI settings are usable in the current
 /// session. A retained server or API object after sign-out is not sufficient.

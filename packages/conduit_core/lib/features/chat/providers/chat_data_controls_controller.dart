@@ -47,8 +47,7 @@ final openWebUiChatActionAllowedProvider = FutureProvider.family<bool, String>((
 });
 
 /// Whether the open chat offers Export: a durable chat of the signed-in Open
-/// WebUI account (not Direct, Hermes, on-device or temporary), and an account
-/// that may export. Independent of Advanced: exporting the chat you are reading
+/// WebUI account (not temporary), and an account that may export. Independent of Advanced: exporting the chat you are reading
 /// is an everyday action.
 final chatExportAvailableProvider = Provider<bool>((ref) {
   if (ref.watch(apiServiceProvider) == null) return false;

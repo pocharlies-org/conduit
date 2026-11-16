@@ -8,7 +8,7 @@ import 'package:conduit/platform/quick_actions_service.dart';
 import 'package:conduit/platform/android_assistant_handler.dart';
 import 'package:conduit_core/features/auth/providers/unified_auth_providers.dart';
 import 'package:conduit/features/chat/voice_call/presentation/voice_call_launcher.dart';
-import 'package:conduit_core/features/hermes/models/hermes_model.dart';
+import 'package:conduit_core/models/model.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -31,7 +31,7 @@ void main() {
     PreferencesStore.debugReset();
   });
 
-  test('Android Assistant delegates signed-out Hermes voice calls', () async {
+  test('Android Assistant delegates signed-out voice calls', () async {
     late _RecordingVoiceCallLauncher launcher;
     final container = _buildContainer((ref) {
       return launcher = _RecordingVoiceCallLauncher(ref);
@@ -44,7 +44,7 @@ void main() {
     expect(launcher.startNewConversationCalls, [isTrue]);
   });
 
-  test('Siri intent delegates signed-out Hermes voice calls', () async {
+  test('Siri intent delegates signed-out voice calls', () async {
     late _RecordingVoiceCallLauncher launcher;
     final container = _buildContainer((ref) {
       return launcher = _RecordingVoiceCallLauncher(ref);
@@ -53,7 +53,7 @@ void main() {
 
     final response = await container
         .read(appIntentCoordinatorProvider.notifier)
-        .startVoiceCall('signed-out-hermes-voice');
+        .startVoiceCall('signed-out-voice');
 
     expect(response.success, isTrue);
     expect(launcher.startNewConversationCalls, [isTrue]);
@@ -138,7 +138,9 @@ ProviderContainer _buildContainer(
       authNavigationStateProvider.overrideWithValue(
         AuthNavigationState.needsLogin,
       ),
-      selectedModelProvider.overrideWithValue(hermesSyntheticModel()),
+      selectedModelProvider.overrideWithValue(
+        const Model(id: 'voice-model', name: 'Voice'),
+      ),
       voiceCallLauncherProvider.overrideWith(createLauncher),
     ],
   );

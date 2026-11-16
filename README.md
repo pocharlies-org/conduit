@@ -10,7 +10,7 @@
 </p>
 
 <p align="center">
-  <strong>A native mobile client for Open WebUI, your own model endpoints, and self-hosted agents.</strong>
+  <strong>A native mobile client for Open WebUI.</strong>
 </p>
 
 <p align="center">
@@ -74,7 +74,6 @@
 </p>
 
 <p align="center">
-  <a href="#ways-to-connect">Connect</a> ·
   <a href="#screenshots">Screenshots</a> ·
   <a href="#what-you-get">Features</a> ·
   <a href="#getting-started">Getting Started</a> ·
@@ -97,49 +96,10 @@
 Open WebUI is excellent on the desktop. On mobile it breaks down at the edges:
 authentication behind a reverse proxy, streaming that drops when the app
 backgrounds, getting a screenshot into a prompt, starting a chat from the home
-screen. Conduit is a real Flutter app built to close that gap, and as of 4.0 it
-works with or without an Open WebUI server at all.
+screen. Conduit is a real Flutter app built to close that gap.
 
 Your chats live on your device first. Nothing routes through a backend the
 maintainer operates.
-
-## Ways to connect
-
-On first launch Conduit asks how you want to connect. Pick one, add the others
-later, and skip any sign-in you don't need.
-
-| | | |
-| --- | --- | --- |
-| **Open WebUI** | Your self-hosted server | Full feature set: chats, folders, notes, channels, workspace, tools, web search, image generation |
-| **Direct** | OpenAI-compatible, Ollama, OpenRouter | Talk straight to a provider or a model on your own machine. No Open WebUI account required |
-| **Apple On-Device** | Apple Intelligence | Run Apple's local model offline on eligible iOS 26 devices without an API key |
-| **Apple PCC** | Apple Private Cloud Compute | Use Apple's private cloud model on eligible iOS 27 devices without an API key |
-| **Hermes** | Your self-hosted agent | An agent that runs tools, asks before sensitive steps, and works on a schedule |
-
-**Direct connections** cover OpenAI-compatible endpoints (Chat Completions or
-Responses), LM Studio, Azure-style API versions, native Ollama, and first-party
-OpenRouter. Bring an API key, or skip it for a local endpoint that doesn't want
-one. Direct connections you already configured in Open WebUI come along
-automatically. Keys and custom headers stay in platform secure storage.
-
-**Apple On-Device** is an iOS-only Direct provider backed by Apple's local
-SystemLanguageModel. It requires iOS 26 and Apple Intelligence, works offline,
-and supports streaming, sampling controls, and JSON-schema responses with a 4K
-context window. Image input, reasoning controls, and tool calling are not
-available.
-
-**Apple Private Cloud Compute** is an iOS-only Direct provider. It uses Apple's
-Foundation Models framework, streams responses through the same chat path as
-other Direct models, and requires iOS 27, Apple Intelligence availability, and
-Apple's managed PCC entitlement. It supports image input, reasoning levels,
-sampling and output limits, JSON-schema responses, live quota/context status,
-and an optional on-device fallback for PCC network failures. Tool calling is
-not enabled.
-
-**Hermes Agent** connects to your own Hermes server. You watch its tools work
-live, approve sensitive steps before they run, and let scheduled agents run
-while you sleep. Conversations and schedules get their own tab, and Conduit only
-exposes the capabilities your server actually reports.
 
 ## Screenshots
 
@@ -182,25 +142,20 @@ settings navigation. Sections you don't have permission for simply don't appear.
 | Voice | Voice input with on-device or server speech recognition, plus a full voice-call mode |
 | Home screen | Widgets on iOS and Android for new chat, mic, camera, photos, and clipboard; app quick actions; iOS App Intents and Shortcuts |
 | Sharing | Share-sheet ingestion from other apps straight into a prompt |
-| Terminal | Interactive sessions over WebSocket with a file browser, shown only when your server exposes it |
 | Personalization | Light, dark, and system themes; five accent palettes; adaptive Material and Cupertino UI; haptics |
 | Languages | 14 locales: English, German, Spanish, French, Italian, Japanese, Korean, Dutch, Russian, Simplified and Traditional Chinese, Czech, Slovak, Polish |
 
 Server-dependent features (channels, notes, web search, image generation,
-toggle filters, terminal) appear only when your deployment exposes them.
+toggle filters) appear only when your deployment exposes them.
 
 ## Built for self-hosted reality
 
 Most mobile clients assume a plain login form. Real deployments rarely look like
 that.
 
-- **Every auth path Open WebUI offers**: username and password, LDAP, manual JWT
-  entry, SSO and OAuth providers.
-- **Reverse proxies actually work**: `oauth2-proxy`, Authelia, Authentik,
-  Pangolin, and Cloudflare Tunnel, by capturing the right cookies and session
-  state on-device.
-- **Custom headers during setup** for environments that require `X-API-Key`,
-  `Authorization`, or organization routing headers.
+- **Browser sign-in**: the login runs in the system browser sheet (authorization
+  code with PKCE), and the app keeps the Open WebUI session token it exchanges
+  for.
 - **Credentials in Keychain or Keystore**, never plain-text local storage.
 - **Tracks upstream**: Conduit supports Open WebUI 0.11.
 
@@ -208,66 +163,12 @@ that.
 
 Install from the [App Store](https://apps.apple.com/us/app/conduit-open-webui-client/id6749840287)
 or [Google Play](https://play.google.com/store/apps/details?id=app.cogwheel.conduit),
-then pick how you want to connect.
+then sign in.
 
-<details open>
-<summary><strong>Open WebUI</strong></summary>
-
-1. Launch Conduit and choose Open WebUI.
-2. Enter your instance's base URL.
-3. Add any required custom headers.
-4. Sign in with username and password, LDAP, JWT, SSO, or proxy auth.
-5. Pick a model and start chatting.
-
-</details>
-
-<details>
-<summary><strong>Direct connection</strong></summary>
-
-1. Launch Conduit and choose Direct connection.
-2. Add an OpenAI-compatible or Ollama profile with its base URL and any API key
-   or custom headers.
-3. Test the connection, enable it, and select a discovered or manually entered
-   model.
-4. Choose whether new direct chats use Open WebUI history when one is signed in,
-   or stay only on this device. Existing chats keep their current location.
-5. Start chatting. No Open WebUI account required.
-
-</details>
-
-<details>
-<summary><strong>Apple On-Device</strong></summary>
-
-1. On an eligible iOS 26 device, launch Conduit and choose Apple On-Device.
-2. Conduit checks Apple Intelligence and local-model availability. No API key
-   or network connection is required.
-3. Start chatting. New Apple-only installations keep Direct history on the
-   device unless you later enable Open WebUI history.
-
-</details>
-
-<details>
-<summary><strong>Apple Private Cloud Compute</strong></summary>
-
-1. On an eligible iOS 27 device, launch Conduit and choose Apple Private Cloud
-   Compute.
-2. Conduit checks Apple Intelligence and PCC availability. No API key is
-   required.
-3. Start chatting. New PCC-only installations keep Direct history on the
-   device unless you later enable Open WebUI history.
-
-</details>
-
-<details>
-<summary><strong>Hermes Agent</strong></summary>
-
-1. Launch Conduit and choose Hermes Agent.
-2. Enter your Hermes server URL and `API_SERVER_KEY`.
-3. Optionally set a memory key to scope the agent's long-term memory to you. One
-   is generated automatically on first chat if you leave it blank.
-4. Open the Hermes tab for conversations and scheduled agents.
-
-</details>
+1. Launch Conduit. The server comes preloaded from the build's
+   `assets/seed_accounts.json`.
+2. Sign in from the login sheet that opens in the system browser.
+3. Pick a model and start chatting.
 
 ## Privacy
 
@@ -279,8 +180,8 @@ then pick how you want to connect.
 - Diagnostic logging is local and transient.
 - No developer-operated backend relays your data. Traffic goes from your device
   to the server or provider you configured, and nowhere else.
-- Signing out lets you choose what stays behind. Clearing everything clears
-  on-device chats too, and fails safely rather than half-deleting.
+- Signing out clears app preferences and saved accounts from this device.
+  Conversations and data on your server aren't affected.
 
 Full details in [PRIVACY_POLICY.md](PRIVACY_POLICY.md).
 

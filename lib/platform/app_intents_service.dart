@@ -1041,7 +1041,7 @@ class AppIntentCoordinator extends _$AppIntentCoordinator
 
     NavigationService.navigateToChat();
 
-    // A cold launch can arrive before Direct profiles or auth finish loading;
+    // A cold launch can arrive before auth finishes loading;
     // resetting only once chat is reachable keeps the prompt out of the
     // previous conversation.
     final chatReady = resetChat

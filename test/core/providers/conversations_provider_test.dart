@@ -25,7 +25,6 @@ import 'package:conduit_core/sync/pull_sync.dart';
 import 'package:conduit_core/sync/sync_api_client.dart';
 import 'package:conduit_core/sync/sync_engine.dart';
 import 'package:conduit_core/features/auth/providers/unified_auth_providers.dart';
-import 'package:conduit_core/features/hermes/services/hermes_session_provenance.dart';
 import 'package:drift/drift.dart';
 import 'package:drift/native.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -536,59 +535,6 @@ void main() {
       );
       check((await db.chatsDao.getChat('collision'))?.lastReadAt).isNull();
       check(socket.emits).isEmpty();
-    });
-
-    test('storage-scoped collisions never match a native Hermes shell', () {
-      const rawId = 'local:hermes_collision';
-      final native = markNativeHermesConversation(_conversation(rawId));
-      final openWebUi = withChatStorageProvenance(
-        _conversation(rawId),
-        ChatStorageKind.openWebUi,
-      );
-      final direct = withChatStorageProvenance(
-        _conversation(rawId),
-        ChatStorageKind.directLocal,
-      );
-
-      check(conversationMatchesScopedId(native, rawId)).isTrue();
-      check(
-        conversationMatchesScopedId(native, conversationScopedId(openWebUi)),
-      ).isFalse();
-      check(conversationMatchesScopedId(native, conversationScopedId(direct)))
-          .isFalse();
-      check(
-        conversationMatchesScopedId(openWebUi, conversationScopedId(openWebUi)),
-      ).isTrue();
-    });
-
-    test('storage-scoped collisions never match a temporary direct shell', () {
-      const rawId = 'local:direct_collision';
-      final directShell = _conversation(rawId).copyWith(
-        metadata: const <String, dynamic>{'backend': kDirectChatBackend},
-      );
-      final legacyOpenWebUi = _conversation(rawId);
-      final explicitOpenWebUiDirectTurn = withChatStorageProvenance(
-        directShell,
-        ChatStorageKind.openWebUi,
-      );
-      final openWebUiSelection = ChatStorageIdentity(
-        rawId: rawId,
-        storage: ChatStorageKind.openWebUi,
-      ).scopedId;
-
-      check(conversationMatchesScopedId(directShell, rawId)).isTrue();
-      check(conversationMatchesScopedId(directShell, openWebUiSelection))
-          .isFalse();
-      check(isSameStoredConversation(directShell, legacyOpenWebUi)).isFalse();
-      check(
-        conversationMatchesScopedId(
-          explicitOpenWebUiDirectTurn,
-          openWebUiSelection,
-        ),
-      ).isTrue();
-      check(
-        isSameStoredConversation(explicitOpenWebUiDirectTurn, legacyOpenWebUi),
-      ).isTrue();
     });
 
     test('upsertConversation writes an envelope stub the next emission agrees '

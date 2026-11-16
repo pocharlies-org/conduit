@@ -12,8 +12,6 @@ import 'package:conduit_core/database/chat_database_repository.dart';
 import 'package:conduit_core/database/database_provider.dart';
 import 'package:conduit_core/features/auth/providers/unified_auth_providers.dart';
 import 'package:conduit_core/features/chat/providers/chat_providers.dart';
-import 'package:conduit_core/features/direct_connections/models/direct_connection_profile.dart';
-import 'package:conduit_core/features/direct_connections/providers/direct_connection_providers.dart';
 import 'package:conduit_core/models/conversation.dart';
 import 'package:conduit_core/models/model.dart';
 import 'package:conduit_core/models/openwebui_chat_settings.dart';
@@ -53,11 +51,6 @@ class _NoDrainEngine extends SyncEngine {
 class _FixedPersonalization extends PersonalizationSettings {
   @override
   Future<ServerUserSettings> build() async => const ServerUserSettings();
-}
-
-class _NoProfiles extends DirectConnectionProfilesController {
-  @override
-  Future<List<DirectConnectionProfile>> build() async => const [];
 }
 
 Conversation _conversation(String id) => withChatStorageProvenance(
@@ -136,7 +129,6 @@ void main() {
           personalizationSettingsProvider.overrideWith(
             _FixedPersonalization.new,
           ),
-          directConnectionProfilesProvider.overrideWith(_NoProfiles.new),
           currentUserProvider2.overrideWithValue(
             const User(
               id: 'me',

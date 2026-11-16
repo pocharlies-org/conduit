@@ -3,11 +3,6 @@
   "appTitle": "Conduit",
   "serverIncompatibleTitle": "不支持该服务器",
   "serverIncompatibleMessage": "此服务器运行的 Open WebUI 版本为 {serverVersion}，高于本应用支持的版本（最高 {maxVersion}）。",
-  "serverIncompatibleResolution": "若要继续，请将服务器降级到 {maxVersion} 或更早版本，或等待新增支持的应用更新。",
-  "serverIncompatibleConnectBlocked": "此服务器的版本高于本应用支持的版本（最高 {maxVersion}）。",
-  "serverIncompatibleRecheck": "重新检查服务器",
-  "serverIncompatibleSwitchServer": "使用其他服务器",
-  "serverIncompatibleStillUnsupported": "此服务器的版本仍高于本应用支持的版本。",
   "retry": "重试",
   "back": "返回",
   "you": "你",
@@ -43,12 +38,9 @@
   "releaseNotesDoneButton": "完成",
   "signOut": "退出登录",
   "endYourSession": "结束您的会话",
-  "signOutOptionsDescription": "退出登录会清除此设备上的应用偏好设置以及 Direct 和 Hermes 连接。已保存的对话和服务器上的数据不会受到影响。",
-  "keepServerDetails": "保留服务器详情",
-  "keepServerDetailsDescription": "服务器地址和非敏感连接设置；令牌和 Cookie 标头将被删除",
+  "signOutOptionsDescription": "退出登录会清除此设备上的应用偏好设置以及 已保存的账户。已保存的对话和服务器上的数据不会受到影响。",
   "defaultModel": "默认模型",
   "autoSelect": "服务器默认",
-  "loadingModels": "加载模型中...",
   "failedToLoadModels": "无法加载模型",
   "failedToLoadFiles": "无法加载文件",
   "availableModels": "可用模型",
@@ -58,82 +50,23 @@
   "errorMessage": "出了点问题。请重试。",
   "closeButtonSemantic": "关闭",
   "loadingContent": "加载内容中",
-  "noItems": "无项目",
   "noItemsToDisplay": "无可显示的项目",
   "knowledgeBase": "知识库",
   "attachments": "附件",
   "files": "文件",
   "takePhoto": "拍照",
   "document": "文档",
-  "backToServerSetup": "返回服务器设置",
-  "connectedToServer": "已连接到服务器",
   "signIn": "登录",
-  "enterCredentials": "输入您的凭据以访问您的 AI 对话",
-  "credentials": "凭据",
   "apiKey": "API 密钥",
   "token": "令牌",
   "jwt": "JWT",
-  "usernameOrEmail": "用户名或电子邮件",
   "password": "密码",
-  "signInWithToken": "使用令牌登录",
-  "connectToServer": "连接到服务器",
   "serverUrl": "服务器 URL",
-  "serverUrlHint": "https://your-server.com",
-  "enterServerUrlSemantic": "输入您的服务器 URL 或 IP 地址",
-  "headerName": "标头名称",
-  "headerValue": "标头值",
-  "headerValueHint": "api-key-123 或 Bearer token",
-  "addHeader": "添加标头",
-  "maximumHeadersReached": "已达到最大标头数",
-  "removeHeader": "删除标头",
   "connecting": "连接中...",
-  "connectToServerButton": "连接到服务器",
-  "demoModeActive": "演示模式已激活",
-  "skipServerSetupTryDemo": "跳过服务器设置并尝试演示",
-  "enterDemo": "进入演示",
-  "demoBadge": "演示",
-  "serverNotOpenWebUI": "这似乎不是 Open-WebUI 服务器。",
-  "serverUrlEmpty": "服务器 URL 不能为空",
-  "invalidUrlFormat": "无效的 URL 格式。请检查您的输入。",
-  "onlyHttpHttps": "仅支持 HTTP 和 HTTPS 协议。",
-  "serverAddressRequired": "需要服务器地址（例如 192.168.1.10 或 example.com）。",
-  "portRange": "端口必须在 1 到 65535 之间。",
-  "invalidIpFormat": "无效的 IP 地址格式。使用如 192.168.1.10 的格式。",
   "couldNotConnectGeneric": "无法连接。请仔细检查地址并重试。",
-  "weCouldntReachServer": "我们无法访问服务器。请检查您的连接和服务器是否正在运行。",
-  "connectionTimedOut": "连接超时。服务器可能很忙或被防火墙阻止。",
-  "useHttpOrHttpsOnly": "仅使用 http:// 或 https://。",
   "loginFailed": "登录失败",
   "invalidCredentials": "无效的用户名或密码。请重试。",
   "signInAccountPendingApproval": "你的账户正在等待管理员批准。批准后请重试。",
-  "signInTwoStepVerificationRequired": "此账户使用两步验证。请重新登录，然后输入身份验证器应用中的验证码。",
-  "twoStepVerifyTitle": "验证登录",
-  "twoStepEnrollTitle": "设置身份验证器",
-  "twoStepRecoverTitle": "恢复身份验证器",
-  "twoStepVerifyDescription": "输入身份验证器应用中的六位验证码。",
-  "twoStepRecoveryCodeDescription": "输入您保存的恢复码之一。",
-  "twoStepEnrollDescription": "将此账户添加到身份验证器应用，然后输入其显示的六位验证码。",
-  "twoStepRecoverDescription": "管理员已重置此账户的两步验证。请输入管理员提供的恢复令牌。",
-  "twoStepCodeLabel": "身份验证码",
-  "twoStepRecoveryCodeLabel": "恢复码",
-  "twoStepResetTokenLabel": "恢复令牌",
-  "twoStepUseRecoveryCode": "使用恢复码",
-  "twoStepUseAuthenticatorCode": "使用身份验证码",
-  "twoStepBackToSignIn": "返回登录",
-  "twoStepOpenAuthenticator": "添加到身份验证器应用",
-  "twoStepSetupKeyLabel": "设置密钥",
-  "twoStepCopySetupKey": "复制设置密钥",
-  "twoStepQrCodeLabel": "身份验证器应用的二维码",
-  "twoStepSetupLoading": "正在准备身份验证器…",
-  "twoStepSetupFailed": "无法加载设置密钥。",
-  "twoStepNoAuthenticatorApp": "没有应用可以添加。请改为将设置密钥复制到身份验证器应用中。",
-  "twoStepRecoveryCodesTitle": "保存恢复码",
-  "twoStepRecoveryCodesDescription": "如果丢失身份验证器，每个恢复码可登录一次。请妥善保存，它们不会再次显示。",
-  "twoStepCopyRecoveryCodes": "复制恢复码",
-  "twoStepInvalidCode": "该验证码无效。请检查后重试。",
-  "twoStepExpired": "此步骤已过期。请返回登录并重新开始。",
-  "twoStepTooManyAttempts": "尝试次数过多。请等待几分钟后重新登录。",
-  "twoStepFailed": "无法验证该验证码。请重试。",
   "serverRedirectingHttps": "服务器正在重定向请求。请检查您的服务器的 HTTPS 配置。",
   "unableToConnectServer": "无法连接到服务器。请检查您的连接。",
   "requestTimedOut": "请求超时。请重试。",
@@ -147,14 +80,7 @@
   "voiceInput": "语音输入",
   "voice": "语音",
   "voiceStatusListening": "正在听...",
-  "voiceStatusRecording": "正在录制...",
   "voiceHoldToTalk": "按住说话",
-  "voiceAutoSend": "自动发送",
-  "voiceTranscript": "转录",
-  "voicePromptSpeakNow": "现在说话...",
-  "voicePromptTapStart": "点击开始以开始",
-  "voiceActionStop": "停止",
-  "voiceActionStart": "开始",
   "messageHintText": "问 Conduit",
   "stopGenerating": "停止生成",
   "codeCopiedToClipboard": "代码已复制到剪贴板。",
@@ -163,15 +89,12 @@
   "file": "文件",
   "photo": "照片",
   "camera": "相机",
-  "pasteImage": "粘贴图片",
   "apiUnavailable": "API 服务不可用",
   "unableToLoadImage": "无法加载图像",
   "notAnImageFile": "不是图像文件：{fileName}",
   "failedToLoadImage": "无法加载图像：{error}",
   "invalidDataUrl": "无效的数据 URL 格式",
   "failedToDecodeImage": "无法解码图像",
-  "invalidImageFormat": "无效的图像格式",
-  "emptyImageData": "空图像数据",
   "confirm": "确认",
   "cancel": "取消",
   "chatQueuedOfflineTitle": "离线排队中",
@@ -190,7 +113,6 @@
   "save": "保存",
   "chooseModel": "选择模型",
   "reviewerMode": "审核者模式",
-  "selectLanguage": "选择语言",
   "newFolder": "新文件夹",
   "folderName": "文件夹名称",
   "newChat": "新对话",
@@ -223,7 +145,6 @@
   "espanol": "Español",
   "nederlands": "Nederlands",
   "russian": "Русский",
-  "chinese": "中文",
   "chineseSimplified": "简体中文",
   "chineseTraditional": "繁體中文",
   "korean": "한국어",
@@ -254,7 +175,6 @@
   "deleteFolderMessage": "此文件夹及其分配引用将被删除。",
   "failedToDeleteFolder": "无法删除文件夹",
   "aboutApp": "关于",
-  "aboutAppSubtitle": "Conduit 信息和链接",
   "web": "网页",
   "imageGen": "图像生成",
   "pinned": "已置顶",
@@ -272,62 +192,13 @@
   "edit": "编辑",
   "regenerate": "重新生成",
   "noConversationsYet": "尚无对话",
-  "usernameOrEmailHint": "输入您的用户名或电子邮件",
   "passwordHint": "输入您的密码",
-  "enterToken": "输入您的 JWT 令牌",
-  "tokenHint": "从 Open WebUI 设置获取 JWT 令牌。API 密钥 (sk-...) 不支持流式传输。",
-  "apiKeyNotSupported": "不支持 API 密钥 (sk-...)。请改用 JWT 令牌。",
-  "apiKeyNoLongerSupported": "由于不再支持 API 密钥，您已被登出。请使用 Open WebUI 设置中的 JWT 令牌登录。",
-  "tokenTooShort": "令牌太短",
   "signingIn": "正在登录...",
-  "advancedSettings": "高级设置",
   "customHeaders": "自定义标头",
-  "customHeadersDescription": "为身份验证、API 密钥或特殊服务器要求添加自定义 HTTP 标头。",
   "allowSelfSignedCertificates": "信任自签名证书",
   "@allowSelfSignedCertificates": {
     "description": "允许信任配置服务器的自签名 TLS 证书的切换标签。"
   },
-  "allowSelfSignedCertificatesDescription": "接受此服务器的 TLS 证书，即使它是自签名的。仅对您信任的服务器启用。",
-  "@allowSelfSignedCertificatesDescription": {
-    "description": "阐明启用自签名证书切换风险的帮助文本。"
-  },
-  "mutualTlsSectionTitle": "mTLS 客户端证书",
-  "mutualTlsSectionDescription": "如果服务器在建立连接时要求双向 TLS，请附加 PEM 证书链和 PEM 私钥。",
-  "mutualTlsSelectCertificate": "选择证书",
-  "mutualTlsSelectPrivateKey": "选择私钥",
-  "mutualTlsCertificateReady": "证书",
-  "mutualTlsPrivateKeyReady": "私钥",
-  "mutualTlsPrivateKeyPasswordHint": "私钥密码（可选）",
-  "mutualTlsClearCredentials": "清除 mTLS 文件",
-  "mutualTlsMissingCredentialPair": "要使用 mTLS，请同时选择客户端证书和私钥。",
-  "mutualTlsCertificatePemRequired": "所选证书文件必须包含 PEM 证书链。",
-  "mutualTlsPrivateKeyPemRequired": "所选私钥文件必须包含 PEM 私钥。",
-  "mutualTlsFileReadFailed": "无法读取所选的 mTLS 文件。",
-  "mutualTlsHandshakeFailed": "服务器拒绝了 mTLS 凭据。请确认该证书、私钥和密码是否正确。",
-  "mutualTlsConnectionClosed": "服务器在响应之前关闭了连接。如果它需要客户端证书，请确认该证书、私钥和密码是否正确。",
-  "headerNameTooLong": "标头名称太长（最多 64 个字符）",
-  "headerNameInvalidChars": "无效的标头名称。仅使用字母、数字和这些符号：!#$&-^_`|~",
-  "headerNameReserved": "无法覆盖保留的标头「{key}」",
-  "@headerNameReserved": {
-    "placeholders": {
-      "key": {
-        "type": "String"
-      }
-    }
-  },
-  "headerValueTooLong": "标头值太长（最多 1024 个字符）",
-  "headerValueInvalidChars": "标头值包含无效字符。仅使用可打印的 ASCII。",
-  "headerValueUnsafe": "标头值似乎包含潜在的不安全内容",
-  "headerAlreadyExists": "标头「{key}」已存在。首先删除它以更新。",
-  "@headerAlreadyExists": {
-    "placeholders": {
-      "key": {
-        "type": "String"
-      }
-    }
-  },
-  "maxHeadersReachedDetail": "最多允许 10 个自定义标头。删除一些以添加更多。",
-  "noModelsAvailable": "无可用模型",
   "followingSystem": "跟随系统：{theme}",
   "@followingSystem": {
     "placeholders": {
@@ -344,7 +215,6 @@
   "themeLight": "浅色",
   "currentlyUsingDarkTheme": "当前使用深色主题",
   "currentlyUsingLightTheme": "当前使用浅色主题",
-  "aboutConduit": "关于 Conduit",
   "versionLabel": "版本：{version}（{build}）",
   "@versionLabel": {
     "placeholders": {
@@ -373,7 +243,6 @@
   "analyzing": "分析中…",
   "analyzed": "已分析",
   "appCustomization": "自定义",
-  "appCustomizationSubtitle": "主题、语言、语音和 quick actions",
   "quickActionsDescription": "聊天快捷方式",
   "chatSettings": "对话",
   "sendOnEnter": "回车发送",
@@ -412,18 +281,6 @@
   "ttsEngineServerDescription": "在聊天所用的服务器上生成语音：Open WebUI、Hermes，或 Direct 和 Apple 聊天的语音提供商。",
   "ttsDeviceUnavailableWarning": "此设备不支持本机文本转语音。",
   "ttsServerUnavailableWarning": "连接到启用文本转语音的服务器后才能使用此选项。",
-  "voiceProviderTitle": "语音提供商",
-  "voiceProviderDescription": "当“语音转文字”或“文本转语音”设为“服务器”时，Direct 和 Apple 聊天会使用此连接。",
-  "voiceProviderConnection": "连接",
-  "voiceProviderNone": "无",
-  "voiceProviderNoConnections": "添加一个兼容 OpenAI 的 Direct 连接后即可在此选择。",
-  "voiceProviderTranscriptionModel": "转写模型",
-  "voiceProviderSpeechModel": "语音合成模型",
-  "voiceProviderModelsHint": "请使用提供商列出的模型名称。留空的方向将改用此设备处理。",
-  "voiceProviderRealtimeModel": "实时模型",
-  "voiceProviderRealtimeInstructions": "指令",
-  "voiceProviderRealtimeInstructionsHint": "留空则使用 Conduit 自带的指令。",
-  "voiceProviderRealtimeFooter": "Direct 和 Apple 聊天中的通话将使用此语音，并借助上方的转写模型理解你说的话。",
   "voiceCallModeTitle": "通话",
   "voiceCallModeRealtime": "实时",
   "voiceCallModeStandard": "标准",
@@ -507,10 +364,6 @@
   "voiceCallResume": "继续",
   "@voiceCallResume": {
     "description": "Button label to resume a paused voice call."
-  },
-  "voiceCallStop": "停止",
-  "@voiceCallStop": {
-    "description": "Button label to stop the active voice call."
   },
   "voiceCallEnd": "结束通话",
   "@voiceCallEnd": {
@@ -853,10 +706,6 @@
   "@voiceCallDisconnected": {
     "description": "Status label shown when the voice call has ended or disconnected."
   },
-  "voiceCallErrorHelp": "请检查：\n• 已授予麦克风权限\n• 设备支持语音识别\n• 已连接到服务器",
-  "@voiceCallErrorHelp": {
-    "description": "Guidance shown when the voice call encounters an error."
-  },
   "mermaidPreviewUnavailable": "此平台不支持 Mermaid 预览。",
   "chartPreviewUnavailable": "此平台不支持图表预览。",
   "notes": "笔记",
@@ -942,22 +791,8 @@
       }
     }
   },
-  "sso": "SSO",
   "ssoDescription": "使用组织的身份提供商登录",
   "signInWithSso": "使用 SSO 登录",
-  "ssoAuthenticating": "正在验证...",
-  "ssoAuthFailed": "SSO 验证失败",
-  "ssoLoadingLogin": "正在加载登录页面...",
-  "ldap": "LDAP",
-  "ldapDescription": "使用 LDAP 目录凭据登录",
-  "signInWithLdap": "使用 LDAP 登录",
-  "ldapUsername": "用户名",
-  "ldapUsernameHint": "输入您的 LDAP 用户名",
-  "moreSignInOptions": "更多登录选项",
-  "ldapNotEnabled": "此服务器未启用 LDAP 验证",
-  "ssoPlatformNotSupported": "此平台不支持 SSO 验证。请改用凭据或 LDAP 验证。",
-  "continueWithProvider": "使用 {provider} 继续",
-  "or": "或",
   "usageInfo": "信息",
   "usageInfoTitle": "响应统计",
   "usageTokenGeneration": "Token 生成",
@@ -994,16 +829,7 @@
   "usageQueueTime": "排队时间",
   "usageReasoningTokens": "推理 token",
   "usageTotalTokens": "总 token",
-  "proxyAuthentication": "代理认证",
-  "proxyAuthPlatformNotSupported": "代理认证需要移动设备。请先通过浏览器进行认证。",
-  "proxyAuthLoading": "正在加载认证页面...",
-  "proxyAuthFailed": "代理认证失败",
-  "proxyAuthHelpText": "通过您组织的代理完成登录，然后登录 Open WebUI。您将被自动重定向。",
-  "proxyAuthHelpTextSimple": "通过您的代理登录。认证后，点击继续以进行登录。",
-  "continueButton": "继续",
   "proxyAuthRequired": "此服务器需要代理认证",
-  "proxyAuthRequiredDescription": "您的服务器似乎位于认证代理（如 oauth2-proxy）后面。您需要先通过代理登录。",
-  "authenticateThroughProxy": "认证",
   "voiceOptions": "语音选项",
   "dictation": "听写",
   "dictationDescription": "说话并实时转换为文字",
@@ -1141,10 +967,6 @@
   "chatSaved": "聊天已保存到历史记录",
   "chatSaveFailed": "无法保存聊天",
   "sidebarChatsTab": "聊天",
-  "sidebarTerminalTab": "终端",
-  "@sidebarTerminalTab": {
-    "description": "Label for the Terminal tab in the sidebar"
-  },
   "sidebarNotesTab": "笔记",
   "sidebarChannelsTab": "频道",
   "sidebarResizeHandle": "调整侧边栏宽度",
@@ -1164,112 +986,10 @@
       }
     }
   },
-  "closeSidebar": "关闭侧边栏",
-  "terminalSelectServer": "选择终端服务器",
-  "@terminalSelectServer": {
-    "description": "Prompt shown when the user needs to choose a terminal server."
-  },
-  "terminalNoServersConfigured": "没有可用的终端服务器。",
-  "@terminalNoServersConfigured": {
-    "description": "Empty state shown when there are no terminal servers configured."
-  },
-  "terminalConnectAction": "连接",
-  "@terminalConnectAction": {
-    "description": "Button label used to connect to a terminal session."
-  },
-  "terminalDisconnectAction": "断开连接",
-  "@terminalDisconnectAction": {
-    "description": "Button label used to disconnect from a terminal session."
-  },
-  "terminalConnectedStatus": "已连接",
-  "@terminalConnectedStatus": {
-    "description": "Status label shown when the terminal is connected."
-  },
-  "terminalDisconnectedStatus": "已断开",
-  "@terminalDisconnectedStatus": {
-    "description": "Status label shown when the terminal is disconnected."
-  },
-  "terminalConnectingStatus": "正在连接...",
-  "@terminalConnectingStatus": {
-    "description": "Status label shown while the terminal connection is being established."
-  },
-  "terminalUploadAction": "上传",
-  "@terminalUploadAction": {
-    "description": "Action label for uploading a file into the terminal workspace."
-  },
-  "terminalOpenInBrowserAction": "在浏览器中打开",
-  "@terminalOpenInBrowserAction": {
-    "description": "Action label for opening a forwarded port in the browser."
-  },
-  "terminalHomeAction": "主目录",
-  "@terminalHomeAction": {
-    "description": "Tooltip for navigating back to the terminal home directory."
-  },
-  "terminalCurrentPathLabel": "当前路径",
-  "@terminalCurrentPathLabel": {
-    "description": "Label displayed above the current terminal working directory."
-  },
-  "terminalPortsSectionLabel": "监听端口",
-  "@terminalPortsSectionLabel": {
-    "description": "Section title for ports discovered in the terminal environment."
-  },
-  "terminalNoFiles": "此目录中没有文件。",
-  "@terminalNoFiles": {
-    "description": "Empty state shown when the current terminal directory has no files."
-  },
-  "terminalNoPorts": "未检测到监听端口。",
-  "@terminalNoPorts": {
-    "description": "Empty state shown when the terminal server reports no listening ports."
-  },
-  "terminalPreviewUnavailable": "预览不可用。请改用下载。",
-  "@terminalPreviewUnavailable": {
-    "description": "Message shown when a terminal file cannot be previewed inline."
-  },
-  "terminalFeatureDisabled": "此终端服务器未提供交互式 shell。",
-  "@terminalFeatureDisabled": {
-    "description": "Message shown when the selected terminal server disables interactive terminal sessions."
-  },
-  "terminalFolderNameHint": "文件夹名称",
-  "@terminalFolderNameHint": {
-    "description": "Hint text used when creating a new folder in the terminal workspace."
-  },
-  "terminalFailedToLoadFiles": "无法加载终端文件。",
-  "@terminalFailedToLoadFiles": {
-    "description": "Error message shown when the terminal file list cannot be loaded."
-  },
-  "terminalFailedToLoadPorts": "无法加载监听端口。",
-  "@terminalFailedToLoadPorts": {
-    "description": "Error message shown when terminal port discovery fails."
-  },
-  "terminalFailedToConnect": "无法连接到终端。",
-  "@terminalFailedToConnect": {
-    "description": "Error message shown when the terminal websocket session cannot be opened."
-  },
-  "terminalDownloadFailed": "无法下载所选文件。",
-  "@terminalDownloadFailed": {
-    "description": "Error message shown when downloading a terminal file fails."
-  },
-  "terminalUploadFailed": "无法上传所选文件。",
-  "@terminalUploadFailed": {
-    "description": "Error message shown when uploading a terminal file fails."
-  },
-  "terminalRenameFailed": "无法重命名所选项目。",
-  "@terminalRenameFailed": {
-    "description": "Error message shown when renaming a file or folder in the terminal workspace fails."
-  },
-  "terminalDeleteFailed": "无法删除所选项目。",
-  "@terminalDeleteFailed": {
-    "description": "Error message shown when deleting a file or folder in the terminal workspace fails."
-  },
-  "terminalFolderCreateFailed": "无法创建文件夹。",
-  "@terminalFolderCreateFailed": {
-    "description": "Error message shown when creating a new terminal folder fails."
-  },
   "channelCreateTitle": "创建频道",
   "channelName": "频道名称",
   "channelDescription": "描述",
   "channelPrivate": "私密频道",
-  "channelJoin": "加入频道",
   "channelLeave": "退出频道",
   "channelDelete": "删除频道",
   "channelEdit": "编辑频道",
@@ -1284,7 +1004,6 @@
   "channelMessageDelete": "删除",
   "channelLoadError": "无法加载频道",
   "channelSendError": "无法发送消息",
-  "channelDeleted": "此频道已被删除",
   "searchChannels": "搜索频道...",
   "channelUnreadCount": "{count} 条未读消息",
   "channelCreateError": "无法创建频道",
@@ -1303,8 +1022,6 @@
       }
     }
   },
-  "channelMessageHint": "消息...",
-  "audioUploadError": "无法上传音频：{error}",
   "shareChat": "分享聊天",
   "@shareChat": {
     "description": "Dialog title and action label for sharing a chat."
@@ -1353,21 +1070,14 @@
   "@deleteSharedLinkFailed": {
     "description": "Snackbar shown when deleting a shared chat link fails."
   },
-  "systemPrompts": "系统提示词",
   "globalSystemPrompt": "全局系统提示词",
   "modelSystemPrompts": "模型系统提示词",
-  "folderSystemPrompts": "文件夹系统提示词",
   "openWebuiModelSettings": "Open WebUI 模型设置",
-  "openWebuiFolderSettings": "Open WebUI 文件夹设置",
   "accessibleModelsCount": "{count} 个可访问模型",
-  "accessibleFoldersCount": "{count} 个可访问文件夹",
   "unableToLoadOpenWebuiSettings": "无法加载 Open WebUI 设置。",
   "unableToLoadModels": "无法加载模型。",
-  "unableToLoadFolders": "无法加载文件夹。",
   "noAccessibleModelsFound": "未找到可访问的模型。",
-  "noAccessibleFoldersFound": "未找到可访问的文件夹。",
   "tapToLoadServerPromptSettings": "点按以加载服务器提示词设置。",
-  "loadingFromOpenWebui": "正在从 Open WebUI 加载...",
   "globalSystemPromptEditorDescription": "保存到你的 Open WebUI 用户设置，并用作默认聊天系统提示词。",
   "modelNoEditableServerRecord": "此模型没有可编辑的服务器记录。",
   "modelSystemPromptTitle": "{modelName} 系统提示词",
@@ -1381,7 +1091,6 @@
   "close": "关闭",
   "connectionHealth": "连接状态",
   "personalization": "个性化",
-  "personalizationSubtitle": "默认模型、个人提示词和记忆",
   "defaultImageGenerationModel": "默认图像生成模型",
   "defaultImageGenerationModelDescription": "输入 OpenRouter 图像模型 ID。留空则使用 OpenRouter 默认模型。",
   "openRouterDefaultImageGenerationModel": "OpenRouter 默认模型（openai/gpt-5-image）",
@@ -1410,7 +1119,6 @@
   "memoryUpdatedAt": "更新于 {formattedTime}",
   "advancedPromptOverridesDescription": "模型级提示词覆盖位于 App 与聊天。",
   "audioSettingsTitle": "音频",
-  "audioSettingsSubtitle": "语音转文字和文字转语音",
   "accountSettingsTitle": "账户",
   "accountSettingsSubtitle": "个人资料详情和密码管理",
   "accountDetails": "账户详情",
@@ -1421,7 +1129,6 @@
   "profileDetails": "个人资料详情",
   "name": "姓名",
   "avatarUrl": "头像 URL",
-  "avatarUrlHint": "https://example.com/avatar.png",
   "bioLabel": "简介",
   "bioHint": "关于你的简短描述。",
   "genderLabel": "性别",
@@ -1434,14 +1141,11 @@
   "customGenderRequired": "请输入自定义性别或选择其他选项。",
   "birthDateLabel": "出生日期",
   "selectBirthDate": "选择日期",
-  "birthDateHint": "YYYY-MM-DD",
   "currentAvatar": "当前头像",
   "uploadFromDevice": "从设备上传",
   "useInitials": "首字母",
   "removeAvatar": "移除",
   "avatarUploadFailed": "无法更新头像。",
-  "timezoneLabel": "时区",
-  "timezoneHint": "Asia/Shanghai",
   "saveProfile": "保存个人资料",
   "changePasswordTitle": "更改密码",
   "passwordChangeUnavailable": "此服务器已禁用密码更改。",
@@ -1462,20 +1166,7 @@
   "serverNameLabel": "服务器名称",
   "serverVersionLabel": "服务器版本",
   "latestVersionLabel": "最新版本",
-  "deploymentIdLabel": "部署 ID",
-  "defaultLocaleLabel": "默认语言",
-  "userCountLabel": "用户数",
-  "serverDefaultModelsLabel": "默认模型",
-  "loginFormLabel": "登录表单",
-  "passwordChangesLabel": "密码更改",
-  "apiKeysLabel": "API 密钥",
-  "audioInputLabel": "音频输入",
-  "audioOutputLabel": "音频输出",
-  "speechToTextEngineLabel": "语音转文字引擎",
-  "textToSpeechEngineLabel": "文字转语音引擎",
-  "licenseMetadataLabel": "许可证元数据",
   "enabledLabel": "已启用",
-  "disabledLabel": "已禁用",
   "noEmailLabel": "无电子邮件",
   "userFallbackName": "用户",
   "unknownLabel": "未知",
@@ -1881,14 +1572,9 @@
       }
     }
   },
-  "@continueWithProvider": {
-    "description": "Button text for OAuth provider sign-in.",
-    "placeholders": {
-      "provider": {
-        "type": "String",
-        "example": "Google"
-      }
-    }
+  "startChattingGreeting": "Start chatting",
+  "@startChattingGreeting": {
+    "description": "Heading shown on the empty chat page when the account has no display name."
   },
   "@channelMembers": {
     "description": "Member count display in channel header",
@@ -1898,30 +1584,12 @@
       }
     }
   },
-  "@audioUploadError": {
-    "description": "Error message when audio upload fails",
-    "placeholders": {
-      "error": {
-        "type": "String",
-        "description": "The error message"
-      }
-    }
-  },
   "@accessibleModelsCount": {
     "description": "Subtitle showing how many accessible models are listed.",
     "placeholders": {
       "count": {
         "type": "int",
         "example": "4"
-      }
-    }
-  },
-  "@accessibleFoldersCount": {
-    "description": "Subtitle showing how many accessible folders are listed.",
-    "placeholders": {
-      "count": {
-        "type": "int",
-        "example": "3"
       }
     }
   },
@@ -2023,27 +1691,8 @@
   "@failedToLoadTools": {
     "description": "Error shown when the composer overflow menu cannot load tools."
   },
-  "terminalExpandAction": "全屏",
-  "terminalReopenFullscreen": "已在全屏中打开 - 点按以重新打开",
-  "terminalKeyTab": "Tab",
-  "terminalKeyUp": "上",
-  "terminalKeyDown": "下",
-  "terminalKeyCtrlC": "Ctrl-C",
-  "terminalCopyAction": "复制",
-  "terminalPasteAction": "粘贴",
-  "terminalNothingToCopy": "没有选择要复制的内容",
-  "terminalCopied": "已复制到剪贴板",
-  "terminalPasteWhileDisconnected": "连接后粘贴",
-  "terminalPortsToggle": "监听端口",
-  "releaseNotesManualSubtitle": "{currentVersion} 的内置更新日志",
-  "settingsCategoryApp": "应用",
-  "settingsCategoryAi": "AI",
-  "settingsCategoryServer": "服务器",
-  "settingsCategorySupport": "支持",
   "settingsDataAndConnection": "数据与连接",
   "settingsAppearance": "外观",
-  "settingsAppearanceSubtitle": "主题、调色板和语言",
-  "settingsChatSubtitle": "聊天行为、快捷操作和高级提示词",
   "workspaceTitle": "工作区",
   "workspaceSubtitle": "Manage server resources and access.",
   "workspaceModels": "Models",
@@ -2089,7 +1738,6 @@
   "workspaceEditorKeepEditing": "Keep editing",
   "workspaceEditorSaveTooltip": "Save changes",
   "workspaceEditorSaving": "Saving…",
-  "workspaceEditorMoreActions": "More actions",
   "workspaceImportChooseFile": "Choose JSON file",
   "workspaceImportPasteLabel": "Or paste JSON",
   "workspaceImportPasteHint": "Paste exported JSON here",
@@ -2485,10 +2133,6 @@
   "workspaceKnowledgeRoot": "Root",
   "@workspaceKnowledgeRoot": {
     "description": "Breadcrumb label for the top level of a knowledge base."
-  },
-  "workspaceKnowledgeAddMenu": "Add files",
-  "@workspaceKnowledgeAddMenu": {
-    "description": "Tooltip for the menu that adds files or folders to a knowledge base."
   },
   "workspaceKnowledgeUpload": "Upload file",
   "@workspaceKnowledgeUpload": {
@@ -3076,8 +2720,6 @@
   "workspaceValveNone": "None",
   "workspaceValveEnabled": "Enabled",
   "workspaceValveDisabled": "Disabled",
-  "noteConflictCopyBadge": "冲突副本",
-  "noteConflictCopySuffix": "（冲突副本）",
   "notificationChannelDescription": "当有人在频道或私信中发送消息时通知。",
   "notificationChannelMessagesDescription": "回复、频道消息和已完成的响应",
   "notificationChannelMessagesName": "消息",
@@ -3097,20 +2739,8 @@
   "notificationsEnabledDescription": "当应用在后台时以及在应用内接收提醒。",
   "notificationsEnabledTitle": "启用通知",
   "notificationsPermissionDenied": "通知已在系统设置中关闭。",
-  "notificationsSubtitle": "回复、消息和已完成响应的提醒",
   "notificationsTitle": "通知",
-  "hermesSecretsUnavailable": "Could not access saved Hermes credentials. Unlock secure storage and retry.",
-  "hermesAgentSettingsTitle": "Hermes Agent",
-  "hermesAgentSettingsSubtitle": "Connect a self-hosted Hermes agent",
-  "connectOpenWebUITitle": "Connect to Open WebUI",
-  "connectOpenWebUISubtitle": "Add a self-hosted Open WebUI server",
-  "backendChooserWelcome": "Welcome to Conduit",
-  "backendChooserPrompt": "Choose how you want to connect.",
-  "backendChooserOpenWebUISubtitle": "Use your self-hosted Open WebUI server with full chat, notes, and more.",
-  "backendChooserHermesTitle": "Use a Hermes Agent",
-  "backendChooserHermesSubtitle": "Connect directly to a self-hosted Hermes agent — no Open WebUI server needed.",
-  "hermesApprovalRequired": "Approval required",
-  "hermesApprovalFallback": "The agent is requesting permission to continue.",
+  "toolApprovalRequired": "Approval required",
   "openWebUiPromptOther": "其他",
   "@openWebUiPromptOther": {
     "description": "Label for a free-form answer to an Open WebUI ask-user question."
@@ -3123,146 +2753,17 @@
   "@openWebUiPromptSubmit": {
     "description": "Action that submits all answers to an Open WebUI ask-user prompt."
   },
-  "hermesApprovalApproved": "Approved ✓",
-  "hermesApprovalDenied": "Denied",
-  "hermesApprovalApproveAction": "Approve",
-  "hermesApprovalDenyAction": "Deny",
-  "hermesEnableTitle": "Enable Hermes Agent",
-  "hermesEnableSubtitle": "Use your self-hosted Hermes agent as a model in the picker.",
-  "hermesServerUrlTitle": "Server URL",
-  "hermesApiKeyTitle": "API key",
-  "hermesConfiguredReplacePlaceholder": "Configured — enter to replace",
-  "hermesApiKeyPlaceholder": "Enter API key",
-  "hermesMemoryKeyTitle": "Memory key (optional)",
-  "hermesMemoryKeyPlaceholder": "Auto-generated if left blank",
-  "hermesCapabilitiesTitle": "Capabilities",
-  "hermesCapabilityApproval": "Approval",
-  "hermesCapabilitySkills": "Skills",
-  "hermesCapabilityToolsets": "Toolsets",
-  "hermesCapabilityJobs": "Jobs",
-  "hermesCapabilitySessions": "Sessions",
-  "hermesTabInfoTitle": "Conversations & Scheduled Agents",
-  "hermesTabInfoSubtitle": "Available in the Hermes tab once enabled.",
-  "hermesNativeSettingsSubtitle": "Connect directly to a self-hosted Hermes agent.",
-  "hermesSelfHostedAgentLabel": "Self-hosted agent",
-  "hermesNoConversationsMessage": "No Hermes conversations yet.\nStart a new chat with the Hermes Agent and it will appear here.",
-  "hermesConversationsTitle": "Conversations",
-  "hermesBotsTitle": "机器人",
-  "hermesConversationsLoadError": "Could not load Hermes conversations.\nCheck the connection in Settings → Hermes Agent.",
-  "hermesSchedulesLoading": "Loading schedules…",
-  "hermesSchedulesUnavailable": "Schedules unavailable",
-  "hermesNoSchedulesYet": "No schedules yet",
-  "hermesSchedulesSummary": "{active} active · {total, plural, =1{1 schedule} other{{total} schedules}}",
-  "hermesReviewSchedules": "Review schedules",
-  "hermesScheduledAgentsTitle": "Scheduled agents",
+  "toolApprovalApproveAction": "Approve",
+  "toolApprovalDenyAction": "Deny",
   "workspaceToolImportUrlHost": "Only GitHub tool URLs can be imported.",
-  "signInServerDescription": "Use your Open WebUI account to sign in to the server below.",
   "openWebUIServer": "Open WebUI server",
   "serverAddressUnavailable": "Server address unavailable",
   "showPassword": "Show password",
   "hidePassword": "Hide password",
-  "reviewerModeEnabled": "Reviewer mode enabled. You can open the demo without a server.",
-  "reviewerModeDisabled": "Reviewer mode disabled.",
   "openSourceLicenses": "Open source licenses",
-  "directConnectionsTitle": "直接连接",
-  "directConnectionsSubtitle": "Connect to OpenAI-compatible APIs and Ollama",
-  "directConnectionsDescription": "Connect to model providers without Open WebUI. Credentials are stored securely on this device and sent to the provider with requests.",
-  "directConnectionsCombinedDescription": "使用从 Open WebUI 同步或仅保存在本机的连接，直接连接模型提供商。",
-  "openWebUiDirectConnectionsSectionTitle": "Open WebUI 服务器",
-  "openWebUiDirectConnectionsSectionDescription": "保存在 Open WebUI 帐户中，其他已登录的客户端也可使用。",
-  "deviceDirectConnectionsSectionTitle": "本机",
-  "deviceDirectConnectionsSectionDescription": "凭据安全地保存在本机。",
-  "openWebUiDirectProfilesEmptyTitle": "暂无服务器连接",
-  "openWebUiDirectProfilesEmptySubtitle": "添加兼容 OpenAI 的 API 连接，即可通过 Open WebUI 同步。",
-  "openWebUiDirectConnectionsLoadFailed": "无法从 Open WebUI 同步连接。",
-  "openWebUiDirectConnectionSourceLabel": "Open WebUI",
-  "deviceDirectConnectionSourceLabel": "本机",
-  "openWebUiDirectConnectionUnsupportedAuth": "Conduit 无法安全使用此连接的认证方式。",
-  "directConnectionUnavailableLabel": "不可用",
-  "openWebUiDirectConnectionEditorDescription": "更改将保存到 Open WebUI 帐户。",
-  "openWebUiDirectConnectionProviderDescription": "Open WebUI 用户连接支持兼容 OpenAI 的 API。",
-  "openWebUiDirectConnectionFallbackName": "Open WebUI 连接",
-  "openWebUiDirectConnectionsUnavailable": "Open WebUI 连接不可用。",
-  "directConnectionNoLongerExists": "此连接已不存在。",
-  "openWebUiDirectConnectionDeleteMessage": "这会从 Open WebUI 帐户和其他已登录的客户端中移除 {name}。",
-  "@openWebUiDirectConnectionDeleteMessage": {
-    "description": "Confirmation message shown before deleting an Open WebUI-synced direct connection.",
-    "placeholders": {
-      "name": {
-        "type": "String"
-      }
-    }
-  },
-  "addDirectConnection": "Add connection",
-  "editDirectConnection": "Edit connection",
-  "directConnectionName": "Connection name",
-  "directDefaultConnectionName": "我的提供商",
   "sidebarButtonLabel": "侧边栏",
-  "directConnectionNameRequired": "Enter a connection name.",
-  "directConnectionUrlInvalid": "Use a valid http:// or https:// URL.",
-  "directConnectionCredentialsReentryRequired": "Re-enter credentials when changing servers.",
-  "directConnectionApiKeyRequired": "Enter an API key or choose no authentication.",
-  "directConnectionHeaderNameRequired": "Enter a header name, then add the header.",
-  "directConnectionCredentialTransferTitle": "Use credentials with new server?",
-  "directConnectionCredentialTransferMessage": "This sends the API key and complete custom-header map to the new server. Only continue if you trust it.",
-  "directConnectionCredentialTransferConfirm": "Use credentials",
-  "directConnectionSaveFailed": "Could not save this connection.",
-  "directConnectionSaveConflict": "此连接已在其他位置更改。请重新打开后再保存。",
-  "directConnectionReachFailed": "Could not reach the provider.",
-  "directConnectionDeleteTitle": "Delete connection?",
-  "directConnectionDeleteMessage": "This removes {name} and its credentials from this device.",
-  "directConnectionDeleteFailed": "Could not delete this connection.",
-  "directConnectionProbeConnected": "Connected",
-  "directConnectionProbeConnectedModels": "{count, plural, =1{Connected · 1 model} other{Connected · {count} models}}",
-  "directProvider": "Provider type",
-  "openAICompatible": "OpenAI-compatible",
-  "ollama": "Ollama",
-  "openRouterProviderName": "OpenRouter",
-  "directApiBaseUrl": "Base URL",
-  "directOpenRouterUrlInvalid": "Use OpenRouter’s HTTPS /api/v1 root (global or EU).",
-  "directOpenRouterBaseUrlDescription": "Uses your OpenRouter API key, authenticated model catalog, and Conduit-managed tools.",
-  "directOpenRouterChatCompletionsDescription": "Chat Completions is used for native web search, image generation, PDF parsing, and reusable PDF annotations.",
-  "directCompletionApi": "Completion API",
-  "directChatCompletions": "Chat Completions",
-  "directResponses": "Responses",
-  "directChatCompletionsDescription": "Works with OpenAI-compatible providers such as LM Studio, vLLM, LocalAI, and OpenRouter.",
-  "directResponsesDescription": "Use the typed Responses event stream. Choose this only when the provider exposes /responses.",
-  "directApiVersion": "API version",
-  "directApiVersionDescription": "Optional. Adds the api-version query parameter required by Azure OpenAI endpoints.",
-  "directAuthentication": "Authentication",
-  "noAuthentication": "No authentication",
-  "bearerToken": "Bearer token",
-  "directApiKeyHeader": "API-key header",
-  "directApiKeyHeaderDescription": "Sends the credential in the api-key header used by Azure OpenAI.",
-  "directApiKey": "API key",
-  "directCustomHeaders": "Custom headers",
-  "directManualModelIds": "Manual model IDs",
-  "directManualModelIdsDescription": "可选。如果服务器无法列出模型，请每行输入一个 ID。",
-  "@directManualModelIdsDescription": {
-    "placeholders": {}
-  },
-  "directModelIdPrefix": "Model ID prefix",
-  "directModelIdPrefixDescription": "Optional. Adds a visible namespace such as studio.model-name without changing the model ID sent to the provider.",
-  "directModelTags": "Model tags",
-  "directModelTagsDescription": "Optional. Separate tags with commas or new lines.",
-  "syncDirectHistory": "Open WebUI history",
-  "syncDirectHistorySubtitle": "New direct chats sync when signed in. Existing chats keep their current location.",
-  "directHistoryLocalOnlySubtitle": "New direct chats stay on this device. Existing chats keep their current location.",
-  "backendChooserDirectTitle": "Connect directly",
-  "backendChooserDirectSubtitle": "Use an OpenAI-compatible API or Ollama without Open WebUI.",
-  "testDirectConnection": "Test connection",
-  "directConnectionTestUnavailable": "Connection testing is not available yet.",
-  "finishDirectSetup": "Start chatting",
-  "directProfilesEmptyTitle": "No direct connections yet",
-  "directProfilesEmptySubtitle": "Add an OpenAI-compatible or Ollama server to get started.",
-  "directConnectionsSectionTitle": "Connections",
-  "directSavedDataUnreadable": "The saved connection data could not be read.",
-  "directSecureStorageUnavailable": "Check secure storage access and try again.",
   "onDevice": "On device",
-  "directConnectionError": "Direct connection error",
-  "directAttachmentUnsupported": "This direct model does not support this attachment.",
-  "backendChooserOpenWebUITitle": "Open WebUI",
-  "hermesMemoryKeyDescription": "The memory key scopes the agent's long-term memory to you (X-Hermes-Session-Key). A stable key is generated automatically the first time you chat if you leave this blank.",
+  "openWebUi": "Open WebUI",
   "moreModels": "More models",
   "reasoningEffort": "Effort",
   "reasoningEffortLow": "Low",
@@ -3274,121 +2775,15 @@
   "reasoningEffortNone": "无",
   "customReasoningEffort": "Custom effort",
   "customReasoningEffortHint": "Enter a provider-supported effort",
-  "proxyServerVerificationFailed": "Could not verify the Open WebUI server. The proxy session may have expired or be invalid. Please try again.",
-  "proxyManualSignInRequired": "Authentication failed. Please try signing in manually.",
   "sidebarSyncingChats": "Syncing chats",
   "sidebarSyncingNotes": "Syncing notes",
   "sidebarFinishingSync": "Finishing sync",
   "loadMermaidPreview": "Load Mermaid preview",
   "loadChartPreview": "Load chart preview",
   "loadPdfPreview": "Load PDF preview: {title}",
-  "ollamaCloudDefaultName": "Ollama Cloud",
-  "ollamaCloudBaseUrlHint": "https://ollama.com",
-  "ollamaCloudBaseUrlDescription": "Use https://ollama.com with an API key for Ollama Cloud.",
-  "ollamaModelLoaded": "Loaded",
-  "ollamaModelActions": "Model memory",
-  "ollamaModelActionsDescription": "Manage this model in Ollama's RAM or VRAM.",
-  "ollamaLoadModel": "Load model",
-  "ollamaLoadModelDescription": "Warm it now to make the first response faster.",
-  "ollamaUnloadModel": "Unload model",
-  "ollamaUnloadModelDescription": "Free its RAM or VRAM. It loads automatically on the next message.",
-  "ollamaUnloadModelConfirmTitle": "Unload {name}?",
-  "ollamaUnloadModelConfirmMessage": "This frees the model's RAM or VRAM. Ollama will load it again automatically when you send a message.",
-  "ollamaKeepAlive": "Keep alive",
-  "ollamaKeepAliveDescription": "Applied to this model after each chat request.",
-  "ollamaKeepAliveServerDefault": "Server default",
-  "ollamaKeepAliveFiveMinutes": "5 minutes",
-  "ollamaKeepAliveThirtyMinutes": "30 minutes",
-  "ollamaKeepAliveOneHour": "1 hour",
-  "ollamaKeepAliveAlways": "Always loaded",
-  "ollamaKeepAliveImmediate": "Unload after every response",
-  "ollamaKeepAliveCustom": "Custom",
-  "ollamaKeepAliveCustomHint": "Examples: 10m, 24h, 3600, -1, or 0",
-  "ollamaKeepAliveInvalid": "Use seconds or a duration such as 10m or 24h.",
-  "ollamaModelLoadedMessage": "{name} is loaded.",
-  "ollamaModelUnloadedMessage": "{name} was unloaded.",
-  "ollamaModelActionFailed": "Could not update this model's memory state.",
-  "ollamaThinking": "Thinking",
-  "ollamaCloudModelActionsDescription": "Configure how this Ollama Cloud model responds.",
-  "ollamaThinkingDescription": "Choose how much reasoning the model should use. Available levels depend on the model.",
   "ollamaThinkingAutomatic": "Automatic",
-  "ollamaThinkingDisabled": "Off",
-  "ollamaThinkingLow": "Low",
-  "ollamaThinkingMedium": "Medium",
-  "ollamaThinkingHigh": "High",
-  "ollamaThinkingMaximum": "Maximum",
   "releaseNotesSupportPromptHeading": "喜欢 Conduit 吗？",
   "releaseNotesSupportPromptMessage": "一条简短的评价能帮助更多人发现 Conduit。一点小小的打赏能支持我继续开发。无论哪一种，对我都意义重大。",
-  "directConnectProvider": "连接提供商",
-  "directConnectProviderTitle": "连接提供商",
-  "directConnectionEnabledSubtitle": "在模型选择器中显示此连接的模型。",
-  "directConnectionDetailsTitle": "连接详情",
-  "directBaseUrlDescription": "请包含提供商要求的 API 前缀，通常为 /v1。",
-  "directConfiguredReplacePlaceholder": "已配置，输入新值以替换",
-  "directApiKeyPlaceholder": "输入 API 密钥",
-  "hermesOnboardingFailed": "无法完成 Hermes 设置。请检查安全存储后重试。",
-  "hermesConnectionDetailsTitle": "连接详情",
-  "hermesMemoryKeyShortDescription": "将智能体的长期记忆限定于你。留空时 Conduit 会创建密钥。",
-  "hermesConnectAction": "连接 Hermes",
-  "hermesToolCount": "{count} 个工具",
-  "@hermesToolCount": {
-    "placeholders": {
-      "count": {
-        "type": "int"
-      }
-    }
-  },
-  "hermesNoToolsets": "服务器未报告工具集。",
-  "hermesToolsetsNewSessions": "更改将应用于新的 Hermes 会话。现有聊天将保留当前工具。",
-  "hermesServerStatusTitle": "服务器状态",
-  "hermesNoServerStatus": "服务器未报告状态。",
-  "hermesLegacySessionToken": "旧版会话令牌",
-  "hermesLegacySessionTokenHint": "粘贴 Hermes 会话令牌",
-  "hermesGatewayStopped": "Hermes 仪表板已在线，但 Desktop Gateway 已停止。请在 Hermes 服务器上启动网关，然后重新测试。",
-  "hermesProfile": "Hermes 配置文件",
-  "hermesProfileLabel": "配置文件",
-  "hermesRefreshProfiles": "刷新配置文件",
-  "hermesDesktopAuthentication": "桌面身份验证",
-  "hermesDashboardAuthHelp": "在登录窗口中打开 Hermes 仪表板，然后返回此处测试连接。",
-  "hermesAuthLegacy": "旧版",
-  "hermesAuthNative": "原生",
-  "hermesAuthDashboard": "仪表板",
-  "hermesNativeSignIn": "使用 Hermes 登录",
-  "hermesDashboardSignIn": "打开仪表板登录",
-  "hermesGatewayAccessHeaders": "网关访问标头",
-  "hermesGatewayAccessHeadersHelp": "用于受保护的 Hermes 仪表板的可选标头。",
-  "hermesDesktopGateway": "Desktop Gateway",
-  "hermesReloadSkills": "重新加载技能",
-  "hermesNoInstalledSkills": "没有已安装的技能",
-  "hermesMcpServers": "MCP 服务器",
-  "hermesSignOut": "退出 Hermes",
-  "hermesActionFailed": "Hermes 操作失败。",
-  "hermesToolsetUpdateFailed": "Hermes 工具集更新失败。",
-  "hermesJobStateLabel": "状态",
-  "hermesJobDeliveryLabel": "投递",
-  "hermesJobLastLabel": "上次",
-  "hermesJobNextLabel": "下次",
-  "hermesJobRunHistory": "运行历史",
-  "hermesApprovalAllowOnce": "允许一次",
-  "hermesApprovalAllowSession": "本次会话允许",
-  "hermesApprovalAlwaysAllow": "始终允许",
-  "hermesClarificationTitle": "Hermes 需要澄清",
-  "hermesSudoTitle": "Hermes 需要 sudo 权限",
-  "hermesSecretTitle": "Hermes 需要一个密钥",
-  "hermesMcpSetupTitle": "Hermes 需要设置 MCP",
-  "hermesResponseSent": "已发送回复",
-  "hermesNotNow": "暂不",
-  "hermesSetUp": "设置",
-  "hermesSensitiveResponse": "敏感回复",
-  "hermesResponse": "回复",
-  "hermesSendResponse": "发送回复",
-  "hermesFastTier": "快速层级",
-  "hermesFastTierOn": "开启",
-  "hermesFastTierOff": "关闭",
-  "hermesTurnSteer": "引导",
-  "hermesTurnSendNext": "发送下一条",
-  "hermesTurnControlsUnsupported": "请升级 Hermes 以启用安全的轮次控制。",
-  "sidebarHermesTab": "Hermes",
   "markdownShowMoreLines": "再显示 {count} 行",
   "@markdownShowMoreLines": {
     "placeholders": {
@@ -3410,222 +2805,10 @@
   "notificationRequiresSound": "请开启声音以更改此设置。",
   "enabled": "开启",
   "disabled": "关闭",
-  "hermesJobNew": "新建定时任务",
-  "hermesJobAdminDisabled": "此服务器已停用任务管理。计划为只读。",
-  "hermesJobEmptyMessage": "创建定时任务以自动运行提示词。",
-  "hermesJobLoadFailed": "无法加载定时任务。请检查 Hermes 连接后重试。",
-  "hermesJobCreateFailed": "无法创建定时任务。",
-  "hermesJobCreated": "定时任务已创建。",
-  "hermesJobPaused": "已暂停",
-  "hermesJobRunNow": "立即运行",
-  "hermesJobEdit": "编辑定时任务",
-  "hermesJobDelete": "删除定时任务",
-  "hermesJobResumeFailed": "无法恢复定时任务。",
-  "hermesJobPauseFailed": "无法暂停定时任务。",
-  "hermesJobResumed": "定时任务已恢复。",
-  "hermesJobPausedSuccess": "定时任务已暂停。",
-  "hermesJobRunFailed": "无法运行定时任务。",
-  "hermesJobStarted": "定时任务已启动。",
-  "hermesJobUpdateFailed": "无法更新定时任务。",
-  "hermesJobUpdated": "定时任务已更新。",
-  "hermesJobDeleteTitle": "删除任务",
-  "hermesJobDeleteMessage": "要删除此定时任务吗？此操作无法撤销。",
-  "hermesJobDeleteFailed": "无法删除定时任务。",
-  "hermesJobDeleted": "定时任务已删除。",
-  "hermesJobEditorEditTitle": "编辑任务",
-  "hermesJobNameHint": "每日摘要",
-  "hermesJobPromptLabel": "提示词",
-  "hermesJobPromptHint": "每次运行时，智能体应执行什么操作？",
-  "hermesJobScheduleLabel": "计划",
-  "hermesJobScheduleHint": "0 9 * * * 或 every 2h",
-  "hermesJobTooLong": "请勿超过 {count} 个字符",
-  "hermesJobScheduleInvalid": "请输入时长、间隔、日期、时间或有效的 cron 计划。",
-  "hermesJobScheduleHelp": "可使用 cron（0 9 * * *）、间隔（every 2h）、延迟（30m）或 ISO 日期和时间。",
-  "hermesJobsSheetSubtitle": "暂停计划或查看接下来要运行的内容。",
-  "hermesJobsSheetReview": "查看运行时间并暂停计划。",
-  "hermesJobsManageDescription": "创建、编辑、运行或删除计划。",
-  "hermesJobsEmptyManageHint": "使用“管理”创建定时提示词。",
-  "hermesLastStatus": "最近状态：{status}",
-  "hermesSessionUntitled": "未命名对话",
-  "hermesSessionFork": "分叉",
-  "hermesSessionRenameTitle": "重命名对话",
-  "hermesSessionNameHint": "对话名称",
-  "hermesSessionDeleteTitle": "删除对话",
-  "hermesSessionDeleteMessage": "要删除此 Hermes 对话吗？此操作无法撤销。",
-  "hermesSessionForkFailed": "无法分叉对话。",
-  "hermesSessionRenameFailed": "无法重命名对话。",
-  "hermesSessionDeleteFailed": "无法删除对话。",
-  "hermesSessionLoadFailed": "无法加载此对话。请检查连接后重试。",
-  "hermesMemoryKeyFieldLabel": "记忆键",
-  "directMcpServersTitle": "MCP servers",
-  "directMcpEmptyTitle": "No MCP servers yet",
-  "directMcpReachabilityHelp": "Add a Streamable HTTP endpoint that this phone can reach.",
-  "directMcpEditorTitle": "Edit MCP server",
-  "directMcpAddTitle": "Add MCP server",
-  "directMcpName": "Server name",
-  "directMcpEndpoint": "Streamable HTTP endpoint",
-  "directMcpBearerToken": "Bearer token (optional)",
-  "directMcpCustomHeaders": "Custom headers (optional)",
-  "directMcpCustomHeadersHint": "One per line: Name: Value",
-  "directMcpTestConnection": "Test connection",
-  "directMcpTesting": "Testing connection…",
-  "directMcpTestSucceeded": "Connected — {count} tools found.",
-  "directMcpTestFailed": "Could not list tools from this MCP server.",
-  "directMcpSaveFailed": "Could not save this MCP server.",
-  "directMcpLoadFailed": "Could not load MCP servers from secure storage.",
-  "directMcpMissing": "This MCP server no longer exists.",
-  "directMcpCredentialTransferTitle": "Use credentials with new server?",
-  "directMcpCredentialTransferMessage": "This sends the bearer token and custom headers to the new server. Continue only if you trust it. Cancel saves the server without credentials.",
-  "directMcpCredentialTransferConfirm": "Use credentials",
-  "directMcpDeleteTitle": "Delete MCP server?",
-  "directMcpDeleteMessage": "This removes {name} and its credentials from this device.",
-  "directMcpDeleteFailed": "Could not delete this MCP server.",
-  "directMcpAuthMode": "Authentication",
   "directMcpAuthNone": "None",
   "directMcpAuthBearer": "Bearer token",
-  "directMcpAuthOAuth": "OAuth",
-  "directMcpOAuthConnect": "Connect in browser",
-  "directMcpOAuthReconnect": "Reconnect in browser",
-  "directMcpOAuthDisconnect": "Disconnect OAuth",
-  "directMcpOAuthPending": "Waiting for authorization in the browser…",
-  "directMcpOAuthConnected": "OAuth connected.",
-  "directMcpOAuthConnectionDetails": "Connected to {issuerHost} · {scopes}",
-  "directMcpOAuthNoScopes": "No scopes reported",
-  "directMcpOAuthConnectFailed": "Could not connect this MCP server with OAuth.",
-  "directMcpOAuthDisconnectFailed": "Could not disconnect OAuth from this MCP server.",
-  "directMcpApprovalTitle": "Tool approval",
-  "directMcpApprovalAllowOnce": "Allow once",
-  "directMcpApprovalAllowSession": "Allow for session",
-  "directMcpApprovalAllowAlways": "Always allow",
-  "directMcpApprovalAlwaysTitle": "Always allow this tool?",
-  "directMcpApprovalAlwaysMessage": "{serverName} will be allowed to run {toolName} without asking again. The approval is revoked automatically if the tool schema changes.",
-  "@directMcpApprovalAlwaysMessage": {
-    "placeholders": {
-      "serverName": {
-        "type": "String"
-      },
-      "toolName": {
-        "type": "String"
-      }
-    }
-  },
-  "directMcpApprovalSaveFailed": "Could not remember this approval. You can retry or choose another option.",
-  "directMcpApprovalDeny": "Deny",
-  "directMcpApprovalAllowed": "Allowed once",
-  "directMcpApprovalAllowedSession": "Allowed for session",
-  "directMcpApprovalAllowedAlways": "Always allowed",
-  "directMcpApprovalDenied": "Denied",
-  "directMcpApprovalExpired": "Approval expired",
-  "directMcpRememberedApprovalsTitle": "Always allowed tools",
-  "directMcpRememberedApprovalsSubtitle": "These exact tools can run without asking while their server and input schema remain unchanged.",
-  "directMcpRememberedApprovalRevoke": "Revoke",
-  "directMcpRememberedApprovalsRevokeAll": "Revoke all",
-  "directMcpRememberedApprovalRevokeFailed": "Could not revoke the remembered approval.",
-  "directMcpContentAction": "MCP content",
-  "directMcpContentTitle": "MCP content",
-  "directMcpContentServer": "MCP server",
-  "directMcpContentSearch": "Search prompts and resources",
-  "directMcpContentPrompts": "Prompts",
-  "directMcpContentResources": "Resources",
-  "directMcpContentEmpty": "This server has no prompts or resources.",
-  "directMcpContentNoMatches": "No matching prompts or resources.",
-  "directMcpContentLoadFailed": "Could not load content from this MCP server.",
-  "directMcpContentRefresh": "Refresh MCP content",
-  "directMcpContentPreviewTitle": "Preview",
-  "directMcpContentInsert": "Insert",
-  "directMcpContentPromptHeading": "MCP prompt from {serverName}: {promptName}",
-  "@directMcpContentPromptHeading": {
-    "placeholders": {
-      "serverName": {
-        "type": "String"
-      },
-      "promptName": {
-        "type": "String"
-      }
-    }
-  },
-  "directMcpContentResourceHeading": "MCP resource from {serverName}: {resourceUri}",
-  "@directMcpContentResourceHeading": {
-    "placeholders": {
-      "serverName": {
-        "type": "String"
-      },
-      "resourceUri": {
-        "type": "String"
-      }
-    }
-  },
-  "directMcpContentRoleUser": "User",
-  "directMcpContentRoleAssistant": "Assistant",
-  "directMcpContentRequestFailed": "Could not load this MCP content. Try again.",
-  "directMcpContentUnsupported": "This item is binary or unsupported. Choose a text prompt or text resource.",
-  "directMcpContentChanged": "This item changed on the server. Refresh and choose it again.",
-  "directMcpContentTooLarge": "This content is too large to insert.",
-  "directMcpContentComposerTooLarge": "The draft and this content exceed the 256 KiB message limit. Shorten the draft or content and try again.",
-  "directMcpContentLoading": "Loading MCP content…",
-  "directMcpInsecureCredentialsTitle": "Send credentials without encryption?",
-  "directMcpInsecureCredentialsMessage": "This server uses unencrypted HTTP. Your bearer token, OAuth token, and custom headers could be read or changed on the network.",
-  "directMcpInsecureCredentialsConfirm": "Send without encryption",
-  "hermesSessionTooLarge": "此对话过大，无法在此设备上加载。",
-  "hermesSessionNotFound": "此对话在 Hermes 服务器上已不可用。",
-  "hermesSessionLoadFailedDetail": "无法加载此对话：{detail}",
-  "@hermesSessionLoadFailedDetail": {
-    "placeholders": {
-      "detail": {
-        "type": "String"
-      }
-    }
-  },
-  "directBearerDescription": "通过 Authorization: Bearer 请求头发送凭据。大多数 OpenAI 兼容服务器（llama.cpp、vLLM、LM Studio、Ollama）都采用此方式。",
-  "directApiKeyHeaderAzureOnlyDescription": "通过 api-key 请求头发送凭据。仅用于 Azure OpenAI；其他 OpenAI 兼容服务器需要 Bearer 令牌。",
-  "appleOnDeviceUnavailable": "此设备不支持 Apple On-Device。",
-  "applePccContextSize": "{tokens} 令牌上下文",
-  "@applePccContextSize": {
-    "description": "Apple PCC context size label.",
-    "placeholders": {
-      "tokens": {
-        "type": "String"
-      }
-    }
-  },
-  "applePccCurrentLanguageUnsupported": "当前设备语言可能不受支持。",
-  "applePccOnDeviceFallback": "设备端回退",
-  "applePccOnDeviceFallbackSubtitle": "当无法连接 PCC 时，使用较小的 Apple 设备端模型。推理请求不会回退。",
-  "applePccQuotaApproaching": "接近每日用量上限",
-  "applePccQuotaReached": "已达每日用量上限",
-  "applePccQuotaResetsAt": "重置时间：{time}",
-  "@applePccQuotaResetsAt": {
-    "description": "Apple PCC quota reset time.",
-    "placeholders": {
-      "time": {
-        "type": "String"
-      }
-    }
-  },
-  "applePccShowQuotaOptions": "显示用量选项",
-  "applePccStatusAvailable": "可用",
-  "applePccUnavailable": "此设备不支持 Apple Private Cloud Compute。",
-  "backendChooserAppleOnDeviceSubtitle": "在此设备上运行 Apple 的私有模型，离线也可使用。",
-  "backendChooserAppleOnDeviceTitle": "Apple On-Device",
-  "backendChooserApplePccSubtitle": "无需 API 密钥即可使用 Apple 的私有云模型。",
-  "backendChooserApplePccTitle": "Apple Private Cloud Compute",
-  "backendChooserAppleSectionTitle": "Apple Intelligence",
-  "backendChooserModelApisSectionTitle": "模型 API",
-  "backendChooserSelfHostedSectionTitle": "自托管服务",
   "citationShowTitles": "显示引用页面标题",
   "citationShowTitlesDescription": "在引用标记中使用页面标题而非网站域名",
-  "directContextCompactionDescription": "这些模型不会报告上下文窗口。Conduit 会在请求过大之前，使用所选上限压缩较早的消息。",
-  "directContextCompactionPickerDescription": "选择 Conduit 用于自动压缩的上下文窗口。",
-  "directContextCompactionTitle": "上下文压缩",
-  "directContextLimit": "上下文上限：{tokens}",
-  "@directContextLimit": {
-    "description": "Provider-neutral model context limit label.",
-    "placeholders": {
-      "tokens": {
-        "type": "String"
-      }
-    }
-  },
   "notificationSystemSettingsDescription": "更改 Conduit 的权限、声音和横幅选项。",
   "notificationSystemSettingsOpenFailed": "无法打开系统通知设置。",
   "notificationTargetsTitle": "Webhook 目标",
@@ -3666,7 +2849,6 @@
     }
   },
   "notificationSystemSettingsTitle": "系统通知设置",
-  "proxyAuthSignInAgain": "重新通过代理登录",
   "readOnly": "只读",
   "readOnlySharedChat": "此对话是分享给你的。只有所有者才能发送消息。",
   "reasoningEffortDeep": "深度",
@@ -3700,35 +2882,6 @@
   "chatTaskInProgress": "进行中",
   "chatTaskCompleted": "已完成",
   "chatTaskCancelled": "已取消",
-  "webSearchSettingsFooterAuto": "供没有自带网页搜索的 Direct 模型使用。搜索从此设备发起：查询会发送到 DuckDuckGo，若无响应则发送到 Brave、Bing、Mojeek 或维基百科。模型读取的网页也从此设备获取。",
-  "webSearchSettingsFooterEngine": "供没有自带网页搜索的 Direct 模型使用。搜索从此设备发起，查询只会发送到 {engine}。模型读取的网页也从此设备获取。",
-  "@webSearchSettingsFooterEngine": {
-    "placeholders": {
-      "engine": {
-        "type": "String",
-        "example": "DuckDuckGo"
-      }
-    }
-  },
-  "webSearchEngineLabel": "搜索引擎",
-  "webSearchEngineAuto": "自动",
-  "webSearchSafeSearchLabel": "安全搜索",
-  "webSearchSafeSearchStrict": "严格",
-  "webSearchSafeSearchModerate": "适中",
-  "webSearchSafeSearchOff": "关闭",
-  "webSearchRegionLabel": "地区",
-  "webSearchRegionAuto": "与设备一致",
-  "webSearchRegionWorldwide": "全球",
-  "directModelToolsUnsupported": "此模型无法使用工具，因此无法搜索网页。请关闭网页搜索和所有工具后重试。",
-  "directContextCompactionModelCount": "{count, plural, other{{count} 个模型}}",
-  "@directContextCompactionModelCount": {
-    "placeholders": {
-      "count": {
-        "type": "int",
-        "example": "42"
-      }
-    }
-  },
   "imageViewerPosition": "{current} / {total}",
   "@imageViewerPosition": {
     "placeholders": {
@@ -4494,38 +3647,9 @@
   "chatDataControlsUnsharedAll": "已移除所有分享链接。",
   "chatDataControlsDeletedAll": "已删除所有聊天。",
   "notificationTargetMakeDefaultNeedsSave": "保存更改后才能设为默认。",
-  "hermesConnectionsSectionTitle": "连接",
-  "hermesAddConnection": "添加连接",
-  "hermesNewConnectionTitle": "新建连接",
-  "hermesConnectionNameHint": "显示在模型选择器和侧边栏中",
-  "hermesNoConnectionsTitle": "没有 Hermes 连接",
-  "hermesNoConnectionsSubtitle": "添加 Hermes 服务器以与你的智能体聊天。",
-  "hermesActiveConnection": "使用中",
-  "hermesUseConnection": "使用此连接",
-  "hermesInactiveConnectionNotice": "切换到此连接以查看其状态并管理服务器。",
-  "hermesSignInActivatesConnection": "登录后，此连接将成为当前使用的连接。",
-  "hermesDeleteConnectionTitle": "删除连接？",
-  "hermesDeleteConnectionMessage": "这将从此设备中移除 {name} 及其凭据。",
-  "hermesDeleteConnectionFailed": "无法删除此连接。",
-  "hermesSwitchConnectionFailed": "无法切换到此连接。",
-  "hermesSwitchConnectionTitle": "切换连接",
-  "hermesSwitchConnectionPromptTitle": "切换到 {name}？",
-  "hermesSwitchConnectionPromptMessage": "此聊天的 Hermes 会话属于 {name}。切换即可继续该会话，或保留当前连接以开始新会话。",
-  "hermesSwitchConnectionConfirm": "切换",
-  "hermesKeepCurrentConnection": "保留当前连接",
   "accountsTitle": "账户",
-  "accountChooserTitle": "选择账户",
-  "accountsAddAccount": "添加账户",
-  "accountsManage": "管理账户",
   "accountsSignedOut": "已退出登录",
   "accountsActive": "当前使用",
-  "accountsAddAccountTitle": "添加账户",
-  "accountsAddAccountMessage": "登录已保存服务器上的其他账户，或连接到新服务器。",
-  "accountsNewServer": "新服务器",
-  "accountsContinueWith": "使用 {server} 继续",
-  "accountsKindDirect": "直接",
-  "accountsAddOnThisServer": "在此服务器上添加账户",
-  "accountsSwitch": "切换",
   "accountsSignOutOf": "退出登录 {name}",
   "accountsSignOutConfirmTitle": "要退出登录 {name} 吗？",
   "accountsSignOutConfirmMessage": "这会从此设备上移除该账户及其保存的聊天。你的其他账户将保持登录状态。",
@@ -4534,25 +3658,5 @@
   "accountsSwitchStopsReply": "切换账户会停止该回复。",
   "accountsSignOutStopsReply": "退出登录会停止该回复。",
   "accountsSwitchAnyway": "仍然切换",
-  "accountsAddressChangeStopsReply": "更改正在使用的地址会停止该回复。",
-  "accountsAddressChangeAnyway": "仍然更改",
-  "accountsSignOutAnyway": "仍然退出登录",
-  "accountsServerAddresses": "地址",
-  "accountsServerAddressesHelp": "Conduit 会从上到下依次尝试，通过第一个有响应的地址连接。拖动可调整顺序。",
-  "accountsAddAddress": "添加地址",
-  "accountsEditAddress": "编辑地址",
-  "accountsSaveAddress": "保存地址",
-  "accountsAddressInUse": "使用中",
-  "accountsAddressName": "名称（可选）",
-  "accountsAddressNameHint": "家庭网络、Tailscale…",
-  "accountsAddressDifferentServer": "此地址指向另一台服务器，或该服务器上的另一个账户。",
-  "accountsAddressNeedsSignIn": "请先登录此服务器上的账户，以便检查该地址。",
-  "accountsRemoveAddress": "移除地址",
-  "accountsRemoveAddressMessage": "Conduit 将不再尝试此地址。你的账户将保持登录状态。",
-  "accountsAddressConfirmTitle": "要检查此地址吗？",
-  "accountsAddressConfirmMessage": "为确认 {host} 就是这台服务器，Conduit 会向它发送此设备上已保存账户的会话。仅在你信任此地址时继续。",
-  "accountsAddressConfirmAction": "检查地址",
-  "setupWizardTitle": "Set up the app",
-  "setupWizardSubtitle": "Choose the account to enter with. You can change it later in Settings.",
-  "proxyAuthInAppWebView": "在应用内打开"
+  "accountsSignOutAnyway": "仍然退出登录"
 }

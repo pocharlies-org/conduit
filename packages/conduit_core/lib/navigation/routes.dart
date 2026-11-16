@@ -7,30 +7,13 @@ class Routes {
   static const String splash = '/splash';
   static const String chat = '/chat';
   static const String folder = '/folder/:id';
-  static const String login = '/login';
-  static const String backendChooser = '/backend-chooser';
-
-  /// Cold-start account chooser with more than one account (OWU-104).
-  static const String accountChooser = '/account-chooser';
-
-  /// First-run setup wizard (OWU-105).
-  static const String setupWizard = '/setup';
-  static const String serverConnection = '/server-connection';
-
-  /// Adding another Open WebUI account while signed in to one.
-  static const String addServer = '/add-server';
   static const String connectionIssue = '/connection-issue';
   static const String authentication = '/authentication';
-  static const String ssoAuth = '/sso-auth';
-  static const String proxyAuth = '/proxy-auth';
   static const String profile = '/profile';
   static const String personalization = '/profile/personalization';
   static const String audioSettings = '/profile/audio';
-  static const String voiceProviderSettings = '/profile/audio/voice-provider';
   static const String accountSettings = '/profile/account';
   static const String accounts = '/profile/accounts';
-  static const String serverAddresses = '/profile/accounts/addresses';
-  static const String serverAddressEditor = '/profile/accounts/address';
   static const String notificationSettings = '/profile/notifications';
   static const String appearanceSettings = '/profile/appearance';
   static const String chatSettings = '/profile/chat';
@@ -44,19 +27,6 @@ class Routes {
   static const String scheduledTaskDetail = '/profile/scheduled-tasks/:id';
   static const String scheduledTaskEdit = '/profile/scheduled-tasks/:id/edit';
   static const String calendar = '/profile/calendar';
-  static const String directConnections = '/profile/direct-connections';
-  static const String directConnectionEditor =
-      '/profile/direct-connections/:id';
-  static const String directMcpServerEditor =
-      '/profile/direct-connections/mcp/:id';
-  static const String hermesSettings = '/profile/hermes';
-
-  /// Editor for one saved Hermes connection; [hermesNewConnectionId] adds one.
-  static const String hermesConnectionEditor =
-      '/profile/hermes/connections/:id';
-  static const String hermesNewConnectionId = 'new';
-  static const String hermesJobs = '/profile/hermes/jobs';
-  static const String hermesMcp = '/profile/hermes/mcp';
   static const String about = '/profile/about';
   static const String notes = '/notes';
   static const String noteEditor = '/notes/:id';
@@ -64,12 +34,6 @@ class Routes {
   static const String workspace = '/workspace';
 
   static String folderPath(String id) => '/folder/$id';
-  static String directConnectionEditorPath(String id) =>
-      '/profile/direct-connections/${Uri.encodeComponent(id)}';
-  static String directMcpServerEditorPath(String id) =>
-      '/profile/direct-connections/mcp/${Uri.encodeComponent(id)}';
-  static String hermesConnectionEditorPath(String id) =>
-      '/profile/hermes/connections/${Uri.encodeComponent(id)}';
 }
 
 /// Friendly names for GoRouter routes to support context.pushNamed.
@@ -77,24 +41,13 @@ class RouteNames {
   static const String splash = 'splash';
   static const String chat = 'chat';
   static const String folder = 'folder';
-  static const String login = 'login';
-  static const String backendChooser = 'backend-chooser';
-  static const String accountChooser = 'account-chooser';
-  static const String setupWizard = 'setup';
-  static const String serverConnection = 'server-connection';
-  static const String addServer = 'add-server';
   static const String connectionIssue = 'connection-issue';
   static const String authentication = 'authentication';
-  static const String ssoAuth = 'sso-auth';
-  static const String proxyAuth = 'proxy-auth';
   static const String profile = 'profile';
   static const String personalization = 'personalization';
   static const String audioSettings = 'audio-settings';
-  static const String voiceProviderSettings = 'voice-provider-settings';
   static const String accountSettings = 'account-settings';
   static const String accounts = 'accounts';
-  static const String serverAddresses = 'server-addresses';
-  static const String serverAddressEditor = 'server-address-editor';
   static const String notificationSettings = 'notification-settings';
   static const String appearanceSettings = 'appearance-settings';
   static const String chatSettings = 'chat-settings';
@@ -107,19 +60,11 @@ class RouteNames {
   static const String scheduledTaskEdit = 'scheduled-task-edit';
   static const String calendar = 'calendar';
   static const String personalConnectionEditor = 'personal-connection-editor';
-  static const String directConnections = 'direct-connections';
-  static const String directConnectionEditor = 'direct-connection-editor';
-  static const String directMcpServerEditor = 'direct-mcp-server-editor';
-  static const String hermesSettings = 'hermes-settings';
-  static const String hermesConnectionEditor = 'hermes-connection-editor';
-  static const String hermesJobs = 'hermes-jobs';
-  static const String hermesMcp = 'hermes-mcp';
   static const String about = 'about';
   static const String notes = 'notes';
   static const String noteEditor = 'note-editor';
   static const String channel = 'channel';
   static const String workspace = 'workspace';
-  static const String terminal = 'terminal';
 }
 
 enum WorkspaceSection { models, knowledge, prompts, tools, skills }

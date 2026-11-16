@@ -22,8 +22,6 @@ import 'package:conduit_core/features/chat/models/chat_context_attachment.dart';
 import 'package:conduit_core/features/chat/providers/attached_files_provider.dart';
 import 'package:conduit_core/features/chat/providers/chat_providers.dart';
 import 'package:conduit_core/features/chat/providers/context_attachments_provider.dart';
-import 'package:conduit_core/features/direct_connections/direct_connections.dart';
-import 'package:conduit_core/features/hermes/models/hermes_model.dart';
 import 'package:conduit_core/features/tools/providers/tools_providers.dart';
 import 'package:conduit_core/database/database_provider.dart';
 import 'package:conduit_core/models/conversation.dart';
@@ -257,11 +255,7 @@ bool _queueableRoute(dynamic read) {
           openWebUiChatMutationOwnerScope(active.id)) {
     return false;
   }
-  final model = read(selectedModelProvider);
-  if (model == null ||
-      isHermesModel(model) ||
-      hasReservedDirectIdentity(model) ||
-      read(directModelRegistryProvider).resolve(model) != null) {
+  if (read(selectedModelProvider) == null) {
     return false;
   }
   return read(appDatabaseProvider) != null &&

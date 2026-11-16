@@ -28,8 +28,8 @@ jobs:
           persist-credentials: false
           fetch-depth: 0
       # Building needs only the path dependencies under third_party/;
-      # openwebui-src/ and hermes-src/ are reference sources, a few hundred
-      # MB that no step reads. They fetch while Flutter installs.
+      # openwebui-src/ is a reference source, a few hundred MB that no step
+      # reads. The path dependencies fetch while Flutter installs.
       - parallel:
           - uses: subosito/flutter-action@1a449444c387b1966244ae4d4f8c696479add0b2 # v2
             with:
@@ -166,10 +166,6 @@ jobs:
         working-directory: packages/conduit_core
         run: dart test
         background: true
-      - name: Test conduit_ddgs
-        working-directory: packages/conduit_ddgs
-        run: dart test
-        background: true
       - name: Test conduit_markdown
         working-directory: packages/conduit_markdown
         run: dart test
@@ -183,10 +179,6 @@ jobs:
       - name: Analyze conduit_core
         if: ${{ !cancelled() && steps.codegen.outcome == 'success' }}
         working-directory: packages/conduit_core
-        run: dart analyze --fatal-infos
-      - name: Analyze conduit_ddgs
-        if: ${{ !cancelled() && steps.codegen.outcome == 'success' }}
-        working-directory: packages/conduit_ddgs
         run: dart analyze --fatal-infos
       - name: Analyze conduit_markdown
         if: ${{ !cancelled() && steps.codegen.outcome == 'success' }}

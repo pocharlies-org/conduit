@@ -263,9 +263,9 @@ class WebViewCookieHelper {
 
   /// inappwebview's Android `deleteCookie` writes `Domain=` whenever the
   /// cookie reports one and never `Secure`, so Chromium refuses to expire a
-  /// `__Host-`/`__Secure-` cookie (the Hermes dashboard session) and a
-  /// host-only one stays. Expire it under every identity core's rule lists;
-  /// the caller re-reads the store to confirm.
+  /// `__Host-`/`__Secure-` session cookie and a host-only one stays. Expire
+  /// it under every identity core's rule lists; the caller re-reads the
+  /// store to confirm.
   static Future<bool> _expireAndroidCookie(
     CookieManager manager,
     WebUri url,

@@ -5,7 +5,6 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import 'package:conduit_core/persistence/preferences_store.dart';
 
-import 'package:conduit_core/providers/backend_mode_providers.dart';
 
 import 'package:conduit_core/utils/debug_logger.dart';
 
@@ -56,8 +55,7 @@ class _ReleaseNotesCoordinatorState
   @override
   Widget build(BuildContext context) {
     final authState = ref.watch(authNavigationStateProvider);
-    final preferredBackend = ref.watch(preferredBackendProvider);
-    if (canPresentReleaseNotes(authState, preferredBackend)) {
+    if (canPresentReleaseNotes(authState)) {
       _scheduleAttempt();
     }
     return widget.child;
@@ -81,10 +79,7 @@ class _ReleaseNotesCoordinatorState
       if (!mounted || !PreferencesStore.isReady) {
         return;
       }
-      if (!canPresentReleaseNotes(
-        ref.read(authNavigationStateProvider),
-        ref.read(preferredBackendProvider),
-      )) {
+      if (!canPresentReleaseNotes(ref.read(authNavigationStateProvider))) {
         return;
       }
 

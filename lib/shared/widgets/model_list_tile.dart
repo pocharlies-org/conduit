@@ -22,18 +22,6 @@ bool modelSupportsReasoning(Model model) {
       native.any((value) => value.toString().toLowerCase() == 'thinking');
 }
 
-/// Human-readable source label for locally configured direct models.
-///
-/// The direct registry owns these metadata keys. Remote Open WebUI model
-/// metadata is not treated as direct unless it carries the reserved backend
-/// marker.
-String? directModelSourceLabel(Model model) {
-  final metadata = model.metadata;
-  if (metadata?['backend'] != 'direct') return null;
-  final profileName = metadata?['profileName']?.toString().trim();
-  return profileName == null || profileName.isEmpty ? 'Direct' : profileName;
-}
-
 /// Small chip that displays a model capability (e.g. multimodal, reasoning).
 class ModelCapabilityChip extends StatelessWidget {
   final IconData icon;
@@ -110,42 +98,6 @@ class ModelTagChip extends StatelessWidget {
   }
 }
 
-/// Runtime status chip for an Ollama model currently resident in memory.
-class ModelLoadedChip extends StatelessWidget {
-  const ModelLoadedChip({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    final theme = context.conduitTheme;
-    return Container(
-      margin: const EdgeInsets.only(right: Spacing.xs),
-      padding: const EdgeInsets.symmetric(horizontal: Spacing.xs, vertical: 2),
-      decoration: BoxDecoration(
-        color: theme.successBackground,
-        borderRadius: BorderRadius.circular(AppBorderRadius.chip),
-        border: Border.all(
-          color: theme.success.withValues(alpha: 0.45),
-          width: BorderWidth.thin,
-        ),
-      ),
-      child: Row(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          Icon(Icons.memory_rounded, size: 12, color: theme.success),
-          const SizedBox(width: 4),
-          Text(
-            AppLocalizations.of(context)!.ollamaModelLoaded,
-            style: AppTypography.labelSmallStyle.copyWith(
-              color: theme.success,
-              fontWeight: FontWeight.w600,
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-}
-
 /// Compact list tile for model selection, styled like the sidebar
 /// conversation tiles — no card borders, rounded active highlight.
 class ModelListTile extends StatelessWidget {
@@ -162,12 +114,6 @@ class ModelListTile extends StatelessWidget {
   /// Whether this model is pinned in model selectors.
   final bool isPinned;
 
-  /// Whether the model is currently resident in its provider's memory.
-  final bool isLoaded;
-
-  /// Optional row-level action that does not select the model.
-  final Widget? trailing;
-
   const ModelListTile({
     super.key,
     required this.model,
@@ -176,8 +122,6 @@ class ModelListTile extends StatelessWidget {
     this.iconUrl,
     this.isAutoSelect = false,
     this.isPinned = false,
-    this.isLoaded = false,
-    this.trailing,
   });
 
   @override
@@ -207,23 +151,16 @@ class ModelListTile extends StatelessWidget {
 
     final hasCapabilities =
         !isAutoSelect && (model.isMultimodal || modelSupportsReasoning(model));
-    final directSource = isAutoSelect ? null : directModelSourceLabel(model);
     final modelTagsByLowercase = <String, String>{};
     if (!isAutoSelect) {
       for (final tag in model.modelTags) {
         modelTagsByLowercase.putIfAbsent(tag.toLowerCase(), () => tag);
       }
     }
-    if (directSource != null) {
-      modelTagsByLowercase.putIfAbsent(
-        directSource.toLowerCase(),
-        () => directSource,
-      );
-    }
     final modelTags = modelTagsByLowercase.values.toList()
       ..sort((a, b) => a.toLowerCase().compareTo(b.toLowerCase()));
     final hasTags = modelTags.isNotEmpty;
-    final hasMetadataRow = hasCapabilities || hasTags || isLoaded;
+    final hasMetadataRow = hasCapabilities || hasTags;
 
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: Spacing.xxs),
@@ -283,7 +220,6 @@ class ModelListTile extends StatelessWidget {
                               physics: const ClampingScrollPhysics(),
                               child: Row(
                                 children: [
-                                  if (isLoaded) const ModelLoadedChip(),
                                   for (final tag in modelTags)
                                     ModelTagChip(label: tag),
                                   if (model.isMultimodal)
@@ -310,10 +246,6 @@ class ModelListTile extends StatelessWidget {
                   ],
                 ),
               ),
-              if (trailing != null) ...[
-                const SizedBox(width: Spacing.xxs),
-                trailing!,
-              ],
               if (isPinned && !isAutoSelect) ...[
                 const SizedBox(width: Spacing.xs),
                 Icon(

@@ -3,7 +3,6 @@ import 'dart:convert';
 
 import 'package:conduit_core/persistence/persistence_keys.dart';
 import 'package:conduit_core/persistence/preferences_store.dart';
-import 'package:conduit_core/providers/backend_mode_providers.dart';
 import 'package:conduit/shared/services/navigation_service.dart';
 import 'package:conduit_core/features/auth/providers/unified_auth_providers.dart';
 import 'package:conduit/features/release_notes/data/release_notes_repository.dart';
@@ -138,31 +137,6 @@ void main() {
       '4.0.1',
     );
   });
-
-  for (final backend in [PreferredBackend.direct, PreferredBackend.hermes]) {
-    testWidgets('${backend.name} update shows without Open WebUI auth', (
-      tester,
-    ) async {
-      SharedPreferences.setMockInitialValues({
-        PreferenceKeys.lastSeenReleaseVersion: '3.3.1',
-        PreferenceKeys.preferredBackend: backend.name,
-        if (backend == PreferredBackend.direct)
-          PreferenceKeys.directConnectionsConfigured: true,
-        if (backend == PreferredBackend.hermes)
-          PreferenceKeys.hermesEnabled: true,
-      });
-      PreferencesStore.debugOverride(await FlutterKeyValueStore.load());
-
-      await tester.pumpWidget(
-        _app(authState: AuthNavigationState.needsLogin, showBanner: true),
-      );
-      await tester.pump();
-      await tester.pump(const Duration(milliseconds: 100));
-
-      expect(find.text("What's new in 3.3.2"), findsOneWidget);
-      expect(find.text("What's new"), findsNothing);
-    });
-  }
 
   testWidgets('does not show before the user is authenticated', (tester) async {
     SharedPreferences.setMockInitialValues({

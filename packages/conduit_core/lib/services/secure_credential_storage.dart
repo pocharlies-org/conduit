@@ -2,7 +2,6 @@ import 'dart:convert';
 
 import 'package:conduit_core/conduit_core.dart';
 
-import 'dart:math';
 
 import 'package:conduit_core/utils/debug_logger.dart';
 
@@ -27,21 +26,6 @@ class SecureCredentialStorage {
   static const String _serverConfigsKey = 'server_configs_v2';
   static const String _openWebUiRegistryKey = 'openwebui_registry_v1';
   static const String _authTokenKey = 'auth_token_v2';
-  static const String _hermesApiKeyKey = 'hermes_api_key_v1';
-  static const String _hermesSessionKeyKey = 'hermes_session_key_v1';
-  static const String _hermesDesktopCredentialsKey =
-      'hermes_desktop_credentials_v1';
-  static const String _directConnectionProfilesKey =
-      'direct_connection_profiles_v1';
-  static const String _directMcpServersKey = 'direct_mcp_servers_v1';
-  static const String _openWebUiDirectIdentityKey =
-      'openwebui_direct_identity_key_v1';
-  // Released once drained: a retained completed tail would keep its creating
-  // zone alive, and strands later callers if that zone stops running (as a
-  // finished fake-async widget test does).
-  static Future<void>? _openWebUiDirectIdentityKeyQueue;
-  static bool _openWebUiDirectIdentityWritesBlocked = false;
-
   /// Save user credentials securely.
   ///
   /// [authType] identifies the authentication method:
@@ -340,13 +324,58 @@ class SecureCredentialStorage {
     try {
       final all = await _secureStorage.readAll();
       for (final key in all.keys) {
-        if (key.startsWith(_serverTokenPrefix)) {
+        if (key.startsWith(_serverTokenPrefix) ||
+            key.startsWith(_refreshTokenPrefix)) {
           await _secureStorage.delete(key: key);
         }
       }
     } catch (e) {
       DebugLogger.error(
         'delete-server-tokens-failed',
+        scope: 'credentials/token',
+        error: e,
+      );
+      rethrow;
+    }
+  }
+
+  // ---------------------------------------------------------------------
+  // Keycloak refresh tokens
+  // ---------------------------------------------------------------------
+  //
+  // The Open WebUI bear
+  // token expires, and the way back without a password is the Keycloak one.
+  // Filed by the Open WebUI user id the session belongs to, not by account
+  // slot: a refresh token is one identity's, and reading another account's
+  // would mint a JWT for the wrong person.
+  static const String _refreshTokenPrefix = 'owui_refresh_v1:';
+
+  static String _refreshTokenKey(String userId) =>
+      '$_refreshTokenPrefix$userId';
+
+  Future<void> saveRefreshToken(String userId, String token) async {
+    try {
+      await _secureStorage.write(key: _refreshTokenKey(userId), value: token);
+    } catch (e) {
+      DebugLogger.error(
+        'save-refresh-token-failed',
+        scope: 'credentials/token',
+        error: e,
+      );
+      rethrow;
+    }
+  }
+
+  /// Strict: a platform read failure must not read as "no refresh token".
+  Future<String?> getRefreshToken(String userId) =>
+      _secureStorage.read(key: _refreshTokenKey(userId));
+
+  Future<void> deleteRefreshToken(String userId) async {
+    try {
+      await _secureStorage.delete(key: _refreshTokenKey(userId));
+    } catch (e) {
+      DebugLogger.error(
+        'delete-refresh-token-failed',
         scope: 'credentials/token',
         error: e,
       );
@@ -409,369 +438,6 @@ class SecureCredentialStorage {
         await _secureStorage.delete(key: key);
       }
     }
-  }
-
-  /// Hermes secrets are scoped to one saved connection:
-  /// `hermes_api_key_v1:<connectionId>` and so on. The unscoped keys belong to
-  /// the single connection stored before saved connections existed and are
-  /// only read to migrate them.
-  static String _hermesSecretKey(HermesSecretKind kind, String connectionId) {
-    if (!_hermesConnectionIdPattern.hasMatch(connectionId)) {
-      throw ArgumentError.value(connectionId, 'connectionId', 'Invalid id');
-    }
-    return '${_legacyHermesSecretKey(kind)}:$connectionId';
-  }
-
-  static final RegExp _hermesConnectionIdPattern = RegExp(
-    r'^[A-Za-z0-9_-]{1,64}$',
-  );
-
-  static String _legacyHermesSecretKey(HermesSecretKind kind) =>
-      switch (kind) {
-        HermesSecretKind.apiKey => _hermesApiKeyKey,
-        HermesSecretKind.sessionKey => _hermesSessionKeyKey,
-        HermesSecretKind.desktopCredentials => _hermesDesktopCredentialsKey,
-      };
-
-  static String _hermesSecretScope(HermesSecretKind kind) => switch (kind) {
-    HermesSecretKind.apiKey => 'hermes/api-key',
-    HermesSecretKind.sessionKey => 'hermes/session-key',
-    HermesSecretKind.desktopCredentials => 'hermes/desktop-credentials',
-  };
-
-  /// Reads one connection's secret, or null when none is stored. A thrown
-  /// keychain failure is not reported as a missing secret.
-  Future<String?> readHermesSecret(
-    HermesSecretKind kind,
-    String connectionId,
-  ) => _readHermesSecret(
-    _hermesSecretKey(kind, connectionId),
-    scope: _hermesSecretScope(kind),
-  );
-
-  /// Writes one connection's secret. Callers own validation of Desktop
-  /// credential JSON; this class deliberately never logs a payload.
-  Future<void> writeHermesSecret(
-    HermesSecretKind kind,
-    String connectionId,
-    String value,
-  ) async {
-    try {
-      await _secureStorage.write(
-        key: _hermesSecretKey(kind, connectionId),
-        value: value,
-      );
-    } catch (e) {
-      DebugLogger.error(
-        'save-failed',
-        scope: _hermesSecretScope(kind),
-        error: e,
-      );
-      rethrow;
-    }
-  }
-
-  Future<void> deleteHermesSecret(
-    HermesSecretKind kind,
-    String connectionId,
-  ) async {
-    try {
-      await _secureStorage.delete(key: _hermesSecretKey(kind, connectionId));
-    } catch (e) {
-      DebugLogger.error(
-        'delete-failed',
-        scope: _hermesSecretScope(kind),
-        error: e,
-      );
-      rethrow;
-    }
-  }
-
-  /// Removes every secret saved for one Hermes connection. Attempts each key
-  /// and rethrows the first failure afterwards.
-  Future<void> deleteHermesConnectionSecrets(String connectionId) async {
-    Object? firstError;
-    StackTrace? firstStackTrace;
-    for (final kind in HermesSecretKind.values) {
-      try {
-        await deleteHermesSecret(kind, connectionId);
-      } catch (error, stackTrace) {
-        firstError ??= error;
-        firstStackTrace ??= stackTrace;
-      }
-    }
-    if (firstError != null) {
-      Error.throwWithStackTrace(firstError, firstStackTrace!);
-    }
-  }
-
-  /// Reads a secret stored before saved connections existed.
-  Future<String?> readLegacyHermesSecret(HermesSecretKind kind) =>
-      _readHermesSecret(
-        _legacyHermesSecretKey(kind),
-        scope: _hermesSecretScope(kind),
-      );
-
-  Future<void> deleteLegacyHermesSecret(HermesSecretKind kind) async {
-    try {
-      await _secureStorage.delete(key: _legacyHermesSecretKey(kind));
-    } catch (e) {
-      DebugLogger.error(
-        'legacy-delete-failed',
-        scope: _hermesSecretScope(kind),
-        error: e,
-      );
-      rethrow;
-    }
-  }
-
-  /// Save a connection's Hermes Agent API key (its bearer token).
-  Future<void> saveHermesApiKey(String connectionId, String apiKey) =>
-      writeHermesSecret(HermesSecretKind.apiKey, connectionId, apiKey);
-
-  /// Get a connection's Hermes Agent API key, or null when none is stored.
-  Future<String?> getHermesApiKey(String connectionId) =>
-      readHermesSecret(HermesSecretKind.apiKey, connectionId);
-
-  Future<String?> _readHermesSecret(String key, {required String scope}) async {
-    try {
-      return await _secureStorage.read(key: key);
-    } catch (error) {
-      // Keychain/keystore access can fail transiently while the platform is
-      // unlocking. Retry once rather than treating a configured backend as if
-      // its secret were absent for the remainder of this app session.
-      DebugLogger.warning(
-        'read-retrying',
-        scope: scope,
-        data: {'error': error.toString()},
-      );
-    }
-
-    try {
-      return await _secureStorage.read(key: key);
-    } catch (error, stackTrace) {
-      DebugLogger.error(
-        'read-failed',
-        scope: scope,
-        error: error,
-        stackTrace: stackTrace,
-      );
-      Error.throwWithStackTrace(error, stackTrace);
-    }
-  }
-
-  /// Delete a connection's Hermes Agent API key.
-  Future<void> deleteHermesApiKey(String connectionId) =>
-      deleteHermesSecret(HermesSecretKind.apiKey, connectionId);
-
-  /// Save a connection's long-term memory session key
-  /// (`X-Hermes-Session-Key`).
-  Future<void> saveHermesSessionKey(String connectionId, String sessionKey) =>
-      writeHermesSecret(HermesSecretKind.sessionKey, connectionId, sessionKey);
-
-  /// Get a connection's long-term memory session key, or null when none is
-  /// stored.
-  Future<String?> getHermesSessionKey(String connectionId) =>
-      readHermesSecret(HermesSecretKind.sessionKey, connectionId);
-
-  /// Delete a connection's long-term memory session key.
-  Future<void> deleteHermesSessionKey(String connectionId) =>
-      deleteHermesSecret(HermesSecretKind.sessionKey, connectionId);
-
-  /// Persists a connection's versioned Desktop Gateway credential document.
-  Future<void> saveHermesDesktopCredentials(
-    String connectionId,
-    String value,
-  ) => writeHermesSecret(
-    HermesSecretKind.desktopCredentials,
-    connectionId,
-    value,
-  );
-
-  Future<String?> getHermesDesktopCredentials(String connectionId) =>
-      readHermesSecret(HermesSecretKind.desktopCredentials, connectionId);
-
-  Future<void> deleteHermesDesktopCredentials(String connectionId) =>
-      deleteHermesSecret(HermesSecretKind.desktopCredentials, connectionId);
-
-  /// Persists the complete versioned direct-connection document securely.
-  ///
-  /// Profiles include API keys, custom headers, and optional mTLS material, so
-  /// their serialized representation must never be placed in preferences.
-  Future<void> saveDirectConnectionProfiles(String profilesJson) async {
-    try {
-      await _secureStorage.write(
-        key: _directConnectionProfilesKey,
-        value: profilesJson,
-      );
-    } catch (error, stackTrace) {
-      DebugLogger.error(
-        'save-failed',
-        scope: 'direct-connections/profiles',
-        error: error,
-        stackTrace: stackTrace,
-      );
-      Error.throwWithStackTrace(error, stackTrace);
-    }
-  }
-
-  /// Reads the versioned direct-connection document from secure storage.
-  /// Storage failures are surfaced rather than being confused with no config.
-  Future<String?> getDirectConnectionProfiles() async {
-    try {
-      return await _secureStorage.read(key: _directConnectionProfilesKey);
-    } catch (error, stackTrace) {
-      DebugLogger.error(
-        'read-failed',
-        scope: 'direct-connections/profiles',
-        error: error,
-        stackTrace: stackTrace,
-      );
-      Error.throwWithStackTrace(error, stackTrace);
-    }
-  }
-
-  Future<void> deleteDirectConnectionProfiles() async {
-    try {
-      await _secureStorage.delete(key: _directConnectionProfilesKey);
-    } catch (error, stackTrace) {
-      DebugLogger.error(
-        'delete-failed',
-        scope: 'direct-connections/profiles',
-        error: error,
-        stackTrace: stackTrace,
-      );
-      Error.throwWithStackTrace(error, stackTrace);
-    }
-  }
-
-  /// Persists the complete MCP server document without logging its payload.
-  Future<void> saveDirectMcpServers(String serversJson) async {
-    try {
-      await _secureStorage.write(key: _directMcpServersKey, value: serversJson);
-    } catch (error, stackTrace) {
-      DebugLogger.error(
-        'save-failed',
-        scope: 'direct-connections/mcp/storage',
-        error: error,
-        stackTrace: stackTrace,
-      );
-      Error.throwWithStackTrace(error, stackTrace);
-    }
-  }
-
-  Future<String?> getDirectMcpServers() async {
-    try {
-      return await _secureStorage.read(key: _directMcpServersKey);
-    } catch (error, stackTrace) {
-      DebugLogger.error(
-        'read-failed',
-        scope: 'direct-connections/mcp/storage',
-        error: error,
-        stackTrace: stackTrace,
-      );
-      Error.throwWithStackTrace(error, stackTrace);
-    }
-  }
-
-  Future<void> deleteDirectMcpServers() async {
-    try {
-      await _secureStorage.delete(key: _directMcpServersKey);
-    } catch (error, stackTrace) {
-      DebugLogger.error(
-        'delete-failed',
-        scope: 'direct-connections/mcp/storage',
-        error: error,
-        stackTrace: stackTrace,
-      );
-      Error.throwWithStackTrace(error, stackTrace);
-    }
-  }
-
-  /// Returns the durable device secret used for domain-separated Direct
-  /// identity authentication, creating it when needed.
-  Future<List<int>> getOrCreateOpenWebUiDirectIdentityKey() {
-    if (_openWebUiDirectIdentityWritesBlocked) {
-      return Future<List<int>>.error(
-        StateError(
-          'Direct identity changes are unavailable while signing out.',
-        ),
-      );
-    }
-    final previous = _openWebUiDirectIdentityKeyQueue ?? Future<void>.value();
-    final result = previous.then<List<int>>(
-      (_) => _loadOrCreateOpenWebUiDirectIdentityKeyIfAllowed(),
-      onError: (Object _, StackTrace _) =>
-          _loadOrCreateOpenWebUiDirectIdentityKeyIfAllowed(),
-    );
-    late final Future<void> tail;
-    tail = result
-        .then<void>((_) {}, onError: (Object _, StackTrace _) {})
-        .whenComplete(() {
-          if (identical(_openWebUiDirectIdentityKeyQueue, tail)) {
-            _openWebUiDirectIdentityKeyQueue = null;
-          }
-        });
-    _openWebUiDirectIdentityKeyQueue = tail;
-    return result;
-  }
-
-  Future<List<int>> _loadOrCreateOpenWebUiDirectIdentityKeyIfAllowed() {
-    if (_openWebUiDirectIdentityWritesBlocked) {
-      return Future<List<int>>.error(
-        StateError(
-          'Direct identity changes are unavailable while signing out.',
-        ),
-      );
-    }
-    return _loadOrCreateOpenWebUiDirectIdentityKey();
-  }
-
-  static Future<void> blockDirectIdentityWritesForAppDataClear() async {
-    _openWebUiDirectIdentityWritesBlocked = true;
-    await _openWebUiDirectIdentityKeyQueue;
-  }
-
-  static void resumeDirectIdentityWritesAfterAppDataClear() {
-    _openWebUiDirectIdentityWritesBlocked = false;
-  }
-
-  Future<List<int>> _loadOrCreateOpenWebUiDirectIdentityKey() async {
-    List<int>? decodeKey(String? raw) {
-      if (raw == null || raw.isEmpty) return null;
-      try {
-        final decoded = base64Url.decode(raw);
-        return decoded.length >= 32 ? decoded : null;
-      } catch (_) {
-        return null;
-      }
-    }
-
-    final existing = decodeKey(
-      await _secureStorage.read(key: _openWebUiDirectIdentityKey),
-    );
-    if (existing != null) return List<int>.unmodifiable(existing);
-
-    final random = Random.secure();
-    final generated = List<int>.generate(
-      32,
-      (_) => random.nextInt(256),
-      growable: false,
-    );
-    await _secureStorage.write(
-      key: _openWebUiDirectIdentityKey,
-      value: base64UrlEncode(generated),
-    );
-    // Read back to verify that secure persistence accepted the generated key.
-    final persisted = decodeKey(
-      await _secureStorage.read(key: _openWebUiDirectIdentityKey),
-    );
-    if (persisted == null) {
-      throw StateError(
-        'Open WebUI direct identity key could not be persisted.',
-      );
-    }
-    return List<int>.unmodifiable(persisted);
   }
 
   /// Persists the saved Open WebUI servers and accounts. The document holds
@@ -868,28 +534,4 @@ class SecureCredentialStorage {
       rethrow;
     }
   }
-
-  /// Migrate from old storage format if needed.
-  ///
-  /// Preserves the [authType] if present in old credentials.
-  Future<void> migrateFromOldStorage(
-    Map<String, String>? oldCredentials,
-  ) async {
-    if (oldCredentials == null) return;
-
-    try {
-      await saveCredentials(
-        serverId: oldCredentials['serverId'] ?? '',
-        username: oldCredentials['username'] ?? '',
-        password: oldCredentials['password'] ?? '',
-        authType: oldCredentials['authType'] ?? 'credentials',
-      );
-      DebugLogger.storage('migrate-ok', scope: 'credentials');
-    } catch (e) {
-      DebugLogger.error('migrate-failed', scope: 'credentials', error: e);
-    }
-  }
 }
-
-/// The secrets one saved Hermes connection can hold.
-enum HermesSecretKind { apiKey, sessionKey, desktopCredentials }

@@ -20,8 +20,6 @@ import 'package:conduit_core/features/calendar/providers/calendar_providers.dart
     show calendarAvailableProvider;
 import 'package:conduit_core/features/chat/providers/chat_providers.dart'
     show chatDataControlsEntryVisibleProvider;
-import 'package:conduit_core/features/hermes/models/hermes_connection_profile.dart';
-import 'package:conduit_core/features/hermes/providers/hermes_providers.dart';
 import 'package:conduit_core/features/integrations/providers/personal_connections_providers.dart';
 import 'package:conduit_core/features/workspace/models/workspace_capabilities.dart';
 import 'package:conduit_core/features/workspace/providers/workspace_capabilities_provider.dart';
@@ -33,7 +31,6 @@ import 'package:conduit_core/providers/app_providers.dart';
 import 'package:conduit_core/services/optimized_storage_service.dart';
 import 'package:conduit_core/services/settings_service.dart';
 import 'package:flutter/services.dart';
-import 'package:conduit_core/providers/backend_mode_providers.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_riverpod/misc.dart' show Override;
 import 'package:flutter_test/flutter_test.dart';
@@ -93,11 +90,6 @@ class _Profiles extends AccountProfile {
   }
 }
 
-final class _DirectPrimary extends PreferredBackendController {
-  @override
-  PreferredBackend build() => PreferredBackend.direct;
-}
-
 class _SignedInUser extends Notifier<User?> {
   @override
   User? build() => _ada;
@@ -105,9 +97,7 @@ class _SignedInUser extends Notifier<User?> {
   void signIn(User? user) => state = user;
 }
 
-final _signedInUser = NotifierProvider<_SignedInUser, User?>(
-  _SignedInUser.new,
-);
+final _signedInUser = NotifierProvider<_SignedInUser, User?>(_SignedInUser.new);
 
 final _applyDetailPatchChannel = BasicMessageChannel<Object?>(
   'dev.flutter.pigeon.conduit.NativeSheetHostApi.applyDetailPatch',
@@ -148,7 +138,6 @@ Future<_Harness> _pump(
       apiServiceProvider.overrideWithValue(null),
       currentUserProvider2.overrideWith((ref) => ref.watch(_signedInUser)),
       currentUserProvider.overrideWith((ref) async => ref.watch(_signedInUser)),
-      hermesOnlyModeProvider.overrideWithValue(false),
       accountProfileProvider.overrideWith(() => profiles),
       workspaceCapabilitiesProvider.overrideWith(
         (ref) => Completer<WorkspaceCapabilities>().future,
@@ -272,9 +261,8 @@ void main() {
     final profilePage = harness.patches.lastWhere(
       (patch) => patch.detailId == NativeSheetRoutes.profile,
     );
-    final about = [
-      for (final section in profilePage.sections) ...section.items,
-    ].singleWhere((item) => item.id == 'profile-about');
+    final about = [for (final section in profilePage.sections) ...section.items]
+        .singleWhere((item) => item.id == 'profile-about');
     check(about.subtitle).equals('New');
   });
 
@@ -318,9 +306,8 @@ void main() {
     ]) {
       check(ids).not((it) => it.contains(editor));
     }
-    check(
-      harness.patches.where((p) => p.detailId == NativeSheetRoutes.profile),
-    ).isEmpty();
+    check(harness.patches.where((p) => p.detailId == NativeSheetRoutes.profile))
+        .isEmpty();
 
     harness.profiles.pending!.complete(_profile(bio: 'New'));
     await tester.pump();
@@ -345,9 +332,8 @@ void main() {
     final profilePage = harness.patches.singleWhere(
       (patch) => patch.detailId == NativeSheetRoutes.profile,
     );
-    final about = [
-      for (final section in profilePage.sections) ...section.items,
-    ].singleWhere((item) => item.id == 'profile-about');
+    final about = [for (final section in profilePage.sections) ...section.items]
+        .singleWhere((item) => item.id == 'profile-about');
     check(about.subtitle).equals('Old');
   });
 
@@ -365,9 +351,8 @@ void main() {
     final profilePage = harness.patches.singleWhere(
       (patch) => patch.detailId == NativeSheetRoutes.profile,
     );
-    final about = [
-      for (final section in profilePage.sections) ...section.items,
-    ].singleWhere((item) => item.id == 'profile-about');
+    final about = [for (final section in profilePage.sections) ...section.items]
+        .singleWhere((item) => item.id == 'profile-about');
     check(about.subtitle).equals('Old');
   });
 
@@ -379,16 +364,13 @@ void main() {
     harness.container
         .read(_signedInUser.notifier)
         .signIn(_ada.copyWith(id: 'user-2', email: 'grace@example.com'));
-    harness.profiles.pending!.complete(
-      _profile(id: 'user-2', bio: 'Grace'),
-    );
+    harness.profiles.pending!.complete(_profile(id: 'user-2', bio: 'Grace'));
     await tester.pump();
     await tester.pump();
 
     check(harness.profileUpdates).isEmpty();
-    check(
-      harness.patches.where((p) => p.detailId == NativeSheetRoutes.profile),
-    ).isEmpty();
+    check(harness.patches.where((p) => p.detailId == NativeSheetRoutes.profile))
+        .isEmpty();
   });
 
   testWidgets('with no cached profile the sheet waits for the profile to '
@@ -447,42 +429,6 @@ void main() {
     await tester.pump();
   });
 
-  // With Direct primary, no Open WebUI user and Hermes in use, the card
-  // named the Hermes connection beside Direct's avatar.
-  testWidgets('the account card\'s avatar is whom its text names', (
-    tester,
-  ) async {
-    const agent = HermesConnectionProfile(
-      id: 'hermes-home',
-      name: 'Home agent',
-      documentTrustPrincipalId: 'p-home',
-      baseUrl: 'http://10.0.0.5:8642',
-    );
-    final harness = await _pump(
-      tester,
-      cached: null,
-      accounts: Future.value(const []),
-      overrides: [
-        preferredBackendProvider.overrideWith(_DirectPrimary.new),
-        hermesConnectionsProvider.overrideWithValue(const [agent]),
-        hermesActiveConnectionIdProvider.overrideWithValue(agent.id),
-        hermesActiveConnectionNameProvider.overrideWithValue(agent.name),
-        hermesEnabledProvider.overrideWithValue(true),
-      ],
-    );
-
-    harness.container.read(_signedInUser.notifier).signIn(null);
-    await tester.pump();
-    await _tapAvatar(tester);
-    await tester.pumpAndSettle();
-
-    final config = harness.presented.single;
-    final card = config.sections.first.items.first;
-    check(card.title).equals('Home agent');
-    check(card.usesProfileAvatar).isTrue();
-    check(config.profile.displayName).equals('Home agent');
-  });
-
   testWidgets('saved accounts that never load do not hold the sheet back', (
     tester,
   ) async {
@@ -500,9 +446,8 @@ void main() {
 
     check(harness.presented).length.equals(1);
     check(
-      _rootItemIds(
-        harness.presented.single,
-      ).where((id) => id.startsWith(nativeAccountSwitchActionId)),
+      _rootItemIds(harness.presented.single)
+          .where((id) => id.startsWith(nativeAccountSwitchActionId)),
     ).isEmpty();
 
     harness.profiles.pending!.complete(_profile());

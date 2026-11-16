@@ -37,11 +37,6 @@ final notesShowRecentProvider = NotifierProvider<NotesShowRecentNotifier, bool>(
   NotesShowRecentNotifier.new,
 );
 
-/// Bots section visibility for the sidebar Hermes tab.
-final hermesShowBotsProvider = NotifierProvider<HermesShowBotsNotifier, bool>(
-  HermesShowBotsNotifier.new,
-);
-
 /// Provider for tracking which folders are expanded in the drawer.
 final expandedFoldersProvider =
     NotifierProvider<ExpandedFoldersNotifier, Map<String, bool>>(
@@ -131,18 +126,7 @@ class NotesShowRecentNotifier extends Notifier<bool> {
   }
 }
 
-/// Bots section for the Hermes sidebar tab (shared_preferences-backed).
-class HermesShowBotsNotifier extends Notifier<bool> {
-  @override
-  bool build() {
-    return PreferencesStore.getBool(PreferenceKeys.hermesShowBots) ?? true;
-  }
 
-  void toggle() {
-    state = !state;
-    PreferencesStore.put(PreferenceKeys.hermesShowBots, state);
-  }
-}
 
 /// Tracks which folder IDs are expanded in the drawer.
 class ExpandedFoldersNotifier extends Notifier<Map<String, bool>> {

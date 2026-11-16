@@ -13,9 +13,6 @@ final class OpenWebUiServerSpeech implements ServerSpeechProvider {
   final ApiService _api;
 
   @override
-  ServerSpeechSource get source => ServerSpeechSource.openWebUi;
-
-  @override
   bool get canTranscribe => true;
 
   @override

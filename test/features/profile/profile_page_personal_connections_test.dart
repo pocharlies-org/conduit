@@ -54,7 +54,6 @@ void main() {
     tester,
   ) async {
     await pumpProfile(tester, advanced: false, access: allowed);
-    await tester.scrollUntilVisible(find.text('Direct Connections'), 300);
 
     expect(entry, findsNothing);
   });
@@ -69,7 +68,6 @@ void main() {
         PersonalConnectionsBlock.serverDisabled,
       ),
     );
-    await tester.scrollUntilVisible(find.text('Direct Connections'), 300);
 
     expect(entry, findsNothing);
   });

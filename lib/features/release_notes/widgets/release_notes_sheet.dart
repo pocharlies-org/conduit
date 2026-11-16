@@ -10,8 +10,7 @@ import '../models/release_note.dart';
 
 const double _releaseFooterHeight = Spacing.xl + TouchTarget.comfortable;
 
-/// The glyph for a release-note icon name, or null for a name with none
-/// (`hermes` draws [releaseNoteIconAsset] instead).
+/// The glyph for a release-note icon name, or null for a name with none.
 IconData? releaseNoteIcon(String? name) {
   switch (name) {
     case 'local':
@@ -22,11 +21,6 @@ IconData? releaseNoteIcon(String? name) {
       return Icons.design_services_rounded;
   }
   return null;
-}
-
-/// The image asset for a release-note icon name, or null.
-String? releaseNoteIconAsset(String? name) {
-  return name == 'hermes' ? 'assets/icons/hermes_agent.png' : null;
 }
 
 /// Editorial release notes built for quick scanning.
@@ -73,7 +67,6 @@ class ReleaseNotesSheet extends StatelessWidget {
           _ReleaseHighlight(
             text: note.bullets[i],
             icon: releaseNoteIcon(note.iconNameForBullet(i)),
-            iconAsset: releaseNoteIconAsset(note.iconNameForBullet(i)),
           ),
     ];
     final intro = notes.isEmpty ? null : notes.last.intro;
@@ -223,11 +216,10 @@ class _ReleaseHeader extends StatelessWidget {
 }
 
 class _ReleaseHighlight {
-  const _ReleaseHighlight({required this.text, this.icon, this.iconAsset});
+  const _ReleaseHighlight({required this.text, this.icon});
 
   final String text;
   final IconData? icon;
-  final String? iconAsset;
 
   String get title {
     final separator = text.indexOf(':');
@@ -257,7 +249,6 @@ class _ReleaseFeatureRow extends StatelessWidget {
         children: [
           _ReleaseFeatureIcon(
             icon: highlight.icon,
-            iconAsset: highlight.iconAsset,
             ordinal: ordinal,
           ),
           const SizedBox(width: Spacing.md),
@@ -296,27 +287,16 @@ class _ReleaseFeatureRow extends StatelessWidget {
 }
 
 class _ReleaseFeatureIcon extends StatelessWidget {
-  const _ReleaseFeatureIcon({
-    required this.icon,
-    required this.iconAsset,
-    required this.ordinal,
-  });
+  const _ReleaseFeatureIcon({required this.icon, required this.ordinal});
 
   final IconData? icon;
-  final String? iconAsset;
   final int ordinal;
 
   @override
   Widget build(BuildContext context) {
     final theme = context.conduitTheme;
     final foreground = theme.buttonPrimary;
-    final graphic = iconAsset != null
-        ? ImageIcon(
-            AssetImage(iconAsset!),
-            size: IconSize.md,
-            color: foreground,
-          )
-        : icon != null
+    final graphic = icon != null
         ? Icon(icon, size: IconSize.md, color: foreground)
         : Text(
             '$ordinal',

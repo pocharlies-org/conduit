@@ -8,10 +8,6 @@
   "@retry": {
     "description": "Button label to try an action again."
   },
-  "hermesSecretsUnavailable": "Could not access saved Hermes credentials. Unlock secure storage and retry.",
-  "@hermesSecretsUnavailable": {
-    "description": "Error shown when Hermes credentials cannot be read from platform secure storage."
-  },
   "back": "Back",
   "@back": {
     "description": "Back navigation label/tooltip."
@@ -55,56 +51,8 @@
       }
     }
   },
-  "serverIncompatibleResolution": "To continue, downgrade your server to {maxVersion} or earlier, or wait for an app update that adds support.",
-  "@serverIncompatibleResolution": {
-    "description": "Tells the user how to resolve an unsupported server version",
-    "placeholders": {
-      "maxVersion": {
-        "type": "String",
-        "example": "0.10.2"
-      }
-    }
-  },
-  "serverIncompatibleConnectBlocked": "This server is newer than this app supports (up to {maxVersion}).",
-  "@serverIncompatibleConnectBlocked": {
-    "description": "Inline error on the connection form when the probed server version is too new",
-    "placeholders": {
-      "maxVersion": {
-        "type": "String",
-        "example": "0.10.2"
-      }
-    }
-  },
-  "serverIncompatibleRecheck": "Recheck server",
-  "@serverIncompatibleRecheck": {
-    "description": "Button that re-fetches the server version after a downgrade"
-  },
-  "serverIncompatibleSwitchServer": "Use a different server",
-  "@serverIncompatibleSwitchServer": {
-    "description": "Button that lets the user connect to a different server from the incompatibility gate"
-  },
-  "serverIncompatibleStillUnsupported": "This server is still newer than this app supports.",
-  "@serverIncompatibleStillUnsupported": {
-    "description": "Status shown after a recheck when the server version is still too new"
-  },
   "@pleaseCheckConnection": {
     "description": "Generic connectivity hint after an error."
-  },
-  "settingsCategoryApp": "App",
-  "@settingsCategoryApp": {
-    "description": "Settings category for app appearance, chat, voice, and notifications."
-  },
-  "settingsCategoryAi": "AI",
-  "@settingsCategoryAi": {
-    "description": "Settings category for AI personalization and agent options."
-  },
-  "settingsCategoryServer": "Server",
-  "@settingsCategoryServer": {
-    "description": "Settings category for server administration and connection options."
-  },
-  "settingsCategorySupport": "Support",
-  "@settingsCategorySupport": {
-    "description": "Settings category for project support and app information."
   },
   "settingsDataAndConnection": "Connection",
   "@settingsDataAndConnection": {
@@ -113,14 +61,6 @@
   "settingsAppearance": "Appearance",
   "@settingsAppearance": {
     "description": "Settings destination for app appearance options."
-  },
-  "settingsAppearanceSubtitle": "Theme and language",
-  "@settingsAppearanceSubtitle": {
-    "description": "Subtitle for the app appearance settings destination."
-  },
-  "settingsChatSubtitle": "Models, quick actions, and chat behavior",
-  "@settingsChatSubtitle": {
-    "description": "Subtitle for the chat settings destination."
   },
   "account": "Account",
   "@account": {
@@ -175,16 +115,6 @@
   "@releaseNotesDoneButton": {
     "description": "Button dismissing the release notes sheet."
   },
-  "releaseNotesManualSubtitle": "Bundled changelog for {currentVersion}",
-  "@releaseNotesManualSubtitle": {
-    "description": "Subtitle for manually opening the baked changelog from About.",
-    "placeholders": {
-      "currentVersion": {
-        "type": "String",
-        "example": "3.3.2"
-      }
-    }
-  },
   "signOut": "Sign out",
   "@signOut": {
     "description": "Button/title for signing out of the app."
@@ -193,17 +123,9 @@
   "@endYourSession": {
     "description": "Subtitle explaining the sign-out action."
   },
-  "signOutOptionsDescription": "Signing out clears app preferences and Direct and Hermes connections from this device. Saved conversations and data on your server aren't affected.",
+  "signOutOptionsDescription": "Signing out clears app preferences and saved accounts from this device. Saved conversations and data on your server aren't affected.",
   "@signOutOptionsDescription": {
     "description": "Explains the scope of the local data wipe shown before signing out."
-  },
-  "keepServerDetails": "Keep server details",
-  "@keepServerDetails": {
-    "description": "Checkbox label for retaining Open WebUI connection settings during sign-out."
-  },
-  "keepServerDetailsDescription": "Server address and non-sensitive connection settings; tokens and Cookie headers are deleted",
-  "@keepServerDetailsDescription": {
-    "description": "Description of the data retained by the keep-server-details option."
   },
   "defaultModel": "Default model",
   "@defaultModel": {
@@ -212,10 +134,6 @@
   "autoSelect": "Server provided",
   "@autoSelect": {
     "description": "Option to let the app pick a suitable model automatically."
-  },
-  "loadingModels": "Loading models...",
-  "@loadingModels": {
-    "description": "Progress message while fetching model list."
   },
   "failedToLoadModels": "Failed to load models",
   "@failedToLoadModels": {
@@ -365,10 +283,6 @@
       }
     }
   },
-  "noItems": "No items",
-  "@noItems": {
-    "description": "Placeholder text when a list is empty."
-  },
   "noItemsToDisplay": "No items to display",
   "@noItemsToDisplay": {
     "description": "Alternative empty-state description."
@@ -393,18 +307,6 @@
   "@document": {
     "description": "Generic document label used in UI."
   },
-  "backToServerSetup": "Back to Open WebUI setup",
-  "@backToServerSetup": {
-    "description": "Button/back label to return to server configuration flow."
-  },
-  "connectedToServer": "Connected",
-  "@connectedToServer": {
-    "description": "Status label indicating a successful server connection."
-  },
-  "signInServerDescription": "Use your Open WebUI account to sign in to the server below.",
-  "@signInServerDescription": {
-    "description": "Introductory copy above the destination server on the Open WebUI sign-in page."
-  },
   "openWebUIServer": "Open WebUI server",
   "@openWebUIServer": {
     "description": "Label above the server address on the Open WebUI sign-in page."
@@ -416,14 +318,6 @@
   "signIn": "Sign in",
   "@signIn": {
     "description": "Button/heading for sign-in flows."
-  },
-  "enterCredentials": "Enter your credentials to access your AI conversations",
-  "@enterCredentials": {
-    "description": "Instructional text on the sign-in screen."
-  },
-  "credentials": "Password",
-  "@credentials": {
-    "description": "Authentication method label for username/password sign-in."
   },
   "apiKey": "API key",
   "@apiKey": {
@@ -437,10 +331,6 @@
   "@jwt": {
     "description": "Authentication method label for JWT token sign-in."
   },
-  "usernameOrEmail": "Email or username",
-  "@usernameOrEmail": {
-    "description": "Label for username/email input field."
-  },
   "password": "Password",
   "@password": {
     "description": "Label for password input field."
@@ -453,125 +343,17 @@
   "@hidePassword": {
     "description": "Tooltip for obscuring a password or session token field."
   },
-  "signInWithToken": "Sign in with session token",
-  "@signInWithToken": {
-    "description": "Alternative sign-in method using a JWT token."
-  },
-  "connectToServer": "Connect to server",
-  "@connectToServer": {
-    "description": "Call-to-action button for server connection."
-  },
   "serverUrl": "Server address",
   "@serverUrl": {
     "description": "Label for server URL field."
-  },
-  "serverUrlHint": "https://openwebui.example.com",
-  "@serverUrlHint": {
-    "description": "Hint text showing example server URL format."
-  },
-  "enterServerUrlSemantic": "Enter the address of your Open WebUI server",
-  "@enterServerUrlSemantic": {
-    "description": "Semantic/ARIA label instructing to enter server URL or IP."
-  },
-  "headerName": "Header name",
-  "@headerName": {
-    "description": "Label for custom header key."
-  },
-  "headerValue": "Header value",
-  "@headerValue": {
-    "description": "Label for custom header value."
-  },
-  "headerValueHint": "api-key-123",
-  "@headerValueHint": {
-    "description": "Hint text with an example custom header value."
-  },
-  "addHeader": "Add header",
-  "@addHeader": {
-    "description": "Button to add a new custom header row."
-  },
-  "maximumHeadersReached": "Maximum headers reached",
-  "@maximumHeadersReached": {
-    "description": "Warning when custom header limit is reached."
-  },
-  "removeHeader": "Remove header",
-  "@removeHeader": {
-    "description": "Action to remove a custom header row."
   },
   "connecting": "Connecting...",
   "@connecting": {
     "description": "Status while attempting to connect to server."
   },
-  "connectToServerButton": "Connect",
-  "@connectToServerButton": {
-    "description": "Primary action button to initiate server connection."
-  },
-  "demoModeActive": "Demo Mode Active",
-  "@demoModeActive": {
-    "description": "Banner/text indicating the app runs in demo mode."
-  },
-  "skipServerSetupTryDemo": "Skip server setup and try the demo",
-  "@skipServerSetupTryDemo": {
-    "description": "CTA to bypass server configuration and enter demo mode."
-  },
-  "enterDemo": "Enter Demo",
-  "@enterDemo": {
-    "description": "Button to enter demo mode."
-  },
-  "demoBadge": "Demo",
-  "@demoBadge": {
-    "description": "Small badge label for demo content."
-  },
-  "reviewerModeEnabled": "Reviewer mode enabled. You can open the demo without a server.",
-  "@reviewerModeEnabled": {
-    "description": "Confirmation shown when the hidden reviewer demo mode is enabled."
-  },
-  "reviewerModeDisabled": "Reviewer mode disabled.",
-  "@reviewerModeDisabled": {
-    "description": "Confirmation shown when the hidden reviewer demo mode is disabled."
-  },
-  "serverNotOpenWebUI": "This does not appear to be an Open WebUI server.",
-  "@serverNotOpenWebUI": {
-    "description": "Validation error when the server does not resemble Open WebUI."
-  },
-  "serverUrlEmpty": "Enter your server address.",
-  "@serverUrlEmpty": {
-    "description": "Validation message for empty server URL."
-  },
-  "invalidUrlFormat": "Invalid URL format. Please check your input.",
-  "@invalidUrlFormat": {
-    "description": "Validation message when URL format is incorrect."
-  },
-  "onlyHttpHttps": "Only HTTP and HTTPS protocols are supported.",
-  "@onlyHttpHttps": {
-    "description": "Validation note restricting protocols to HTTP/HTTPS."
-  },
-  "serverAddressRequired": "Server address is required (e.g., 192.168.1.10 or example.com).",
-  "@serverAddressRequired": {
-    "description": "Validation hint providing examples for server addresses."
-  },
-  "portRange": "Port must be between 1 and 65535.",
-  "@portRange": {
-    "description": "Validation message for allowed port range."
-  },
-  "invalidIpFormat": "Invalid IP address format. Use format like 192.168.1.10.",
-  "@invalidIpFormat": {
-    "description": "Validation message for IP addresses with example."
-  },
   "couldNotConnectGeneric": "Couldn't connect. Double-check the address and try again.",
   "@couldNotConnectGeneric": {
     "description": "Generic failure when connecting to the server."
-  },
-  "weCouldntReachServer": "We couldn't reach the server. Check your connection and that the server is running.",
-  "@weCouldntReachServer": {
-    "description": "Connectivity error with hints to verify server status."
-  },
-  "connectionTimedOut": "Connection timed out. The server might be busy or blocked by a firewall.",
-  "@connectionTimedOut": {
-    "description": "Timeout error while connecting to server."
-  },
-  "useHttpOrHttpsOnly": "Use http:// or https:// only.",
-  "@useHttpOrHttpsOnly": {
-    "description": "Note instructing the user to include protocol in URL."
   },
   "loginFailed": "Login failed",
   "@loginFailed": {
@@ -584,118 +366,6 @@
   "signInAccountPendingApproval": "Your account is waiting for an administrator to approve it. Try again once it's approved.",
   "@signInAccountPendingApproval": {
     "description": "Sign-in error when the Open WebUI account still waits for an administrator to approve it."
-  },
-  "signInTwoStepVerificationRequired": "This account uses two-step verification. Sign in again, then enter the code from your authenticator app.",
-  "@signInTwoStepVerificationRequired": {
-    "description": "Sign-in error when saved credentials met Open WebUI's two-step verification, which needs a code typed in."
-  },
-  "twoStepVerifyTitle": "Verify your sign-in",
-  "@twoStepVerifyTitle": {
-    "description": "Title of the sign-in step that asks for a two-step verification code."
-  },
-  "twoStepEnrollTitle": "Set up your authenticator",
-  "@twoStepEnrollTitle": {
-    "description": "Title of the sign-in step that adds an authenticator app for two-step verification."
-  },
-  "twoStepRecoverTitle": "Recover your authenticator",
-  "@twoStepRecoverTitle": {
-    "description": "Title of the sign-in step that redeems an administrator's two-step verification recovery token."
-  },
-  "twoStepVerifyDescription": "Enter the six-digit code from your authenticator app.",
-  "@twoStepVerifyDescription": {
-    "description": "Instruction for entering a two-step verification code."
-  },
-  "twoStepRecoveryCodeDescription": "Enter one of the recovery codes you saved.",
-  "@twoStepRecoveryCodeDescription": {
-    "description": "Instruction for signing in with a saved two-step verification recovery code."
-  },
-  "twoStepEnrollDescription": "Add this account to your authenticator app, then enter the six-digit code it shows.",
-  "@twoStepEnrollDescription": {
-    "description": "Instruction for adding the account to an authenticator app during sign-in."
-  },
-  "twoStepRecoverDescription": "Your administrator reset two-step verification for this account. Enter the recovery token they gave you.",
-  "@twoStepRecoverDescription": {
-    "description": "Instruction for redeeming the recovery token an administrator issued after resetting two-step verification."
-  },
-  "twoStepCodeLabel": "Authenticator code",
-  "@twoStepCodeLabel": {
-    "description": "Label of the field for an authenticator app code."
-  },
-  "twoStepRecoveryCodeLabel": "Recovery code",
-  "@twoStepRecoveryCodeLabel": {
-    "description": "Label of the field for a two-step verification recovery code."
-  },
-  "twoStepResetTokenLabel": "Recovery token",
-  "@twoStepResetTokenLabel": {
-    "description": "Label of the field for an administrator's two-step verification recovery token."
-  },
-  "twoStepUseRecoveryCode": "Use a recovery code",
-  "@twoStepUseRecoveryCode": {
-    "description": "Switches the two-step verification field to a recovery code."
-  },
-  "twoStepUseAuthenticatorCode": "Use an authenticator code",
-  "@twoStepUseAuthenticatorCode": {
-    "description": "Switches the two-step verification field back to an authenticator app code."
-  },
-  "twoStepBackToSignIn": "Back to sign in",
-  "@twoStepBackToSignIn": {
-    "description": "Leaves the two-step verification step for the sign-in form."
-  },
-  "twoStepOpenAuthenticator": "Add to authenticator app",
-  "@twoStepOpenAuthenticator": {
-    "description": "Opens an authenticator app on this device to add the account."
-  },
-  "twoStepSetupKeyLabel": "Setup key",
-  "@twoStepSetupKeyLabel": {
-    "description": "Label above the secret key to type into an authenticator app."
-  },
-  "twoStepCopySetupKey": "Copy setup key",
-  "@twoStepCopySetupKey": {
-    "description": "Copies the authenticator setup key."
-  },
-  "twoStepQrCodeLabel": "QR code for your authenticator app",
-  "@twoStepQrCodeLabel": {
-    "description": "Accessibility label of the QR code for an authenticator app."
-  },
-  "twoStepSetupLoading": "Preparing your authenticator…",
-  "@twoStepSetupLoading": {
-    "description": "Shown while the authenticator setup key loads."
-  },
-  "twoStepSetupFailed": "The setup key couldn't be loaded.",
-  "@twoStepSetupFailed": {
-    "description": "Shown when the authenticator setup key could not be loaded."
-  },
-  "twoStepNoAuthenticatorApp": "No app could add it. Copy the setup key into your authenticator app instead.",
-  "@twoStepNoAuthenticatorApp": {
-    "description": "Shown when no app on the device could open the authenticator link."
-  },
-  "twoStepRecoveryCodesTitle": "Save your recovery codes",
-  "@twoStepRecoveryCodesTitle": {
-    "description": "Title of the screen that shows new two-step verification recovery codes once."
-  },
-  "twoStepRecoveryCodesDescription": "Each code signs you in once if you lose your authenticator. Keep them somewhere safe: they won't be shown again.",
-  "@twoStepRecoveryCodesDescription": {
-    "description": "Explains new two-step verification recovery codes before continuing."
-  },
-  "twoStepCopyRecoveryCodes": "Copy recovery codes",
-  "@twoStepCopyRecoveryCodes": {
-    "description": "Copies the new two-step verification recovery codes."
-  },
-  "twoStepInvalidCode": "That code didn't work. Check it and try again.",
-  "@twoStepInvalidCode": {
-    "description": "Shown when a two-step verification code or recovery token was not accepted."
-  },
-  "twoStepExpired": "This step has expired. Go back to sign in and start again.",
-  "@twoStepExpired": {
-    "description": "Shown when the two-step verification step expired or no longer applies."
-  },
-  "twoStepTooManyAttempts": "Too many attempts. Wait a few minutes, then sign in again.",
-  "@twoStepTooManyAttempts": {
-    "description": "Shown when the server refuses more two-step verification codes for now."
-  },
-  "twoStepFailed": "The code couldn't be checked. Try again.",
-  "@twoStepFailed": {
-    "description": "Shown when a two-step verification code could not be checked, for example offline."
   },
   "serverRedirectingHttps": "The server is redirecting requests. Check your server's HTTPS configuration.",
   "@serverRedirectingHttps": {
@@ -722,6 +392,10 @@
         "example": "Alex"
       }
     }
+  },
+  "startChattingGreeting": "Start chatting",
+  "@startChattingGreeting": {
+    "description": "Heading shown on the empty chat page when the account has no display name."
   },
   "attachmentLabel": "Attachment",
   "@attachmentLabel": {
@@ -767,37 +441,9 @@
   "@voiceStatusListening": {
     "description": "Indicates the app is actively listening during voice input."
   },
-  "voiceStatusRecording": "Recording…",
-  "@voiceStatusRecording": {
-    "description": "Indicates the app is recording audio for speech recognition."
-  },
   "voiceHoldToTalk": "Hold to talk",
   "@voiceHoldToTalk": {
     "description": "Toggle label for hold-to-talk mode in voice input."
-  },
-  "voiceAutoSend": "Auto-send",
-  "@voiceAutoSend": {
-    "description": "Toggle label for automatically sending the final transcript."
-  },
-  "voiceTranscript": "Transcript",
-  "@voiceTranscript": {
-    "description": "Label above the transcribed voice input text."
-  },
-  "voicePromptSpeakNow": "Speak now…",
-  "@voicePromptSpeakNow": {
-    "description": "Placeholder prompting the user to start speaking."
-  },
-  "voicePromptTapStart": "Tap Start to begin",
-  "@voicePromptTapStart": {
-    "description": "Placeholder instructing the user to tap Start to begin recording."
-  },
-  "voiceActionStop": "Stop",
-  "@voiceActionStop": {
-    "description": "Button label to stop voice recording."
-  },
-  "voiceActionStart": "Start",
-  "@voiceActionStart": {
-    "description": "Button label to start voice recording."
   },
   "voiceCallTitle": "Voice Call",
   "@voiceCallTitle": {
@@ -810,10 +456,6 @@
   "voiceCallResume": "Resume",
   "@voiceCallResume": {
     "description": "Button label to resume a paused voice call."
-  },
-  "voiceCallStop": "Stop",
-  "@voiceCallStop": {
-    "description": "Button label to stop the active voice call."
   },
   "voiceCallEnd": "End Call",
   "@voiceCallEnd": {
@@ -846,10 +488,6 @@
   "voiceCallDisconnected": "Disconnected",
   "@voiceCallDisconnected": {
     "description": "Status label shown when the voice call has ended or disconnected."
-  },
-  "voiceCallErrorHelp": "Please check:\n• Microphone permissions are granted\n• Speech recognition is available on your device\n• You are connected to the server",
-  "@voiceCallErrorHelp": {
-    "description": "Guidance shown when the voice call encounters an error."
   },
   "messageHintText": "Ask Conduit",
   "@messageHintText": {
@@ -891,10 +529,6 @@
   "@webPage": {
     "description": "Attach a web page label."
   },
-  "pasteImage": "Paste Image",
-  "@pasteImage": {
-    "description": "Context menu action to paste an image from the clipboard."
-  },
   "apiUnavailable": "API service not available",
   "@apiUnavailable": {
     "description": "Shown when backend API service is unavailable."
@@ -930,14 +564,6 @@
   "failedToDecodeImage": "Failed to decode image",
   "@failedToDecodeImage": {
     "description": "Error when decoding image bytes/base64."
-  },
-  "invalidImageFormat": "Invalid image format",
-  "@invalidImageFormat": {
-    "description": "Error when image type/format is not supported."
-  },
-  "emptyImageData": "Empty image data",
-  "@emptyImageData": {
-    "description": "Error when image data buffer is empty."
   },
   "confirm": "Confirm",
   "@confirm": {
@@ -1054,10 +680,6 @@
   "reviewerMode": "REVIEWER MODE",
   "@reviewerMode": {
     "description": "Developer/reviewer mode indicator."
-  },
-  "selectLanguage": "Select Language",
-  "@selectLanguage": {
-    "description": "Dialog title to pick application language."
   },
   "newFolder": "New Folder",
   "@newFolder": {
@@ -1187,10 +809,6 @@
   "@russian": {
     "description": "Language name: Russian."
   },
-  "chinese": "中文",
-  "@chinese": {
-    "description": "Language name: Chinese."
-  },
   "chineseSimplified": "Chinese (Simplified)",
   "@chineseSimplified": {
     "description": "Language name: Chinese (Simplified)."
@@ -1286,10 +904,6 @@
   "aboutApp": "About",
   "@aboutApp": {
     "description": "Settings tile title to view app information."
-  },
-  "aboutAppSubtitle": "Version and links",
-  "@aboutAppSubtitle": {
-    "description": "Subtitle/description for the About section."
   },
   "web": "Web",
   "@web": {
@@ -1429,159 +1043,21 @@
   "@noConversationsYet": {
     "description": "Empty state when the user has no chats."
   },
-  "usernameOrEmailHint": "Email or username",
-  "@usernameOrEmailHint": {
-    "description": "Hint text for username/email input."
-  },
   "passwordHint": "Password",
   "@passwordHint": {
     "description": "Hint text for password input."
-  },
-  "enterToken": "Enter your JWT token",
-  "@enterToken": {
-    "description": "Hint text for JWT token input."
-  },
-  "tokenHint": "Paste an Open WebUI session token from a signed-in browser. API keys are not supported.",
-  "@tokenHint": {
-    "description": "Help text explaining what type of token to use."
-  },
-  "apiKeyNotSupported": "API keys are not supported here. Use an Open WebUI session token.",
-  "@apiKeyNotSupported": {
-    "description": "Error message when user tries to use an API key instead of JWT token."
-  },
-  "apiKeyNoLongerSupported": "This saved API key can no longer be used to sign in. Choose another sign-in method.",
-  "@apiKeyNoLongerSupported": {
-    "description": "Error message shown when user is forced logged out due to using an API key."
-  },
-  "tokenTooShort": "Enter a valid session token.",
-  "@tokenTooShort": {
-    "description": "Error message when token is too short."
   },
   "signingIn": "Signing in...",
   "@signingIn": {
     "description": "Status message shown while signing in."
   },
-  "advancedSettings": "Advanced settings",
-  "@advancedSettings": {
-    "description": "Section that contains additional/optional configuration."
-  },
   "customHeaders": "Custom headers",
   "@customHeaders": {
     "description": "Section title for adding custom HTTP headers."
   },
-  "customHeadersDescription": "Conduit sends these headers with requests to this server and stores them securely on this device.",
-  "@customHeadersDescription": {
-    "description": "Helper text explaining use-cases for custom headers."
-  },
   "allowSelfSignedCertificates": "Allow an unverified certificate",
   "@allowSelfSignedCertificates": {
     "description": "Toggle label that allows trusting self-signed TLS certificates for the configured server."
-  },
-  "allowSelfSignedCertificatesDescription": "Accept a certificate this device cannot verify. This weakens connection security; enable only for a server and network you control.",
-  "@allowSelfSignedCertificatesDescription": {
-    "description": "Helper text clarifying the risks of enabling the self-signed certificate toggle."
-  },
-  "mutualTlsSectionTitle": "Client certificate (mTLS)",
-  "@mutualTlsSectionTitle": {
-    "description": "Section title for configuring a client certificate and private key for mutual TLS."
-  },
-  "mutualTlsSectionDescription": "If this server requires mTLS, choose its client certificate and private key.",
-  "@mutualTlsSectionDescription": {
-    "description": "Helper text explaining when to use the mTLS configuration section."
-  },
-  "mutualTlsSelectCertificate": "Certificate",
-  "@mutualTlsSelectCertificate": {
-    "description": "Button label for picking a PEM client certificate chain file. The surrounding section title and description supply the 'choose' verb, so the label names the file only."
-  },
-  "mutualTlsSelectPrivateKey": "Private key",
-  "@mutualTlsSelectPrivateKey": {
-    "description": "Button label for picking a PEM private key file. The surrounding section title and description supply the 'choose' verb, so the label names the file only."
-  },
-  "mutualTlsCertificateReady": "Certificate",
-  "@mutualTlsCertificateReady": {
-    "description": "Short label used in a badge once an mTLS certificate file has been selected."
-  },
-  "mutualTlsPrivateKeyReady": "Private key",
-  "@mutualTlsPrivateKeyReady": {
-    "description": "Short label used in a badge once an mTLS private key file has been selected."
-  },
-  "mutualTlsPrivateKeyPasswordHint": "Private key password (optional)",
-  "@mutualTlsPrivateKeyPasswordHint": {
-    "description": "Placeholder for the optional password used to decrypt an mTLS private key."
-  },
-  "mutualTlsClearCredentials": "Remove certificate and key",
-  "@mutualTlsClearCredentials": {
-    "description": "Button label that removes selected mTLS certificate material from the form."
-  },
-  "mutualTlsMissingCredentialPair": "Select both a client certificate and private key to use mTLS.",
-  "@mutualTlsMissingCredentialPair": {
-    "description": "Validation message shown when only one half of the mTLS credential pair is configured."
-  },
-  "mutualTlsCertificatePemRequired": "The selected certificate file must contain a PEM certificate chain.",
-  "@mutualTlsCertificatePemRequired": {
-    "description": "Error shown when the selected mTLS certificate file does not look like PEM certificate content."
-  },
-  "mutualTlsPrivateKeyPemRequired": "The selected private key file must contain a PEM private key.",
-  "@mutualTlsPrivateKeyPemRequired": {
-    "description": "Error shown when the selected mTLS private key file does not look like PEM private key content."
-  },
-  "mutualTlsFileReadFailed": "Could not read the selected mTLS file.",
-  "@mutualTlsFileReadFailed": {
-    "description": "Error shown when a picked certificate or key file cannot be read as text."
-  },
-  "mutualTlsHandshakeFailed": "The server rejected the mTLS credentials. Confirm that the certificate, private key, and password are correct.",
-  "@mutualTlsHandshakeFailed": {
-    "description": "Connection error shown when the TLS handshake fails while mTLS credentials are configured."
-  },
-  "mutualTlsConnectionClosed": "The server closed the connection before replying. If it requires a client certificate, confirm that the certificate, private key, and password are correct.",
-  "@mutualTlsConnectionClosed": {
-    "description": "Connection error shown when the server closes an HTTPS connection before replying while mTLS credentials are configured, which a refused client certificate also causes."
-  },
-  "headerNameTooLong": "Header name too long (max 64 characters)",
-  "@headerNameTooLong": {
-    "description": "Validation message for header name length."
-  },
-  "headerNameInvalidChars": "Invalid header name. Use only letters, numbers, and these symbols: !#$&-^_`|~",
-  "@headerNameInvalidChars": {
-    "description": "Validation message for invalid characters in header name."
-  },
-  "headerNameReserved": "Cannot override reserved header \"{key}\"",
-  "@headerNameReserved": {
-    "description": "Error when attempting to override a reserved HTTP header {key}.",
-    "placeholders": {
-      "key": {
-        "type": "String"
-      }
-    }
-  },
-  "headerValueTooLong": "Header value too long (max 1024 characters)",
-  "@headerValueTooLong": {
-    "description": "Validation message for header value length."
-  },
-  "headerValueInvalidChars": "Header value contains invalid characters. Use only printable ASCII.",
-  "@headerValueInvalidChars": {
-    "description": "Validation message for invalid characters in header value."
-  },
-  "headerValueUnsafe": "Header value appears to contain potentially unsafe content",
-  "@headerValueUnsafe": {
-    "description": "Security warning for suspicious header values."
-  },
-  "headerAlreadyExists": "Header \"{key}\" already exists. Remove it first to update.",
-  "@headerAlreadyExists": {
-    "description": "Error when a custom header with key {key} already exists.",
-    "placeholders": {
-      "key": {
-        "type": "String"
-      }
-    }
-  },
-  "maxHeadersReachedDetail": "Maximum of 10 custom headers allowed. Remove some to add more.",
-  "@maxHeadersReachedDetail": {
-    "description": "Explains the upper limit of custom headers."
-  },
-  "noModelsAvailable": "No models available",
-  "@noModelsAvailable": {
-    "description": "Shown when model list is empty or failed to load."
   },
   "followingSystem": "Following system: {theme}",
   "@followingSystem": {
@@ -1652,10 +1128,6 @@
   "@currentlyUsingLightTheme": {
     "description": "Status text indicating light theme is active."
   },
-  "aboutConduit": "About Conduit",
-  "@aboutConduit": {
-    "description": "Dialog title for app information."
-  },
   "openSourceLicenses": "Open source licenses",
   "@openSourceLicenses": {
     "description": "Action that opens licenses and notices for bundled open source software and assets."
@@ -1709,10 +1181,6 @@
   "appCustomization": "Customization",
   "@appCustomization": {
     "description": "Title of the customization settings page."
-  },
-  "appCustomizationSubtitle": "Theme, language, voice, and quick actions",
-  "@appCustomizationSubtitle": {
-    "description": "Subtitle shown under App Customization tile and page header."
   },
   "quickActionsDescription": "Quick actions in chat",
   "@quickActionsDescription": {
@@ -1895,54 +1363,6 @@
   "ttsServerUnavailableWarning": "Connect to a server with text-to-speech enabled to use this option.",
   "@ttsServerUnavailableWarning": {
     "description": "Warning shown when server text-to-speech is unavailable."
-  },
-  "voiceProviderTitle": "Voice provider",
-  "@voiceProviderTitle": {
-    "description": "Title of the setting that picks the Direct connection used for speech in Direct and Apple chats."
-  },
-  "voiceProviderDescription": "Direct and Apple chats use this connection when Speech to text or Text to speech is set to Server.",
-  "@voiceProviderDescription": {
-    "description": "Explains what the Voice provider setting does."
-  },
-  "voiceProviderConnection": "Connection",
-  "@voiceProviderConnection": {
-    "description": "Label of the row that picks the Voice provider's Direct connection."
-  },
-  "voiceProviderNone": "None",
-  "@voiceProviderNone": {
-    "description": "Shown when no Voice provider is chosen; also the picker option that clears it."
-  },
-  "voiceProviderNoConnections": "Add an OpenAI-compatible Direct connection to choose it here.",
-  "@voiceProviderNoConnections": {
-    "description": "Shown when no Direct connection can be the Voice provider."
-  },
-  "voiceProviderTranscriptionModel": "Transcription model",
-  "@voiceProviderTranscriptionModel": {
-    "description": "Label of the field for the speech-to-text model name."
-  },
-  "voiceProviderSpeechModel": "Speech model",
-  "@voiceProviderSpeechModel": {
-    "description": "Label of the field for the text-to-speech model name."
-  },
-  "voiceProviderModelsHint": "Use the model names your provider lists. A direction left empty uses this device instead.",
-  "@voiceProviderModelsHint": {
-    "description": "Hint under the Voice provider's model fields."
-  },
-  "voiceProviderRealtimeModel": "Realtime model",
-  "@voiceProviderRealtimeModel": {
-    "description": "Label of the field for the Voice provider's realtime call model."
-  },
-  "voiceProviderRealtimeInstructions": "Instructions",
-  "@voiceProviderRealtimeInstructions": {
-    "description": "Label of the optional field that replaces Conduit's instructions for the realtime voice."
-  },
-  "voiceProviderRealtimeInstructionsHint": "Leave empty to use Conduit's own.",
-  "@voiceProviderRealtimeInstructionsHint": {
-    "description": "Placeholder of the realtime instructions field."
-  },
-  "voiceProviderRealtimeFooter": "Calls in Direct and Apple chats talk with this voice, using the transcription model above to follow what you say.",
-  "@voiceProviderRealtimeFooter": {
-    "description": "Footer under the Voice provider's realtime call settings."
   },
   "voiceCallModeTitle": "Calls",
   "@voiceCallModeTitle": {
@@ -2242,14 +1662,6 @@
   "@noNotesFound": {
     "description": "Empty state title when search returns no results."
   },
-  "noteConflictCopySuffix": " (conflict copy)",
-  "@noteConflictCopySuffix": {
-    "description": "Title suffix appended to a note created when a concurrent edit could not be merged; both copies are kept so no local edit is lost."
-  },
-  "noteConflictCopyBadge": "Conflict copy",
-  "@noteConflictCopyBadge": {
-    "description": "Badge label shown on a conflict-copy note in the list and editor so the user understands two copies of the note exist."
-  },
   "createFirstNoteHint": "Capture an idea, task, or reference.",
   "@createFirstNoteHint": {
     "description": "Hint text encouraging user to create their first note."
@@ -2500,10 +1912,6 @@
       }
     }
   },
-  "sso": "SSO",
-  "@sso": {
-    "description": "Label for Single Sign-On authentication option."
-  },
   "ssoDescription": "Sign in with your organization's identity provider",
   "@ssoDescription": {
     "description": "Description text explaining SSO authentication."
@@ -2512,115 +1920,9 @@
   "@signInWithSso": {
     "description": "Button text for SSO sign-in."
   },
-  "ssoAuthenticating": "Authenticating...",
-  "@ssoAuthenticating": {
-    "description": "Loading message during SSO authentication."
-  },
-  "ssoAuthFailed": "SSO authentication failed",
-  "@ssoAuthFailed": {
-    "description": "Error message when SSO authentication fails."
-  },
-  "ssoLoadingLogin": "Loading login page...",
-  "@ssoLoadingLogin": {
-    "description": "Loading message while SSO login page loads."
-  },
-  "ldap": "LDAP",
-  "@ldap": {
-    "description": "Label for LDAP authentication option."
-  },
-  "ldapDescription": "Sign in with your LDAP directory credentials",
-  "@ldapDescription": {
-    "description": "Description text explaining LDAP authentication."
-  },
-  "signInWithLdap": "Sign in with LDAP",
-  "@signInWithLdap": {
-    "description": "Button text for LDAP sign-in."
-  },
-  "ldapUsername": "Username",
-  "@ldapUsername": {
-    "description": "Label for LDAP username field."
-  },
-  "ldapUsernameHint": "Enter your LDAP username",
-  "@ldapUsernameHint": {
-    "description": "Hint text for LDAP username field."
-  },
-  "moreSignInOptions": "More sign-in options",
-  "@moreSignInOptions": {
-    "description": "Section header for additional authentication methods."
-  },
-  "ldapNotEnabled": "LDAP authentication is not enabled on this server",
-  "@ldapNotEnabled": {
-    "description": "Error message when LDAP is not configured on the server."
-  },
-  "ssoPlatformNotSupported": "SSO authentication is not supported on this platform. Please use credentials or LDAP authentication instead.",
-  "@ssoPlatformNotSupported": {
-    "description": "Error message when SSO is attempted on an unsupported platform (desktop/web)."
-  },
-  "proxyAuthentication": "Proxy Authentication",
-  "@proxyAuthentication": {
-    "description": "Title for the proxy authentication page."
-  },
-  "proxyAuthPlatformNotSupported": "Proxy authentication requires a mobile device. Please authenticate through a browser first.",
-  "@proxyAuthPlatformNotSupported": {
-    "description": "Error message when proxy auth is attempted on an unsupported platform."
-  },
-  "proxyAuthLoading": "Loading authentication page...",
-  "@proxyAuthLoading": {
-    "description": "Loading message while the proxy login page loads."
-  },
-  "proxyAuthSignInAgain": "Sign in through proxy again",
-  "@proxyAuthSignInAgain": {
-    "description": "Button on the connection issue page that reopens the reverse-proxy sign-in without signing out of Conduit."
-  },
-  "proxyAuthFailed": "Proxy authentication failed",
-  "@proxyAuthFailed": {
-    "description": "Error message when proxy authentication fails."
-  },
-  "proxyServerVerificationFailed": "Could not verify the Open WebUI server. The proxy session may have expired or be invalid. Please try again.",
-  "@proxyServerVerificationFailed": {
-    "description": "Error shown when a server cannot be verified after proxy authentication."
-  },
-  "proxyManualSignInRequired": "Authentication failed. Please try signing in manually.",
-  "@proxyManualSignInRequired": {
-    "description": "Error shown when trusted-proxy authentication cannot produce a valid Open WebUI session."
-  },
-  "proxyAuthHelpText": "Complete sign-in through your organization's proxy, then sign in to Open WebUI. You'll be redirected automatically.",
-  "@proxyAuthHelpText": {
-    "description": "Help text explaining how to complete proxy authentication."
-  },
-  "proxyAuthHelpTextSimple": "Sign in through your proxy. Once authenticated, tap Continue to proceed to sign in.",
-  "@proxyAuthHelpTextSimple": {
-    "description": "Simplified help text for proxy-only authentication flow."
-  },
-  "continueButton": "Continue",
-  "@continueButton": {
-    "description": "Generic continue button text."
-  },
   "proxyAuthRequired": "This server requires proxy authentication",
   "@proxyAuthRequired": {
     "description": "Message when server is behind an authentication proxy."
-  },
-  "proxyAuthRequiredDescription": "Your server appears to be behind an authentication proxy (like oauth2-proxy). You'll need to sign in through the proxy first.",
-  "@proxyAuthRequiredDescription": {
-    "description": "Detailed explanation of proxy authentication requirement."
-  },
-  "authenticateThroughProxy": "Authenticate",
-  "@authenticateThroughProxy": {
-    "description": "Button text to start proxy authentication."
-  },
-  "continueWithProvider": "Continue with {provider}",
-  "@continueWithProvider": {
-    "description": "Button text for OAuth provider sign-in.",
-    "placeholders": {
-      "provider": {
-        "type": "String",
-        "example": "Google"
-      }
-    }
-  },
-  "or": "or",
-  "@or": {
-    "description": "Separator text between authentication options."
   },
   "audioAttachment": "Audio Attachment",
   "@audioAttachment": {
@@ -3077,10 +2379,6 @@
   "@sidebarChatsTab": {
     "description": "Label for the Chats tab in the sidebar"
   },
-  "sidebarTerminalTab": "Terminal",
-  "@sidebarTerminalTab": {
-    "description": "Label for the Terminal tab in the sidebar"
-  },
   "sidebarNotesTab": "Notes",
   "@sidebarNotesTab": {
     "description": "Label for the Notes tab in the sidebar"
@@ -3118,158 +2416,6 @@
   "@sidebarChannelsTab": {
     "description": "Label for the Channels tab in the sidebar"
   },
-  "terminalSelectServer": "Select a terminal server",
-  "@terminalSelectServer": {
-    "description": "Prompt shown when the user needs to choose a terminal server."
-  },
-  "terminalNoServersConfigured": "No terminal servers available.",
-  "@terminalNoServersConfigured": {
-    "description": "Empty state shown when there are no terminal servers configured."
-  },
-  "terminalConnectAction": "Connect",
-  "@terminalConnectAction": {
-    "description": "Button label used to connect to a terminal session."
-  },
-  "terminalDisconnectAction": "Disconnect",
-  "@terminalDisconnectAction": {
-    "description": "Button label used to disconnect from a terminal session."
-  },
-  "terminalConnectedStatus": "Connected",
-  "@terminalConnectedStatus": {
-    "description": "Status label shown when the terminal is connected."
-  },
-  "terminalDisconnectedStatus": "Disconnected",
-  "@terminalDisconnectedStatus": {
-    "description": "Status label shown when the terminal is disconnected."
-  },
-  "terminalConnectingStatus": "Connecting...",
-  "@terminalConnectingStatus": {
-    "description": "Status label shown while the terminal connection is being established."
-  },
-  "terminalUploadAction": "Upload",
-  "@terminalUploadAction": {
-    "description": "Action label for uploading a file into the terminal workspace."
-  },
-  "terminalOpenInBrowserAction": "Open in browser",
-  "@terminalOpenInBrowserAction": {
-    "description": "Action label for opening a forwarded port in the browser."
-  },
-  "terminalHomeAction": "Home directory",
-  "@terminalHomeAction": {
-    "description": "Tooltip for navigating back to the terminal home directory."
-  },
-  "terminalCurrentPathLabel": "Current path",
-  "@terminalCurrentPathLabel": {
-    "description": "Label displayed above the current terminal working directory."
-  },
-  "terminalPortsSectionLabel": "Listening ports",
-  "@terminalPortsSectionLabel": {
-    "description": "Section title for ports discovered in the terminal environment."
-  },
-  "terminalNoFiles": "No files in this directory.",
-  "@terminalNoFiles": {
-    "description": "Empty state shown when the current terminal directory has no files."
-  },
-  "terminalNoPorts": "No listening ports detected.",
-  "@terminalNoPorts": {
-    "description": "Empty state shown when the terminal server reports no listening ports."
-  },
-  "terminalPreviewUnavailable": "Preview unavailable. Use Download instead.",
-  "@terminalPreviewUnavailable": {
-    "description": "Message shown when a terminal file cannot be previewed inline."
-  },
-  "terminalFeatureDisabled": "This terminal server does not expose an interactive shell.",
-  "@terminalFeatureDisabled": {
-    "description": "Message shown when the selected terminal server disables interactive terminal sessions."
-  },
-  "terminalFolderNameHint": "Folder name",
-  "@terminalFolderNameHint": {
-    "description": "Hint text used when creating a new folder in the terminal workspace."
-  },
-  "terminalFailedToLoadFiles": "Unable to load terminal files.",
-  "@terminalFailedToLoadFiles": {
-    "description": "Error message shown when the terminal file list cannot be loaded."
-  },
-  "terminalFailedToLoadPorts": "Unable to load listening ports.",
-  "@terminalFailedToLoadPorts": {
-    "description": "Error message shown when terminal port discovery fails."
-  },
-  "terminalFailedToConnect": "Unable to connect to the terminal.",
-  "@terminalFailedToConnect": {
-    "description": "Error message shown when the terminal websocket session cannot be opened."
-  },
-  "terminalDownloadFailed": "Unable to download the selected file.",
-  "@terminalDownloadFailed": {
-    "description": "Error message shown when downloading a terminal file fails."
-  },
-  "terminalUploadFailed": "Unable to upload the selected file.",
-  "@terminalUploadFailed": {
-    "description": "Error message shown when uploading a terminal file fails."
-  },
-  "terminalRenameFailed": "Unable to rename the selected item.",
-  "@terminalRenameFailed": {
-    "description": "Error message shown when renaming a file or folder in the terminal workspace fails."
-  },
-  "terminalDeleteFailed": "Unable to delete the selected item.",
-  "@terminalDeleteFailed": {
-    "description": "Error message shown when deleting a file or folder in the terminal workspace fails."
-  },
-  "terminalFolderCreateFailed": "Unable to create the folder.",
-  "@terminalFolderCreateFailed": {
-    "description": "Error message shown when creating a new terminal folder fails."
-  },
-  "terminalExpandAction": "Full screen",
-  "@terminalExpandAction": {
-    "description": "Tooltip for the button that opens the terminal in a full-screen page."
-  },
-  "terminalReopenFullscreen": "Opened in full screen - tap to reopen",
-  "@terminalReopenFullscreen": {
-    "description": "Placeholder shown in the inline terminal pane while the full-screen terminal page is open."
-  },
-  "terminalKeyTab": "Tab",
-  "@terminalKeyTab": {
-    "description": "Label for the toolbar button that sends a Tab key to trigger shell completion."
-  },
-  "terminalKeyUp": "Up",
-  "@terminalKeyUp": {
-    "description": "Label for the toolbar button that sends the Up arrow key to navigate command history."
-  },
-  "terminalKeyDown": "Down",
-  "@terminalKeyDown": {
-    "description": "Label for the toolbar button that sends the Down arrow key to navigate command history."
-  },
-  "terminalKeyCtrlC": "Ctrl-C",
-  "@terminalKeyCtrlC": {
-    "description": "Label for the toolbar button that sends Ctrl-C to interrupt the running process."
-  },
-  "terminalCopyAction": "Copy",
-  "@terminalCopyAction": {
-    "description": "Tooltip for the button that copies the current terminal selection to the clipboard."
-  },
-  "terminalPasteAction": "Paste",
-  "@terminalPasteAction": {
-    "description": "Tooltip for the button that pastes clipboard contents into the terminal."
-  },
-  "terminalNothingToCopy": "Nothing selected to copy",
-  "@terminalNothingToCopy": {
-    "description": "Message shown when the user taps Copy but no terminal text is selected."
-  },
-  "terminalCopied": "Copied to clipboard",
-  "@terminalCopied": {
-    "description": "Confirmation shown after copying the terminal selection to the clipboard."
-  },
-  "terminalPasteWhileDisconnected": "Connect to paste",
-  "@terminalPasteWhileDisconnected": {
-    "description": "Message shown when the user tries to paste while the terminal is disconnected."
-  },
-  "terminalPortsToggle": "Listening ports",
-  "@terminalPortsToggle": {
-    "description": "Label for the collapsible header that shows or hides the listening ports list."
-  },
-  "closeSidebar": "Close sidebar",
-  "@closeSidebar": {
-    "description": "Tooltip for the sidebar close button"
-  },
   "channelCreateTitle": "Create channel",
   "@channelCreateTitle": {
     "description": "Title for the create channel dialog"
@@ -3285,10 +2431,6 @@
   "channelPrivate": "Private Channel",
   "@channelPrivate": {
     "description": "Label for the private channel toggle"
-  },
-  "channelJoin": "Join Channel",
-  "@channelJoin": {
-    "description": "Button label to join a channel"
   },
   "channelLeave": "Leave Channel",
   "@channelLeave": {
@@ -3355,10 +2497,6 @@
   "@channelSendError": {
     "description": "Error message when a channel message fails to send"
   },
-  "channelDeleted": "This channel has been deleted",
-  "@channelDeleted": {
-    "description": "Snackbar message when a viewed channel is deleted"
-  },
   "searchChannels": "Search channels...",
   "@searchChannels": {
     "description": "Hint text for the channel search field"
@@ -3410,20 +2548,6 @@
       }
     }
   },
-  "channelMessageHint": "Message...",
-  "@channelMessageHint": {
-    "description": "Hint text for the channel message input field"
-  },
-  "audioUploadError": "Failed to upload audio: {error}",
-  "@audioUploadError": {
-    "description": "Error message when audio upload fails",
-    "placeholders": {
-      "error": {
-        "type": "String",
-        "description": "The error message"
-      }
-    }
-  },
   "shareChat": "Share chat",
   "@shareChat": {
     "description": "Dialog title and action label for sharing a chat."
@@ -3472,10 +2596,6 @@
   "@deleteSharedLinkFailed": {
     "description": "Snackbar shown when deleting a shared chat link fails."
   },
-  "systemPrompts": "System prompts",
-  "@systemPrompts": {
-    "description": "Section title for server-backed system prompt settings."
-  },
   "globalSystemPrompt": "Global system prompt",
   "@globalSystemPrompt": {
     "description": "Title for the Open WebUI user-level system prompt setting."
@@ -3484,17 +2604,9 @@
   "@modelSystemPrompts": {
     "description": "Title for the Open WebUI model-level system prompts list."
   },
-  "folderSystemPrompts": "Folder system prompts",
-  "@folderSystemPrompts": {
-    "description": "Title for the Open WebUI folder-level system prompts list."
-  },
   "openWebuiModelSettings": "Open WebUI model settings",
   "@openWebuiModelSettings": {
     "description": "Subtitle for model prompt settings before models load."
-  },
-  "openWebuiFolderSettings": "Open WebUI folder settings",
-  "@openWebuiFolderSettings": {
-    "description": "Subtitle for folder prompt settings before folders load."
   },
   "accessibleModelsCount": "{count} accessible models",
   "@accessibleModelsCount": {
@@ -3506,16 +2618,6 @@
       }
     }
   },
-  "accessibleFoldersCount": "{count} accessible folders",
-  "@accessibleFoldersCount": {
-    "description": "Subtitle showing how many accessible folders are listed.",
-    "placeholders": {
-      "count": {
-        "type": "int",
-        "example": "3"
-      }
-    }
-  },
   "unableToLoadOpenWebuiSettings": "Unable to load Open WebUI settings.",
   "@unableToLoadOpenWebuiSettings": {
     "description": "Error shown when user settings cannot be loaded from Open WebUI."
@@ -3524,25 +2626,13 @@
   "@unableToLoadModels": {
     "description": "Error shown when server models cannot be loaded."
   },
-  "unableToLoadFolders": "Unable to load folders.",
-  "@unableToLoadFolders": {
-    "description": "Error shown when server folders cannot be loaded."
-  },
   "noAccessibleModelsFound": "No accessible models found.",
   "@noAccessibleModelsFound": {
     "description": "Empty state for model system prompt settings."
   },
-  "noAccessibleFoldersFound": "No accessible folders found.",
-  "@noAccessibleFoldersFound": {
-    "description": "Empty state for folder system prompt settings."
-  },
   "tapToLoadServerPromptSettings": "Tap to load server prompt settings.",
   "@tapToLoadServerPromptSettings": {
     "description": "Subtitle for model rows whose prompt details are loaded on demand."
-  },
-  "loadingFromOpenWebui": "Loading from Open WebUI...",
-  "@loadingFromOpenWebui": {
-    "description": "Loading subtitle for server-backed settings."
   },
   "globalSystemPromptEditorDescription": "Saved to your Open WebUI user settings and used as the default chat system prompt.",
   "@globalSystemPromptEditorDescription": {
@@ -3608,7 +2698,6 @@
   "@personalization": {
     "description": "Title for the personalization settings page."
   },
-  "personalizationSubtitle": "Personal prompt and memories",
   "defaultImageGenerationModel": "Default image generation model",
   "defaultImageGenerationModelDescription": "Enter an OpenRouter image model ID. Leave blank to use OpenRouter's default.",
   "openRouterDefaultImageGenerationModel": "OpenRouter default (openai/gpt-5-image)",
@@ -3620,9 +2709,6 @@
   },
   "@openRouterDefaultImageGenerationModel": {
     "description": "Label for using OpenRouter's default image generation model."
-  },
-  "@personalizationSubtitle": {
-    "description": "Subtitle for the personalization hub tile."
   },
   "yourSystemPrompt": "Your system prompt",
   "@yourSystemPrompt": {
@@ -3732,10 +2818,6 @@
   "@audioSettingsTitle": {
     "description": "Title for the audio settings page."
   },
-  "audioSettingsSubtitle": "Dictation and spoken responses",
-  "@audioSettingsSubtitle": {
-    "description": "Subtitle for the audio settings hub tile."
-  },
   "accountSettingsTitle": "Account",
   "@accountSettingsTitle": {
     "description": "Title for the account settings page."
@@ -3775,10 +2857,6 @@
   "avatarUrl": "Avatar URL",
   "@avatarUrl": {
     "description": "Label for the avatar URL field."
-  },
-  "avatarUrlHint": "https://example.com/avatar.png",
-  "@avatarUrlHint": {
-    "description": "Hint text for the avatar URL field."
   },
   "bioLabel": "Bio",
   "@bioLabel": {
@@ -3828,10 +2906,6 @@
   "@selectBirthDate": {
     "description": "Placeholder for picking a birth date."
   },
-  "birthDateHint": "YYYY-MM-DD",
-  "@birthDateHint": {
-    "description": "Hint text for the birth date field."
-  },
   "currentAvatar": "Current avatar",
   "@currentAvatar": {
     "description": "Label shown above the current avatar preview."
@@ -3851,14 +2925,6 @@
   "avatarUploadFailed": "Unable to update the avatar.",
   "@avatarUploadFailed": {
     "description": "Error shown when avatar selection or conversion fails."
-  },
-  "timezoneLabel": "Timezone",
-  "@timezoneLabel": {
-    "description": "Label for the timezone field."
-  },
-  "timezoneHint": "Asia/Kolkata",
-  "@timezoneHint": {
-    "description": "Hint text for the timezone field."
   },
   "saveProfile": "Save profile",
   "@saveProfile": {
@@ -3940,30 +3006,6 @@
   "@latestVersionLabel": {
     "description": "Label for the latest available version row."
   },
-  "deploymentIdLabel": "Deployment ID",
-  "@deploymentIdLabel": {
-    "description": "Label for the deployment identifier row."
-  },
-  "defaultLocaleLabel": "Default locale",
-  "@defaultLocaleLabel": {
-    "description": "Label for the server default locale row."
-  },
-  "userCountLabel": "User count",
-  "@userCountLabel": {
-    "description": "Label for the server user count row."
-  },
-  "serverDefaultModelsLabel": "Default models",
-  "@serverDefaultModelsLabel": {
-    "description": "Label for the server default models row."
-  },
-  "loginFormLabel": "Login form",
-  "@loginFormLabel": {
-    "description": "Label for whether the login form is enabled."
-  },
-  "passwordChangesLabel": "Password changes",
-  "@passwordChangesLabel": {
-    "description": "Label for whether password changes are enabled."
-  },
   "passwordChangeDescription": "Update your account password",
   "@passwordChangeDescription": {
     "description": "Subtitle for the action that updates the account password."
@@ -3972,37 +3014,9 @@
   "@profileDetailsSummary": {
     "description": "Subtitle for the profile details editor."
   },
-  "apiKeysLabel": "API keys",
-  "@apiKeysLabel": {
-    "description": "Label for whether API keys are enabled."
-  },
-  "audioInputLabel": "Audio input",
-  "@audioInputLabel": {
-    "description": "Label for whether speech-to-text is enabled on the server."
-  },
-  "audioOutputLabel": "Audio output",
-  "@audioOutputLabel": {
-    "description": "Label for whether text-to-speech is enabled on the server."
-  },
-  "speechToTextEngineLabel": "Speech-to-text engine",
-  "@speechToTextEngineLabel": {
-    "description": "Label for the server speech-to-text engine."
-  },
-  "textToSpeechEngineLabel": "Text-to-speech engine",
-  "@textToSpeechEngineLabel": {
-    "description": "Label for the server text-to-speech engine."
-  },
-  "licenseMetadataLabel": "License metadata",
-  "@licenseMetadataLabel": {
-    "description": "Heading for server license metadata."
-  },
   "enabledLabel": "Enabled",
   "@enabledLabel": {
     "description": "Label for an enabled boolean value."
-  },
-  "disabledLabel": "Disabled",
-  "@disabledLabel": {
-    "description": "Label for a disabled boolean value."
   },
   "noEmailLabel": "No email",
   "@noEmailLabel": {
@@ -4528,10 +3542,6 @@
   "@notificationsTitle": {
     "description": "Title of the notification settings page and the profile row that opens it."
   },
-  "notificationsSubtitle": "Banners, system alerts, and sounds",
-  "@notificationsSubtitle": {
-    "description": "Subtitle for the Notifications row in the profile/settings list."
-  },
   "notificationsEnabledTitle": "Enable notifications",
   "@notificationsEnabledTitle": {
     "description": "Master toggle title for all notifications."
@@ -4940,10 +3950,6 @@
   "workspaceEditorSaving": "Saving…",
   "@workspaceEditorSaving": {
     "description": "Label shown on the editor save button while a save is in progress."
-  },
-  "workspaceEditorMoreActions": "More actions",
-  "@workspaceEditorMoreActions": {
-    "description": "Tooltip for the workspace editor overflow menu button."
   },
   "workspaceImportChooseFile": "Choose JSON file",
   "@workspaceImportChooseFile": {
@@ -5384,10 +4390,6 @@
   "workspaceKnowledgeRoot": "Root",
   "@workspaceKnowledgeRoot": {
     "description": "Breadcrumb label for the top level of a knowledge base."
-  },
-  "workspaceKnowledgeAddMenu": "Add files",
-  "@workspaceKnowledgeAddMenu": {
-    "description": "Tooltip for the menu that adds files or folders to a knowledge base."
   },
   "workspaceKnowledgeUpload": "Upload file",
   "@workspaceKnowledgeUpload": {
@@ -6179,640 +5181,21 @@
   "@workspaceValveDisabled": {
     "description": "State label for a boolean valve that is off."
   },
-  "hermesAgentSettingsTitle": "Hermes Agent",
-  "@hermesAgentSettingsTitle": {
-    "description": "Title for the profile option that opens Hermes Agent settings."
-  },
-  "hermesAgentSettingsSubtitle": "Self-hosted agent",
-  "@hermesAgentSettingsSubtitle": {
-    "description": "Subtitle for the profile option that opens Hermes Agent settings."
-  },
-  "connectOpenWebUITitle": "Connect to Open WebUI",
-  "@connectOpenWebUITitle": {
-    "description": "Title for the Hermes-only profile option that adds an Open WebUI server."
-  },
-  "connectOpenWebUISubtitle": "Add a self-hosted Open WebUI server",
-  "@connectOpenWebUISubtitle": {
-    "description": "Subtitle for the Hermes-only profile option that adds an Open WebUI server."
-  },
-  "directConnectionsTitle": "Direct Connections",
-  "@directConnectionsTitle": {
-    "description": "Title for settings that manage direct model API connections."
-  },
-  "directConnectionsSubtitle": "OpenAI-compatible APIs and Ollama",
-  "@directConnectionsSubtitle": {
-    "description": "Subtitle for the direct connections profile option."
-  },
-  "directConnectionsDescription": "Connect to model providers without Open WebUI. Credentials are stored securely on this device and sent to the provider with requests.",
-  "@directConnectionsDescription": {
-    "description": "Introductory copy on direct connections settings."
-  },
-  "directConnectionsCombinedDescription": "Connect directly to model providers using connections synced from Open WebUI or stored only on this device.",
-  "@directConnectionsCombinedDescription": {
-    "description": "Introductory copy explaining that direct connections can come from Open WebUI or local device storage."
-  },
-  "openWebUiDirectConnectionsSectionTitle": "Open WebUI server",
-  "@openWebUiDirectConnectionsSectionTitle": {
-    "description": "Section title above direct connections synced from the signed-in Open WebUI server."
-  },
-  "openWebUiDirectConnectionsSectionDescription": "Saved to your Open WebUI account and available to other signed-in clients.",
-  "@openWebUiDirectConnectionsSectionDescription": {
-    "description": "Description of where Open WebUI direct connections are stored and available."
-  },
-  "deviceDirectConnectionsSectionTitle": "On this device",
-  "@deviceDirectConnectionsSectionTitle": {
-    "description": "Section title above direct connections stored only on the current device."
-  },
-  "deviceDirectConnectionsSectionDescription": "Credentials are stored securely on this device.",
-  "@deviceDirectConnectionsSectionDescription": {
-    "description": "Description of how device-only direct connection credentials are stored."
-  },
-  "openWebUiDirectProfilesEmptyTitle": "No server connections yet",
-  "@openWebUiDirectProfilesEmptyTitle": {
-    "description": "Empty-state title when the Open WebUI account has no direct connections."
-  },
-  "openWebUiDirectProfilesEmptySubtitle": "Add an OpenAI-compatible API connection to sync it through Open WebUI.",
-  "@openWebUiDirectProfilesEmptySubtitle": {
-    "description": "Empty-state guidance for adding an Open WebUI-synced direct connection."
-  },
-  "openWebUiDirectConnectionsLoadFailed": "Could not sync connections from Open WebUI.",
-  "@openWebUiDirectConnectionsLoadFailed": {
-    "description": "Error shown when direct connections cannot be loaded from Open WebUI."
-  },
-  "openWebUiDirectConnectionSourceLabel": "Open WebUI",
-  "@openWebUiDirectConnectionSourceLabel": {
-    "description": "Source label identifying a direct connection synced from Open WebUI."
-  },
-  "deviceDirectConnectionSourceLabel": "This device",
-  "@deviceDirectConnectionSourceLabel": {
-    "description": "Source label identifying a direct connection stored only on this device."
-  },
-  "openWebUiDirectConnectionUnsupportedAuth": "This connection uses an authentication method Conduit cannot safely use.",
-  "@openWebUiDirectConnectionUnsupportedAuth": {
-    "description": "Warning shown when an Open WebUI direct connection uses unsupported authentication."
-  },
-  "directConnectionUnavailableLabel": "Unavailable",
-  "@directConnectionUnavailableLabel": {
-    "description": "Status label for a direct connection that Conduit cannot currently use."
-  },
-  "openWebUiDirectConnectionEditorDescription": "Changes are saved to your Open WebUI account.",
-  "@openWebUiDirectConnectionEditorDescription": {
-    "description": "Editor help text explaining where changes to a server-synced connection are saved."
-  },
-  "openWebUiDirectConnectionProviderDescription": "Open WebUI user connections support OpenAI-compatible APIs.",
-  "@openWebUiDirectConnectionProviderDescription": {
-    "description": "Help text describing the provider protocol supported by Open WebUI user connections."
-  },
-  "openWebUiDirectConnectionFallbackName": "Open WebUI connection",
-  "@openWebUiDirectConnectionFallbackName": {
-    "description": "Fallback display name for a new Open WebUI-synced direct connection before the server derives its name."
-  },
-  "openWebUiDirectConnectionsUnavailable": "Open WebUI connections are unavailable.",
-  "@openWebUiDirectConnectionsUnavailable": {
-    "description": "Message shown when Open WebUI direct connections are no longer available while their editor is open."
-  },
-  "directConnectionNoLongerExists": "This connection no longer exists.",
-  "@directConnectionNoLongerExists": {
-    "description": "Message shown when a direct connection is deleted while its editor is open."
-  },
-  "openWebUiDirectConnectionDeleteMessage": "This removes {name} from your Open WebUI account and other signed-in clients.",
-  "@openWebUiDirectConnectionDeleteMessage": {
-    "description": "Confirmation message shown before deleting an Open WebUI-synced direct connection.",
-    "placeholders": {
-      "name": {
-        "type": "String",
-        "example": "Work provider"
-      }
-    }
-  },
-  "addDirectConnection": "Add connection",
-  "@addDirectConnection": {
-    "description": "Button that creates a direct connection profile."
-  },
-  "editDirectConnection": "Edit connection",
-  "@editDirectConnection": {
-    "description": "Title for editing a direct connection profile."
-  },
-  "directConnectionName": "Connection name",
-  "@directConnectionName": {
-    "description": "Label for a user-defined direct connection profile name."
-  },
-  "directDefaultConnectionName": "My provider",
-  "@directDefaultConnectionName": {
-    "description": "Name prefilled for a new OpenAI-compatible direct connection."
-  },
   "sidebarButtonLabel": "Sidebar",
   "@sidebarButtonLabel": {
     "description": "Accessibility label for the toolbar button that shows or hides the sidebar."
-  },
-  "directConnectionNameRequired": "Enter a connection name.",
-  "@directConnectionNameRequired": {
-    "description": "Validation error shown when a direct connection name is empty."
-  },
-  "directConnectionUrlInvalid": "Use a valid http:// or https:// URL.",
-  "@directConnectionUrlInvalid": {
-    "description": "Validation error shown when a direct provider URL is invalid."
-  },
-  "directConnectionCredentialsReentryRequired": "Re-enter credentials when changing servers.",
-  "@directConnectionCredentialsReentryRequired": {
-    "description": "Validation error requiring credentials to be reviewed after changing a direct provider origin."
-  },
-  "directConnectionApiKeyRequired": "Enter an API key or choose no authentication.",
-  "@directConnectionApiKeyRequired": {
-    "description": "Validation error shown when direct provider authentication requires an API key."
-  },
-  "directConnectionHeaderNameRequired": "Enter a header name, then add the header.",
-  "@directConnectionHeaderNameRequired": {
-    "description": "Validation error shown when a pending direct provider header has a value but no name."
-  },
-  "directConnectionCredentialTransferTitle": "Use credentials with new server?",
-  "@directConnectionCredentialTransferTitle": {
-    "description": "Title of the confirmation dialog shown before sending saved direct provider credentials to a new origin."
-  },
-  "directConnectionCredentialTransferMessage": "This sends the API key and complete custom-header map to the new server. Only continue if you trust it.",
-  "@directConnectionCredentialTransferMessage": {
-    "description": "Security warning shown before sending direct provider credentials to a new origin."
-  },
-  "directConnectionCredentialTransferConfirm": "Use credentials",
-  "@directConnectionCredentialTransferConfirm": {
-    "description": "Action that confirms sending direct provider credentials to a new origin."
-  },
-  "directConnectionSaveFailed": "Could not save this connection.",
-  "@directConnectionSaveFailed": {
-    "description": "Error shown when a direct connection profile cannot be saved."
-  },
-  "directConnectionSaveConflict": "This connection changed elsewhere. Reopen it before saving.",
-  "@directConnectionSaveConflict": {
-    "description": "Error shown when a direct connection profile changed after the editor loaded it."
-  },
-  "directConnectionReachFailed": "Could not reach the provider.",
-  "@directConnectionReachFailed": {
-    "description": "Error shown when a direct provider connection test cannot reach the provider."
-  },
-  "directConnectionDeleteTitle": "Delete connection?",
-  "@directConnectionDeleteTitle": {
-    "description": "Title of the direct connection deletion confirmation dialog."
-  },
-  "directConnectionDeleteMessage": "This removes {name} and its credentials from this device.",
-  "@directConnectionDeleteMessage": {
-    "description": "Confirmation message shown before deleting a direct connection and its credentials.",
-    "placeholders": {
-      "name": {
-        "type": "String",
-        "example": "Home provider"
-      }
-    }
-  },
-  "directConnectionDeleteFailed": "Could not delete this connection.",
-  "@directConnectionDeleteFailed": {
-    "description": "Error shown when a direct connection profile cannot be deleted."
-  },
-  "directConnectionProbeConnected": "Connected",
-  "@directConnectionProbeConnected": {
-    "description": "Success status shown when a direct provider connection test succeeds without a model count."
-  },
-  "directConnectionProbeConnectedModels": "{count, plural, =1{Connected · 1 model} other{Connected · {count} models}}",
-  "@directConnectionProbeConnectedModels": {
-    "description": "Success status showing how many models a direct provider connection test discovered.",
-    "placeholders": {
-      "count": {
-        "type": "int",
-        "example": "2"
-      }
-    }
-  },
-  "directProvider": "Provider type",
-  "@directProvider": {
-    "description": "Label for selecting the direct API protocol."
-  },
-  "openAICompatible": "OpenAI-compatible",
-  "@openAICompatible": {
-    "description": "Label for an API compatible with OpenAI Chat Completions."
-  },
-  "ollama": "Ollama",
-  "@ollama": {
-    "description": "Label for an Ollama native API connection."
-  },
-  "openRouterProviderName": "OpenRouter",
-  "@openRouterProviderName": {
-    "description": "Provider name used by the OpenRouter connection preset."
-  },
-  "ollamaCloudDefaultName": "Ollama Cloud",
-  "@ollamaCloudDefaultName": {
-    "description": "Default connection name and field hint for Ollama Cloud."
-  },
-  "ollamaCloudBaseUrlHint": "https://ollama.com",
-  "@ollamaCloudBaseUrlHint": {
-    "description": "Base URL field hint for the official Ollama Cloud API."
-  },
-  "ollamaCloudBaseUrlDescription": "Connect to Ollama Cloud with an API key.",
-  "@ollamaCloudBaseUrlDescription": {
-    "description": "Help text for configuring the official Ollama Cloud API."
-  },
-  "ollamaModelLoaded": "Loaded",
-  "@ollamaModelLoaded": {
-    "description": "Badge shown when an Ollama model is currently loaded in memory."
-  },
-  "ollamaModelActions": "Model memory",
-  "@ollamaModelActions": {
-    "description": "Tooltip and sheet title for Ollama model memory actions."
-  },
-  "ollamaModelActionsDescription": "Manage this model in Ollama's RAM or VRAM.",
-  "@ollamaModelActionsDescription": {
-    "description": "Description shown above Ollama model memory actions."
-  },
-  "ollamaLoadModel": "Load model",
-  "@ollamaLoadModel": {
-    "description": "Action that warms an Ollama model in memory."
-  },
-  "ollamaLoadModelDescription": "Warm it now to make the first response faster.",
-  "@ollamaLoadModelDescription": {
-    "description": "Description of the Ollama model load action."
-  },
-  "ollamaUnloadModel": "Unload model",
-  "@ollamaUnloadModel": {
-    "description": "Action that removes an Ollama model from memory."
-  },
-  "ollamaUnloadModelDescription": "Free its RAM or VRAM. It loads automatically on the next message.",
-  "@ollamaUnloadModelDescription": {
-    "description": "Description of the Ollama model unload action."
-  },
-  "ollamaUnloadModelConfirmTitle": "Unload {name}?",
-  "@ollamaUnloadModelConfirmTitle": {
-    "description": "Confirmation title shown before unloading an Ollama model.",
-    "placeholders": {
-      "name": {
-        "type": "String",
-        "example": "llama3.2"
-      }
-    }
-  },
-  "ollamaUnloadModelConfirmMessage": "This frees the model's RAM or VRAM. Ollama will load it again automatically when you send a message.",
-  "@ollamaUnloadModelConfirmMessage": {
-    "description": "Confirmation message shown before unloading an Ollama model."
-  },
-  "ollamaKeepAlive": "Keep alive",
-  "@ollamaKeepAlive": {
-    "description": "Setting that controls how long an Ollama model remains loaded."
-  },
-  "ollamaKeepAliveDescription": "Applied to this model after each chat request.",
-  "@ollamaKeepAliveDescription": {
-    "description": "Description of the per-model Ollama keep-alive setting."
-  },
-  "ollamaKeepAliveServerDefault": "Server default",
-  "@ollamaKeepAliveServerDefault": {
-    "description": "Option that lets the Ollama server choose its keep-alive duration."
-  },
-  "ollamaKeepAliveFiveMinutes": "5 minutes",
-  "@ollamaKeepAliveFiveMinutes": {
-    "description": "Ollama keep-alive duration option."
-  },
-  "ollamaKeepAliveThirtyMinutes": "30 minutes",
-  "@ollamaKeepAliveThirtyMinutes": {
-    "description": "Ollama keep-alive duration option."
-  },
-  "ollamaKeepAliveOneHour": "1 hour",
-  "@ollamaKeepAliveOneHour": {
-    "description": "Ollama keep-alive duration option."
-  },
-  "ollamaKeepAliveAlways": "Always loaded",
-  "@ollamaKeepAliveAlways": {
-    "description": "Ollama keep-alive option that keeps a model loaded indefinitely."
-  },
-  "ollamaKeepAliveImmediate": "Unload after every response",
-  "@ollamaKeepAliveImmediate": {
-    "description": "Ollama keep-alive option that unloads a model after each response."
-  },
-  "ollamaKeepAliveCustom": "Custom",
-  "@ollamaKeepAliveCustom": {
-    "description": "Option for entering a custom Ollama keep-alive value."
-  },
-  "ollamaKeepAliveCustomHint": "Examples: 10m, 24h, 3600, -1, or 0",
-  "@ollamaKeepAliveCustomHint": {
-    "description": "Hint for the custom Ollama keep-alive input."
-  },
-  "ollamaKeepAliveInvalid": "Use seconds or a duration such as 10m or 24h.",
-  "@ollamaKeepAliveInvalid": {
-    "description": "Validation error for an invalid Ollama keep-alive value."
-  },
-  "ollamaModelLoadedMessage": "{name} is loaded.",
-  "@ollamaModelLoadedMessage": {
-    "description": "Success message after warming an Ollama model.",
-    "placeholders": {
-      "name": {
-        "type": "String",
-        "example": "llama3.2"
-      }
-    }
-  },
-  "ollamaModelUnloadedMessage": "{name} was unloaded.",
-  "@ollamaModelUnloadedMessage": {
-    "description": "Success message after unloading an Ollama model.",
-    "placeholders": {
-      "name": {
-        "type": "String",
-        "example": "llama3.2"
-      }
-    }
-  },
-  "ollamaModelActionFailed": "Could not update this model's memory state.",
-  "@ollamaModelActionFailed": {
-    "description": "Error shown when an Ollama model lifecycle request fails."
-  },
-  "directApiBaseUrl": "Base URL",
-  "@directApiBaseUrl": {
-    "description": "Label for the direct provider base URL."
-  },
-  "directOpenRouterUrlInvalid": "Use OpenRouter’s HTTPS /api/v1 root (global or EU).",
-  "@directOpenRouterUrlInvalid": {
-    "description": "Validation error shown when an OpenRouter direct connection does not use an approved API root."
-  },
-  "directOpenRouterBaseUrlDescription": "Connect with an OpenRouter API key.",
-  "@directOpenRouterBaseUrlDescription": {
-    "description": "Help text shown below the OpenRouter direct connection base URL."
-  },
-  "directOpenRouterChatCompletionsDescription": "Chat Completions is used for native web search, image generation, PDF parsing, and reusable PDF annotations.",
-  "@directOpenRouterChatCompletionsDescription": {
-    "description": "Help text explaining why OpenRouter direct connections use Chat Completions."
-  },
-  "directCompletionApi": "Completion API",
-  "@directCompletionApi": {
-    "description": "Section title for selecting an OpenAI-family completion protocol."
-  },
-  "directChatCompletions": "Chat Completions",
-  "@directChatCompletions": {
-    "description": "Option for the OpenAI-compatible Chat Completions protocol."
-  },
-  "directResponses": "Responses",
-  "@directResponses": {
-    "description": "Option for the OpenAI Responses protocol."
-  },
-  "directChatCompletionsDescription": "For OpenAI-compatible APIs.",
-  "@directChatCompletionsDescription": {
-    "description": "Help text for the direct Chat Completions option."
-  },
-  "directResponsesDescription": "Use the typed Responses event stream. Choose this only when the provider exposes /responses.",
-  "@directResponsesDescription": {
-    "description": "Help text for the direct Responses API option."
-  },
-  "directApiVersion": "API version",
-  "@directApiVersion": {
-    "description": "Label for an optional direct provider API version."
-  },
-  "directApiVersionDescription": "Optional. Adds the api-version query parameter required by Azure OpenAI endpoints.",
-  "@directApiVersionDescription": {
-    "description": "Help text for the optional Azure OpenAI API version."
-  },
-  "directAuthentication": "Authentication",
-  "@directAuthentication": {
-    "description": "Label for direct connection authentication settings."
-  },
-  "noAuthentication": "No authentication",
-  "@noAuthentication": {
-    "description": "Authentication option for providers that need no credentials."
-  },
-  "bearerToken": "Bearer token",
-  "@bearerToken": {
-    "description": "Authentication option that sends a bearer token."
-  },
-  "directApiKeyHeader": "API-key header",
-  "@directApiKeyHeader": {
-    "description": "Authentication option that sends a credential in an api-key header."
-  },
-  "directApiKeyHeaderDescription": "Sends the credential in the api-key header used by Azure OpenAI.",
-  "@directApiKeyHeaderDescription": {
-    "description": "Help text for Azure OpenAI API-key header authentication."
-  },
-  "directApiKey": "API key",
-  "@directApiKey": {
-    "description": "Label for a direct connection API key."
-  },
-  "directCustomHeaders": "Custom headers",
-  "@directCustomHeaders": {
-    "description": "Label for custom direct API headers entered as JSON."
-  },
-  "directManualModelIds": "Manual model IDs",
-  "@directManualModelIds": {
-    "description": "Label for newline-separated model identifiers."
-  },
-  "directManualModelIdsDescription": "Optional. Enter one ID per line when the server cannot list its models.",
-  "@directManualModelIdsDescription": {
-    "description": "Help text for manually entered model IDs."
-  },
-  "directModelIdPrefix": "Model ID prefix",
-  "@directModelIdPrefix": {
-    "description": "Label for a visible namespace added to direct model IDs."
-  },
-  "directModelIdPrefixDescription": "Optional. Adds a visible namespace such as studio.model-name without changing the model ID sent to the provider.",
-  "@directModelIdPrefixDescription": {
-    "description": "Help text for a direct connection model ID prefix."
-  },
-  "directModelTags": "Model tags",
-  "@directModelTags": {
-    "description": "Label for tags applied to models from a direct connection."
-  },
-  "directModelTagsDescription": "Optional. Separate tags with commas or new lines.",
-  "@directModelTagsDescription": {
-    "description": "Help text for direct connection model tags."
-  },
-  "syncDirectHistory": "Open WebUI history",
-  "@syncDirectHistory": {
-    "description": "Title for the direct chat history synchronization preference."
-  },
-  "syncDirectHistorySubtitle": "Save new direct chats to your Open WebUI account.",
-  "@syncDirectHistorySubtitle": {
-    "description": "Description of the default direct chat history policy."
-  },
-  "directHistoryLocalOnlySubtitle": "Keep new direct chats only on this device.",
-  "@directHistoryLocalOnlySubtitle": {
-    "description": "Description shown when direct chat history sync is disabled."
-  },
-  "backendChooserSelfHostedSectionTitle": "Self-hosted services",
-  "@backendChooserSelfHostedSectionTitle": {
-    "description": "Section title for self-hosted backend choices on the first-run backend chooser."
-  },
-  "backendChooserAppleSectionTitle": "Apple Intelligence",
-  "@backendChooserAppleSectionTitle": {
-    "description": "Section title for available Apple model choices on the first-run backend chooser."
-  },
-  "backendChooserModelApisSectionTitle": "Model APIs",
-  "@backendChooserModelApisSectionTitle": {
-    "description": "Section title for direct model API choices on the first-run backend chooser."
-  },
-  "backendChooserDirectTitle": "Connect directly",
-  "@backendChooserDirectTitle": {
-    "description": "Title of the direct provider option on the first-run backend chooser."
-  },
-  "backendChooserDirectSubtitle": "Connect an OpenAI-compatible or Ollama API. Credentials stay on this device.",
-  "@backendChooserDirectSubtitle": {
-    "description": "Description of the direct provider option on the first-run backend chooser."
-  },
-  "backendChooserAppleOnDeviceTitle": "Apple On-Device",
-  "@backendChooserAppleOnDeviceTitle": {
-    "description": "Title of the Apple on-device model option on the first-run backend chooser."
-  },
-  "backendChooserAppleOnDeviceSubtitle": "Run Apple's private model on this device, even offline.",
-  "@backendChooserAppleOnDeviceSubtitle": {
-    "description": "Description of the Apple on-device model option on the first-run backend chooser."
-  },
-  "appleOnDeviceUnavailable": "Apple On-Device is not available on this device.",
-  "@appleOnDeviceUnavailable": {
-    "description": "Fallback shown when the Apple on-device model cannot be selected during onboarding."
-  },
-  "backendChooserApplePccTitle": "Apple Private Cloud Compute",
-  "@backendChooserApplePccTitle": {
-    "description": "Title of the Apple PCC option on the first-run backend chooser."
-  },
-  "backendChooserApplePccSubtitle": "Use Apple's private cloud model without an API key.",
-  "@backendChooserApplePccSubtitle": {
-    "description": "Description of the Apple PCC option on the first-run backend chooser."
-  },
-  "applePccUnavailable": "Apple Private Cloud Compute is not available on this device.",
-  "@applePccUnavailable": {
-    "description": "Fallback shown when Apple PCC cannot be selected during onboarding."
-  },
-  "applePccStatusAvailable": "Available",
-  "@applePccStatusAvailable": {
-    "description": "Apple PCC availability label."
-  },
-  "applePccQuotaApproaching": "Nearing the daily usage limit",
-  "@applePccQuotaApproaching": {
-    "description": "Apple PCC quota warning."
-  },
-  "applePccQuotaReached": "Daily usage limit reached",
-  "@applePccQuotaReached": {
-    "description": "Apple PCC exhausted quota label."
-  },
-  "applePccQuotaResetsAt": "Resets {time}",
-  "@applePccQuotaResetsAt": {
-    "description": "Apple PCC quota reset time.",
-    "placeholders": {
-      "time": {
-        "type": "String"
-      }
-    }
-  },
-  "applePccShowQuotaOptions": "Show usage options",
-  "@applePccShowQuotaOptions": {
-    "description": "Action that presents Apple's PCC quota increase flow."
-  },
-  "applePccOnDeviceFallback": "On-device fallback",
-  "@applePccOnDeviceFallback": {
-    "description": "Apple PCC network fallback preference."
-  },
-  "applePccOnDeviceFallbackSubtitle": "Use Apple's smaller on-device model when PCC cannot be reached. Reasoning requests never fall back.",
-  "@applePccOnDeviceFallbackSubtitle": {
-    "description": "Description of the Apple PCC network fallback preference."
-  },
-  "applePccCurrentLanguageUnsupported": "The current device language may not be supported.",
-  "@applePccCurrentLanguageUnsupported": {
-    "description": "Warning shown when PCC does not support the current locale."
-  },
-  "applePccContextSize": "{tokens} token context",
-  "@applePccContextSize": {
-    "description": "Apple PCC context size label.",
-    "placeholders": {
-      "tokens": {
-        "type": "String"
-      }
-    }
-  },
-  "directContextLimit": "Context limit: {tokens}",
-  "@directContextLimit": {
-    "description": "Provider-neutral model context limit label.",
-    "placeholders": {
-      "tokens": {
-        "type": "String"
-      }
-    }
-  },
-  "directContextCompactionTitle": "Context compaction",
-  "@directContextCompactionTitle": {
-    "description": "Section title for fallback context windows used by Direct models."
-  },
-  "directContextCompactionDescription": "These models do not report a context window. Conduit uses the selected limit to compact older messages before requests get too large.",
-  "@directContextCompactionDescription": {
-    "description": "Footer explaining per-model Direct context window fallbacks."
-  },
-  "directContextCompactionPickerDescription": "Choose the context window Conduit should use for automatic compaction.",
-  "@directContextCompactionPickerDescription": {
-    "description": "Description in the Direct context window fallback picker."
-  },
-  "testDirectConnection": "Test connection",
-  "@testDirectConnection": {
-    "description": "Button that probes a direct model API."
-  },
-  "directConnectionTestUnavailable": "Connection testing is not available yet.",
-  "@directConnectionTestUnavailable": {
-    "description": "Fallback shown when the direct connection test service is unavailable."
-  },
-  "finishDirectSetup": "Start chatting",
-  "@finishDirectSetup": {
-    "description": "Button that completes direct provider onboarding."
-  },
-  "directProfilesEmptyTitle": "No direct connections yet",
-  "@directProfilesEmptyTitle": {
-    "description": "Empty-state title on direct connections settings."
-  },
-  "directProfilesEmptySubtitle": "Add an API provider to start chatting.",
-  "@directProfilesEmptySubtitle": {
-    "description": "Empty-state description on direct connections settings."
-  },
-  "directConnectionsSectionTitle": "Connections",
-  "@directConnectionsSectionTitle": {
-    "description": "Section title above configured direct provider profiles."
-  },
-  "directSavedDataUnreadable": "The saved connection data could not be read.",
-  "@directSavedDataUnreadable": {
-    "description": "Error shown when the secure direct profile document is malformed."
-  },
-  "directSecureStorageUnavailable": "Check secure storage access and try again.",
-  "@directSecureStorageUnavailable": {
-    "description": "Error shown when direct profiles cannot be loaded from secure storage."
   },
   "onDevice": "On device",
   "@onDevice": {
     "description": "Badge for chats and data stored only on this device."
   },
-  "directConnectionError": "Direct connection error",
-  "@directConnectionError": {
-    "description": "Generic title for an error from a direct model provider."
-  },
-  "directAttachmentUnsupported": "This direct model does not support this attachment.",
-  "@directAttachmentUnsupported": {
-    "description": "Error shown when a direct model cannot accept an attached file."
-  },
-  "backendChooserWelcome": "Choose how to connect",
-  "@backendChooserWelcome": {
-    "description": "Welcome heading on the first-run backend chooser."
-  },
-  "backendChooserPrompt": "Choose one to start. You can add more later.",
-  "@backendChooserPrompt": {
-    "description": "Prompt on the first-run backend chooser."
-  },
-  "backendChooserOpenWebUITitle": "Open WebUI",
-  "@backendChooserOpenWebUITitle": {
+  "openWebUi": "Open WebUI",
+  "@openWebUi": {
     "description": "Short Open WebUI title used on the backend chooser and server setup page."
   },
-  "backendChooserOpenWebUISubtitle": "Sign in to your server for synced chats, notes, and more.",
-  "@backendChooserOpenWebUISubtitle": {
-    "description": "Description of the Open WebUI option on the backend chooser."
-  },
-  "backendChooserHermesTitle": "Hermes Agent",
-  "@backendChooserHermesTitle": {
-    "description": "Title of the Hermes Agent option on the backend chooser."
-  },
-  "backendChooserHermesSubtitle": "Connect a self-hosted Hermes agent.",
-  "@backendChooserHermesSubtitle": {
-    "description": "Description of the Hermes Agent option on the backend chooser."
-  },
-  "hermesApprovalRequired": "Approval required",
-  "@hermesApprovalRequired": {
+  "toolApprovalRequired": "Approval required",
+  "@toolApprovalRequired": {
     "description": "Title of a Hermes human-approval request card."
-  },
-  "hermesApprovalFallback": "The agent is requesting permission to continue.",
-  "@hermesApprovalFallback": {
-    "description": "Fallback description for a Hermes approval request."
   },
   "openWebUiPromptOther": "Other",
   "@openWebUiPromptOther": {
@@ -6826,398 +5209,17 @@
   "@openWebUiPromptSubmit": {
     "description": "Action that submits all answers to an Open WebUI ask-user prompt."
   },
-  "hermesApprovalApproved": "Approved ✓",
-  "@hermesApprovalApproved": {
-    "description": "Resolved status for an approved Hermes request."
-  },
-  "hermesApprovalDenied": "Denied",
-  "@hermesApprovalDenied": {
-    "description": "Resolved status for a denied Hermes request."
-  },
-  "hermesApprovalApproveAction": "Approve",
-  "@hermesApprovalApproveAction": {
+  "toolApprovalApproveAction": "Approve",
+  "@toolApprovalApproveAction": {
     "description": "Button that approves a Hermes request."
   },
-  "hermesApprovalDenyAction": "Deny",
-  "@hermesApprovalDenyAction": {
+  "toolApprovalDenyAction": "Deny",
+  "@toolApprovalDenyAction": {
     "description": "Button that denies a Hermes request."
-  },
-  "hermesEnableTitle": "Enable Hermes Agent",
-  "@hermesEnableTitle": {
-    "description": "Title of the Hermes enable toggle."
-  },
-  "hermesEnableSubtitle": "Use your self-hosted Hermes agent as a model in the picker.",
-  "@hermesEnableSubtitle": {
-    "description": "Description of the Hermes enable toggle."
-  },
-  "hermesServerUrlTitle": "Server URL",
-  "@hermesServerUrlTitle": {
-    "description": "Label for the Hermes server URL field."
-  },
-  "hermesApiKeyTitle": "API key",
-  "@hermesApiKeyTitle": {
-    "description": "Label for the Hermes API key field."
-  },
-  "hermesConfiguredReplacePlaceholder": "Configured; enter to replace",
-  "@hermesConfiguredReplacePlaceholder": {
-    "description": "Placeholder for a configured Hermes secret."
-  },
-  "hermesApiKeyPlaceholder": "Enter API key",
-  "@hermesApiKeyPlaceholder": {
-    "description": "Placeholder for an unconfigured Hermes API key."
-  },
-  "hermesMemoryKeyTitle": "Memory key (optional)",
-  "@hermesMemoryKeyTitle": {
-    "description": "Label for the optional Hermes memory key."
-  },
-  "hermesMemoryKeyDescription": "Keeps long-term memory separate for this device. Conduit creates a key if you leave this blank.",
-  "@hermesMemoryKeyDescription": {
-    "description": "Help text explaining how the optional Hermes memory key scopes long-term memory."
-  },
-  "hermesMemoryKeyPlaceholder": "Auto-generated if left blank",
-  "@hermesMemoryKeyPlaceholder": {
-    "description": "Placeholder for an unconfigured Hermes memory key."
-  },
-  "hermesCapabilitiesTitle": "Capabilities",
-  "@hermesCapabilitiesTitle": {
-    "description": "Title of the Hermes server capabilities summary."
-  },
-  "hermesCapabilityApproval": "Approval",
-  "@hermesCapabilityApproval": {
-    "description": "Hermes approval capability label."
-  },
-  "hermesCapabilitySkills": "Skills",
-  "@hermesCapabilitySkills": {
-    "description": "Hermes skills capability label."
-  },
-  "hermesCapabilityToolsets": "Toolsets",
-  "@hermesCapabilityToolsets": {
-    "description": "Hermes toolsets capability label."
-  },
-  "hermesCapabilityJobs": "Jobs",
-  "@hermesCapabilityJobs": {
-    "description": "Hermes jobs capability label."
-  },
-  "hermesCapabilitySessions": "Sessions",
-  "@hermesCapabilitySessions": {
-    "description": "Hermes sessions capability label."
-  },
-  "hermesTabInfoTitle": "Conversations and schedules",
-  "@hermesTabInfoTitle": {
-    "description": "Title explaining the Hermes sidebar tab."
-  },
-  "hermesTabInfoSubtitle": "Available in the Hermes tab once enabled.",
-  "@hermesTabInfoSubtitle": {
-    "description": "Description explaining when the Hermes sidebar tab is available."
-  },
-  "hermesNativeSettingsSubtitle": "Connect directly to a self-hosted Hermes agent.",
-  "@hermesNativeSettingsSubtitle": {
-    "description": "Subtitle of the native Hermes settings sheet."
-  },
-  "hermesSelfHostedAgentLabel": "Self-hosted agent",
-  "@hermesSelfHostedAgentLabel": {
-    "description": "Fallback host label in the Hermes-only native profile sheet."
-  },
-  "hermesNoConversationsMessage": "No conversations yet",
-  "@hermesNoConversationsMessage": {
-    "description": "Empty-state message in the Hermes conversations sidebar."
-  },
-  "hermesConversationsTitle": "Conversations",
-  "@hermesConversationsTitle": {
-    "description": "Section title above the Hermes conversation list."
-  },
-  "hermesBotsTitle": "Bots",
-  "@hermesBotsTitle": {
-    "description": "Section title above the Hermes Bot Mode roster."
-  },
-  "hermesConversationsLoadError": "Could not load Hermes conversations.\nCheck the connection in Settings → Hermes Agent.",
-  "@hermesConversationsLoadError": {
-    "description": "Error shown when Hermes conversations cannot be loaded."
-  },
-  "hermesSchedulesLoading": "Loading schedules…",
-  "@hermesSchedulesLoading": {
-    "description": "Status shown while Hermes schedules are loading."
-  },
-  "hermesSchedulesUnavailable": "Schedules unavailable",
-  "@hermesSchedulesUnavailable": {
-    "description": "Status shown when Hermes schedules cannot be loaded."
-  },
-  "hermesNoSchedulesYet": "No schedules",
-  "@hermesNoSchedulesYet": {
-    "description": "Status shown when no Hermes schedules exist."
-  },
-  "hermesSchedulesSummary": "{active} active · {total, plural, =1{1 schedule} other{{total} schedules}}",
-  "@hermesSchedulesSummary": {
-    "description": "Summary of active and total Hermes schedules.",
-    "placeholders": {
-      "active": {
-        "type": "int",
-        "example": "1"
-      },
-      "total": {
-        "type": "int",
-        "example": "2"
-      }
-    }
-  },
-  "hermesReviewSchedules": "Review schedules",
-  "@hermesReviewSchedules": {
-    "description": "Fallback subtitle for the Hermes schedules launcher."
-  },
-  "hermesScheduledAgentsTitle": "Scheduled agents",
-  "@hermesScheduledAgentsTitle": {
-    "description": "Title of the Hermes schedules launcher."
-  },
-  "hermesJobNew": "New scheduled job",
-  "@hermesJobNew": {
-    "description": "Action and editor title for creating a Hermes scheduled job."
-  },
-  "hermesJobAdminDisabled": "Job administration is disabled on this server. Schedules are read-only.",
-  "@hermesJobAdminDisabled": {
-    "description": "Notice that Hermes job administration is read-only on this server."
-  },
-  "hermesJobEmptyMessage": "Create a scheduled job to run a prompt automatically.",
-  "@hermesJobEmptyMessage": {
-    "description": "Empty-state hint explaining how to create a scheduled Hermes job."
-  },
-  "hermesJobLoadFailed": "Could not load scheduled jobs. Check the Hermes connection and try again.",
-  "@hermesJobLoadFailed": {
-    "description": "Error shown when scheduled Hermes jobs cannot be loaded."
-  },
-  "hermesJobCreateFailed": "Could not create scheduled job.",
-  "@hermesJobCreateFailed": {
-    "description": "Error shown when creating a scheduled Hermes job fails."
-  },
-  "hermesJobCreated": "Scheduled job created.",
-  "@hermesJobCreated": {
-    "description": "Success message after creating a scheduled Hermes job."
-  },
-  "hermesJobPaused": "Paused",
-  "@hermesJobPaused": {
-    "description": "Status label for a paused Hermes scheduled job."
-  },
-  "hermesJobRunNow": "Run now",
-  "@hermesJobRunNow": {
-    "description": "Button that runs a Hermes scheduled job immediately."
-  },
-  "hermesJobEdit": "Edit scheduled job",
-  "@hermesJobEdit": {
-    "description": "Tooltip for editing a Hermes scheduled job."
-  },
-  "hermesJobDelete": "Delete scheduled job",
-  "@hermesJobDelete": {
-    "description": "Tooltip for deleting a Hermes scheduled job."
-  },
-  "hermesJobResumeFailed": "Could not resume scheduled job.",
-  "@hermesJobResumeFailed": {
-    "description": "Error shown when resuming a paused Hermes job fails."
-  },
-  "hermesJobPauseFailed": "Could not pause scheduled job.",
-  "@hermesJobPauseFailed": {
-    "description": "Error shown when pausing a Hermes job fails."
-  },
-  "hermesJobResumed": "Scheduled job resumed.",
-  "@hermesJobResumed": {
-    "description": "Success message after resuming a Hermes scheduled job."
-  },
-  "hermesJobPausedSuccess": "Scheduled job paused.",
-  "@hermesJobPausedSuccess": {
-    "description": "Success message after pausing a Hermes scheduled job."
-  },
-  "hermesJobRunFailed": "Could not run scheduled job.",
-  "@hermesJobRunFailed": {
-    "description": "Error shown when starting a Hermes scheduled job fails."
-  },
-  "hermesJobStarted": "Scheduled job started.",
-  "@hermesJobStarted": {
-    "description": "Success message after starting a Hermes scheduled job."
-  },
-  "hermesJobUpdateFailed": "Could not update scheduled job.",
-  "@hermesJobUpdateFailed": {
-    "description": "Error shown when saving edits to a Hermes job fails."
-  },
-  "hermesJobUpdated": "Scheduled job updated.",
-  "@hermesJobUpdated": {
-    "description": "Success message after updating a Hermes scheduled job."
-  },
-  "hermesJobDeleteTitle": "Delete job",
-  "@hermesJobDeleteTitle": {
-    "description": "Title of the dialog that confirms deleting a Hermes job."
-  },
-  "hermesJobDeleteMessage": "Delete this scheduled job? This cannot be undone.",
-  "@hermesJobDeleteMessage": {
-    "description": "Confirmation body for deleting a Hermes scheduled job."
-  },
-  "hermesJobDeleteFailed": "Could not delete scheduled job.",
-  "@hermesJobDeleteFailed": {
-    "description": "Error shown when deleting a Hermes scheduled job fails."
-  },
-  "hermesJobDeleted": "Scheduled job deleted.",
-  "@hermesJobDeleted": {
-    "description": "Success message after deleting a Hermes scheduled job."
-  },
-  "hermesJobEditorEditTitle": "Edit job",
-  "@hermesJobEditorEditTitle": {
-    "description": "Title of the editor when changing an existing Hermes job."
-  },
-  "hermesJobNameHint": "Daily summary",
-  "@hermesJobNameHint": {
-    "description": "Example placeholder for a Hermes job name field."
-  },
-  "hermesJobPromptLabel": "Prompt",
-  "@hermesJobPromptLabel": {
-    "description": "Label for the prompt field in the Hermes job editor."
-  },
-  "hermesJobPromptHint": "What should the agent do each run?",
-  "@hermesJobPromptHint": {
-    "description": "Hint describing what the Hermes job prompt should contain."
-  },
-  "hermesJobScheduleLabel": "Schedule",
-  "@hermesJobScheduleLabel": {
-    "description": "Label for the schedule field in the Hermes job editor."
-  },
-  "hermesJobScheduleHint": "0 9 * * * or every 2h",
-  "@hermesJobScheduleHint": {
-    "description": "Example placeholder for a Hermes job schedule."
-  },
-  "hermesJobTooLong": "Use {count} characters or fewer",
-  "@hermesJobTooLong": {
-    "description": "Validation error when a Hermes job name or prompt exceeds the character limit.",
-    "placeholders": {
-      "count": {
-        "type": "int"
-      }
-    }
-  },
-  "hermesJobScheduleInvalid": "Enter a duration, interval, date, time, or valid cron schedule.",
-  "@hermesJobScheduleInvalid": {
-    "description": "Validation error for an unrecognized Hermes job schedule."
-  },
-  "hermesJobScheduleHelp": "Use cron (0 9 * * *), an interval (every 2h), a delay (30m), or an ISO date and time.",
-  "@hermesJobScheduleHelp": {
-    "description": "Help text listing accepted Hermes job schedule formats."
-  },
-  "hermesJobsSheetSubtitle": "Pause schedules or review what runs next.",
-  "@hermesJobsSheetSubtitle": {
-    "description": "Subtitle on the compact Hermes jobs sheet."
-  },
-  "hermesJobsSheetReview": "Review run times and pause schedules.",
-  "@hermesJobsSheetReview": {
-    "description": "Review-mode subtitle on the compact Hermes jobs sheet."
-  },
-  "hermesJobsManageDescription": "Create, edit, run, or delete schedules.",
-  "@hermesJobsManageDescription": {
-    "description": "Description of the manage action for Hermes schedules."
-  },
-  "hermesJobsEmptyManageHint": "Use Manage to create a scheduled prompt.",
-  "@hermesJobsEmptyManageHint": {
-    "description": "Empty-state hint pointing users to Manage to create a Hermes schedule."
-  },
-  "hermesLastStatus": "Last status: {status}",
-  "@hermesLastStatus": {
-    "description": "Label showing the most recent status of a Hermes job.",
-    "placeholders": {
-      "status": {
-        "type": "String"
-      }
-    }
-  },
-  "hermesSessionUntitled": "Untitled conversation",
-  "@hermesSessionUntitled": {
-    "description": "Fallback title for a Hermes conversation without a name."
-  },
-  "hermesSessionFork": "Fork",
-  "@hermesSessionFork": {
-    "description": "Action that duplicates a Hermes conversation into a new session."
-  },
-  "hermesSessionRenameTitle": "Rename conversation",
-  "@hermesSessionRenameTitle": {
-    "description": "Title of the dialog that renames a Hermes conversation."
-  },
-  "hermesSessionNameHint": "Conversation name",
-  "@hermesSessionNameHint": {
-    "description": "Placeholder for a Hermes conversation name field."
-  },
-  "hermesSessionDeleteTitle": "Delete conversation",
-  "@hermesSessionDeleteTitle": {
-    "description": "Title of the dialog that confirms deleting a Hermes conversation."
-  },
-  "hermesSessionDeleteMessage": "Delete this Hermes conversation? This cannot be undone.",
-  "@hermesSessionDeleteMessage": {
-    "description": "Confirmation body for deleting a Hermes conversation."
-  },
-  "hermesSessionForkFailed": "Could not fork conversation.",
-  "@hermesSessionForkFailed": {
-    "description": "Error shown when forking a Hermes conversation fails."
-  },
-  "hermesSessionRenameFailed": "Could not rename conversation.",
-  "@hermesSessionRenameFailed": {
-    "description": "Error shown when renaming a Hermes conversation fails."
-  },
-  "hermesSessionDeleteFailed": "Could not delete conversation.",
-  "@hermesSessionDeleteFailed": {
-    "description": "Error shown when deleting a Hermes conversation fails."
-  },
-  "hermesSessionLoadFailed": "Could not load this conversation. Check the connection and try again.",
-  "@hermesSessionLoadFailed": {
-    "description": "Error shown when a Hermes conversation cannot be loaded."
-  },
-  "hermesSessionTooLarge": "This conversation is too large to load on this device.",
-  "@hermesSessionTooLarge": {
-    "description": "Error shown when a Hermes conversation transcript exceeds the size the app can load."
-  },
-  "hermesSessionNotFound": "This conversation is no longer available on the Hermes server.",
-  "@hermesSessionNotFound": {
-    "description": "Error shown when the Hermes server reports that a conversation does not exist."
-  },
-  "hermesSessionLoadFailedDetail": "Could not load this conversation: {detail}",
-  "@hermesSessionLoadFailedDetail": {
-    "description": "Error shown when a Hermes conversation cannot be loaded and the server gave a reason.",
-    "placeholders": {
-      "detail": {
-        "type": "String"
-      }
-    }
-  },
-  "hermesMemoryKeyFieldLabel": "Memory key",
-  "@hermesMemoryKeyFieldLabel": {
-    "description": "Label for the Hermes long-term memory key field."
-  },
-  "ollamaThinking": "Thinking",
-  "@ollamaThinking": {
-    "description": "Title for an Ollama Cloud model thinking-level setting."
-  },
-  "ollamaCloudModelActionsDescription": "Configure how this Ollama Cloud model responds.",
-  "@ollamaCloudModelActionsDescription": {
-    "description": "Description of the action sheet for an Ollama Cloud model."
-  },
-  "ollamaThinkingDescription": "Choose how much reasoning the model should use. Available levels depend on the model.",
-  "@ollamaThinkingDescription": {
-    "description": "Description of the Ollama Cloud thinking-level selector."
   },
   "ollamaThinkingAutomatic": "Automatic",
   "@ollamaThinkingAutomatic": {
     "description": "Ollama thinking option that lets the model or service choose."
-  },
-  "ollamaThinkingDisabled": "Off",
-  "@ollamaThinkingDisabled": {
-    "description": "Ollama thinking option that disables reasoning when supported."
-  },
-  "ollamaThinkingLow": "Low",
-  "@ollamaThinkingLow": {
-    "description": "Low Ollama thinking level."
-  },
-  "ollamaThinkingMedium": "Medium",
-  "@ollamaThinkingMedium": {
-    "description": "Medium Ollama thinking level."
-  },
-  "ollamaThinkingHigh": "High",
-  "@ollamaThinkingHigh": {
-    "description": "High Ollama thinking level."
-  },
-  "ollamaThinkingMaximum": "Maximum",
-  "@ollamaThinkingMaximum": {
-    "description": "Maximum Ollama thinking level."
   },
   "releaseNotesSupportPromptHeading": "Enjoying Conduit?",
   "releaseNotesSupportPromptMessage": "A short review helps more people find Conduit. A small tip helps me keep building it. Either one means a lot.",
@@ -7226,263 +5228,6 @@
   },
   "@releaseNotesSupportPromptMessage": {
     "description": "Combined message explaining how a review or donation supports Conduit."
-  },
-  "directConnectProvider": "Connect provider",
-  "@directConnectProvider": {
-    "description": "Primary onboarding action that tests and saves a direct provider."
-  },
-  "directConnectProviderTitle": "Connect a provider",
-  "@directConnectProviderTitle": {
-    "description": "Heading above the direct provider setup form."
-  },
-  "directConnectionEnabledSubtitle": "Show models from this connection in the model picker.",
-  "@directConnectionEnabledSubtitle": {
-    "description": "Description of an enabled direct connection."
-  },
-  "directConnectionDetailsTitle": "Connection details",
-  "@directConnectionDetailsTitle": {
-    "description": "Section title above direct provider endpoint and authentication fields."
-  },
-  "directBaseUrlDescription": "Include the API prefix expected by the provider, usually /v1.",
-  "@directBaseUrlDescription": {
-    "description": "Help text below a generic direct provider base URL."
-  },
-  "directConfiguredReplacePlaceholder": "Configured, enter to replace",
-  "@directConfiguredReplacePlaceholder": {
-    "description": "Placeholder for a configured direct provider secret."
-  },
-  "directApiKeyPlaceholder": "Enter API key",
-  "@directApiKeyPlaceholder": {
-    "description": "Placeholder for an unconfigured direct provider API key."
-  },
-  "hermesOnboardingFailed": "Could not finish Hermes setup. Check secure storage and try again.",
-  "@hermesOnboardingFailed": {
-    "description": "Error shown when Hermes onboarding fails after the server was reached."
-  },
-  "hermesConnectionDetailsTitle": "Connection details",
-  "@hermesConnectionDetailsTitle": {
-    "description": "Section title above Hermes endpoint and API key fields."
-  },
-  "hermesMemoryKeyShortDescription": "Keeps long-term memory tied to you.",
-  "@hermesMemoryKeyShortDescription": {
-    "description": "Concise summary shown on the collapsed Hermes memory-key disclosure."
-  },
-  "hermesConnectAction": "Connect Hermes",
-  "@hermesConnectAction": {
-    "description": "Primary onboarding action that tests and saves a Hermes connection."
-  },
-  "hermesToolCount": "{count, plural, =1{1 tool} other{{count} tools}}",
-  "@hermesToolCount": {
-    "description": "Tool count shown for a Hermes toolset.",
-    "placeholders": {
-      "count": {
-        "type": "int"
-      }
-    }
-  },
-  "hermesNoToolsets": "No toolsets reported by the server.",
-  "@hermesNoToolsets": {
-    "description": "Empty state when a Hermes server reports no toolsets."
-  },
-  "hermesToolsetsNewSessions": "Changes apply to new Hermes sessions. Existing chats keep their current tools.",
-  "@hermesToolsetsNewSessions": {
-    "description": "Explains that Desktop toolset changes do not reset existing chats."
-  },
-  "hermesServerStatusTitle": "Server status",
-  "@hermesServerStatusTitle": {
-    "description": "Section title above Hermes server diagnostic status."
-  },
-  "hermesNoServerStatus": "No status reported by the server.",
-  "@hermesNoServerStatus": {
-    "description": "Empty state when a Hermes server reports no diagnostic status."
-  },
-  "hermesLegacySessionToken": "Legacy session token",
-  "@hermesLegacySessionToken": {
-    "description": "Label for the legacy Hermes session-token field."
-  },
-  "hermesLegacySessionTokenHint": "Paste the Hermes session token",
-  "@hermesLegacySessionTokenHint": {
-    "description": "Placeholder for pasting a legacy Hermes session token."
-  },
-  "hermesGatewayStopped": "The Hermes dashboard is online, but Desktop Gateway is stopped. Start the gateway on the Hermes server, then test again.",
-  "@hermesGatewayStopped": {
-    "description": "Error when the Hermes dashboard is up but Desktop Gateway is stopped."
-  },
-  "hermesProfile": "Hermes profile",
-  "@hermesProfile": {
-    "description": "Title for the Hermes profile picker."
-  },
-  "hermesProfileLabel": "Profile",
-  "@hermesProfileLabel": {
-    "description": "Field label for the selected Hermes profile."
-  },
-  "hermesRefreshProfiles": "Refresh profiles",
-  "@hermesRefreshProfiles": {
-    "description": "Action that reloads available Hermes profiles."
-  },
-  "hermesDesktopAuthentication": "Desktop authentication",
-  "@hermesDesktopAuthentication": {
-    "description": "Section title for Hermes desktop sign-in methods."
-  },
-  "hermesDashboardAuthHelp": "Open the Hermes dashboard in the sign-in window, then return here to test the connection.",
-  "@hermesDashboardAuthHelp": {
-    "description": "Help text for signing in through the Hermes dashboard window."
-  },
-  "hermesAuthLegacy": "Legacy",
-  "@hermesAuthLegacy": {
-    "description": "Segment label for legacy Hermes token authentication."
-  },
-  "hermesAuthNative": "Native",
-  "@hermesAuthNative": {
-    "description": "Segment label for native Hermes sign-in."
-  },
-  "hermesAuthDashboard": "Dashboard",
-  "@hermesAuthDashboard": {
-    "description": "Segment label for Hermes dashboard sign-in."
-  },
-  "hermesNativeSignIn": "Sign in with Hermes",
-  "@hermesNativeSignIn": {
-    "description": "Button that starts native Hermes sign-in."
-  },
-  "hermesDashboardSignIn": "Open dashboard sign in",
-  "@hermesDashboardSignIn": {
-    "description": "Button that opens Hermes dashboard sign-in."
-  },
-  "hermesGatewayAccessHeaders": "Headers and certificates",
-  "@hermesGatewayAccessHeaders": {
-    "description": "Title for custom Hermes gateway headers and certificates."
-  },
-  "hermesGatewayAccessHeadersHelp": "Custom request headers and TLS trust for a protected Hermes server.",
-  "@hermesGatewayAccessHeadersHelp": {
-    "description": "Help text for custom request headers and TLS trust on a protected Hermes server."
-  },
-  "hermesDesktopGateway": "Desktop Gateway",
-  "@hermesDesktopGateway": {
-    "description": "Section title for Hermes Desktop Gateway settings."
-  },
-  "hermesReloadSkills": "Reload skills",
-  "@hermesReloadSkills": {
-    "description": "Action that reloads installed Hermes skills."
-  },
-  "hermesNoInstalledSkills": "No installed skills",
-  "@hermesNoInstalledSkills": {
-    "description": "Empty-state message when the Hermes server reports no skills."
-  },
-  "hermesMcpServers": "MCP servers",
-  "@hermesMcpServers": {
-    "description": "Section title for Hermes MCP server settings."
-  },
-  "hermesSignOut": "Sign out of Hermes",
-  "@hermesSignOut": {
-    "description": "Action that signs the user out of Hermes."
-  },
-  "hermesActionFailed": "Hermes action failed.",
-  "@hermesActionFailed": {
-    "description": "Generic error when a Hermes settings action fails."
-  },
-  "hermesToolsetUpdateFailed": "Hermes toolset update failed.",
-  "@hermesToolsetUpdateFailed": {
-    "description": "Error shown when updating Hermes toolsets fails."
-  },
-  "hermesJobStateLabel": "State",
-  "@hermesJobStateLabel": {
-    "description": "Label for a Hermes job state in the job details list."
-  },
-  "hermesJobDeliveryLabel": "Delivery",
-  "@hermesJobDeliveryLabel": {
-    "description": "Label for a Hermes job delivery target in the job details list."
-  },
-  "hermesJobLastLabel": "Last",
-  "@hermesJobLastLabel": {
-    "description": "Label for the last-run time of a Hermes job."
-  },
-  "hermesJobNextLabel": "Next",
-  "@hermesJobNextLabel": {
-    "description": "Label for the next-run time of a Hermes job."
-  },
-  "hermesJobRunHistory": "Run history",
-  "@hermesJobRunHistory": {
-    "description": "Disclosure title for a Hermes job run history."
-  },
-  "hermesApprovalAllowOnce": "Allow once",
-  "@hermesApprovalAllowOnce": {
-    "description": "Approval option that permits a Hermes tool call once."
-  },
-  "hermesApprovalAllowSession": "Allow for session",
-  "@hermesApprovalAllowSession": {
-    "description": "Approval option that permits a Hermes tool call for the session."
-  },
-  "hermesApprovalAlwaysAllow": "Always allow",
-  "@hermesApprovalAlwaysAllow": {
-    "description": "Approval option that always permits a Hermes tool call."
-  },
-  "hermesClarificationTitle": "Hermes needs clarification",
-  "@hermesClarificationTitle": {
-    "description": "Title of a Hermes card asking the user to clarify a request."
-  },
-  "hermesSudoTitle": "Hermes needs sudo access",
-  "@hermesSudoTitle": {
-    "description": "Title of a Hermes card requesting sudo access."
-  },
-  "hermesSecretTitle": "Hermes needs a secret",
-  "@hermesSecretTitle": {
-    "description": "Title of a Hermes card requesting a secret."
-  },
-  "hermesMcpSetupTitle": "Hermes needs MCP setup",
-  "@hermesMcpSetupTitle": {
-    "description": "Title of a Hermes card requesting MCP setup."
-  },
-  "hermesResponseSent": "Response sent",
-  "@hermesResponseSent": {
-    "description": "Status shown after sending a reply to a Hermes decision card."
-  },
-  "hermesNotNow": "Not now",
-  "@hermesNotNow": {
-    "description": "Button that dismisses a Hermes setup request for now."
-  },
-  "hermesSetUp": "Set up",
-  "@hermesSetUp": {
-    "description": "Button that starts setup from a Hermes decision card."
-  },
-  "hermesSensitiveResponse": "Sensitive response",
-  "@hermesSensitiveResponse": {
-    "description": "Label for a sensitive reply field on a Hermes decision card."
-  },
-  "hermesResponse": "Response",
-  "@hermesResponse": {
-    "description": "Label for the reply field on a Hermes decision card."
-  },
-  "hermesSendResponse": "Send response",
-  "@hermesSendResponse": {
-    "description": "Button that sends a reply from a Hermes decision card."
-  },
-  "hermesFastTier": "Fast tier",
-  "@hermesFastTier": {
-    "description": "Title of the Hermes fast-tier toggle in the model picker."
-  },
-  "hermesFastTierOn": "On",
-  "@hermesFastTierOn": {
-    "description": "Status label when Hermes fast tier is enabled."
-  },
-  "hermesFastTierOff": "Off",
-  "@hermesFastTierOff": {
-    "description": "Status label when Hermes fast tier is disabled."
-  },
-  "hermesTurnSteer": "Steer",
-  "@hermesTurnSteer": {
-    "description": "Chat-input action that steers the current Hermes turn."
-  },
-  "hermesTurnSendNext": "Send next",
-  "@hermesTurnSendNext": {
-    "description": "Chat-input action that sends the next Hermes turn."
-  },
-  "hermesTurnControlsUnsupported": "Upgrade Hermes to enable safe turn controls.",
-  "@hermesTurnControlsUnsupported": {
-    "description": "Notice that the connected Hermes server cannot use turn controls."
-  },
-  "sidebarHermesTab": "Hermes",
-  "@sidebarHermesTab": {
-    "description": "Compact label for the Hermes sidebar tab."
   },
   "markdownShowMoreLines": "{count, plural, =1{Show 1 more line} other{Show {count} more lines}}",
   "@markdownShowMoreLines": {
@@ -7514,112 +5259,6 @@
   "@voiceCallSpeakerOff": {
     "description": "Tooltip for disabling the loudspeaker during a voice call."
   },
-  "directMcpServersTitle": "MCP servers",
-  "@directMcpServersTitle": {
-    "description": "Section title for Streamable HTTP MCP tool servers used by Direct models."
-  },
-  "directMcpEmptyTitle": "No MCP servers yet",
-  "@directMcpEmptyTitle": {
-    "description": "Empty-state title when no Direct MCP servers are configured."
-  },
-  "directMcpReachabilityHelp": "Add a Streamable HTTP endpoint that this phone can reach.",
-  "@directMcpReachabilityHelp": {
-    "description": "Explains the network reachability requirement for Direct MCP servers."
-  },
-  "directMcpEditorTitle": "Edit MCP server",
-  "@directMcpEditorTitle": {
-    "description": "Title for editing a Direct MCP server."
-  },
-  "directMcpAddTitle": "Add MCP server",
-  "@directMcpAddTitle": {
-    "description": "Title for adding a Direct MCP server."
-  },
-  "directMcpName": "Server name",
-  "@directMcpName": {
-    "description": "Field label for an MCP server display name."
-  },
-  "directMcpEndpoint": "Streamable HTTP endpoint",
-  "@directMcpEndpoint": {
-    "description": "Field label for an MCP Streamable HTTP URL."
-  },
-  "directMcpBearerToken": "Bearer token (optional)",
-  "@directMcpBearerToken": {
-    "description": "Field label for an optional MCP bearer token."
-  },
-  "directMcpCustomHeaders": "Custom headers (optional)",
-  "@directMcpCustomHeaders": {
-    "description": "Field label for optional MCP HTTP headers."
-  },
-  "directMcpCustomHeadersHint": "One per line: Name: Value",
-  "@directMcpCustomHeadersHint": {
-    "description": "Input hint showing the MCP custom-header format."
-  },
-  "directMcpTestConnection": "Test connection",
-  "@directMcpTestConnection": {
-    "description": "Button that lists tools from an MCP server without saving it."
-  },
-  "directMcpTesting": "Testing connection…",
-  "@directMcpTesting": {
-    "description": "Progress message while testing an MCP server."
-  },
-  "directMcpTestSucceeded": "{count, plural, =1{Connected — 1 tool found.} other{Connected — {count} tools found.}}",
-  "@directMcpTestSucceeded": {
-    "description": "Successful MCP connection test result with the listed tool count.",
-    "placeholders": {
-      "count": {
-        "type": "int"
-      }
-    }
-  },
-  "directMcpTestFailed": "Could not list tools from this MCP server.",
-  "@directMcpTestFailed": {
-    "description": "Error shown when an MCP connection test fails."
-  },
-  "directMcpSaveFailed": "Could not save this MCP server.",
-  "@directMcpSaveFailed": {
-    "description": "Error shown when an MCP server cannot be saved."
-  },
-  "directMcpLoadFailed": "Could not load MCP servers from secure storage.",
-  "@directMcpLoadFailed": {
-    "description": "Error shown when Direct MCP server configuration cannot be loaded."
-  },
-  "directMcpMissing": "This MCP server no longer exists.",
-  "@directMcpMissing": {
-    "description": "Message shown when an MCP server was removed while its editor was open."
-  },
-  "directMcpCredentialTransferTitle": "Use credentials with new server?",
-  "@directMcpCredentialTransferTitle": {
-    "description": "Title before sending MCP credentials to a changed endpoint."
-  },
-  "directMcpCredentialTransferMessage": "This sends the bearer token and custom headers to the new server. Continue only if you trust it. Cancel saves the server without credentials.",
-  "@directMcpCredentialTransferMessage": {
-    "description": "Security warning before transferring MCP credentials to a changed endpoint."
-  },
-  "directMcpCredentialTransferConfirm": "Use credentials",
-  "@directMcpCredentialTransferConfirm": {
-    "description": "Action confirming MCP credentials may be used at a changed endpoint."
-  },
-  "directMcpDeleteTitle": "Delete MCP server?",
-  "@directMcpDeleteTitle": {
-    "description": "Title for the MCP server deletion confirmation."
-  },
-  "directMcpDeleteMessage": "This removes {name} and its credentials from this device.",
-  "@directMcpDeleteMessage": {
-    "description": "Confirmation message before deleting an MCP server.",
-    "placeholders": {
-      "name": {
-        "type": "String"
-      }
-    }
-  },
-  "directMcpDeleteFailed": "Could not delete this MCP server.",
-  "@directMcpDeleteFailed": {
-    "description": "Error shown when an MCP server cannot be deleted."
-  },
-  "directMcpAuthMode": "Authentication",
-  "@directMcpAuthMode": {
-    "description": "Field label for selecting an MCP server authentication mode."
-  },
   "directMcpAuthNone": "None",
   "@directMcpAuthNone": {
     "description": "MCP authentication option with no credentials."
@@ -7627,258 +5266,6 @@
   "directMcpAuthBearer": "Bearer token",
   "@directMcpAuthBearer": {
     "description": "MCP authentication option using a manually entered bearer token."
-  },
-  "directMcpAuthOAuth": "OAuth",
-  "@directMcpAuthOAuth": {
-    "description": "MCP authentication option using an external browser OAuth flow."
-  },
-  "directMcpOAuthConnect": "Connect in browser",
-  "@directMcpOAuthConnect": {
-    "description": "Action that starts an MCP OAuth connection in the system browser."
-  },
-  "directMcpOAuthReconnect": "Reconnect in browser",
-  "@directMcpOAuthReconnect": {
-    "description": "Action that replaces an existing MCP OAuth connection."
-  },
-  "directMcpOAuthDisconnect": "Disconnect OAuth",
-  "@directMcpOAuthDisconnect": {
-    "description": "Action that deletes OAuth tokens for an MCP server."
-  },
-  "directMcpOAuthPending": "Waiting for authorization in the browser…",
-  "@directMcpOAuthPending": {
-    "description": "Status while an MCP OAuth browser flow is pending."
-  },
-  "directMcpOAuthConnected": "OAuth connected.",
-  "@directMcpOAuthConnected": {
-    "description": "Status shown after an MCP OAuth flow succeeds."
-  },
-  "directMcpOAuthConnectionDetails": "Connected to {issuerHost} · {scopes}",
-  "@directMcpOAuthConnectionDetails": {
-    "description": "Secret-free summary of an MCP OAuth connection.",
-    "placeholders": {
-      "issuerHost": {
-        "type": "String"
-      },
-      "scopes": {
-        "type": "String"
-      }
-    }
-  },
-  "directMcpOAuthNoScopes": "No scopes reported",
-  "@directMcpOAuthNoScopes": {
-    "description": "Fallback when an OAuth server does not report granted scopes."
-  },
-  "directMcpOAuthConnectFailed": "Could not connect this MCP server with OAuth.",
-  "@directMcpOAuthConnectFailed": {
-    "description": "Generic sanitized failure for an MCP OAuth connection."
-  },
-  "directMcpOAuthDisconnectFailed": "Could not disconnect OAuth from this MCP server.",
-  "@directMcpOAuthDisconnectFailed": {
-    "description": "Failure shown when MCP OAuth tokens cannot be deleted."
-  },
-  "directMcpApprovalTitle": "Tool approval",
-  "@directMcpApprovalTitle": {
-    "description": "Title of a Direct MCP allow-once approval card."
-  },
-  "directMcpApprovalAllowOnce": "Allow once",
-  "@directMcpApprovalAllowOnce": {
-    "description": "Action permitting one Direct MCP tool call."
-  },
-  "directMcpApprovalAllowSession": "Allow for session",
-  "@directMcpApprovalAllowSession": {
-    "description": "Action permitting an exact Direct MCP tool for the current app session."
-  },
-  "directMcpApprovalAllowAlways": "Always allow",
-  "@directMcpApprovalAllowAlways": {
-    "description": "Action remembering an exact Direct MCP tool approval."
-  },
-  "directMcpApprovalAlwaysTitle": "Always allow this tool?",
-  "@directMcpApprovalAlwaysTitle": {
-    "description": "Confirmation title before remembering a Direct MCP tool approval."
-  },
-  "directMcpApprovalAlwaysMessage": "{serverName} will be allowed to run {toolName} without asking again. The approval is revoked automatically if the tool schema changes.",
-  "@directMcpApprovalAlwaysMessage": {
-    "description": "Confirmation message before remembering a Direct MCP tool approval.",
-    "placeholders": {
-      "serverName": {
-        "type": "String"
-      },
-      "toolName": {
-        "type": "String"
-      }
-    }
-  },
-  "directMcpApprovalSaveFailed": "Could not remember this approval. You can retry or choose another option.",
-  "@directMcpApprovalSaveFailed": {
-    "description": "Safe error shown when a remembered Direct MCP tool approval cannot be persisted."
-  },
-  "directMcpApprovalDeny": "Deny",
-  "@directMcpApprovalDeny": {
-    "description": "Action denying one Direct MCP tool call."
-  },
-  "directMcpApprovalAllowed": "Allowed once",
-  "@directMcpApprovalAllowed": {
-    "description": "Resolved status for an allowed Direct MCP tool call."
-  },
-  "directMcpApprovalAllowedSession": "Allowed for session",
-  "@directMcpApprovalAllowedSession": {
-    "description": "Resolved status for a session-approved Direct MCP tool call."
-  },
-  "directMcpApprovalAllowedAlways": "Always allowed",
-  "@directMcpApprovalAllowedAlways": {
-    "description": "Resolved status for a remembered Direct MCP tool call."
-  },
-  "directMcpApprovalDenied": "Denied",
-  "@directMcpApprovalDenied": {
-    "description": "Resolved status for a denied Direct MCP tool call."
-  },
-  "directMcpApprovalExpired": "Approval expired",
-  "@directMcpApprovalExpired": {
-    "description": "Status for a restored Direct MCP approval with no live run."
-  },
-  "directMcpRememberedApprovalsTitle": "Always allowed tools",
-  "@directMcpRememberedApprovalsTitle": {
-    "description": "Section title for persistent Direct MCP tool approvals."
-  },
-  "directMcpRememberedApprovalsSubtitle": "These exact tools can run without asking while their server and input schema remain unchanged.",
-  "@directMcpRememberedApprovalsSubtitle": {
-    "description": "Security explanation for persistent Direct MCP tool approvals."
-  },
-  "directMcpRememberedApprovalRevoke": "Revoke",
-  "@directMcpRememberedApprovalRevoke": {
-    "description": "Action revoking one persistent Direct MCP tool approval."
-  },
-  "directMcpRememberedApprovalsRevokeAll": "Revoke all",
-  "@directMcpRememberedApprovalsRevokeAll": {
-    "description": "Action revoking every persistent Direct MCP tool approval for one server."
-  },
-  "directMcpRememberedApprovalRevokeFailed": "Could not revoke the remembered approval.",
-  "@directMcpRememberedApprovalRevokeFailed": {
-    "description": "Safe error shown when a remembered Direct MCP approval cannot be revoked."
-  },
-  "directMcpContentAction": "MCP content",
-  "@directMcpContentAction": {
-    "description": "Direct composer action for browsing MCP prompts and resources."
-  },
-  "directMcpContentTitle": "MCP content",
-  "@directMcpContentTitle": {
-    "description": "Title of the Direct MCP prompt and resource picker."
-  },
-  "directMcpContentServer": "MCP server",
-  "@directMcpContentServer": {
-    "description": "Label for the MCP content server selector."
-  },
-  "directMcpContentSearch": "Search prompts and resources",
-  "@directMcpContentSearch": {
-    "description": "Placeholder and accessibility label for MCP content search."
-  },
-  "directMcpContentPrompts": "Prompts",
-  "@directMcpContentPrompts": {
-    "description": "Section label for MCP prompts."
-  },
-  "directMcpContentResources": "Resources",
-  "@directMcpContentResources": {
-    "description": "Section label for MCP resources."
-  },
-  "directMcpContentEmpty": "This server has no prompts or resources.",
-  "@directMcpContentEmpty": {
-    "description": "Empty state for an MCP server with no prompt or resource inventory."
-  },
-  "directMcpContentNoMatches": "No matching prompts or resources.",
-  "@directMcpContentNoMatches": {
-    "description": "Empty search result for MCP content."
-  },
-  "directMcpContentLoadFailed": "Could not load content from this MCP server.",
-  "@directMcpContentLoadFailed": {
-    "description": "Sanitized MCP content inventory load failure."
-  },
-  "directMcpContentRefresh": "Refresh MCP content",
-  "@directMcpContentRefresh": {
-    "description": "Tooltip and accessibility label for refreshing MCP content."
-  },
-  "directMcpContentPreviewTitle": "Preview",
-  "@directMcpContentPreviewTitle": {
-    "description": "Title above MCP content awaiting explicit insertion."
-  },
-  "directMcpContentInsert": "Insert",
-  "@directMcpContentInsert": {
-    "description": "Action that inserts previewed MCP content into the composer."
-  },
-  "directMcpContentPromptHeading": "MCP prompt from {serverName}: {promptName}",
-  "@directMcpContentPromptHeading": {
-    "description": "Visible source heading inserted before an MCP prompt.",
-    "placeholders": {
-      "serverName": {
-        "type": "String"
-      },
-      "promptName": {
-        "type": "String"
-      }
-    }
-  },
-  "directMcpContentResourceHeading": "MCP resource from {serverName}: {resourceUri}",
-  "@directMcpContentResourceHeading": {
-    "description": "Visible source heading inserted before an MCP resource.",
-    "placeholders": {
-      "serverName": {
-        "type": "String"
-      },
-      "resourceUri": {
-        "type": "String"
-      }
-    }
-  },
-  "directMcpContentRoleUser": "User",
-  "@directMcpContentRoleUser": {
-    "description": "Role label for a user message returned by an MCP prompt."
-  },
-  "directMcpContentRoleAssistant": "Assistant",
-  "@directMcpContentRoleAssistant": {
-    "description": "Role label for an assistant message returned by an MCP prompt."
-  },
-  "directMcpContentRequestFailed": "Could not load this MCP content. Try again.",
-  "@directMcpContentRequestFailed": {
-    "description": "Sanitized failure while loading an MCP prompt or resource preview."
-  },
-  "directMcpContentUnsupported": "This item is binary or unsupported. Choose a text prompt or text resource.",
-  "@directMcpContentUnsupported": {
-    "description": "Error shown when MCP content cannot be inserted as text."
-  },
-  "directMcpContentChanged": "This item changed on the server. Refresh and choose it again.",
-  "@directMcpContentChanged": {
-    "description": "Error shown when the selected MCP inventory item changed before retrieval."
-  },
-  "directMcpContentTooLarge": "This content is too large to insert.",
-  "@directMcpContentTooLarge": {
-    "description": "Error shown when fetched MCP content exceeds fixed insertion limits."
-  },
-  "directMcpContentComposerTooLarge": "The draft and this content exceed the 256 KiB message limit. Shorten the draft or content and try again.",
-  "@directMcpContentComposerTooLarge": {
-    "description": "Actionable error when MCP insertion would exceed the Direct composer limit."
-  },
-  "directMcpContentLoading": "Loading MCP content…",
-  "@directMcpContentLoading": {
-    "description": "Status shown while an MCP prompt or resource is loading."
-  },
-  "directMcpInsecureCredentialsTitle": "Send credentials without encryption?",
-  "@directMcpInsecureCredentialsTitle": {
-    "description": "Title before sending MCP credentials over non-loopback HTTP."
-  },
-  "directMcpInsecureCredentialsMessage": "This server uses unencrypted HTTP. Your bearer token, OAuth token, and custom headers could be read or changed on the network.",
-  "@directMcpInsecureCredentialsMessage": {
-    "description": "Warning before allowing MCP credentials over non-loopback HTTP."
-  },
-  "directMcpInsecureCredentialsConfirm": "Send without encryption",
-  "@directMcpInsecureCredentialsConfirm": {
-    "description": "Action confirming MCP credentials may be sent over unencrypted HTTP."
-  },
-  "directBearerDescription": "Sends the credential as an Authorization: Bearer header. Most OpenAI-compatible servers (llama.cpp, vLLM, LM Studio, Ollama) expect this.",
-  "@directBearerDescription": {
-    "description": "Help text for the Bearer token authentication mode of a direct connection."
-  },
-  "directApiKeyHeaderAzureOnlyDescription": "Sends the credential in the api-key header. Use this only for Azure OpenAI; other OpenAI-compatible servers expect a Bearer token.",
-  "@directApiKeyHeaderAzureOnlyDescription": {
-    "description": "Help text for the Azure OpenAI api-key header authentication mode, noting it is Azure-only."
   },
   "chatTaskProgress": "Tasks: {completed} of {total} completed",
   "@chatTaskProgress": {
@@ -7907,70 +5294,6 @@
   "chatTaskCancelled": "Cancelled",
   "@chatTaskCancelled": {
     "description": "Task checklist status for a cancelled task."
-  },
-  "webSearchSettingsFooterAuto": "Used by Direct models that don't have their own web search. Searches run from this device: queries go to DuckDuckGo, then to Brave, Bing, Mojeek or Wikipedia if it doesn't answer. Pages the model reads are also fetched from this device.",
-  "@webSearchSettingsFooterAuto": {
-    "description": "Footer under the on-device web search settings when the engine is Auto; explains where queries and page fetches go."
-  },
-  "webSearchSettingsFooterEngine": "Used by Direct models that don't have their own web search. Searches run from this device, and queries go only to {engine}. Pages the model reads are also fetched from this device.",
-  "@webSearchSettingsFooterEngine": {
-    "description": "Footer under the on-device web search settings when one engine is chosen; {engine} is a brand name such as DuckDuckGo.",
-    "placeholders": {
-      "engine": {
-        "type": "String",
-        "example": "DuckDuckGo"
-      }
-    }
-  },
-  "webSearchEngineLabel": "Search engine",
-  "@webSearchEngineLabel": {
-    "description": "Row label for choosing the on-device web search engine."
-  },
-  "webSearchEngineAuto": "Auto",
-  "@webSearchEngineAuto": {
-    "description": "Engine option that tries several search engines in order."
-  },
-  "webSearchSafeSearchLabel": "Safe search",
-  "@webSearchSafeSearchLabel": {
-    "description": "Row label for the adult-content filter used by on-device web search."
-  },
-  "webSearchSafeSearchStrict": "Strict",
-  "@webSearchSafeSearchStrict": {
-    "description": "Safe search level: filter all adult content."
-  },
-  "webSearchSafeSearchModerate": "Moderate",
-  "@webSearchSafeSearchModerate": {
-    "description": "Safe search level: filter explicit images and video."
-  },
-  "webSearchSafeSearchOff": "Off",
-  "@webSearchSafeSearchOff": {
-    "description": "Safe search level: no filtering."
-  },
-  "webSearchRegionLabel": "Region",
-  "@webSearchRegionLabel": {
-    "description": "Row label for the region on-device web search results are biased toward."
-  },
-  "webSearchRegionAuto": "Match device",
-  "@webSearchRegionAuto": {
-    "description": "Region option that follows the device language and country."
-  },
-  "webSearchRegionWorldwide": "Worldwide",
-  "@webSearchRegionWorldwide": {
-    "description": "Region option with no regional bias."
-  },
-  "directModelToolsUnsupported": "This model can't use tools, so it can't search the web. Turn off web search and any tools, then try again.",
-  "@directModelToolsUnsupported": {
-    "description": "Error shown when a Direct model rejects tool definitions, which web search needs."
-  },
-  "directContextCompactionModelCount": "{count, plural, =1{1 model} other{{count} models}}",
-  "@directContextCompactionModelCount": {
-    "description": "Row value on Direct Connections that opens the list of models needing a context limit.",
-    "placeholders": {
-      "count": {
-        "type": "int",
-        "example": "42"
-      }
-    }
   },
   "imageViewerPosition": "{current} of {total}",
   "@imageViewerPosition": {
@@ -10125,115 +7448,9 @@
   "@notificationTargetMakeDefaultNeedsSave": {
     "description": "Shown under the dimmed 'Make default' action in the webhook destination editor while the form has unsaved edits. Making a destination the default closes the editor, so the edits must be saved first."
   },
-  "hermesConnectionsSectionTitle": "Connections",
-  "@hermesConnectionsSectionTitle": {
-    "description": "Heading above the list of saved Hermes connections in Hermes Agent settings."
-  },
-  "hermesAddConnection": "Add connection",
-  "@hermesAddConnection": {
-    "description": "Button that opens the editor for a new saved Hermes connection."
-  },
-  "hermesNewConnectionTitle": "New connection",
-  "@hermesNewConnectionTitle": {
-    "description": "Title of the editor page when adding a new Hermes connection."
-  },
-  "hermesConnectionNameHint": "Shown in the model picker and sidebar",
-  "@hermesConnectionNameHint": {
-    "description": "Helper text under the name field of a Hermes connection, explaining where the name appears."
-  },
-  "hermesNoConnectionsTitle": "No Hermes connections",
-  "@hermesNoConnectionsTitle": {
-    "description": "Title of the empty state when no Hermes connection is saved."
-  },
-  "hermesNoConnectionsSubtitle": "Add a Hermes server to chat with your agent.",
-  "@hermesNoConnectionsSubtitle": {
-    "description": "Subtitle of the empty state when no Hermes connection is saved."
-  },
-  "hermesActiveConnection": "Active",
-  "@hermesActiveConnection": {
-    "description": "Label marking the saved Hermes connection that is currently in use."
-  },
-  "hermesUseConnection": "Use this connection",
-  "@hermesUseConnection": {
-    "description": "Action that makes a saved Hermes connection the active one."
-  },
-  "hermesInactiveConnectionNotice": "Switch to this connection to see its status and manage the server.",
-  "@hermesInactiveConnectionNotice": {
-    "description": "Notice in the editor of a saved Hermes connection that is not the active one."
-  },
-  "hermesSignInActivatesConnection": "Signing in makes this the active connection.",
-  "@hermesSignInActivatesConnection": {
-    "description": "Footer under Desktop Gateway sign-in options of an inactive Hermes connection."
-  },
-  "hermesDeleteConnectionTitle": "Delete connection?",
-  "@hermesDeleteConnectionTitle": {
-    "description": "Title of the confirmation dialog before deleting a saved Hermes connection."
-  },
-  "hermesDeleteConnectionMessage": "This removes {name} and its credentials from this device.",
-  "@hermesDeleteConnectionMessage": {
-    "description": "Confirmation message before deleting a saved Hermes connection and its credentials.",
-    "placeholders": {
-      "name": {
-        "type": "String",
-        "example": "Home agent"
-      }
-    }
-  },
-  "hermesDeleteConnectionFailed": "Could not delete this connection.",
-  "@hermesDeleteConnectionFailed": {
-    "description": "Error shown when a saved Hermes connection cannot be deleted."
-  },
-  "hermesSwitchConnectionFailed": "Could not switch to this connection.",
-  "@hermesSwitchConnectionFailed": {
-    "description": "Error shown when switching to another saved Hermes connection fails."
-  },
-  "hermesSwitchConnectionTitle": "Switch connection",
-  "@hermesSwitchConnectionTitle": {
-    "description": "Title of the picker that switches the active Hermes connection."
-  },
-  "hermesSwitchConnectionPromptTitle": "Switch to {name}?",
-  "@hermesSwitchConnectionPromptTitle": {
-    "description": "Title of the dialog asking whether to switch to the Hermes connection that owns a chat session.",
-    "placeholders": {
-      "name": {
-        "type": "String",
-        "example": "Home agent"
-      }
-    }
-  },
-  "hermesSwitchConnectionPromptMessage": "This chat's Hermes session belongs to {name}. Switch to continue it, or keep the current connection to start a new session.",
-  "@hermesSwitchConnectionPromptMessage": {
-    "description": "Message of the dialog asking whether to switch to the Hermes connection that owns this chat's session.",
-    "placeholders": {
-      "name": {
-        "type": "String",
-        "example": "Home agent"
-      }
-    }
-  },
-  "hermesSwitchConnectionConfirm": "Switch",
-  "@hermesSwitchConnectionConfirm": {
-    "description": "Confirm button that switches to another Hermes connection."
-  },
-  "hermesKeepCurrentConnection": "Keep current",
-  "@hermesKeepCurrentConnection": {
-    "description": "Button that keeps the current Hermes connection instead of switching."
-  },
   "accountsTitle": "Accounts",
   "@accountsTitle": {
     "description": "Heading of the list of saved Open WebUI accounts on the profile page and of the page that manages them."
-  },
-  "accountChooserTitle": "Choose an account",
-  "@accountChooserTitle": {
-    "description": "Heading of the cold-start screen shown when more than one account is configured (OWU-104)."
-  },
-  "accountsAddAccount": "Add account",
-  "@accountsAddAccount": {
-    "description": "Row and button that starts signing in to another Open WebUI account, on a saved server or a new one."
-  },
-  "accountsManage": "Manage accounts",
-  "@accountsManage": {
-    "description": "Row on the profile page that opens the page listing every saved Open WebUI account, grouped by server."
   },
   "accountsSignedOut": "Signed out",
   "@accountsSignedOut": {
@@ -10242,40 +7459,6 @@
   "accountsActive": "Active",
   "@accountsActive": {
     "description": "Accessibility label for the checkmark next to the Open WebUI account the app is currently using."
-  },
-  "accountsAddAccountTitle": "Add an account",
-  "@accountsAddAccountTitle": {
-    "description": "Title of the sheet that asks where to add another Open WebUI account: on a saved server or on a new one."
-  },
-  "accountsAddAccountMessage": "Sign in to another account on a saved server, or connect to a new one.",
-  "@accountsAddAccountMessage": {
-    "description": "Explanation in the sheet that asks where to add another Open WebUI account."
-  },
-  "accountsNewServer": "New server",
-  "@accountsNewServer": {
-    "description": "Option in the add-account sheet that connects to an Open WebUI server that is not saved yet."
-  },
-  "accountsContinueWith": "Continue with {server}",
-  "@accountsContinueWith": {
-    "description": "Button in the add-account sheet that signs in to another account on a saved Open WebUI server. {server} is the server's name.",
-    "placeholders": {
-      "server": {
-        "type": "String",
-        "example": "Home Lab"
-      }
-    }
-  },
-  "accountsKindDirect": "Direct",
-  "@accountsKindDirect": {
-    "description": "Short tab label in the add-account sheet for adding a Direct connection to a model provider (OpenAI-compatible, Ollama, OpenRouter). Keep it short: it shares a segmented control with 'Open WebUI' and 'Hermes'."
-  },
-  "accountsAddOnThisServer": "Add account on this server",
-  "@accountsAddOnThisServer": {
-    "description": "Row under a saved Open WebUI server on the accounts page that starts signing in to another account on it."
-  },
-  "accountsSwitch": "Switch",
-  "@accountsSwitch": {
-    "description": "Action that makes the chosen saved Open WebUI account the one the app uses."
   },
   "accountsSignOutOf": "Sign out of {name}",
   "@accountsSignOutOf": {
@@ -10321,94 +7504,8 @@
   "@accountsSwitchAnyway": {
     "description": "Confirms switching accounts even though it stops the reply that is still streaming."
   },
-  "accountsAddressChangeStopsReply": "Changing the address in use stops it.",
-  "@accountsAddressChangeStopsReply": {
-    "description": "Body of the confirmation shown before saving or removing the server address in use while a reply is still streaming."
-  },
-  "accountsAddressChangeAnyway": "Change anyway",
-  "@accountsAddressChangeAnyway": {
-    "description": "Confirms changing or removing the server address in use even though it stops the reply that is still streaming."
-  },
   "accountsSignOutAnyway": "Sign out anyway",
   "@accountsSignOutAnyway": {
     "description": "Confirms signing out of the current account even though it stops the reply that is still streaming."
-  },
-  "accountsServerAddresses": "Addresses",
-  "@accountsServerAddresses": {
-    "description": "Row under a saved Open WebUI server, and title of the page, listing the addresses (URLs) the server can be reached at, such as a LAN address, a Tailscale name and a public domain."
-  },
-  "accountsServerAddressesHelp": "Conduit connects through the first address that answers, from the top. Drag to change the order.",
-  "@accountsServerAddressesHelp": {
-    "description": "Explanation under the list of addresses of one Open WebUI server."
-  },
-  "accountsAddAddress": "Add address",
-  "@accountsAddAddress": {
-    "description": "Row and page title for adding another address (URL) at which the same Open WebUI server can be reached."
-  },
-  "accountsEditAddress": "Edit address",
-  "@accountsEditAddress": {
-    "description": "Title of the page that edits one saved address (URL) of an Open WebUI server."
-  },
-  "accountsSaveAddress": "Save address",
-  "@accountsSaveAddress": {
-    "description": "Button that checks an address of an Open WebUI server and saves it."
-  },
-  "accountsAddressInUse": "In use",
-  "@accountsAddressInUse": {
-    "description": "Badge on the address of an Open WebUI server that the app is connected through right now."
-  },
-  "accountsAddressName": "Name (optional)",
-  "@accountsAddressName": {
-    "description": "Label of the optional field naming an address of an Open WebUI server, such as Home network or Tailscale."
-  },
-  "accountsAddressNameHint": "Home network, Tailscale…",
-  "@accountsAddressNameHint": {
-    "description": "Placeholder in the optional name field of an Open WebUI server address."
-  },
-  "accountsAddressDifferentServer": "This address reaches a different server, or a different account on it.",
-  "@accountsAddressDifferentServer": {
-    "description": "Error shown when a new address of an Open WebUI server answers as another server: the signed-in account is not recognized there."
-  },
-  "accountsAddressNeedsSignIn": "Sign in to an account on this server first, so the address can be checked.",
-  "@accountsAddressNeedsSignIn": {
-    "description": "Error shown when a new address of an Open WebUI server cannot be checked: the server's accounts keep a saved sign-in but are not signed in."
-  },
-  "accountsRemoveAddress": "Remove address",
-  "@accountsRemoveAddress": {
-    "description": "Destructive action that removes one address of an Open WebUI server."
-  },
-  "accountsRemoveAddressMessage": "Conduit stops trying this address. Your accounts stay signed in.",
-  "@accountsRemoveAddressMessage": {
-    "description": "Body of the confirmation before removing one address of an Open WebUI server."
-  },
-  "accountsAddressConfirmTitle": "Check this address?",
-  "@accountsAddressConfirmTitle": {
-    "description": "Title of the confirmation shown before a new address of a saved Open WebUI server, on a host none of its addresses uses, is checked by sending it a saved account's session."
-  },
-  "accountsAddressConfirmMessage": "To make sure {host} is this server, Conduit sends it the session of an account saved here. Continue only if you trust this address.",
-  "@accountsAddressConfirmMessage": {
-    "description": "Body of the confirmation shown before a saved account's session is sent to a new address to check that it reaches the same Open WebUI server. {host} is the new address's host name, with its port when it has one.",
-    "placeholders": {
-      "host": {
-        "type": "String",
-        "example": "chat.example.com"
-      }
-    }
-  },
-  "accountsAddressConfirmAction": "Check address",
-  "@accountsAddressConfirmAction": {
-    "description": "Confirms sending a saved account's session to a new address of an Open WebUI server, to check that it reaches the same server."
-  },
-  "setupWizardTitle": "Set up the app",
-  "@setupWizardTitle": {
-    "description": "Heading of the first-run setup wizard (OWU-105)."
-  },
-  "setupWizardSubtitle": "Choose the account to enter with. You can change it later in Settings.",
-  "@setupWizardSubtitle": {
-    "description": "Body of the first-run setup wizard: the account list follows."
-  },
-  "proxyAuthInAppWebView": "Open inside the app",
-  "@proxyAuthInAppWebView": {
-    "description": "Fallback action: opens the login in an in-app web view when the system browser fails."
   }
 }

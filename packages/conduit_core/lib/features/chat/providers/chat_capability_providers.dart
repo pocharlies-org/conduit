@@ -35,9 +35,7 @@ final codeInterpreterBlockProvider = Provider<CodeInterpreterBlock?>((ref) {
   final model = ref.watch(selectedModelProvider);
   if (api == null ||
       model == null ||
-      !ref.watch(isAuthenticatedProvider2) ||
-      isHermesModel(model) ||
-      hasReservedDirectIdentity(model)) {
+      !ref.watch(isAuthenticatedProvider2)) {
     return CodeInterpreterBlock.notOpenWebUi;
   }
   return _evaluateCodeInterpreterSupport(
@@ -393,24 +391,6 @@ class VisionCapableModelsNotifier extends Notifier<List<String>> {
       return [];
     }
 
-    final directIdentity =
-        isLocallyMintedDirectModel(selectedModel) ||
-        hasReservedDirectIdentity(selectedModel);
-    if (directIdentity) {
-      // DirectModelRegistry is mutable and its Provider retains object
-      // identity. Discovery is the reactive mutation signal for model
-      // replacement/removal, so watching the registry provider alone cannot
-      // invalidate this capability result.
-      ref.watch(directModelDiscoveryProvider);
-      final directBinding = ref
-          .read(directModelRegistryProvider)
-          .resolve(selectedModel);
-      if (directBinding == null || selectedModel.isMultimodal != true) {
-        return [];
-      }
-      return [selectedModel.id];
-    }
-
     // Match OpenWebUI: omitted capability metadata is permissive for
     // compatibility, but an explicit false must disable image input.
     if (_explicitModelCapability(selectedModel, 'vision') == false) {
@@ -426,23 +406,6 @@ class FileUploadCapableModelsNotifier extends Notifier<List<String>> {
     final selectedModel = ref.watch(selectedModelProvider);
     if (selectedModel == null) {
       return [];
-    }
-
-    if (isHermesModel(selectedModel)) {
-      return [selectedModel.id];
-    }
-
-    final directIdentity =
-        isLocallyMintedDirectModel(selectedModel) ||
-        hasReservedDirectIdentity(selectedModel);
-    if (directIdentity) {
-      ref.watch(directModelDiscoveryProvider);
-      final directBinding = ref
-          .read(directModelRegistryProvider)
-          .resolve(selectedModel);
-      // Direct documents are extracted locally into bounded text and do not
-      // depend on the remote model's image-input capability.
-      return directBinding == null ? [] : [selectedModel.id];
     }
 
     // Match OpenWebUI's missing-is-allowed policy while honoring an explicit

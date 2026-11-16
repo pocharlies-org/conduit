@@ -8,12 +8,7 @@ import 'package:conduit_core/database/database_provider.dart';
 import 'package:conduit_core/features/chat/providers/chat_providers.dart';
 import 'package:conduit_core/features/auth/providers/unified_auth_providers.dart';
 import 'package:conduit_core/features/chat/providers/reasoning_effort_provider.dart';
-import 'package:conduit_core/features/hermes/models/hermes_model.dart';
 import 'package:conduit_core/services/settings_service.dart';
-import 'package:conduit_core/features/direct_connections/services/direct_model_registry.dart';
-import 'package:conduit_core/features/direct_connections/providers/direct_connection_providers.dart';
-import 'package:conduit_core/features/direct_connections/models/direct_remote_model.dart';
-import 'package:conduit_core/features/direct_connections/models/direct_connection_profile.dart';
 import 'package:conduit_core/models/conversation.dart';
 import 'package:conduit_core/models/model.dart';
 import 'package:conduit_core/models/openwebui_chat_settings.dart';
@@ -544,16 +539,6 @@ void main() {
           .deepEquals({'reasoning_effort': 'low'});
     });
 
-    test('a Hermes model keeps its device-local pick only', () async {
-      await _seed(db, 'c1');
-      final c = container(active: _conversation('c1'));
-
-      await persistOpenWebUiReasoningPick(c, hermesSyntheticModel(), 'high');
-
-      check(await stored('c1')).isEmpty();
-      check(await db.outboxDao.pendingForChat('c1')).isEmpty();
-    });
-
     test(
       'a user without parameter rights still gets the pick, just not saved',
       () async {
@@ -704,29 +689,6 @@ void main() {
         check(await stored('c1')).isEmpty();
         check(await db.outboxDao.pendingForChat('c1')).isEmpty();
       });
-
-      test('a Hermes pick is never saved on a chat, however slow', () async {
-        await _seed(db, 'c1');
-        final gate = Completer<void>();
-        final c = container(
-          active: _conversation('c1'),
-          extraOverrides: [
-            localReasoningEffortsProvider.overrideWith(
-              () => _SlowEfforts(gate),
-            ),
-          ],
-        );
-
-        final pick = selectReasoningEffortForModel(
-          c,
-          hermesSyntheticModel(),
-          'high',
-        );
-        gate.complete();
-        await pick;
-
-        check(await stored('c1')).isEmpty();
-      });
     });
 
     group('on a chat that is another user\'s', () {
@@ -803,7 +765,6 @@ void main() {
       Conversation? active,
       OpenWebUiChatSettingsAccess access = OpenWebUiChatSettingsAccess.all,
       bool reviewer = false,
-      DirectModelRegistry? registry,
       bool signedIn = true,
     }) {
       final c = ProviderContainer(
@@ -823,8 +784,6 @@ void main() {
           openWebUiChatSettingsAccessProvider.overrideWith(
             (ref) async => access,
           ),
-          if (registry != null)
-            directModelRegistryProvider.overrideWithValue(registry),
           appSettingsProvider.overrideWith(
             () =>
                 _FixedSettings(AppSettings(advancedFeaturesEnabled: advanced)),
@@ -913,47 +872,6 @@ void main() {
 
       check(await entry(c)).equals(OpenWebUiChatSettingsMenuEntry.applied);
     });
-
-    test('Hermes models never see it', () async {
-      check(await entry(menu(model: hermesSyntheticModel())))
-          .equals(OpenWebUiChatSettingsMenuEntry.none);
-    });
-
-    test(
-      'an on-device direct model never sees it, an Open WebUI direct one does',
-      () async {
-        final profile = DirectConnectionProfile(
-          id: 'p',
-          name: 'p',
-          adapterKey: kOpenAiCompatibleAdapterKey,
-          baseUrl: 'https://provider.example.test/v1',
-          modelIdPrefix: 'pfx',
-        );
-        Model directModel(
-          DirectModelRegistry registry,
-          DirectModelSource source,
-        ) => registry
-            .replaceProfileModels(
-              profile,
-              [DirectRemoteModel(id: 'm', name: 'm')],
-              source: source,
-              openWebUiUrlIndex: source == DirectModelSource.openWebUi
-                  ? 1
-                  : null,
-            )
-            .single;
-
-        final device = DirectModelRegistry();
-        final deviceModel = directModel(device, DirectModelSource.device);
-        check(await entry(menu(model: deviceModel, registry: device)))
-            .equals(OpenWebUiChatSettingsMenuEntry.none);
-
-        final server = DirectModelRegistry();
-        final serverModel = directModel(server, DirectModelSource.openWebUi);
-        check(await entry(menu(model: serverModel, registry: server)))
-            .equals(OpenWebUiChatSettingsMenuEntry.editor);
-      },
-    );
 
     test("on-device chats and another user's chats never see it", () async {
       final device = withChatStorageProvenance(

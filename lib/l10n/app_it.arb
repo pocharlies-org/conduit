@@ -3,11 +3,6 @@
   "appTitle": "Conduit",
   "serverIncompatibleTitle": "Server non supportato",
   "serverIncompatibleMessage": "Questo server esegue Open WebUI {serverVersion}, una versione più recente di quella supportata da questa app (fino alla {maxVersion}).",
-  "serverIncompatibleResolution": "Per continuare, riporta il server alla versione {maxVersion} o precedente, oppure attendi un aggiornamento dell'app che ne aggiunga il supporto.",
-  "serverIncompatibleConnectBlocked": "Questo server è più recente di quanto supportato da questa app (fino alla {maxVersion}).",
-  "serverIncompatibleRecheck": "Ricontrolla il server",
-  "serverIncompatibleSwitchServer": "Usa un server diverso",
-  "serverIncompatibleStillUnsupported": "Questo server è ancora più recente di quanto supportato da questa app.",
   "retry": "Riprova",
   "back": "Indietro",
   "you": "Tu",
@@ -43,12 +38,9 @@
   "releaseNotesDoneButton": "Fatto",
   "signOut": "Esci",
   "endYourSession": "Termina la sessione",
-  "signOutOptionsDescription": "La disconnessione cancella da questo dispositivo le preferenze dell’app e le connessioni Direct e Hermes. Le conversazioni salvate e i dati sul server non vengono modificati.",
-  "keepServerDetails": "Conserva i dettagli del server",
-  "keepServerDetailsDescription": "Indirizzo del server e impostazioni di connessione non sensibili; token e intestazioni Cookie vengono eliminati",
+  "signOutOptionsDescription": "La disconnessione cancella da questo dispositivo le preferenze dell’app e gli account salvati. Le conversazioni salvate e i dati sul server non vengono modificati.",
   "defaultModel": "Modello predefinito",
   "autoSelect": "Predefinito del server",
-  "loadingModels": "Caricamento modelli...",
   "failedToLoadModels": "Impossibile caricare i modelli",
   "failedToLoadFiles": "Impossibile caricare i file",
   "availableModels": "Modelli disponibili",
@@ -58,82 +50,23 @@
   "errorMessage": "Qualcosa è andato storto. Riprova.",
   "closeButtonSemantic": "Chiudi",
   "loadingContent": "Caricamento contenuto",
-  "noItems": "Nessun elemento",
   "noItemsToDisplay": "Nessun elemento da visualizzare",
   "knowledgeBase": "Base di conoscenza",
   "attachments": "Allegati",
   "files": "File",
   "takePhoto": "Scatta una foto",
   "document": "Documento",
-  "backToServerSetup": "Torna alla configurazione del server",
-  "connectedToServer": "Connesso al server",
   "signIn": "Accedi",
-  "enterCredentials": "Inserisci le credenziali per accedere alle conversazioni IA",
-  "credentials": "Credenziali",
   "apiKey": "Chiave API",
   "token": "Token",
   "jwt": "JWT",
-  "usernameOrEmail": "Username o e‑mail",
   "password": "Password",
-  "signInWithToken": "Accedi con token",
-  "connectToServer": "Connetti al server",
   "serverUrl": "URL del server",
-  "serverUrlHint": "https://tuo-server.com",
-  "enterServerUrlSemantic": "Inserisci l'URL o l'indirizzo IP del server",
-  "headerName": "Nome header",
-  "headerValue": "Valore header",
-  "headerValueHint": "api-key-123 o token Bearer",
-  "addHeader": "Aggiungi header",
-  "maximumHeadersReached": "Numero massimo raggiunto",
-  "removeHeader": "Rimuovi header",
   "connecting": "Connessione in corso...",
-  "connectToServerButton": "Connetti al server",
-  "demoModeActive": "Modalità demo attiva",
-  "skipServerSetupTryDemo": "Salta configurazione server e prova la demo",
-  "enterDemo": "Entra in demo",
-  "demoBadge": "Demo",
-  "serverNotOpenWebUI": "Questo non sembra un server Open-WebUI.",
-  "serverUrlEmpty": "L'URL del server non può essere vuoto",
-  "invalidUrlFormat": "Formato URL non valido. Controlla l'input.",
-  "onlyHttpHttps": "Sono supportati solo i protocolli HTTP e HTTPS.",
-  "serverAddressRequired": "Indirizzo server richiesto (es. 192.168.1.10 o example.com).",
-  "portRange": "La porta deve essere tra 1 e 65535.",
-  "invalidIpFormat": "Formato IP non valido. Esempio: 192.168.1.10.",
   "couldNotConnectGeneric": "Impossibile connettersi. Verifica l'indirizzo e riprova.",
-  "weCouldntReachServer": "Impossibile raggiungere il server. Verifica connessione e stato del server.",
-  "connectionTimedOut": "Tempo scaduto. Il server potrebbe essere occupato o bloccato.",
-  "useHttpOrHttpsOnly": "Usa solo http:// o https://.",
   "loginFailed": "Accesso non riuscito",
   "invalidCredentials": "Nome utente o password non validi. Riprova.",
   "signInAccountPendingApproval": "Il tuo account è in attesa dell'approvazione di un amministratore. Riprova quando sarà approvato.",
-  "signInTwoStepVerificationRequired": "Questo account usa la verifica in due passaggi. Accedi di nuovo, poi inserisci il codice della tua app di autenticazione.",
-  "twoStepVerifyTitle": "Conferma l'accesso",
-  "twoStepEnrollTitle": "Configura l'autenticatore",
-  "twoStepRecoverTitle": "Recupera l'autenticatore",
-  "twoStepVerifyDescription": "Inserisci il codice a sei cifre della tua app di autenticazione.",
-  "twoStepRecoveryCodeDescription": "Inserisci uno dei codici di recupero che hai salvato.",
-  "twoStepEnrollDescription": "Aggiungi questo account alla tua app di autenticazione, poi inserisci il codice a sei cifre che mostra.",
-  "twoStepRecoverDescription": "Il tuo amministratore ha reimpostato la verifica in due passaggi per questo account. Inserisci il token di recupero che ti ha fornito.",
-  "twoStepCodeLabel": "Codice di autenticazione",
-  "twoStepRecoveryCodeLabel": "Codice di recupero",
-  "twoStepResetTokenLabel": "Token di recupero",
-  "twoStepUseRecoveryCode": "Usa un codice di recupero",
-  "twoStepUseAuthenticatorCode": "Usa un codice di autenticazione",
-  "twoStepBackToSignIn": "Torna all'accesso",
-  "twoStepOpenAuthenticator": "Aggiungi all'app di autenticazione",
-  "twoStepSetupKeyLabel": "Chiave di configurazione",
-  "twoStepCopySetupKey": "Copia la chiave di configurazione",
-  "twoStepQrCodeLabel": "Codice QR per la tua app di autenticazione",
-  "twoStepSetupLoading": "Preparazione dell'autenticatore…",
-  "twoStepSetupFailed": "Impossibile caricare la chiave di configurazione.",
-  "twoStepNoAuthenticatorApp": "Nessuna app è riuscita ad aggiungerlo. Copia invece la chiave di configurazione nella tua app di autenticazione.",
-  "twoStepRecoveryCodesTitle": "Salva i codici di recupero",
-  "twoStepRecoveryCodesDescription": "Ogni codice ti fa accedere una volta se perdi l'autenticatore. Conservali in un posto sicuro: non verranno più mostrati.",
-  "twoStepCopyRecoveryCodes": "Copia i codici di recupero",
-  "twoStepInvalidCode": "Questo codice non ha funzionato. Controllalo e riprova.",
-  "twoStepExpired": "Questo passaggio è scaduto. Torna all'accesso e ricomincia.",
-  "twoStepTooManyAttempts": "Troppi tentativi. Attendi qualche minuto, poi accedi di nuovo.",
-  "twoStepFailed": "Impossibile verificare il codice. Riprova.",
   "serverRedirectingHttps": "Il server sta reindirizzando. Controlla la configurazione HTTPS.",
   "unableToConnectServer": "Impossibile connettersi al server. Controlla la connessione.",
   "requestTimedOut": "Richiesta scaduta. Riprova.",
@@ -147,14 +80,7 @@
   "voiceInput": "Input vocale",
   "voice": "Voce",
   "voiceStatusListening": "In ascolto…",
-  "voiceStatusRecording": "Registrazione…",
   "voiceHoldToTalk": "Tieni premuto per parlare",
-  "voiceAutoSend": "Invio automatico",
-  "voiceTranscript": "Trascrizione",
-  "voicePromptSpeakNow": "Parla ora…",
-  "voicePromptTapStart": "Tocca \"Avvia\" per iniziare",
-  "voiceActionStop": "Stop",
-  "voiceActionStart": "Avvia",
   "messageHintText": "Chiedi a Conduit",
   "stopGenerating": "Interrompi generazione",
   "codeCopiedToClipboard": "Codice copiato negli appunti.",
@@ -163,15 +89,12 @@
   "file": "File",
   "photo": "Foto",
   "camera": "Fotocamera",
-  "pasteImage": "Incolla immagine",
   "apiUnavailable": "Servizio API non disponibile",
   "unableToLoadImage": "Impossibile caricare l'immagine",
   "notAnImageFile": "Non è un file immagine: {fileName}",
   "failedToLoadImage": "Impossibile caricare l'immagine: {error}",
   "invalidDataUrl": "Formato data URL non valido",
   "failedToDecodeImage": "Impossibile decodificare l'immagine",
-  "invalidImageFormat": "Formato immagine non valido",
-  "emptyImageData": "Dati immagine vuoti",
   "confirm": "Conferma",
   "cancel": "Annulla",
   "chatQueuedOfflineTitle": "In coda offline",
@@ -190,7 +113,6 @@
   "save": "Salva",
   "chooseModel": "Scegli modello",
   "reviewerMode": "REVIEWER MODE",
-  "selectLanguage": "Seleziona lingua",
   "newFolder": "Nuova cartella",
   "folderName": "Nome cartella",
   "newChat": "Nuova chat",
@@ -223,7 +145,6 @@
   "espanol": "Spagnolo",
   "nederlands": "Olandese",
   "russian": "Russo",
-  "chinese": "Cinese",
   "chineseSimplified": "Cinese (semplificato)",
   "chineseTraditional": "Cinese (tradizionale)",
   "korean": "Coreano",
@@ -254,7 +175,6 @@
   "deleteFolderMessage": "Questa cartella e le sue associazioni verranno rimosse.",
   "failedToDeleteFolder": "Impossibile eliminare la cartella",
   "aboutApp": "Informazioni",
-  "aboutAppSubtitle": "Informazioni e link di Conduit",
   "web": "Web",
   "imageGen": "Gen. immagini",
   "pinned": "Fissati",
@@ -272,62 +192,13 @@
   "edit": "Modifica",
   "regenerate": "Rigenera",
   "noConversationsYet": "Ancora nessuna conversazione",
-  "usernameOrEmailHint": "Inserisci il tuo username o e‑mail",
   "passwordHint": "Inserisci la password",
-  "enterToken": "Inserisci il tuo token JWT",
-  "tokenHint": "Ottieni il token JWT dalle impostazioni di Open WebUI. Le chiavi API (sk-...) non sono supportate per lo streaming.",
-  "apiKeyNotSupported": "Le chiavi API (sk-...) non sono supportate. Per favore usa un token JWT.",
-  "apiKeyNoLongerSupported": "Sei stato disconnesso perché le chiavi API non sono più supportate. Per favore accedi con un token JWT dalle impostazioni di Open WebUI.",
-  "tokenTooShort": "Il token è troppo corto",
   "signingIn": "Accesso in corso...",
-  "advancedSettings": "Impostazioni avanzate",
   "customHeaders": "Header personalizzati",
-  "customHeadersDescription": "Aggiungi header HTTP personalizzati per autenticazione, chiavi API o requisiti speciali del server.",
   "allowSelfSignedCertificates": "Considera attendibili i certificati autofirmati",
   "@allowSelfSignedCertificates": {
     "description": "Etichetta dell'interruttore che consente i certificati TLS autofirmati per il server configurato."
   },
-  "allowSelfSignedCertificatesDescription": "Accetta il certificato TLS di questo server anche se è autofirmato. Attiva questa opzione solo per server di cui ti fidi.",
-  "@allowSelfSignedCertificatesDescription": {
-    "description": "Testo di supporto che chiarisce i rischi dell'attivazione dell'opzione per certificati autofirmati."
-  },
-  "mutualTlsSectionTitle": "Certificato client mTLS",
-  "mutualTlsSectionDescription": "Allega una catena di certificati PEM e una chiave privata PEM quando il server richiede TLS reciproco durante la configurazione della connessione.",
-  "mutualTlsSelectCertificate": "Seleziona certificato",
-  "mutualTlsSelectPrivateKey": "Seleziona chiave privata",
-  "mutualTlsCertificateReady": "Certificato",
-  "mutualTlsPrivateKeyReady": "Chiave privata",
-  "mutualTlsPrivateKeyPasswordHint": "Password della chiave privata (opzionale)",
-  "mutualTlsClearCredentials": "Cancella file mTLS",
-  "mutualTlsMissingCredentialPair": "Seleziona sia un certificato client sia una chiave privata per usare mTLS.",
-  "mutualTlsCertificatePemRequired": "Il file del certificato selezionato deve contenere una catena di certificati PEM.",
-  "mutualTlsPrivateKeyPemRequired": "Il file della chiave privata selezionato deve contenere una chiave privata PEM.",
-  "mutualTlsFileReadFailed": "Impossibile leggere il file mTLS selezionato.",
-  "mutualTlsHandshakeFailed": "Il server ha rifiutato le credenziali mTLS. Verifica che certificato, chiave privata e password siano corretti.",
-  "mutualTlsConnectionClosed": "Il server ha chiuso la connessione prima di rispondere. Se richiede un certificato client, verifica che certificato, chiave privata e password siano corretti.",
-  "headerNameTooLong": "Nome header troppo lungo (max 64 caratteri)",
-  "headerNameInvalidChars": "Nome header non valido. Usa solo lettere, numeri e questi simboli: !#$&-^_`|~",
-  "headerNameReserved": "Impossibile sovrascrivere l'header riservato \"{key}\"",
-  "@headerNameReserved": {
-    "placeholders": {
-      "key": {
-        "type": "String"
-      }
-    }
-  },
-  "headerValueTooLong": "Valore header troppo lungo (max 1024 caratteri)",
-  "headerValueInvalidChars": "Il valore dell'header contiene caratteri non validi. Usa solo ASCII stampabile.",
-  "headerValueUnsafe": "Il valore dell'header sembra contenere contenuti potenzialmente non sicuri",
-  "headerAlreadyExists": "L'header \"{key}\" esiste già. Rimuovilo prima per aggiornarlo.",
-  "@headerAlreadyExists": {
-    "placeholders": {
-      "key": {
-        "type": "String"
-      }
-    }
-  },
-  "maxHeadersReachedDetail": "Massimo 10 header personalizzati consentiti. Rimuovine alcuni per aggiungerne altri.",
-  "noModelsAvailable": "Nessun modello disponibile",
   "followingSystem": "Segue il sistema: {theme}",
   "@followingSystem": {
     "placeholders": {
@@ -344,7 +215,6 @@
   "themeLight": "Chiaro",
   "currentlyUsingDarkTheme": "Attualmente tema scuro",
   "currentlyUsingLightTheme": "Attualmente tema chiaro",
-  "aboutConduit": "Informazioni su Conduit",
   "versionLabel": "Versione: {version} ({build})",
   "@versionLabel": {
     "placeholders": {
@@ -373,7 +243,6 @@
   "analyzing": "Analisi…",
   "analyzed": "Analizzato",
   "appCustomization": "Personalizzazione",
-  "appCustomizationSubtitle": "Tema, lingua, voce e quick actions",
   "quickActionsDescription": "Scorciatoie nella chat",
   "chatSettings": "Chat",
   "sendOnEnter": "Invia con Invio",
@@ -412,18 +281,6 @@
   "ttsEngineServerDescription": "Genera la voce sul server della chat: Open WebUI, Hermes o, per le chat Direct e Apple, il provider vocale.",
   "ttsDeviceUnavailableWarning": "La sintesi vocale sul dispositivo non è disponibile su questo dispositivo.",
   "ttsServerUnavailableWarning": "Collegati a un server con la sintesi vocale abilitata per usare questa opzione.",
-  "voiceProviderTitle": "Provider vocale",
-  "voiceProviderDescription": "Le chat Direct e Apple usano questa connessione quando “Voce in testo” o “Sintesi vocale” è impostato su “Server”.",
-  "voiceProviderConnection": "Connessione",
-  "voiceProviderNone": "Nessuno",
-  "voiceProviderNoConnections": "Aggiungi una connessione Direct compatibile con OpenAI per poterla scegliere qui.",
-  "voiceProviderTranscriptionModel": "Modello di trascrizione",
-  "voiceProviderSpeechModel": "Modello di sintesi vocale",
-  "voiceProviderModelsHint": "Usa i nomi dei modelli elencati dal tuo provider. Se lasci vuoto un campo, per quella direzione verrà usato questo dispositivo.",
-  "voiceProviderRealtimeModel": "Modello in tempo reale",
-  "voiceProviderRealtimeInstructions": "Istruzioni",
-  "voiceProviderRealtimeInstructionsHint": "Lascia vuoto per usare quelle di Conduit.",
-  "voiceProviderRealtimeFooter": "Nelle chat Direct e Apple le chiamate usano questa voce, che segue ciò che dici grazie al modello di trascrizione qui sopra.",
   "voiceCallModeTitle": "Chiamate",
   "voiceCallModeRealtime": "Tempo reale",
   "voiceCallModeStandard": "Standard",
@@ -507,10 +364,6 @@
   "voiceCallResume": "Riprendi",
   "@voiceCallResume": {
     "description": "Button label to resume a paused voice call."
-  },
-  "voiceCallStop": "Stop",
-  "@voiceCallStop": {
-    "description": "Button label to stop the active voice call."
   },
   "voiceCallEnd": "Termina chiamata",
   "@voiceCallEnd": {
@@ -853,10 +706,6 @@
   "@voiceCallDisconnected": {
     "description": "Status label shown when the voice call has ended or disconnected."
   },
-  "voiceCallErrorHelp": "Controlla:\n• Sono state concesse le autorizzazioni del microfono\n• Il riconoscimento vocale è disponibile sul dispositivo\n• Sei connesso al server",
-  "@voiceCallErrorHelp": {
-    "description": "Guidance shown when the voice call encounters an error."
-  },
   "mermaidPreviewUnavailable": "L'anteprima Mermaid non è disponibile su questa piattaforma.",
   "chartPreviewUnavailable": "L'anteprima dei grafici non è disponibile su questa piattaforma.",
   "notes": "Note",
@@ -942,22 +791,8 @@
       }
     }
   },
-  "sso": "SSO",
   "ssoDescription": "Accedi con il provider di identità della tua organizzazione",
   "signInWithSso": "Accedi con SSO",
-  "ssoAuthenticating": "Autenticazione...",
-  "ssoAuthFailed": "Autenticazione SSO fallita",
-  "ssoLoadingLogin": "Caricamento pagina di accesso...",
-  "ldap": "LDAP",
-  "ldapDescription": "Accedi con le credenziali della directory LDAP",
-  "signInWithLdap": "Accedi con LDAP",
-  "ldapUsername": "Nome utente",
-  "ldapUsernameHint": "Inserisci il tuo nome utente LDAP",
-  "moreSignInOptions": "Altre opzioni di accesso",
-  "ldapNotEnabled": "L'autenticazione LDAP non è abilitata su questo server",
-  "ssoPlatformNotSupported": "L'autenticazione SSO non è supportata su questa piattaforma. Usa invece le credenziali o l'autenticazione LDAP.",
-  "continueWithProvider": "Continua con {provider}",
-  "or": "o",
   "usageInfo": "Info",
   "usageInfoTitle": "Statistiche risposta",
   "usageTokenGeneration": "Generazione token",
@@ -994,16 +829,7 @@
   "usageQueueTime": "Tempo in coda",
   "usageReasoningTokens": "Token di ragionamento",
   "usageTotalTokens": "Token totali",
-  "proxyAuthentication": "Autenticazione Proxy",
-  "proxyAuthPlatformNotSupported": "L'autenticazione proxy richiede un dispositivo mobile. Si prega di autenticarsi prima tramite un browser.",
-  "proxyAuthLoading": "Caricamento della pagina di autenticazione...",
-  "proxyAuthFailed": "Autenticazione proxy fallita",
-  "proxyAuthHelpText": "Completa l'accesso tramite il proxy della tua organizzazione, poi accedi a Open WebUI. Sarai reindirizzato automaticamente.",
-  "proxyAuthHelpTextSimple": "Accedi tramite il tuo proxy. Una volta autenticato, tocca Continua per procedere all'accesso.",
-  "continueButton": "Continua",
   "proxyAuthRequired": "Questo server richiede l'autenticazione proxy",
-  "proxyAuthRequiredDescription": "Il tuo server sembra essere dietro un proxy di autenticazione (come oauth2-proxy). Dovrai prima accedere tramite il proxy.",
-  "authenticateThroughProxy": "Autentica",
   "voiceOptions": "Opzioni vocali",
   "dictation": "Dettatura",
   "dictationDescription": "Parla e converti in testo in tempo reale",
@@ -1141,10 +967,6 @@
   "chatSaved": "Chat salvata nella cronologia",
   "chatSaveFailed": "Impossibile salvare la chat",
   "sidebarChatsTab": "Chat",
-  "sidebarTerminalTab": "Terminale",
-  "@sidebarTerminalTab": {
-    "description": "Label for the Terminal tab in the sidebar"
-  },
   "sidebarNotesTab": "Note",
   "sidebarChannelsTab": "Canali",
   "sidebarResizeHandle": "Ridimensiona la barra laterale",
@@ -1164,112 +986,10 @@
       }
     }
   },
-  "closeSidebar": "Chiudi barra laterale",
-  "terminalSelectServer": "Seleziona un server terminale",
-  "@terminalSelectServer": {
-    "description": "Prompt shown when the user needs to choose a terminal server."
-  },
-  "terminalNoServersConfigured": "Nessun server terminale disponibile.",
-  "@terminalNoServersConfigured": {
-    "description": "Empty state shown when there are no terminal servers configured."
-  },
-  "terminalConnectAction": "Connetti",
-  "@terminalConnectAction": {
-    "description": "Button label used to connect to a terminal session."
-  },
-  "terminalDisconnectAction": "Disconnetti",
-  "@terminalDisconnectAction": {
-    "description": "Button label used to disconnect from a terminal session."
-  },
-  "terminalConnectedStatus": "Connesso",
-  "@terminalConnectedStatus": {
-    "description": "Status label shown when the terminal is connected."
-  },
-  "terminalDisconnectedStatus": "Disconnesso",
-  "@terminalDisconnectedStatus": {
-    "description": "Status label shown when the terminal is disconnected."
-  },
-  "terminalConnectingStatus": "Connessione...",
-  "@terminalConnectingStatus": {
-    "description": "Status label shown while the terminal connection is being established."
-  },
-  "terminalUploadAction": "Carica",
-  "@terminalUploadAction": {
-    "description": "Action label for uploading a file into the terminal workspace."
-  },
-  "terminalOpenInBrowserAction": "Apri nel browser",
-  "@terminalOpenInBrowserAction": {
-    "description": "Action label for opening a forwarded port in the browser."
-  },
-  "terminalHomeAction": "Directory home",
-  "@terminalHomeAction": {
-    "description": "Tooltip for navigating back to the terminal home directory."
-  },
-  "terminalCurrentPathLabel": "Percorso attuale",
-  "@terminalCurrentPathLabel": {
-    "description": "Label displayed above the current terminal working directory."
-  },
-  "terminalPortsSectionLabel": "Porte in ascolto",
-  "@terminalPortsSectionLabel": {
-    "description": "Section title for ports discovered in the terminal environment."
-  },
-  "terminalNoFiles": "Nessun file in questa directory.",
-  "@terminalNoFiles": {
-    "description": "Empty state shown when the current terminal directory has no files."
-  },
-  "terminalNoPorts": "Nessuna porta in ascolto rilevata.",
-  "@terminalNoPorts": {
-    "description": "Empty state shown when the terminal server reports no listening ports."
-  },
-  "terminalPreviewUnavailable": "Anteprima non disponibile. Usa Scarica.",
-  "@terminalPreviewUnavailable": {
-    "description": "Message shown when a terminal file cannot be previewed inline."
-  },
-  "terminalFeatureDisabled": "Questo server terminale non espone una shell interattiva.",
-  "@terminalFeatureDisabled": {
-    "description": "Message shown when the selected terminal server disables interactive terminal sessions."
-  },
-  "terminalFolderNameHint": "Nome cartella",
-  "@terminalFolderNameHint": {
-    "description": "Hint text used when creating a new folder in the terminal workspace."
-  },
-  "terminalFailedToLoadFiles": "Impossibile caricare i file del terminale.",
-  "@terminalFailedToLoadFiles": {
-    "description": "Error message shown when the terminal file list cannot be loaded."
-  },
-  "terminalFailedToLoadPorts": "Impossibile caricare le porte in ascolto.",
-  "@terminalFailedToLoadPorts": {
-    "description": "Error message shown when terminal port discovery fails."
-  },
-  "terminalFailedToConnect": "Impossibile connettersi al terminale.",
-  "@terminalFailedToConnect": {
-    "description": "Error message shown when the terminal websocket session cannot be opened."
-  },
-  "terminalDownloadFailed": "Impossibile scaricare il file selezionato.",
-  "@terminalDownloadFailed": {
-    "description": "Error message shown when downloading a terminal file fails."
-  },
-  "terminalUploadFailed": "Impossibile caricare il file selezionato.",
-  "@terminalUploadFailed": {
-    "description": "Error message shown when uploading a terminal file fails."
-  },
-  "terminalRenameFailed": "Impossibile rinominare l’elemento selezionato.",
-  "@terminalRenameFailed": {
-    "description": "Error message shown when renaming a file or folder in the terminal workspace fails."
-  },
-  "terminalDeleteFailed": "Impossibile eliminare l’elemento selezionato.",
-  "@terminalDeleteFailed": {
-    "description": "Error message shown when deleting a file or folder in the terminal workspace fails."
-  },
-  "terminalFolderCreateFailed": "Impossibile creare la cartella.",
-  "@terminalFolderCreateFailed": {
-    "description": "Error message shown when creating a new terminal folder fails."
-  },
   "channelCreateTitle": "Crea canale",
   "channelName": "Nome del canale",
   "channelDescription": "Descrizione",
   "channelPrivate": "Canale privato",
-  "channelJoin": "Unisciti al canale",
   "channelLeave": "Abbandona canale",
   "channelDelete": "Elimina canale",
   "channelEdit": "Modifica canale",
@@ -1284,7 +1004,6 @@
   "channelMessageDelete": "Elimina",
   "channelLoadError": "Impossibile caricare i canali",
   "channelSendError": "Impossibile inviare il messaggio",
-  "channelDeleted": "Questo canale è stato eliminato",
   "searchChannels": "Cerca canali...",
   "channelUnreadCount": "{count, plural, =1{1 messaggio non letto} other{{count} messaggi non letti}}",
   "channelCreateError": "Impossibile creare il canale",
@@ -1303,8 +1022,6 @@
       }
     }
   },
-  "channelMessageHint": "Messaggio...",
-  "audioUploadError": "Impossibile caricare l'audio: {error}",
   "shareChat": "Condividi chat",
   "@shareChat": {
     "description": "Dialog title and action label for sharing a chat."
@@ -1353,21 +1070,14 @@
   "@deleteSharedLinkFailed": {
     "description": "Snackbar shown when deleting a shared chat link fails."
   },
-  "systemPrompts": "Prompt di sistema",
   "globalSystemPrompt": "Prompt di sistema globale",
   "modelSystemPrompts": "Prompt di sistema dei modelli",
-  "folderSystemPrompts": "Prompt di sistema delle cartelle",
   "openWebuiModelSettings": "Impostazioni modello Open WebUI",
-  "openWebuiFolderSettings": "Impostazioni cartella Open WebUI",
   "accessibleModelsCount": "{count} modelli accessibili",
-  "accessibleFoldersCount": "{count} cartelle accessibili",
   "unableToLoadOpenWebuiSettings": "Impossibile caricare le impostazioni Open WebUI.",
   "unableToLoadModels": "Impossibile caricare i modelli.",
-  "unableToLoadFolders": "Impossibile caricare le cartelle.",
   "noAccessibleModelsFound": "Nessun modello accessibile trovato.",
-  "noAccessibleFoldersFound": "Nessuna cartella accessibile trovata.",
   "tapToLoadServerPromptSettings": "Tocca per caricare le impostazioni prompt del server.",
-  "loadingFromOpenWebui": "Caricamento da Open WebUI...",
   "globalSystemPromptEditorDescription": "Salvato nelle impostazioni utente Open WebUI e usato come prompt di sistema predefinito della chat.",
   "modelNoEditableServerRecord": "Questo modello non ha un record server modificabile.",
   "modelSystemPromptTitle": "Prompt di sistema di {modelName}",
@@ -1381,7 +1091,6 @@
   "close": "Chiudi",
   "connectionHealth": "Stato connessione",
   "personalization": "Personalizzazione",
-  "personalizationSubtitle": "Modello predefinito, prompt personale e memorie",
   "defaultImageGenerationModel": "Modello predefinito per la generazione di immagini",
   "defaultImageGenerationModelDescription": "Inserisci l’ID di un modello di immagini OpenRouter. Lascia vuoto per usare il modello predefinito di OpenRouter.",
   "openRouterDefaultImageGenerationModel": "Predefinito di OpenRouter (openai/gpt-5-image)",
@@ -1410,7 +1119,6 @@
   "memoryUpdatedAt": "Aggiornato {formattedTime}",
   "advancedPromptOverridesDescription": "Gli override dei prompt a livello modello sono in App e chat.",
   "audioSettingsTitle": "Audio",
-  "audioSettingsSubtitle": "Da voce a testo e da testo a voce",
   "accountSettingsTitle": "Account",
   "accountSettingsSubtitle": "Dettagli profilo e gestione password",
   "accountDetails": "Dettagli account",
@@ -1421,7 +1129,6 @@
   "profileDetails": "Dettagli profilo",
   "name": "Nome",
   "avatarUrl": "URL avatar",
-  "avatarUrlHint": "https://example.com/avatar.png",
   "bioLabel": "Bio",
   "bioHint": "Una breve descrizione di te.",
   "genderLabel": "Genere",
@@ -1434,14 +1141,11 @@
   "customGenderRequired": "Inserisci un genere personalizzato o scegli un’altra opzione.",
   "birthDateLabel": "Data di nascita",
   "selectBirthDate": "Seleziona una data",
-  "birthDateHint": "AAAA-MM-GG",
   "currentAvatar": "Avatar attuale",
   "uploadFromDevice": "Carica dal dispositivo",
   "useInitials": "Iniziali",
   "removeAvatar": "Rimuovi",
   "avatarUploadFailed": "Impossibile aggiornare l’avatar.",
-  "timezoneLabel": "Fuso orario",
-  "timezoneHint": "Europe/Rome",
   "saveProfile": "Salva profilo",
   "changePasswordTitle": "Cambia password",
   "passwordChangeUnavailable": "Le modifiche della password sono disabilitate su questo server.",
@@ -1462,20 +1166,7 @@
   "serverNameLabel": "Nome server",
   "serverVersionLabel": "Versione server",
   "latestVersionLabel": "Ultima versione",
-  "deploymentIdLabel": "ID distribuzione",
-  "defaultLocaleLabel": "Lingua predefinita",
-  "userCountLabel": "Numero utenti",
-  "serverDefaultModelsLabel": "Modelli predefiniti",
-  "loginFormLabel": "Modulo di accesso",
-  "passwordChangesLabel": "Modifiche password",
-  "apiKeysLabel": "Chiavi API",
-  "audioInputLabel": "Input audio",
-  "audioOutputLabel": "Output audio",
-  "speechToTextEngineLabel": "Motore voce-testo",
-  "textToSpeechEngineLabel": "Motore testo-voce",
-  "licenseMetadataLabel": "Metadati licenza",
   "enabledLabel": "Abilitato",
-  "disabledLabel": "Disabilitato",
   "noEmailLabel": "Nessuna e-mail",
   "userFallbackName": "Utente",
   "unknownLabel": "Sconosciuto",
@@ -1881,14 +1572,9 @@
       }
     }
   },
-  "@continueWithProvider": {
-    "description": "Button text for OAuth provider sign-in.",
-    "placeholders": {
-      "provider": {
-        "type": "String",
-        "example": "Google"
-      }
-    }
+  "startChattingGreeting": "Start chatting",
+  "@startChattingGreeting": {
+    "description": "Heading shown on the empty chat page when the account has no display name."
   },
   "@channelMembers": {
     "description": "Member count display in channel header",
@@ -1898,30 +1584,12 @@
       }
     }
   },
-  "@audioUploadError": {
-    "description": "Error message when audio upload fails",
-    "placeholders": {
-      "error": {
-        "type": "String",
-        "description": "The error message"
-      }
-    }
-  },
   "@accessibleModelsCount": {
     "description": "Subtitle showing how many accessible models are listed.",
     "placeholders": {
       "count": {
         "type": "int",
         "example": "4"
-      }
-    }
-  },
-  "@accessibleFoldersCount": {
-    "description": "Subtitle showing how many accessible folders are listed.",
-    "placeholders": {
-      "count": {
-        "type": "int",
-        "example": "3"
       }
     }
   },
@@ -2023,27 +1691,8 @@
   "@failedToLoadTools": {
     "description": "Error shown when the composer overflow menu cannot load tools."
   },
-  "terminalExpandAction": "Schermo intero",
-  "terminalReopenFullscreen": "Aperto a schermo intero - tocca per riaprire",
-  "terminalKeyTab": "Tab",
-  "terminalKeyUp": "Su",
-  "terminalKeyDown": "Giù",
-  "terminalKeyCtrlC": "Ctrl-C",
-  "terminalCopyAction": "Copia",
-  "terminalPasteAction": "Incolla",
-  "terminalNothingToCopy": "Nessuna selezione da copiare",
-  "terminalCopied": "Copiato negli appunti",
-  "terminalPasteWhileDisconnected": "Connettiti per incollare",
-  "terminalPortsToggle": "Porte in ascolto",
-  "releaseNotesManualSubtitle": "Changelog incluso per {currentVersion}",
-  "settingsCategoryApp": "App",
-  "settingsCategoryAi": "IA",
-  "settingsCategoryServer": "Server",
-  "settingsCategorySupport": "Supporto",
   "settingsDataAndConnection": "Dati e connessione",
   "settingsAppearance": "Aspetto",
-  "settingsAppearanceSubtitle": "Tema, tavolozza colori e lingua",
-  "settingsChatSubtitle": "Comportamento chat, azioni rapide e prompt avanzati",
   "workspaceTitle": "Area di lavoro",
   "workspaceSubtitle": "Manage server resources and access.",
   "workspaceModels": "Models",
@@ -2089,7 +1738,6 @@
   "workspaceEditorKeepEditing": "Keep editing",
   "workspaceEditorSaveTooltip": "Save changes",
   "workspaceEditorSaving": "Saving…",
-  "workspaceEditorMoreActions": "More actions",
   "workspaceImportChooseFile": "Choose JSON file",
   "workspaceImportPasteLabel": "Or paste JSON",
   "workspaceImportPasteHint": "Paste exported JSON here",
@@ -2485,10 +2133,6 @@
   "workspaceKnowledgeRoot": "Root",
   "@workspaceKnowledgeRoot": {
     "description": "Breadcrumb label for the top level of a knowledge base."
-  },
-  "workspaceKnowledgeAddMenu": "Add files",
-  "@workspaceKnowledgeAddMenu": {
-    "description": "Tooltip for the menu that adds files or folders to a knowledge base."
   },
   "workspaceKnowledgeUpload": "Upload file",
   "@workspaceKnowledgeUpload": {
@@ -3076,8 +2720,6 @@
   "workspaceValveNone": "None",
   "workspaceValveEnabled": "Enabled",
   "workspaceValveDisabled": "Disabled",
-  "noteConflictCopyBadge": "Copia in conflitto",
-  "noteConflictCopySuffix": " (copia in conflitto)",
   "notificationChannelDescription": "Avvisa quando qualcuno invia un messaggio in un canale o in un MD.",
   "notificationChannelMessagesDescription": "Risposte, messaggi dei canali e risposte completate",
   "notificationChannelMessagesName": "Messaggi",
@@ -3097,20 +2739,8 @@
   "notificationsEnabledDescription": "Ricevi avvisi quando l'app è in background e all'interno dell'app.",
   "notificationsEnabledTitle": "Abilita le notifiche",
   "notificationsPermissionDenied": "Le notifiche sono disattivate nelle impostazioni di sistema.",
-  "notificationsSubtitle": "Avvisi per risposte, messaggi e risposte completate",
   "notificationsTitle": "Notifiche",
-  "hermesSecretsUnavailable": "Could not access saved Hermes credentials. Unlock secure storage and retry.",
-  "hermesAgentSettingsTitle": "Hermes Agent",
-  "hermesAgentSettingsSubtitle": "Connect a self-hosted Hermes agent",
-  "connectOpenWebUITitle": "Connect to Open WebUI",
-  "connectOpenWebUISubtitle": "Add a self-hosted Open WebUI server",
-  "backendChooserWelcome": "Welcome to Conduit",
-  "backendChooserPrompt": "Choose how you want to connect.",
-  "backendChooserOpenWebUISubtitle": "Use your self-hosted Open WebUI server with full chat, notes, and more.",
-  "backendChooserHermesTitle": "Use a Hermes Agent",
-  "backendChooserHermesSubtitle": "Connect directly to a self-hosted Hermes agent — no Open WebUI server needed.",
-  "hermesApprovalRequired": "Approval required",
-  "hermesApprovalFallback": "The agent is requesting permission to continue.",
+  "toolApprovalRequired": "Approval required",
   "openWebUiPromptOther": "Altro",
   "@openWebUiPromptOther": {
     "description": "Label for a free-form answer to an Open WebUI ask-user question."
@@ -3123,146 +2753,17 @@
   "@openWebUiPromptSubmit": {
     "description": "Action that submits all answers to an Open WebUI ask-user prompt."
   },
-  "hermesApprovalApproved": "Approved ✓",
-  "hermesApprovalDenied": "Denied",
-  "hermesApprovalApproveAction": "Approve",
-  "hermesApprovalDenyAction": "Deny",
-  "hermesEnableTitle": "Enable Hermes Agent",
-  "hermesEnableSubtitle": "Use your self-hosted Hermes agent as a model in the picker.",
-  "hermesServerUrlTitle": "Server URL",
-  "hermesApiKeyTitle": "API key",
-  "hermesConfiguredReplacePlaceholder": "Configured — enter to replace",
-  "hermesApiKeyPlaceholder": "Enter API key",
-  "hermesMemoryKeyTitle": "Memory key (optional)",
-  "hermesMemoryKeyPlaceholder": "Auto-generated if left blank",
-  "hermesCapabilitiesTitle": "Capabilities",
-  "hermesCapabilityApproval": "Approval",
-  "hermesCapabilitySkills": "Skills",
-  "hermesCapabilityToolsets": "Toolsets",
-  "hermesCapabilityJobs": "Jobs",
-  "hermesCapabilitySessions": "Sessions",
-  "hermesTabInfoTitle": "Conversations & Scheduled Agents",
-  "hermesTabInfoSubtitle": "Available in the Hermes tab once enabled.",
-  "hermesNativeSettingsSubtitle": "Connect directly to a self-hosted Hermes agent.",
-  "hermesSelfHostedAgentLabel": "Self-hosted agent",
-  "hermesNoConversationsMessage": "No Hermes conversations yet.\nStart a new chat with the Hermes Agent and it will appear here.",
-  "hermesConversationsTitle": "Conversations",
-  "hermesBotsTitle": "Bot",
-  "hermesConversationsLoadError": "Could not load Hermes conversations.\nCheck the connection in Settings → Hermes Agent.",
-  "hermesSchedulesLoading": "Loading schedules…",
-  "hermesSchedulesUnavailable": "Schedules unavailable",
-  "hermesNoSchedulesYet": "No schedules yet",
-  "hermesSchedulesSummary": "{active} active · {total, plural, =1{1 schedule} other{{total} schedules}}",
-  "hermesReviewSchedules": "Review schedules",
-  "hermesScheduledAgentsTitle": "Scheduled agents",
+  "toolApprovalApproveAction": "Approve",
+  "toolApprovalDenyAction": "Deny",
   "workspaceToolImportUrlHost": "Only GitHub tool URLs can be imported.",
-  "signInServerDescription": "Use your Open WebUI account to sign in to the server below.",
   "openWebUIServer": "Open WebUI server",
   "serverAddressUnavailable": "Server address unavailable",
   "showPassword": "Show password",
   "hidePassword": "Hide password",
-  "reviewerModeEnabled": "Reviewer mode enabled. You can open the demo without a server.",
-  "reviewerModeDisabled": "Reviewer mode disabled.",
   "openSourceLicenses": "Open source licenses",
-  "directConnectionsTitle": "Connessioni dirette",
-  "directConnectionsSubtitle": "Connect to OpenAI-compatible APIs and Ollama",
-  "directConnectionsDescription": "Connect to model providers without Open WebUI. Credentials are stored securely on this device and sent to the provider with requests.",
-  "directConnectionsCombinedDescription": "Connettiti direttamente ai fornitori di modelli usando connessioni sincronizzate da Open WebUI o salvate solo su questo dispositivo.",
-  "openWebUiDirectConnectionsSectionTitle": "Server Open WebUI",
-  "openWebUiDirectConnectionsSectionDescription": "Salvate nel tuo account Open WebUI e disponibili sugli altri client connessi.",
-  "deviceDirectConnectionsSectionTitle": "Su questo dispositivo",
-  "deviceDirectConnectionsSectionDescription": "Le credenziali vengono salvate in modo sicuro su questo dispositivo.",
-  "openWebUiDirectProfilesEmptyTitle": "Nessuna connessione salvata sul server",
-  "openWebUiDirectProfilesEmptySubtitle": "Aggiungi una connessione API compatibile con OpenAI per sincronizzarla tramite Open WebUI.",
-  "openWebUiDirectConnectionsLoadFailed": "Impossibile sincronizzare le connessioni da Open WebUI.",
-  "openWebUiDirectConnectionSourceLabel": "Open WebUI",
-  "deviceDirectConnectionSourceLabel": "Questo dispositivo",
-  "openWebUiDirectConnectionUnsupportedAuth": "Questa connessione usa un metodo di autenticazione che Conduit non può utilizzare in modo sicuro.",
-  "directConnectionUnavailableLabel": "Non disponibile",
-  "openWebUiDirectConnectionEditorDescription": "Le modifiche vengono salvate nel tuo account Open WebUI.",
-  "openWebUiDirectConnectionProviderDescription": "Le connessioni salvate in Open WebUI supportano le API compatibili con OpenAI.",
-  "openWebUiDirectConnectionFallbackName": "Connessione Open WebUI",
-  "openWebUiDirectConnectionsUnavailable": "Le connessioni Open WebUI non sono disponibili.",
-  "directConnectionNoLongerExists": "Questa connessione non esiste più.",
-  "openWebUiDirectConnectionDeleteMessage": "Questa operazione rimuove {name} dal tuo account Open WebUI e dagli altri client connessi.",
-  "@openWebUiDirectConnectionDeleteMessage": {
-    "description": "Confirmation message shown before deleting an Open WebUI-synced direct connection.",
-    "placeholders": {
-      "name": {
-        "type": "String"
-      }
-    }
-  },
-  "addDirectConnection": "Add connection",
-  "editDirectConnection": "Edit connection",
-  "directConnectionName": "Connection name",
-  "directDefaultConnectionName": "Il mio provider",
   "sidebarButtonLabel": "Barra laterale",
-  "directConnectionNameRequired": "Enter a connection name.",
-  "directConnectionUrlInvalid": "Use a valid http:// or https:// URL.",
-  "directConnectionCredentialsReentryRequired": "Re-enter credentials when changing servers.",
-  "directConnectionApiKeyRequired": "Enter an API key or choose no authentication.",
-  "directConnectionHeaderNameRequired": "Enter a header name, then add the header.",
-  "directConnectionCredentialTransferTitle": "Use credentials with new server?",
-  "directConnectionCredentialTransferMessage": "This sends the API key and complete custom-header map to the new server. Only continue if you trust it.",
-  "directConnectionCredentialTransferConfirm": "Use credentials",
-  "directConnectionSaveFailed": "Could not save this connection.",
-  "directConnectionSaveConflict": "Questa connessione è stata modificata altrove. Riaprila prima di salvare.",
-  "directConnectionReachFailed": "Could not reach the provider.",
-  "directConnectionDeleteTitle": "Delete connection?",
-  "directConnectionDeleteMessage": "This removes {name} and its credentials from this device.",
-  "directConnectionDeleteFailed": "Could not delete this connection.",
-  "directConnectionProbeConnected": "Connected",
-  "directConnectionProbeConnectedModels": "{count, plural, =1{Connected · 1 model} other{Connected · {count} models}}",
-  "directProvider": "Provider type",
-  "openAICompatible": "OpenAI-compatible",
-  "ollama": "Ollama",
-  "openRouterProviderName": "OpenRouter",
-  "directApiBaseUrl": "Base URL",
-  "directOpenRouterUrlInvalid": "Use OpenRouter’s HTTPS /api/v1 root (global or EU).",
-  "directOpenRouterBaseUrlDescription": "Uses your OpenRouter API key, authenticated model catalog, and Conduit-managed tools.",
-  "directOpenRouterChatCompletionsDescription": "Chat Completions is used for native web search, image generation, PDF parsing, and reusable PDF annotations.",
-  "directCompletionApi": "Completion API",
-  "directChatCompletions": "Chat Completions",
-  "directResponses": "Responses",
-  "directChatCompletionsDescription": "Works with OpenAI-compatible providers such as LM Studio, vLLM, LocalAI, and OpenRouter.",
-  "directResponsesDescription": "Use the typed Responses event stream. Choose this only when the provider exposes /responses.",
-  "directApiVersion": "API version",
-  "directApiVersionDescription": "Optional. Adds the api-version query parameter required by Azure OpenAI endpoints.",
-  "directAuthentication": "Authentication",
-  "noAuthentication": "No authentication",
-  "bearerToken": "Bearer token",
-  "directApiKeyHeader": "API-key header",
-  "directApiKeyHeaderDescription": "Sends the credential in the api-key header used by Azure OpenAI.",
-  "directApiKey": "API key",
-  "directCustomHeaders": "Custom headers",
-  "directManualModelIds": "Manual model IDs",
-  "directManualModelIdsDescription": "Facoltativo. Inserisci un ID per riga se il server non può elencare i modelli.",
-  "@directManualModelIdsDescription": {
-    "placeholders": {}
-  },
-  "directModelIdPrefix": "Model ID prefix",
-  "directModelIdPrefixDescription": "Optional. Adds a visible namespace such as studio.model-name without changing the model ID sent to the provider.",
-  "directModelTags": "Model tags",
-  "directModelTagsDescription": "Optional. Separate tags with commas or new lines.",
-  "syncDirectHistory": "Open WebUI history",
-  "syncDirectHistorySubtitle": "New direct chats sync when signed in. Existing chats keep their current location.",
-  "directHistoryLocalOnlySubtitle": "New direct chats stay on this device. Existing chats keep their current location.",
-  "backendChooserDirectTitle": "Connect directly",
-  "backendChooserDirectSubtitle": "Use an OpenAI-compatible API or Ollama without Open WebUI.",
-  "testDirectConnection": "Test connection",
-  "directConnectionTestUnavailable": "Connection testing is not available yet.",
-  "finishDirectSetup": "Start chatting",
-  "directProfilesEmptyTitle": "No direct connections yet",
-  "directProfilesEmptySubtitle": "Add an OpenAI-compatible or Ollama server to get started.",
-  "directConnectionsSectionTitle": "Connections",
-  "directSavedDataUnreadable": "The saved connection data could not be read.",
-  "directSecureStorageUnavailable": "Check secure storage access and try again.",
   "onDevice": "On device",
-  "directConnectionError": "Direct connection error",
-  "directAttachmentUnsupported": "This direct model does not support this attachment.",
-  "backendChooserOpenWebUITitle": "Open WebUI",
-  "hermesMemoryKeyDescription": "The memory key scopes the agent's long-term memory to you (X-Hermes-Session-Key). A stable key is generated automatically the first time you chat if you leave this blank.",
+  "openWebUi": "Open WebUI",
   "moreModels": "More models",
   "reasoningEffort": "Effort",
   "reasoningEffortLow": "Basso",
@@ -3274,121 +2775,15 @@
   "reasoningEffortNone": "Nessuno",
   "customReasoningEffort": "Custom effort",
   "customReasoningEffortHint": "Enter a provider-supported effort",
-  "proxyServerVerificationFailed": "Could not verify the Open WebUI server. The proxy session may have expired or be invalid. Please try again.",
-  "proxyManualSignInRequired": "Authentication failed. Please try signing in manually.",
   "sidebarSyncingChats": "Syncing chats",
   "sidebarSyncingNotes": "Syncing notes",
   "sidebarFinishingSync": "Finishing sync",
   "loadMermaidPreview": "Load Mermaid preview",
   "loadChartPreview": "Load chart preview",
   "loadPdfPreview": "Load PDF preview: {title}",
-  "ollamaCloudDefaultName": "Ollama Cloud",
-  "ollamaCloudBaseUrlHint": "https://ollama.com",
-  "ollamaCloudBaseUrlDescription": "Use https://ollama.com with an API key for Ollama Cloud.",
-  "ollamaModelLoaded": "Loaded",
-  "ollamaModelActions": "Model memory",
-  "ollamaModelActionsDescription": "Manage this model in Ollama's RAM or VRAM.",
-  "ollamaLoadModel": "Load model",
-  "ollamaLoadModelDescription": "Warm it now to make the first response faster.",
-  "ollamaUnloadModel": "Unload model",
-  "ollamaUnloadModelDescription": "Free its RAM or VRAM. It loads automatically on the next message.",
-  "ollamaUnloadModelConfirmTitle": "Unload {name}?",
-  "ollamaUnloadModelConfirmMessage": "This frees the model's RAM or VRAM. Ollama will load it again automatically when you send a message.",
-  "ollamaKeepAlive": "Keep alive",
-  "ollamaKeepAliveDescription": "Applied to this model after each chat request.",
-  "ollamaKeepAliveServerDefault": "Server default",
-  "ollamaKeepAliveFiveMinutes": "5 minutes",
-  "ollamaKeepAliveThirtyMinutes": "30 minutes",
-  "ollamaKeepAliveOneHour": "1 hour",
-  "ollamaKeepAliveAlways": "Always loaded",
-  "ollamaKeepAliveImmediate": "Unload after every response",
-  "ollamaKeepAliveCustom": "Custom",
-  "ollamaKeepAliveCustomHint": "Examples: 10m, 24h, 3600, -1, or 0",
-  "ollamaKeepAliveInvalid": "Use seconds or a duration such as 10m or 24h.",
-  "ollamaModelLoadedMessage": "{name} is loaded.",
-  "ollamaModelUnloadedMessage": "{name} was unloaded.",
-  "ollamaModelActionFailed": "Could not update this model's memory state.",
-  "ollamaThinking": "Thinking",
-  "ollamaCloudModelActionsDescription": "Configure how this Ollama Cloud model responds.",
-  "ollamaThinkingDescription": "Choose how much reasoning the model should use. Available levels depend on the model.",
   "ollamaThinkingAutomatic": "Automatic",
-  "ollamaThinkingDisabled": "Off",
-  "ollamaThinkingLow": "Low",
-  "ollamaThinkingMedium": "Medium",
-  "ollamaThinkingHigh": "High",
-  "ollamaThinkingMaximum": "Maximum",
   "releaseNotesSupportPromptHeading": "Ti piace Conduit?",
   "releaseNotesSupportPromptMessage": "Una breve recensione aiuta più persone a scoprire Conduit. Una piccola mancia mi aiuta a continuare a svilupparlo. Entrambe significano molto.",
-  "directConnectProvider": "Connetti provider",
-  "directConnectProviderTitle": "Connetti un provider",
-  "directConnectionEnabledSubtitle": "Mostra i modelli di questa connessione nel selettore dei modelli.",
-  "directConnectionDetailsTitle": "Dettagli connessione",
-  "directBaseUrlDescription": "Includi il prefisso API richiesto dal provider, solitamente /v1.",
-  "directConfiguredReplacePlaceholder": "Configurata, inserisci un valore per sostituirla",
-  "directApiKeyPlaceholder": "Inserisci la chiave API",
-  "hermesOnboardingFailed": "Impossibile completare la configurazione di Hermes. Controlla l’archiviazione sicura e riprova.",
-  "hermesConnectionDetailsTitle": "Dettagli connessione",
-  "hermesMemoryKeyShortDescription": "Associa la memoria a lungo termine dell’agente a te. Lascia vuoto e Conduit creerà una chiave.",
-  "hermesConnectAction": "Connetti Hermes",
-  "hermesToolCount": "{count, plural, =1{1 strumento} other{{count} strumenti}}",
-  "@hermesToolCount": {
-    "placeholders": {
-      "count": {
-        "type": "int"
-      }
-    }
-  },
-  "hermesNoToolsets": "Il server non ha segnalato alcun set di strumenti.",
-  "hermesToolsetsNewSessions": "Le modifiche si applicano alle nuove sessioni Hermes. Le chat esistenti mantengono i loro strumenti attuali.",
-  "hermesServerStatusTitle": "Stato del server",
-  "hermesNoServerStatus": "Il server non ha segnalato alcuno stato.",
-  "hermesLegacySessionToken": "Token di sessione legacy",
-  "hermesLegacySessionTokenHint": "Incolla il token di sessione Hermes",
-  "hermesGatewayStopped": "La dashboard Hermes è online, ma Desktop Gateway è arrestato. Avvia il gateway sul server Hermes, quindi riprova.",
-  "hermesProfile": "Profilo Hermes",
-  "hermesProfileLabel": "Profilo",
-  "hermesRefreshProfiles": "Aggiorna profili",
-  "hermesDesktopAuthentication": "Autenticazione desktop",
-  "hermesDashboardAuthHelp": "Apri la dashboard Hermes nella finestra di accesso, quindi torna qui per testare la connessione.",
-  "hermesAuthLegacy": "Legacy",
-  "hermesAuthNative": "Nativo",
-  "hermesAuthDashboard": "Dashboard",
-  "hermesNativeSignIn": "Accedi con Hermes",
-  "hermesDashboardSignIn": "Apri accesso alla dashboard",
-  "hermesGatewayAccessHeaders": "Intestazioni di accesso del gateway",
-  "hermesGatewayAccessHeadersHelp": "Intestazioni facoltative per una dashboard Hermes protetta.",
-  "hermesDesktopGateway": "Desktop Gateway",
-  "hermesReloadSkills": "Ricarica competenze",
-  "hermesNoInstalledSkills": "Nessuna competenza installata",
-  "hermesMcpServers": "Server MCP",
-  "hermesSignOut": "Esci da Hermes",
-  "hermesActionFailed": "Azione Hermes non riuscita.",
-  "hermesToolsetUpdateFailed": "Aggiornamento del set di strumenti Hermes non riuscito.",
-  "hermesJobStateLabel": "Stato",
-  "hermesJobDeliveryLabel": "Consegna",
-  "hermesJobLastLabel": "Ultima",
-  "hermesJobNextLabel": "Successiva",
-  "hermesJobRunHistory": "Cronologia esecuzioni",
-  "hermesApprovalAllowOnce": "Consenti una volta",
-  "hermesApprovalAllowSession": "Consenti per la sessione",
-  "hermesApprovalAlwaysAllow": "Consenti sempre",
-  "hermesClarificationTitle": "Hermes ha bisogno di un chiarimento",
-  "hermesSudoTitle": "Hermes ha bisogno dell'accesso sudo",
-  "hermesSecretTitle": "Hermes ha bisogno di un segreto",
-  "hermesMcpSetupTitle": "Hermes ha bisogno della configurazione MCP",
-  "hermesResponseSent": "Risposta inviata",
-  "hermesNotNow": "Non ora",
-  "hermesSetUp": "Configura",
-  "hermesSensitiveResponse": "Risposta sensibile",
-  "hermesResponse": "Risposta",
-  "hermesSendResponse": "Invia risposta",
-  "hermesFastTier": "Livello rapido",
-  "hermesFastTierOn": "Attivo",
-  "hermesFastTierOff": "Disattivo",
-  "hermesTurnSteer": "Orienta",
-  "hermesTurnSendNext": "Invia successivo",
-  "hermesTurnControlsUnsupported": "Aggiorna Hermes per abilitare i controlli di turno sicuri.",
-  "sidebarHermesTab": "Hermes",
   "markdownShowMoreLines": "{count, plural, =1{Mostra 1 riga in più} other{Mostra {count} righe in più}}",
   "@markdownShowMoreLines": {
     "placeholders": {
@@ -3410,222 +2805,10 @@
   "notificationRequiresSound": "Attiva l'audio per modificare questa impostazione.",
   "enabled": "Attivo",
   "disabled": "Disattivo",
-  "hermesJobNew": "Nuova attività pianificata",
-  "hermesJobAdminDisabled": "La gestione delle attività è disattivata su questo server. Le pianificazioni sono di sola lettura.",
-  "hermesJobEmptyMessage": "Crea un'attività pianificata per eseguire automaticamente un prompt.",
-  "hermesJobLoadFailed": "Impossibile caricare le attività pianificate. Controlla la connessione a Hermes e riprova.",
-  "hermesJobCreateFailed": "Impossibile creare l'attività pianificata.",
-  "hermesJobCreated": "Attività pianificata creata.",
-  "hermesJobPaused": "In pausa",
-  "hermesJobRunNow": "Esegui ora",
-  "hermesJobEdit": "Modifica attività pianificata",
-  "hermesJobDelete": "Elimina attività pianificata",
-  "hermesJobResumeFailed": "Impossibile riprendere l'attività pianificata.",
-  "hermesJobPauseFailed": "Impossibile sospendere l'attività pianificata.",
-  "hermesJobResumed": "Attività pianificata ripresa.",
-  "hermesJobPausedSuccess": "Attività pianificata sospesa.",
-  "hermesJobRunFailed": "Impossibile eseguire l'attività pianificata.",
-  "hermesJobStarted": "Attività pianificata avviata.",
-  "hermesJobUpdateFailed": "Impossibile aggiornare l'attività pianificata.",
-  "hermesJobUpdated": "Attività pianificata aggiornata.",
-  "hermesJobDeleteTitle": "Elimina attività",
-  "hermesJobDeleteMessage": "Eliminare questa attività pianificata? Questa azione non può essere annullata.",
-  "hermesJobDeleteFailed": "Impossibile eliminare l'attività pianificata.",
-  "hermesJobDeleted": "Attività pianificata eliminata.",
-  "hermesJobEditorEditTitle": "Modifica attività",
-  "hermesJobNameHint": "Riepilogo giornaliero",
-  "hermesJobPromptLabel": "Prompt",
-  "hermesJobPromptHint": "Cosa deve fare l'agente a ogni esecuzione?",
-  "hermesJobScheduleLabel": "Pianificazione",
-  "hermesJobScheduleHint": "0 9 * * * oppure every 2h",
-  "hermesJobTooLong": "Usa al massimo {count} caratteri",
-  "hermesJobScheduleInvalid": "Inserisci una durata, un intervallo, una data, un'ora o una pianificazione cron valida.",
-  "hermesJobScheduleHelp": "Usa cron (0 9 * * *), un intervallo (every 2h), un ritardo (30m) o una data e ora ISO.",
-  "hermesJobsSheetSubtitle": "Metti in pausa le pianificazioni o controlla la prossima esecuzione.",
-  "hermesJobsSheetReview": "Controlla gli orari di esecuzione e metti in pausa le pianificazioni.",
-  "hermesJobsManageDescription": "Crea, modifica, esegui o elimina le pianificazioni.",
-  "hermesJobsEmptyManageHint": "Usa Gestisci per creare un prompt pianificato.",
-  "hermesLastStatus": "Ultimo stato: {status}",
-  "hermesSessionUntitled": "Conversazione senza titolo",
-  "hermesSessionFork": "Crea diramazione",
-  "hermesSessionRenameTitle": "Rinomina conversazione",
-  "hermesSessionNameHint": "Nome della conversazione",
-  "hermesSessionDeleteTitle": "Elimina conversazione",
-  "hermesSessionDeleteMessage": "Eliminare questa conversazione Hermes? Questa azione non può essere annullata.",
-  "hermesSessionForkFailed": "Impossibile creare una diramazione della conversazione.",
-  "hermesSessionRenameFailed": "Impossibile rinominare la conversazione.",
-  "hermesSessionDeleteFailed": "Impossibile eliminare la conversazione.",
-  "hermesSessionLoadFailed": "Impossibile caricare questa conversazione. Controlla la connessione e riprova.",
-  "hermesMemoryKeyFieldLabel": "Chiave di memoria",
-  "directMcpServersTitle": "MCP servers",
-  "directMcpEmptyTitle": "No MCP servers yet",
-  "directMcpReachabilityHelp": "Add a Streamable HTTP endpoint that this phone can reach.",
-  "directMcpEditorTitle": "Edit MCP server",
-  "directMcpAddTitle": "Add MCP server",
-  "directMcpName": "Server name",
-  "directMcpEndpoint": "Streamable HTTP endpoint",
-  "directMcpBearerToken": "Bearer token (optional)",
-  "directMcpCustomHeaders": "Custom headers (optional)",
-  "directMcpCustomHeadersHint": "One per line: Name: Value",
-  "directMcpTestConnection": "Test connection",
-  "directMcpTesting": "Testing connection…",
-  "directMcpTestSucceeded": "Connected — {count} tools found.",
-  "directMcpTestFailed": "Could not list tools from this MCP server.",
-  "directMcpSaveFailed": "Could not save this MCP server.",
-  "directMcpLoadFailed": "Could not load MCP servers from secure storage.",
-  "directMcpMissing": "This MCP server no longer exists.",
-  "directMcpCredentialTransferTitle": "Use credentials with new server?",
-  "directMcpCredentialTransferMessage": "This sends the bearer token and custom headers to the new server. Continue only if you trust it. Cancel saves the server without credentials.",
-  "directMcpCredentialTransferConfirm": "Use credentials",
-  "directMcpDeleteTitle": "Delete MCP server?",
-  "directMcpDeleteMessage": "This removes {name} and its credentials from this device.",
-  "directMcpDeleteFailed": "Could not delete this MCP server.",
-  "directMcpAuthMode": "Authentication",
   "directMcpAuthNone": "None",
   "directMcpAuthBearer": "Bearer token",
-  "directMcpAuthOAuth": "OAuth",
-  "directMcpOAuthConnect": "Connect in browser",
-  "directMcpOAuthReconnect": "Reconnect in browser",
-  "directMcpOAuthDisconnect": "Disconnect OAuth",
-  "directMcpOAuthPending": "Waiting for authorization in the browser…",
-  "directMcpOAuthConnected": "OAuth connected.",
-  "directMcpOAuthConnectionDetails": "Connected to {issuerHost} · {scopes}",
-  "directMcpOAuthNoScopes": "No scopes reported",
-  "directMcpOAuthConnectFailed": "Could not connect this MCP server with OAuth.",
-  "directMcpOAuthDisconnectFailed": "Could not disconnect OAuth from this MCP server.",
-  "directMcpApprovalTitle": "Tool approval",
-  "directMcpApprovalAllowOnce": "Allow once",
-  "directMcpApprovalAllowSession": "Allow for session",
-  "directMcpApprovalAllowAlways": "Always allow",
-  "directMcpApprovalAlwaysTitle": "Always allow this tool?",
-  "directMcpApprovalAlwaysMessage": "{serverName} will be allowed to run {toolName} without asking again. The approval is revoked automatically if the tool schema changes.",
-  "@directMcpApprovalAlwaysMessage": {
-    "placeholders": {
-      "serverName": {
-        "type": "String"
-      },
-      "toolName": {
-        "type": "String"
-      }
-    }
-  },
-  "directMcpApprovalSaveFailed": "Could not remember this approval. You can retry or choose another option.",
-  "directMcpApprovalDeny": "Deny",
-  "directMcpApprovalAllowed": "Allowed once",
-  "directMcpApprovalAllowedSession": "Allowed for session",
-  "directMcpApprovalAllowedAlways": "Always allowed",
-  "directMcpApprovalDenied": "Denied",
-  "directMcpApprovalExpired": "Approval expired",
-  "directMcpRememberedApprovalsTitle": "Always allowed tools",
-  "directMcpRememberedApprovalsSubtitle": "These exact tools can run without asking while their server and input schema remain unchanged.",
-  "directMcpRememberedApprovalRevoke": "Revoke",
-  "directMcpRememberedApprovalsRevokeAll": "Revoke all",
-  "directMcpRememberedApprovalRevokeFailed": "Could not revoke the remembered approval.",
-  "directMcpContentAction": "MCP content",
-  "directMcpContentTitle": "MCP content",
-  "directMcpContentServer": "MCP server",
-  "directMcpContentSearch": "Search prompts and resources",
-  "directMcpContentPrompts": "Prompts",
-  "directMcpContentResources": "Resources",
-  "directMcpContentEmpty": "This server has no prompts or resources.",
-  "directMcpContentNoMatches": "No matching prompts or resources.",
-  "directMcpContentLoadFailed": "Could not load content from this MCP server.",
-  "directMcpContentRefresh": "Refresh MCP content",
-  "directMcpContentPreviewTitle": "Preview",
-  "directMcpContentInsert": "Insert",
-  "directMcpContentPromptHeading": "MCP prompt from {serverName}: {promptName}",
-  "@directMcpContentPromptHeading": {
-    "placeholders": {
-      "serverName": {
-        "type": "String"
-      },
-      "promptName": {
-        "type": "String"
-      }
-    }
-  },
-  "directMcpContentResourceHeading": "MCP resource from {serverName}: {resourceUri}",
-  "@directMcpContentResourceHeading": {
-    "placeholders": {
-      "serverName": {
-        "type": "String"
-      },
-      "resourceUri": {
-        "type": "String"
-      }
-    }
-  },
-  "directMcpContentRoleUser": "User",
-  "directMcpContentRoleAssistant": "Assistant",
-  "directMcpContentRequestFailed": "Could not load this MCP content. Try again.",
-  "directMcpContentUnsupported": "This item is binary or unsupported. Choose a text prompt or text resource.",
-  "directMcpContentChanged": "This item changed on the server. Refresh and choose it again.",
-  "directMcpContentTooLarge": "This content is too large to insert.",
-  "directMcpContentComposerTooLarge": "The draft and this content exceed the 256 KiB message limit. Shorten the draft or content and try again.",
-  "directMcpContentLoading": "Loading MCP content…",
-  "directMcpInsecureCredentialsTitle": "Send credentials without encryption?",
-  "directMcpInsecureCredentialsMessage": "This server uses unencrypted HTTP. Your bearer token, OAuth token, and custom headers could be read or changed on the network.",
-  "directMcpInsecureCredentialsConfirm": "Send without encryption",
-  "hermesSessionTooLarge": "Questa conversazione è troppo grande per essere caricata su questo dispositivo.",
-  "hermesSessionNotFound": "Questa conversazione non è più disponibile sul server Hermes.",
-  "hermesSessionLoadFailedDetail": "Impossibile caricare questa conversazione: {detail}",
-  "@hermesSessionLoadFailedDetail": {
-    "placeholders": {
-      "detail": {
-        "type": "String"
-      }
-    }
-  },
-  "directBearerDescription": "Invia la credenziale nell'intestazione Authorization: Bearer. La maggior parte dei server compatibili con OpenAI (llama.cpp, vLLM, LM Studio, Ollama) si aspetta questo.",
-  "directApiKeyHeaderAzureOnlyDescription": "Invia la credenziale nell'intestazione api-key. Usalo solo per Azure OpenAI; gli altri server compatibili con OpenAI si aspettano un token Bearer.",
-  "appleOnDeviceUnavailable": "Apple On-Device non è disponibile su questo dispositivo.",
-  "applePccContextSize": "Contesto di {tokens} token",
-  "@applePccContextSize": {
-    "description": "Apple PCC context size label.",
-    "placeholders": {
-      "tokens": {
-        "type": "String"
-      }
-    }
-  },
-  "applePccCurrentLanguageUnsupported": "La lingua attuale del dispositivo potrebbe non essere supportata.",
-  "applePccOnDeviceFallback": "Fallback sul dispositivo",
-  "applePccOnDeviceFallbackSubtitle": "Usa il modello Apple più piccolo sul dispositivo quando PCC non è raggiungibile. Le richieste con ragionamento non usano mai il fallback.",
-  "applePccQuotaApproaching": "Limite di utilizzo giornaliero quasi raggiunto",
-  "applePccQuotaReached": "Limite di utilizzo giornaliero raggiunto",
-  "applePccQuotaResetsAt": "Reimpostazione: {time}",
-  "@applePccQuotaResetsAt": {
-    "description": "Apple PCC quota reset time.",
-    "placeholders": {
-      "time": {
-        "type": "String"
-      }
-    }
-  },
-  "applePccShowQuotaOptions": "Mostra opzioni di utilizzo",
-  "applePccStatusAvailable": "Disponibile",
-  "applePccUnavailable": "Apple Private Cloud Compute non è disponibile su questo dispositivo.",
-  "backendChooserAppleOnDeviceSubtitle": "Esegui il modello privato di Apple su questo dispositivo, anche offline.",
-  "backendChooserAppleOnDeviceTitle": "Apple On-Device",
-  "backendChooserApplePccSubtitle": "Usa il modello cloud privato di Apple senza chiave API.",
-  "backendChooserApplePccTitle": "Apple Private Cloud Compute",
-  "backendChooserAppleSectionTitle": "Apple Intelligence",
-  "backendChooserModelApisSectionTitle": "API dei modelli",
-  "backendChooserSelfHostedSectionTitle": "Servizi self-hosted",
   "citationShowTitles": "Mostra i titoli delle pagine citate",
   "citationShowTitlesDescription": "Usa i titoli delle pagine invece dei domini nei badge delle citazioni",
-  "directContextCompactionDescription": "Questi modelli non indicano la finestra di contesto. Conduit usa il limite selezionato per compattare i messaggi meno recenti prima che le richieste diventino troppo grandi.",
-  "directContextCompactionPickerDescription": "Scegli la finestra di contesto che Conduit deve usare per la compattazione automatica.",
-  "directContextCompactionTitle": "Compattazione del contesto",
-  "directContextLimit": "Limite di contesto: {tokens}",
-  "@directContextLimit": {
-    "description": "Provider-neutral model context limit label.",
-    "placeholders": {
-      "tokens": {
-        "type": "String"
-      }
-    }
-  },
   "notificationSystemSettingsDescription": "Modifica autorizzazioni, suono e opzioni banner per Conduit.",
   "notificationSystemSettingsOpenFailed": "Impossibile aprire le impostazioni di notifica di sistema.",
   "notificationTargetsTitle": "Destinazioni webhook",
@@ -3666,7 +2849,6 @@
     }
   },
   "notificationSystemSettingsTitle": "Impostazioni di notifica di sistema",
-  "proxyAuthSignInAgain": "Accedi di nuovo tramite proxy",
   "readOnly": "Sola lettura",
   "readOnlySharedChat": "Questa chat è stata condivisa con te. Solo il proprietario può inviare messaggi.",
   "reasoningEffortDeep": "Profondo",
@@ -3700,35 +2882,6 @@
   "chatTaskInProgress": "In corso",
   "chatTaskCompleted": "Completata",
   "chatTaskCancelled": "Annullata",
-  "webSearchSettingsFooterAuto": "Usato dai modelli Direct senza una ricerca web propria. Le ricerche partono da questo dispositivo: le query vanno a DuckDuckGo e, se non risponde, a Brave, Bing, Mojeek o Wikipedia. Anche le pagine lette dal modello vengono scaricate da questo dispositivo.",
-  "webSearchSettingsFooterEngine": "Usato dai modelli Direct senza una ricerca web propria. Le ricerche partono da questo dispositivo e le query vanno solo a {engine}. Anche le pagine lette dal modello vengono scaricate da questo dispositivo.",
-  "@webSearchSettingsFooterEngine": {
-    "placeholders": {
-      "engine": {
-        "type": "String",
-        "example": "DuckDuckGo"
-      }
-    }
-  },
-  "webSearchEngineLabel": "Motore di ricerca",
-  "webSearchEngineAuto": "Automatico",
-  "webSearchSafeSearchLabel": "Ricerca sicura",
-  "webSearchSafeSearchStrict": "Rigorosa",
-  "webSearchSafeSearchModerate": "Moderata",
-  "webSearchSafeSearchOff": "Disattivata",
-  "webSearchRegionLabel": "Regione",
-  "webSearchRegionAuto": "Come il dispositivo",
-  "webSearchRegionWorldwide": "Tutto il mondo",
-  "directModelToolsUnsupported": "Questo modello non può usare strumenti, quindi non può cercare sul web. Disattiva la ricerca web e gli strumenti, poi riprova.",
-  "directContextCompactionModelCount": "{count, plural, =1{1 modello} other{{count} modelli}}",
-  "@directContextCompactionModelCount": {
-    "placeholders": {
-      "count": {
-        "type": "int",
-        "example": "42"
-      }
-    }
-  },
   "imageViewerPosition": "{current} di {total}",
   "@imageViewerPosition": {
     "placeholders": {
@@ -4494,38 +3647,9 @@
   "chatDataControlsUnsharedAll": "Tutti i link di condivisione sono stati rimossi.",
   "chatDataControlsDeletedAll": "Tutte le chat sono state eliminate.",
   "notificationTargetMakeDefaultNeedsSave": "Salva le modifiche per impostarla come predefinita.",
-  "hermesConnectionsSectionTitle": "Connessioni",
-  "hermesAddConnection": "Aggiungi connessione",
-  "hermesNewConnectionTitle": "Nuova connessione",
-  "hermesConnectionNameHint": "Mostrato nel selettore dei modelli e nella barra laterale",
-  "hermesNoConnectionsTitle": "Nessuna connessione Hermes",
-  "hermesNoConnectionsSubtitle": "Aggiungi un server Hermes per chattare con il tuo agente.",
-  "hermesActiveConnection": "Attiva",
-  "hermesUseConnection": "Usa questa connessione",
-  "hermesInactiveConnectionNotice": "Passa a questa connessione per vederne lo stato e gestire il server.",
-  "hermesSignInActivatesConnection": "Accedendo, questa diventa la connessione attiva.",
-  "hermesDeleteConnectionTitle": "Eliminare la connessione?",
-  "hermesDeleteConnectionMessage": "Questa azione rimuove {name} e le relative credenziali da questo dispositivo.",
-  "hermesDeleteConnectionFailed": "Impossibile eliminare questa connessione.",
-  "hermesSwitchConnectionFailed": "Impossibile passare a questa connessione.",
-  "hermesSwitchConnectionTitle": "Cambia connessione",
-  "hermesSwitchConnectionPromptTitle": "Passare a {name}?",
-  "hermesSwitchConnectionPromptMessage": "La sessione Hermes di questa chat appartiene a {name}. Passa a quella connessione per continuarla, oppure mantieni quella attuale per iniziare una nuova sessione.",
-  "hermesSwitchConnectionConfirm": "Passa",
-  "hermesKeepCurrentConnection": "Mantieni quella attuale",
   "accountsTitle": "Account",
-  "accountChooserTitle": "Scegli un account",
-  "accountsAddAccount": "Aggiungi account",
-  "accountsManage": "Gestisci account",
   "accountsSignedOut": "Disconnesso",
   "accountsActive": "Attivo",
-  "accountsAddAccountTitle": "Aggiungi un account",
-  "accountsAddAccountMessage": "Accedi a un altro account su un server salvato o connettiti a uno nuovo.",
-  "accountsNewServer": "Nuovo server",
-  "accountsContinueWith": "Continua con {server}",
-  "accountsKindDirect": "Diretto",
-  "accountsAddOnThisServer": "Aggiungi account su questo server",
-  "accountsSwitch": "Cambia",
   "accountsSignOutOf": "Esci da {name}",
   "accountsSignOutConfirmTitle": "Uscire da {name}?",
   "accountsSignOutConfirmMessage": "L'account e le chat che ha salvato verranno rimossi da questo dispositivo. Gli altri tuoi account restano connessi.",
@@ -4534,25 +3658,5 @@
   "accountsSwitchStopsReply": "Se cambi account, verrà interrotta.",
   "accountsSignOutStopsReply": "Se esci, verrà interrotta.",
   "accountsSwitchAnyway": "Cambia comunque",
-  "accountsAddressChangeStopsReply": "Se modifichi l'indirizzo in uso, verrà interrotta.",
-  "accountsAddressChangeAnyway": "Modifica comunque",
-  "accountsSignOutAnyway": "Esci comunque",
-  "accountsServerAddresses": "Indirizzi",
-  "accountsServerAddressesHelp": "Conduit si connette tramite il primo indirizzo che risponde, partendo dall'alto. Trascina per cambiare l'ordine.",
-  "accountsAddAddress": "Aggiungi indirizzo",
-  "accountsEditAddress": "Modifica indirizzo",
-  "accountsSaveAddress": "Salva indirizzo",
-  "accountsAddressInUse": "In uso",
-  "accountsAddressName": "Nome (facoltativo)",
-  "accountsAddressNameHint": "Rete di casa, Tailscale…",
-  "accountsAddressDifferentServer": "Questo indirizzo porta a un altro server o a un altro account su di esso.",
-  "accountsAddressNeedsSignIn": "Accedi prima a un account su questo server, così l'indirizzo potrà essere verificato.",
-  "accountsRemoveAddress": "Rimuovi indirizzo",
-  "accountsRemoveAddressMessage": "Conduit smetterà di provare questo indirizzo. I tuoi account restano connessi.",
-  "accountsAddressConfirmTitle": "Verificare questo indirizzo?",
-  "accountsAddressConfirmMessage": "Per assicurarsi che {host} sia questo server, Conduit gli invia la sessione di un account salvato qui. Continua solo se ti fidi di questo indirizzo.",
-  "accountsAddressConfirmAction": "Verifica indirizzo",
-  "setupWizardTitle": "Set up the app",
-  "setupWizardSubtitle": "Choose the account to enter with. You can change it later in Settings.",
-  "proxyAuthInAppWebView": "Apri dentro l’app"
+  "accountsSignOutAnyway": "Esci comunque"
 }

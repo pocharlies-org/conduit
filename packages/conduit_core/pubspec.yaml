@@ -13,18 +13,13 @@ environment:
 dependencies:
   # `QueryExecutor` is part of the DatabaseOpener port's signature. The core
   # owns the schema, so drift belongs here rather than in the front-ends.
-  archive: ^4.0.9
-  xml: ^7.0.1
-  mcp_dart: ^2.4.0
   parchment: ^1.27.0
   http: ^1.5.0
   http_parser: ^4.0.2
-  ollama_dart: ^2.4.0
   web_socket_channel: ^3.0.3
   collection: ^1.19.1
   hive_ce: ^2.14.0
   intl: ^0.20.2
-  openai_dart: ^8.1.0
   socket_io_client: ^3.1.2
   synchronized: ^3.4.1
   web_socket: ^1.0.1
@@ -35,11 +30,6 @@ dependencies:
   image: ^4.9.0
   conduit_markdown:
     path: ../conduit_markdown
-  # On-device web search for Direct models (vendored `ddgs`, see its
-  # VENDORED.md) and the HTML parser its page reader shares.
-  conduit_ddgs:
-    path: ../conduit_ddgs
-  html: ^0.15.6
   crypto: ^3.0.3
   # The core raises and classifies API errors, and `ApiError` is built from a
   # `DioException`. dio is pure Dart, so this costs the package nothing in

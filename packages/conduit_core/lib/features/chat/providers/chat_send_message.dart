@@ -11,27 +11,6 @@ Future<void> _sendMessageInternal(
   onAssistantPlaceholderCreated,
   ChatSendVoiceContext? voice,
 ]) async {
-  final hermesSelectedAtStart = ref.read(selectedModelProvider) as Model?;
-  if (hermesSelectedAtStart != null && isHermesModel(hermesSelectedAtStart)) {
-    // Before anything below is captured: switching connections replaces the
-    // Hermes runtime and the selected model.
-    final ownerBeforeOffer = captureChatMutationOwner(
-      ref,
-      ref.read(activeConversationProvider) as Conversation?,
-    );
-    final offer = _offerHermesConnectionSwitchForMixedChat(ref);
-    if (offer is Future<void>) {
-      await offer;
-      // The user may have opened another chat while the prompt or the switch
-      // ran; this text belongs to the chat it was typed in. Thrown so the
-      // composer keeps the text instead of treating it as sent.
-      if (!chatMutationTokenStillActive(ref, ownerBeforeOffer)) {
-        throw StateError(
-          'The conversation changed while preparing the message.',
-        );
-      }
-    }
-  }
   final conversationAtSendStart =
       ref.read(activeConversationProvider) as Conversation?;
   final sendMutationOwner = captureChatMutationOwner(
@@ -48,196 +27,52 @@ Future<void> _sendMessageInternal(
       : const <String, dynamic>{};
   final reviewerMode = ref.read(reviewerModeProvider);
   final api = ref.read(apiServiceProvider);
-  final Object? directSourceApi = sendMutationOwner.usesOpenWebUiContext
-      ? sendMutationOwner.openWebUiApi
-      : api;
-  final directSourceAuthSnapshot = directSourceApi is ApiService
-      ? directSourceApi.captureAuthSnapshot()
-      : null;
-  final Object? directSourceAuthSessionEpoch = directSourceApi == null
-      ? null
-      : _readOpenWebUiAuthSessionEpoch(ref);
   final selectedModelCandidate = ref.read(selectedModelProvider) as Model?;
-  final reasoningEffortAtSendStart = ref.read(
-    configuredReasoningEffortProvider,
-  );
-  final webSearchAtSendStart =
-      ref.read(webSearchEnabledProvider) &&
-      ref.read(webSearchAvailableProvider);
-  final imageGenerationAtSendStart =
-      ref.read(imageGenerationEnabledProvider) &&
-      ref.read(imageGenerationAvailableProvider);
-  // Admitted with the account and model this send started under. The request
-  // below drops it if a terminal turns out to be part of the same request.
+  // Admitted with the account and model this send started under.
   final codeInterpreterAtSendStart = _admitCodeInterpreter(ref);
-  final localMcpToolIdsAtSendStart = (toolIds ?? const <String>[])
-      .where((id) => id.startsWith(kDirectMcpToolIdPrefix))
-      .toList(growable: false);
-  final usesHermes =
-      selectedModelCandidate != null && isHermesModel(selectedModelCandidate);
-  final HermesConfigController? hermesConfigController = usesHermes
-      ? ref.read(hermesConfigProvider.notifier)
-      : null;
-  final int? hermesConfigAdmission = hermesConfigController
-      ?.captureSessionActionAdmission();
-  if (usesHermes && hermesConfigAdmission == null) return;
-  final HermesBackendService? hermesServiceGeneration = usesHermes
-      ? ref.read(hermesApiServiceProvider)
-      : null;
-  final resolvedDirectRoute = await _resolveDirectRoute(
-    ref,
-    selectedModelCandidate,
-  );
-  final directRoute =
-      resolvedDirectRoute?.binding.source == DirectModelSource.device
-      ? resolvedDirectRoute
-      : null;
-  final openWebUiDirectRoute =
-      resolvedDirectRoute?.binding.source == DirectModelSource.openWebUi
-      ? resolvedDirectRoute
-      : null;
-  if (!chatMutationTokenStillActive(ref, sendMutationOwner)) {
-    throw StateError('The conversation changed while preparing the message.');
-  }
-  if (resolvedDirectRoute != null &&
-      !_directRouteIsStillSelected(ref, resolvedDirectRoute)) {
-    throw StateError(
-      'The selected direct connection changed while preparing the message.',
-    );
-  }
-  if (usesHermes &&
-      (!hermesConfigController!.sessionActionAdmissionIsCurrent(
-            hermesConfigAdmission!,
-          ) ||
-          !identical(
-            ref.read(hermesApiServiceProvider),
-            hermesServiceGeneration,
-          ))) {
-    return;
-  }
-
-  // App-owned transports do not require an OpenWebUI API. A reserved direct
-  // identity without a current trusted registry binding remains blocked.
   if (isSendBlocked(
     reviewerMode: reviewerMode,
     api: api,
     selectedModel: selectedModelCandidate,
-    hasTrustedDirectBinding: resolvedDirectRoute != null,
   )) {
     throw Exception('No API service or model selected');
   }
-  if (!reviewerMode && openWebUiDirectRoute != null && api == null) {
-    throw Exception('Open WebUI direct connections require a server session.');
-  }
   final Model selectedModel = selectedModelCandidate!;
-  final serverModelId = openWebUiDirectRoute == null
-      ? selectedModel.id
-      : _openWebUiDirectWireModelId(openWebUiDirectRoute);
-
+  final serverModelId = selectedModel.id;
   final isLoadingConversation = ref.read(isLoadingConversationProvider);
   final currentConversation = ref.read(activeConversationProvider);
-  final directSendConversationId = currentConversation == null
-      ? null
-      : _directRunOwnerScopeForConversation(ref, currentConversation);
-  final directAttachmentContentTypes = _durableAttachmentContentTypesFromState(
-    ref,
-    attachments ?? const <String>[],
-  );
-  Stream<RemapEvent>? directRemapEvents;
-  SyncEngine? directOpenWebUiSyncEngine;
-  if (sendMutationOwner.usesOpenWebUiContext) {
-    try {
-      final engine = ref.read(syncEngineProvider.notifier);
-      directOpenWebUiSyncEngine = engine;
-      directRemapEvents = engine.remapEvents;
-    } catch (_) {}
+  if (!chatMutationTokenStillActive(ref, sendMutationOwner)) {
+    throw StateError('The conversation changed while preparing the message.');
   }
   // Guard against a race where the user opens an existing chat and sends
   // before its history loads, which would otherwise create a new chat.
   if (isLoadingConversation && currentConversation == null) {
     throw StateError('Conversation is still loading');
   }
-  if (!isModelCompatibleWithConversation(
-    conversation: currentConversation,
-    hasTrustedDirectBinding: directRoute != null,
-  )) {
-    throw StateError(
-      'On-device direct chats can only continue with a direct connection model.',
-    );
-  }
 
   // Get context attachments synchronously (no API calls)
   final contextAttachments = ref.read(contextAttachmentsProvider);
   final contextFiles = _contextAttachmentsToFiles(contextAttachments);
-  final _PreparedHermesTurn? preparedHermesTurn = usesHermes
-      ? await _prepareHermesTurn(
-          ref,
-          selectedModel: selectedModel,
-          text: message,
-          attachmentIds: attachments,
-          contextAttachments: contextAttachments,
-        )
-      : null;
-  final _PreparedDirectDocuments? preparedDirectDocuments = directRoute != null
-      ? await _prepareDirectDocuments(
-          ref,
-          attachmentIds: attachments,
-          supportsOpenRouterPdfInputs:
-              directRoute.profile.supportsOpenRouterPdfInputs,
-        )
-      : null;
-  if (!chatMutationTokenStillActive(ref, sendMutationOwner)) {
-    throw StateError('The conversation changed while preparing the message.');
-  }
-  if (resolvedDirectRoute != null &&
-      !_directRouteIsStillSelected(ref, resolvedDirectRoute)) {
-    throw StateError(
-      'The selected direct connection changed while preparing the message.',
-    );
-  }
-  if (usesHermes &&
-      (!hermesConfigController!.sessionActionAdmissionIsCurrent(
-            hermesConfigAdmission!,
-          ) ||
-          !identical(
-            ref.read(hermesApiServiceProvider),
-            hermesServiceGeneration,
-          ))) {
-    return;
-  }
 
-  // All attachments are now server file IDs (images uploaded like OpenWebUI)
-  // Legacy base64 support kept for backwards compatibility
+  // All attachments are server file IDs (images uploaded like OpenWebUI).
+  // Legacy base64 support kept for backwards compatibility.
   final legacyBase64Images = <Map<String, dynamic>>[];
   final serverFileIds = <String>[];
-
-  if (attachments != null && preparedHermesTurn == null) {
+  if (attachments != null) {
     for (final attachment in attachments) {
       if (attachment.startsWith('data:image/')) {
-        // Legacy base64 format - keep for backwards compatibility
         legacyBase64Images.add({'type': 'image', 'url': attachment});
-      } else if (!(preparedDirectDocuments?.attachmentIds.contains(
-            attachment,
-          ) ??
-          false)) {
-        // Server file ID (both images and documents)
+      } else {
         serverFileIds.add(attachment);
       }
     }
   }
 
-  // Build initial user files with legacy base64 and context (server files added later)
+  // Build initial user files with legacy base64 and context (server files
+  // added later)
   final List<Map<String, dynamic>>? initialUserFiles =
-      preparedHermesTurn != null
-      ? (preparedHermesTurn.files.isEmpty ? null : preparedHermesTurn.files)
-      : (legacyBase64Images.isNotEmpty ||
-            contextFiles.isNotEmpty ||
-            (preparedDirectDocuments?.files.isNotEmpty ?? false))
-      ? [
-          ...legacyBase64Images,
-          ...contextFiles,
-          ...?preparedDirectDocuments?.files,
-        ]
+      legacyBase64Images.isNotEmpty || contextFiles.isNotEmpty
+      ? [...legacyBase64Images, ...contextFiles]
       : null;
 
   final existingMessages = ref.read(chatMessagesProvider);
@@ -278,8 +113,6 @@ Future<void> _sendMessageInternal(
     metadata: {
       'parentId': userMessageId,
       'childrenIds': const <String>[],
-      if (isHermesModel(selectedModel)) 'transport': kHermesTransport,
-      if (directRoute != null) 'transport': kDirectTransport,
       if (selectedModel.name.trim().isNotEmpty)
         'modelName': selectedModel.name.trim(),
     },
@@ -290,27 +123,7 @@ Future<void> _sendMessageInternal(
       : _voiceReplyMessage(placeholder, voiceReply);
   final messagesNotifier =
       ref.read(chatMessagesProvider.notifier) as ChatMessagesNotifier;
-  if ((directRoute != null || isHermesModel(selectedModel)) &&
-      openWebUiParentId != null) {
-    messagesNotifier.updateMessageById(openWebUiParentId, (parent) {
-      final childrenIds = message_tree
-          .chatMessageChildrenIds(parent)
-          .toList(growable: true);
-      if (childrenIds.contains(userMessageId)) return parent;
-      childrenIds.add(userMessageId);
-      return parent.copyWith(
-        metadata: <String, dynamic>{
-          ...?parent.metadata,
-          'childrenIds': childrenIds,
-        },
-      );
-    });
-  }
   messagesNotifier.addMessages([userMessage, assistantPlaceholder]);
-  final optimisticTurnMessages = List<ChatMessage>.from(
-    ref.read(chatMessagesProvider) as List<ChatMessage>,
-    growable: false,
-  );
   final sendHandle = ChatSendPlaceholderHandle._(
     userMessageId: userMessageId,
     assistantMessageId: assistantMessageId,
@@ -320,580 +133,7 @@ Future<void> _sendMessageInternal(
   if (voiceReply != null) {
     // The voice already answered: the turn is stored as it was said, and no
     // model runs. Chats this path holds only in memory keep it there.
-    if (directRoute != null) {
-      _DirectConversationOwner? owner;
-      try {
-        owner = await _persistDirectTurnStart(
-          ref,
-          route: directRoute,
-          expectedConversation: currentConversation,
-          expectedConversationId: directSendConversationId,
-          userMessage: userMessage,
-          assistantMessage: assistantPlaceholder,
-          allMessages: optimisticTurnMessages,
-          bindOwner: (resolvedOwner) {
-            // Kept here: the helper's post-commit auth fence may throw
-            // instead of returning the owner, whose lease must still go.
-            owner = resolvedOwner;
-            return true;
-          },
-          sourceApi: directSourceApi,
-          sourceAuthSnapshot: directSourceAuthSnapshot,
-          sourceAuthSessionEpoch: directSourceAuthSessionEpoch,
-          remapEvents: directRemapEvents,
-          openWebUiAuthSessionEpoch:
-              sendMutationOwner.openWebUiAuthSessionEpoch,
-          openWebUiSyncEngine: directOpenWebUiSyncEngine,
-          pendingFolderId:
-              pendingFolderIdOverride ?? ref.read(pendingFolderIdProvider),
-        );
-      } finally {
-        await owner?.releaseDatabaseLease();
-      }
-    }
     return;
-  }
-  final DirectRunRegistry? directRegistry = directRoute == null
-      ? null
-      : ref.read(directRunRegistryProvider);
-  if (directRoute != null && !_directRouteIsStillSelected(ref, directRoute)) {
-    // No durable owner or run reservation exists yet. Roll back the complete
-    // optimistic turn (including its parent edge) instead of leaving an empty,
-    // apparently completed assistant behind.
-    if (openWebUiParentId != null) {
-      messagesNotifier.updateMessageById(openWebUiParentId, (parent) {
-        final childrenIds = message_tree
-            .chatMessageChildrenIds(parent)
-            .where((id) => id != userMessageId)
-            .toList(growable: false);
-        return parent.copyWith(
-          metadata: <String, dynamic>{
-            ...?parent.metadata,
-            'childrenIds': childrenIds,
-          },
-        );
-      });
-    }
-    messagesNotifier.removeMessageById(assistantMessageId);
-    messagesNotifier.removeMessageById(userMessageId);
-    throw StateError(
-      'The selected direct connection changed while preparing the message.',
-    );
-  }
-  final directStopIndex = directRoute == null
-      ? null
-      : ref.read(_directRunStopIndexProvider);
-  var directIndexedRunKey = directRoute == null
-      ? null
-      : _directRunKeyForOwner(
-          directSendConversationId ??
-              _pendingDirectRunOwner(assistantMessageId),
-          assistantMessageId,
-        );
-  final DirectRunReservation? directReservation = directRegistry?.reserve(
-    directIndexedRunKey!,
-    directRoute!.binding.profileId,
-  );
-  if (directIndexedRunKey != null) {
-    directStopIndex!.track(directIndexedRunKey);
-  }
-  final directPreflightCancelToken = directRoute == null ? null : CancelToken();
-
-  // Hermes agent: route to Conduit's Hermes transport instead of the OpenWebUI
-  // chat-completions pipeline. Native Hermes chats use server-side session
-  // memory; Hermes segments in stored OpenWebUI chats also persist their local
-  // message tree and sync it through the ordinary OpenWebUI chat outbox.
-  if (usesHermes) {
-    final hermesOwner = _HermesConversationOwner.fromMutationOwner(
-      currentConversation,
-      sendMutationOwner,
-    );
-    final hermesRegistry = ref.read(hermesRunRegistryProvider);
-    var pendingRunKey = hermesOwner.runKey(assistantMessageId);
-    var pendingRunHandedOff = false;
-    final pendingCancelToken = hermesRegistry.registerPending(
-      pendingRunKey,
-      onCancelled: () {
-        if (pendingRunHandedOff || !hermesOwner.isActive(ref)) return;
-        messagesNotifier.finishStreamingMessage(
-          assistantMessageId,
-          ownerConversationId: hermesOwner.notifierConversationId,
-          requireConversationOwner: true,
-        );
-      },
-    );
-    final configController = hermesConfigController!;
-    final configAdmission = hermesConfigAdmission!;
-    final serviceGeneration = hermesServiceGeneration;
-    _HermesCommittedTurnStart? committedTurnStart;
-    DatabaseLifetimeLease? hermesDatabaseLease;
-    Future<void>? committedTurnSettlement;
-    var databaseLeaseHandedOff = false;
-
-    Future<void> cancelPendingRun() async {
-      final cancellation = hermesRegistry.cancelOwned(
-        pendingRunKey,
-        cancelToken: pendingCancelToken,
-      );
-      if (cancellation != null) await cancellation.catchError((_) {});
-    }
-
-    bool pendingRunIsCurrent() =>
-        !pendingCancelToken.isCancelled &&
-        hermesRegistry.owns(pendingRunKey, cancelToken: pendingCancelToken) &&
-        configController.sessionActionAdmissionIsCurrent(configAdmission) &&
-        identical(ref.read(hermesApiServiceProvider), serviceGeneration);
-
-    Future<void> settleCommittedTurnStart() {
-      final committed = committedTurnStart;
-      if (committed == null) return Future<void>.value();
-      return committedTurnSettlement ??= (() {
-        final visible = (ref.read(chatMessagesProvider) as List<ChatMessage>)
-            .where((entry) => entry.id == assistantMessageId)
-            .firstOrNull;
-        return committed.settle(
-          (visible ?? assistantPlaceholder).copyWith(isStreaming: false),
-        );
-      })();
-    }
-
-    Future<void> cancelPendingRunAndSettleCommittedTurn() async {
-      await cancelPendingRun();
-      await settleCommittedTurnStart();
-    }
-
-    try {
-      if (!pendingRunIsCurrent()) {
-        await cancelPendingRun();
-        return;
-      }
-      if (hermesOwner.usesOpenWebUiBackend &&
-          currentConversation != null &&
-          !isTemporaryChat(currentConversation.id)) {
-        committedTurnStart = await _persistHermesOpenWebUiTurnStart(
-          ref,
-          owner: hermesOwner,
-          userMessage: userMessage,
-          assistantMessage: assistantPlaceholder,
-          allMessages: optimisticTurnMessages,
-          sendHandle: sendHandle,
-        );
-        hermesDatabaseLease = committedTurnStart?.databaseLease;
-        if (!pendingRunIsCurrent()) {
-          await cancelPendingRunAndSettleCommittedTurn();
-          return;
-        }
-      }
-      final reboundRunKey = hermesOwner.runKey(assistantMessageId);
-      if (reboundRunKey != pendingRunKey) {
-        final rebound = hermesRegistry.rebindIfVacant(
-          pendingRunKey,
-          reboundRunKey,
-          cancelToken: pendingCancelToken,
-        );
-        if (!rebound) {
-          await cancelPendingRunAndSettleCommittedTurn();
-          return;
-        }
-        pendingRunKey = reboundRunKey;
-      }
-      if (!pendingRunIsCurrent()) {
-        await cancelPendingRunAndSettleCommittedTurn();
-        return;
-      }
-      final nativeHermesOwner = isNativeHermesConversation(currentConversation);
-      final mixedSessionProvenance = hermesOwner.usesOpenWebUiBackend
-          ? _captureHermesMixedSessionProvenance(
-              ref,
-              owner: hermesOwner,
-              databaseManager:
-                  ref.read(databaseManagerProvider) as DatabaseManager,
-            )
-          : null;
-      final continuesResponses =
-          _lastHermesMetadataId(
-                existingMessages,
-                'hermesResponseId',
-                allowNativeHermesMetadata: nativeHermesOwner,
-                mixedProvenance: mixedSessionProvenance,
-              ) !=
-              null ||
-          existingMessages.any(
-            (item) =>
-                item.metadata?['hermesTransportMode'] == kHermesResponsesMode &&
-                (nativeHermesOwner ||
-                    (mixedSessionProvenance != null &&
-                        _mixedHermesMessageHasLocalProvenance(
-                          item,
-                          mixedSessionProvenance,
-                        ))),
-          );
-      final useResponses =
-          (attachments?.isNotEmpty ?? false) || continuesResponses;
-      final inputImagesSupported = useResponses
-          ? await _hermesInputImagesSupported(ref)
-          : false;
-      if (!pendingRunIsCurrent()) {
-        await cancelPendingRunAndSettleCommittedTurn();
-        return;
-      }
-      pendingRunHandedOff = true;
-      databaseLeaseHandedOff = true;
-      await _dispatchHermesRunFromChat(
-        ref,
-        assistantMessageId: assistantMessageId,
-        assistantSeed: assistantPlaceholder,
-        input: message,
-        existingMessages: existingMessages,
-        responseInput: useResponses ? preparedHermesTurn!.input : null,
-        localDocumentPromptText: useResponses
-            ? preparedHermesTurn!.localDocumentPromptText
-            : null,
-        localDocumentEnvelopes: useResponses
-            ? preparedHermesTurn!.localDocumentEnvelopes
-            : const <String>[],
-        responseHistory: useResponses
-            ? _hermesVisibleHistory(
-                existingMessages,
-                inputImagesSupported: inputImagesSupported,
-              )
-            : null,
-        sendHandle: sendHandle,
-        capturedOwner: hermesOwner,
-        databaseLease: hermesDatabaseLease,
-        preRegisteredCancelToken: pendingCancelToken,
-        reasoningEffort: reasoningEffortAtSendStart,
-        voiceContext: voice?.spokenContext,
-      );
-    } catch (error) {
-      final visible = hermesOwner.isActive(ref)
-          ? (ref.read(chatMessagesProvider) as List<ChatMessage>)
-                .where((entry) => entry.id == assistantMessageId)
-                .firstOrNull
-          : null;
-      final failed = (visible ?? assistantPlaceholder).copyWith(
-        isStreaming: false,
-        error: ChatMessageError(content: chatErrorContentForException(error)),
-      );
-      if (hermesOwner.isActive(ref)) {
-        messagesNotifier.updateMessageById(assistantMessageId, (_) => failed);
-      }
-      if (!pendingRunHandedOff && committedTurnStart != null) {
-        committedTurnSettlement ??= committedTurnStart.settle(
-          failed.copyWith(isStreaming: false),
-        );
-        await committedTurnSettlement;
-      }
-      rethrow;
-    } finally {
-      if (!pendingRunHandedOff) {
-        hermesRegistry.complete(pendingRunKey, cancelToken: pendingCancelToken);
-      }
-      if (!databaseLeaseHandedOff) {
-        await hermesDatabaseLease?.release();
-      }
-    }
-    try {
-      if (chatMutationTokenStillActive(ref, sendMutationOwner) &&
-          identical(ref.read(contextAttachmentsProvider), contextAttachments)) {
-        ref.read(contextAttachmentsProvider.notifier).clear();
-      }
-    } catch (_) {}
-    return;
-  }
-
-  if (directRoute != null) {
-    final registry = directRegistry!;
-    final reservation = directReservation!;
-    final preflightCancelToken = directPreflightCancelToken!;
-    _DirectConversationOwner? owner;
-    try {
-      if (contextAttachments.isNotEmpty) {
-        throw const DirectChatInputException(
-          'Direct chats cannot use OpenWebUI context attachments.',
-        );
-      }
-
-      // Commit the optimistic turn before attachment/network preflight. Once
-      // this returns, navigation may hide the turn but cannot silently discard
-      // it: the captured conversation and database remain its durable owner.
-      owner = await _persistDirectTurnStart(
-        ref,
-        route: directRoute,
-        expectedConversation: currentConversation,
-        expectedConversationId: directSendConversationId,
-        userMessage: userMessage,
-        assistantMessage: assistantPlaceholder,
-        allMessages: optimisticTurnMessages,
-        bindOwner: (resolvedOwner) {
-          final nextKey = _directRunKeyForOwner(
-            resolvedOwner.scopedConversationId,
-            assistantMessageId,
-          );
-          final rebound = registry.rebindIfVacant(reservation, nextKey);
-          if (rebound) {
-            // Retain cleanup ownership synchronously. The helper performs a
-            // post-commit auth fence after this callback and may throw instead
-            // of returning the owner through the awaited assignment.
-            owner = resolvedOwner;
-            directStopIndex!.rebind(directIndexedRunKey!, nextKey);
-            directIndexedRunKey = nextKey;
-            sendHandle._bindOwnerScope(resolvedOwner.scopedConversationId);
-          }
-          return rebound;
-        },
-        sourceApi: directSourceApi,
-        sourceAuthSnapshot: directSourceAuthSnapshot,
-        sourceAuthSessionEpoch: directSourceAuthSessionEpoch,
-        remapEvents: directRemapEvents,
-        openWebUiAuthSessionEpoch: sendMutationOwner.openWebUiAuthSessionEpoch,
-        openWebUiSyncEngine: directOpenWebUiSyncEngine,
-        pendingFolderId:
-            pendingFolderIdOverride ?? ref.read(pendingFolderIdProvider),
-      );
-      final runOwner = owner;
-      if (runOwner == null) return;
-      final ownerLocation = runOwner.location;
-      if (ownerLocation != null) {
-        registry.bindPersistenceIdentity(
-          reservation,
-          runOwner.persistenceOwnerId!,
-          authSessionEpoch: runOwner.openWebUiAuthSessionEpoch,
-        );
-      }
-
-      // A server file id is acceptable only when it resolves to an image. This
-      // check prevents documents from being silently omitted by the normalized
-      // direct request builder.
-      for (final attachment in attachments ?? const <String>[]) {
-        if (attachment.startsWith('data:image/') ||
-            (preparedDirectDocuments?.attachmentIds.contains(attachment) ??
-                false)) {
-          continue;
-        }
-        final resolved = await _awaitDirectPreflightOrCancellation(
-          registry: registry,
-          reservation: reservation,
-          cancelToken: preflightCancelToken,
-          operation: () => _resolveDirectImageFromOpenWebUi(
-            directSourceApi,
-            attachment,
-            kDirectMaxDecodedImageBytes,
-            sourceAuthSnapshot: directSourceAuthSnapshot,
-            cancelToken: preflightCancelToken,
-            requireSourceContext: () =>
-                _requireDirectOwnerSourceAuthSession(ref, runOwner),
-          ),
-        );
-        if (resolved == null) {
-          throw const DirectChatInputException(
-            'This direct model does not support this attachment.',
-          );
-        }
-      }
-
-      final durableFiles = await _awaitDirectPreflightOrCancellation(
-        registry: registry,
-        reservation: reservation,
-        cancelToken: preflightCancelToken,
-        operation: () => _resolveDurableFilesFor(
-          ref,
-          <String>[
-            for (final attachment in attachments ?? const <String>[])
-              if (!(preparedDirectDocuments?.attachmentIds.contains(
-                    attachment,
-                  ) ??
-                  false))
-                attachment,
-          ],
-          sourceApi: directSourceApi,
-          sourceAuthSnapshot: directSourceAuthSnapshot,
-          cancelToken: preflightCancelToken,
-          capturedContentTypes: directAttachmentContentTypes,
-          requireSourceContext: () =>
-              _requireDirectOwnerSourceAuthSession(ref, runOwner),
-        ),
-      );
-      if (durableFiles.isNotEmpty) {
-        userMessage = userMessage.copyWith(
-          files: <Map<String, dynamic>>[
-            ...?preparedDirectDocuments?.files,
-            ...durableFiles,
-          ],
-        );
-        if (_isDirectConversationOwnerActive(ref, runOwner)) {
-          final notifier =
-              ref.read(chatMessagesProvider.notifier) as ChatMessagesNotifier;
-          notifier.updateMessageById(userMessage.id, (_) => userMessage);
-        }
-        await _persistDirectUserMessageUpdate(
-          ref,
-          owner: runOwner,
-          userMessage: userMessage,
-          isCurrentGeneration: () => registry.isLatest(reservation),
-        );
-      }
-
-      final requestMessages = withDirectConversationSystemPrompt(
-        messages: <ChatMessage>[...existingMessages, userMessage],
-        systemPrompt: currentConversation?.systemPrompt,
-      );
-      await _dispatchDirectRunFromChat(
-        ref,
-        route: directRoute,
-        assistantMessageId: assistantMessageId,
-        assistantSeed: assistantPlaceholder,
-        requestMessages: requestMessages,
-        owner: runOwner,
-        reservation: reservation,
-        preflightCancelToken: preflightCancelToken,
-        enableWebSearch: webSearchAtSendStart,
-        enableImageGeneration: imageGenerationAtSendStart,
-        reasoningEffort: reasoningEffortAtSendStart,
-        localMcpToolIds: localMcpToolIdsAtSendStart,
-        ephemeralFilePartsByAttachmentId:
-            preparedDirectDocuments?.ephemeralFilePartsByAttachmentId ??
-            const <String, DirectFilePart>{},
-        sendHandle: sendHandle,
-      );
-      if (_isDirectConversationOwnerActive(ref, runOwner) &&
-          identical(ref.read(contextAttachmentsProvider), contextAttachments)) {
-        ref.read(contextAttachmentsProvider.notifier).clear();
-      }
-      return;
-    } catch (error) {
-      if (error is _DirectOpenWebUiAuthSessionChanged) {
-        registry.discardFinalizedOutput(reservation);
-        final authChangedOwner = owner;
-        if (authChangedOwner != null) {
-          try {
-            await _settleDirectAssistantAfterAuthSessionChange(
-              ref,
-              owner: authChangedOwner,
-              assistantMessageId: assistantMessageId,
-              isCurrentGeneration: () => registry.isLatest(reservation),
-            );
-          } catch (settlementError, stackTrace) {
-            DebugLogger.error(
-              'auth-change-placeholder-settlement-failed',
-              scope: 'direct-connections/chat',
-              error: settlementError,
-              stackTrace: stackTrace,
-              data: {'conversationId': authChangedOwner.conversationId},
-            );
-          }
-        }
-        return;
-      }
-      if (error is _DirectRunStoppedDuringPreflight) {
-        if (!registry.isLatest(reservation)) return;
-        final notifier =
-            ref.read(chatMessagesProvider.notifier) as ChatMessagesNotifier;
-        final stoppedOwner = owner;
-        final ownerIsActive = stoppedOwner != null
-            ? _isDirectConversationOwnerActive(ref, stoppedOwner)
-            : _isDirectSendConversationOwnerActive(
-                ref,
-                directSendConversationId,
-              );
-        final stopped =
-            (ownerIsActive
-                ? (ref.read(chatMessagesProvider) as List<ChatMessage>)
-                      .where((entry) => entry.id == assistantMessageId)
-                      .firstOrNull
-                : null) ??
-            assistantPlaceholder;
-        final stoppedSnapshot = stopped.copyWith(isStreaming: false);
-        if (ownerIsActive) {
-          notifier.updateMessageById(
-            assistantMessageId,
-            (_) => stoppedSnapshot,
-          );
-        }
-        if (stoppedOwner != null) {
-          await _persistCompletedDirectAssistant(
-            ref,
-            owner: stoppedOwner,
-            assistant: stoppedSnapshot,
-            isCurrentGeneration: () => registry.isLatest(reservation),
-          );
-          if (registry.isLatest(reservation) &&
-              _isDirectConversationOwnerActive(ref, stoppedOwner)) {
-            notifier.updateMessageById(
-              assistantMessageId,
-              (_) => stoppedSnapshot,
-            );
-          }
-        }
-        return;
-      }
-      DebugLogger.error(
-        'send-failed',
-        scope: 'direct-connections/chat',
-        data: {'errorType': error.runtimeType.toString()},
-      );
-      if (registry.isOutputFinalized(reservation)) rethrow;
-      if (!registry.isLatest(reservation)) return;
-      final notifier =
-          ref.read(chatMessagesProvider.notifier) as ChatMessagesNotifier;
-      final unavailableOwner = error is _DirectConversationOwnerUnavailable
-          ? error
-          : null;
-      final turnStartDatabaseUnavailable =
-          error is _DirectTurnStartDatabaseUnavailable;
-      final failedOwner = owner;
-      final ownerIsActive = failedOwner != null
-          ? _isDirectConversationOwnerActive(ref, failedOwner)
-          : _isDirectSendConversationOwnerActive(ref, directSendConversationId);
-      final failed =
-          (ownerIsActive
-              ? (ref.read(chatMessagesProvider) as List<ChatMessage>)
-                    .where((entry) => entry.id == assistantMessageId)
-                    .firstOrNull
-              : null) ??
-          assistantPlaceholder;
-      final failedSnapshot = failed.copyWith(
-        isStreaming: false,
-        error: ChatMessageError(content: chatErrorContentForException(error)),
-      );
-      if (ownerIsActive) {
-        if (unavailableOwner?.placeholderWasDurablyDeleted == true) {
-          notifier.removeMessageById(assistantMessageId);
-        } else if (turnStartDatabaseUnavailable) {
-          // No direct rows committed, and the managed executor is already
-          // closing. Settle only the optimistic UI; the database watch will
-          // restore the last durable turn without issuing a generic echo write.
-          notifier.completeStoppedDirectStreamingUi(assistantMessageId);
-          notifier.updateMessageById(assistantMessageId, (_) => failedSnapshot);
-        } else {
-          notifier.failLastStreamingAssistant(
-            error,
-            assistantMessageId: assistantMessageId,
-          );
-          // Persist the same deterministic snapshot that is projected to the
-          // UI. Completing streaming can wake the placeholder database watch,
-          // so a post-cleanup reread is not an authoritative failure value.
-          notifier.updateMessageById(assistantMessageId, (_) => failedSnapshot);
-        }
-      }
-      if (failedOwner != null && unavailableOwner == null) {
-        await _persistCompletedDirectAssistant(
-          ref,
-          owner: failedOwner,
-          assistant: failedSnapshot,
-          isCurrentGeneration: () => registry.isLatest(reservation),
-        );
-        if (registry.isLatest(reservation) &&
-            _isDirectConversationOwnerActive(ref, failedOwner)) {
-          notifier.updateMessageById(assistantMessageId, (_) => failedSnapshot);
-        }
-      }
-      rethrow;
-    } finally {
-      await owner?.releaseDatabaseLease();
-      directStopIndex!.untrack(directIndexedRunKey!);
-      registry.releaseReservation(reservation);
-    }
   }
 
   // Now do async work in parallel: user settings + server file info
@@ -1136,7 +376,7 @@ Future<void> _sendMessageInternal(
     // that already settled their response content in the responseDone gap.
     if (_shouldIncludeConversationHistoryMessage(msg)) {
       // Prepare cleaned text content (strip tool details etc.)
-      final cleaned = outboundProviderReplayText(msg);
+      final cleaned = ToolCallsParser.sanitizeForApi(msg.content);
 
       final List<String> ids = msg.attachmentIds ?? const <String>[];
       if (ids.isNotEmpty) {
@@ -1178,7 +418,6 @@ Future<void> _sendMessageInternal(
 
   final selectedToolIds = toolIds ?? const <String>[];
   final toolIdsForApi = _extractToolIdsForApi(selectedToolIds);
-  final selectedTerminalId = ref.read(selectedTerminalIdProvider);
   final isTemporary =
       (activeConversation != null && isTemporaryChat(activeConversation.id)) ||
       ref.read(temporaryChatEnabledProvider);
@@ -1202,11 +441,7 @@ Future<void> _sendMessageInternal(
   String? messageIdForBuffer;
   OpenWebUiCompletionOwner? submittedOpenWebUiOwner;
   try {
-    final modelItem = _buildLocalModelItem(
-      selectedModel,
-      trustedDirectBinding: openWebUiDirectRoute?.binding,
-      wireModelId: serverModelId,
-    );
+    final modelItem = _buildLocalModelItem(selectedModel);
     final submittedConversation = activeConversation;
     final submittedOwner = submittedConversation == null
         ? null
@@ -1264,11 +499,6 @@ Future<void> _sendMessageInternal(
     final socketSessionId = await _ensureConnectedSocketSessionId(
       socketService,
     );
-    if (openWebUiDirectRoute != null && socketSessionId == null) {
-      throw StateError(
-        'Open WebUI direct connections require an active server socket.',
-      );
-    }
     requireOpenWebUiPreflightOwner();
 
     List<Map<String, dynamic>>? toolServers;
@@ -1284,11 +514,7 @@ Future<void> _sendMessageInternal(
       );
     } catch (_) {}
     requireOpenWebUiPreflightOwner();
-    final terminalIdForApi = modelSupportsTerminal(selectedModel)
-        ? _resolveTerminalIdForRequest(selectedTerminalId: selectedTerminalId)
-        : null;
-    final codeInterpreterEnabled =
-        codeInterpreterAtSendStart && terminalIdForApi == null;
+    final codeInterpreterEnabled = codeInterpreterAtSendStart;
 
     // Background tasks should follow backend-synced user settings instead of
     // forcing local defaults. Enable title/tags generation only on the first
@@ -1316,7 +542,6 @@ Future<void> _sendMessageInternal(
     // Determine if we need background task flow (tools/tool servers or web search)
     final bool isBackgroundToolsFlowPre =
         toolIdsForApi.isNotEmpty ||
-        terminalIdForApi != null ||
         (toolServers != null && toolServers.isNotEmpty);
     final bool isBackgroundWebSearchPre = webSearchEnabled;
 
@@ -1350,7 +575,6 @@ Future<void> _sendMessageInternal(
         userMessageId: lastUserMessageId,
         modelId: serverModelId,
         assistantChildMessageId: assistantMessageId,
-        useModelIdForModels: openWebUiDirectRoute != null,
       );
     } catch (_) {}
 
@@ -1381,7 +605,6 @@ Future<void> _sendMessageInternal(
         messages: requestMessages,
         model: serverModelId,
         conversationId: submittedOwner?.chatId,
-        terminalId: terminalIdForApi,
         toolIds: toolIdsForApi.isNotEmpty ? toolIdsForApi : null,
         filterIds: filterIdsForApi,
         enableWebSearch: webSearchEnabled,
@@ -1467,7 +690,6 @@ Future<void> _sendMessageInternal(
           modelUsesReasoning: modelUsesReasoning2,
           toolsEnabled:
               toolIdsForApi.isNotEmpty ||
-              terminalIdForApi != null ||
               (toolServers != null && toolServers.isNotEmpty) ||
               imageGenerationEnabled ||
               codeInterpreterEnabled,
@@ -1566,14 +788,6 @@ Future<void> _sendMessageInternal(
 
 /// Returns a user-friendly error description based on the exception.
 String chatErrorContentForException(Object e) {
-  if (e is _DirectConversationOwnerUnavailable) {
-    return 'This conversation is no longer available.';
-  }
-  if (e is HermesAttachmentsUnsupportedException) return e.message;
-  if (e is HermesChatInputException) return e.message;
-  if (e is HermesLocalDocumentException) return e.message;
-  if (e is DirectChatInputException) return e.message;
-  if (e is DirectProviderException) return e.message;
   if (e is CodeInterpreterUnavailableException) {
     return '${e.message} Send the message again without it.';
   }
@@ -1637,10 +851,7 @@ Future<void> _saveConversationLocally(dynamic ref) async {
     );
     final updatedConversation = activeConversation == null
         ? copiedConversation
-        : inheritNativeHermesConversationProvenance(
-            activeConversation,
-            copiedConversation,
-          );
+        : copiedConversation;
 
     final db = _readAppDatabaseOrNull(ref);
     if (db != null && !isTemporaryChat(updatedConversation.id)) {

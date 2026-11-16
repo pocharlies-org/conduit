@@ -15,8 +15,6 @@ import 'package:conduit_core/utils/debug_logger.dart';
 import '../../../shared/theme/conduit_input_styles.dart';
 import '../../../shared/theme/theme_extensions.dart';
 import '../../../shared/utils/conversation_context_menu.dart';
-import '../../../shared/utils/file_type_utils.dart';
-import '../../../shared/utils/locale_display_formatters.dart';
 
 import 'package:conduit_core/features/chat/services/chat_message_actions.dart';
 import 'package:conduit_core/features/chat/utils/file_utils.dart';
@@ -33,19 +31,16 @@ class _UserFilePartitions {
   const _UserFilePartitions({
     required this.imageFiles,
     required this.noteFiles,
-    required this.localReferenceFiles,
     required this.nonImageFiles,
   });
 
   final List<dynamic> imageFiles;
   final List<dynamic> noteFiles;
-  final List<dynamic> localReferenceFiles;
   final List<dynamic> nonImageFiles;
 
   bool get hasRenderableFiles =>
       imageFiles.isNotEmpty ||
       noteFiles.isNotEmpty ||
-      localReferenceFiles.isNotEmpty ||
       nonImageFiles.isNotEmpty;
 }
 
@@ -112,7 +107,6 @@ class _UserMessageBubbleState extends ConsumerState<UserMessageBubble> {
   Widget _buildUserFileImages(_UserFilePartitions partitions) {
     final imageFiles = partitions.imageFiles;
     final noteFiles = partitions.noteFiles;
-    final localReferenceFiles = partitions.localReferenceFiles;
     final nonImageFiles = partitions.nonImageFiles;
 
     final widgets = <Widget>[];
@@ -133,13 +127,6 @@ class _UserMessageBubbleState extends ConsumerState<UserMessageBubble> {
         widgets.add(const SizedBox(height: Spacing.xs));
       }
       widgets.add(_buildUserNoteFiles(noteFiles));
-    }
-
-    if (localReferenceFiles.isNotEmpty) {
-      if (widgets.isNotEmpty) {
-        widgets.add(const SizedBox(height: Spacing.xs));
-      }
-      widgets.add(_buildHermesLocalReferenceFiles(localReferenceFiles));
     }
 
     if (nonImageFiles.isNotEmpty) {
@@ -166,10 +153,6 @@ class _UserMessageBubbleState extends ConsumerState<UserMessageBubble> {
     return file['type'] == 'note';
   }
 
-  bool _isHermesLocalFileReference(dynamic file) {
-    return file is Map && file['source'] == 'hermes_local';
-  }
-
   _UserFilePartitions? _currentFilePartitions() {
     final files = widget.message.files;
     if (files is! List || files.isEmpty) {
@@ -186,7 +169,6 @@ class _UserMessageBubbleState extends ConsumerState<UserMessageBubble> {
 
     final imageFiles = <dynamic>[];
     final noteFiles = <dynamic>[];
-    final localReferenceFiles = <dynamic>[];
     final nonImageFiles = <dynamic>[];
 
     for (final file in files) {
@@ -197,14 +179,6 @@ class _UserMessageBubbleState extends ConsumerState<UserMessageBubble> {
         noteFiles.add(file);
         continue;
       }
-      // These descriptors intentionally contain metadata only. Classify them
-      // before MIME/URL handling so even an image content type or malformed URL
-      // can never reach a network-backed attachment widget.
-      if (_isHermesLocalFileReference(file)) {
-        localReferenceFiles.add(file);
-        continue;
-      }
-
       final fileUrl = getFileUrl(file);
       if (fileUrl == null) {
         continue;
@@ -219,7 +193,6 @@ class _UserMessageBubbleState extends ConsumerState<UserMessageBubble> {
     final partitions = _UserFilePartitions(
       imageFiles: imageFiles,
       noteFiles: noteFiles,
-      localReferenceFiles: localReferenceFiles,
       nonImageFiles: nonImageFiles,
     );
     _lastPartitionedFiles = files;
@@ -541,108 +514,6 @@ class _UserMessageBubbleState extends ConsumerState<UserMessageBubble> {
           ),
         ),
       ],
-    );
-  }
-
-  Widget _buildHermesLocalReferenceFiles(List<dynamic> files) {
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.end,
-      children: [
-        Flexible(
-          child: Wrap(
-            alignment: WrapAlignment.end,
-            spacing: Spacing.xs,
-            runSpacing: Spacing.xs,
-            children: files
-                .map<Widget>(_buildHermesLocalReferenceCard)
-                .toList(growable: false),
-          ),
-        ),
-      ],
-    );
-  }
-
-  Widget _buildHermesLocalReferenceCard(dynamic file) {
-    final theme = context.conduitTheme;
-    final rawName = file is Map
-        ? (file['name'] ?? file['filename'])?.toString().trim() ?? ''
-        : '';
-    final filename = rawName.isEmpty
-        ? AppLocalizations.of(context)!.file
-        : rawName;
-    final rawSize = file is Map ? file['size'] : null;
-    final size = rawSize is num ? rawSize.toInt() : int.tryParse('$rawSize');
-    final sizeLabel = size == null
-        ? ''
-        : LocaleDisplayFormatters.bytes(context, size);
-    final extension = FileTypeUtils.extensionFromName(filename);
-    final id = file is Map ? file['id']?.toString() ?? '' : '';
-
-    return Semantics(
-      container: true,
-      label: sizeLabel.isEmpty ? filename : '$filename, $sizeLabel',
-      child: ExcludeSemantics(
-        child: Container(
-          key: ValueKey('hermes-local-file-$id'),
-          constraints: const BoxConstraints(maxWidth: 280),
-          padding: const EdgeInsets.symmetric(
-            horizontal: Spacing.sm,
-            vertical: Spacing.sm,
-          ),
-          decoration: BoxDecoration(
-            color: theme.cardBackground,
-            borderRadius: BorderRadius.circular(AppBorderRadius.md),
-            border: Border.all(
-              color: theme.textPrimary.withValues(alpha: 0.12),
-              width: BorderWidth.regular,
-            ),
-          ),
-          child: Row(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              Container(
-                width: 32,
-                height: 32,
-                decoration: BoxDecoration(
-                  color: theme.buttonPrimary.withValues(alpha: 0.1),
-                  borderRadius: BorderRadius.circular(AppBorderRadius.small),
-                ),
-                alignment: Alignment.center,
-                child: Icon(
-                  FileTypeUtils.iconForExtension(extension),
-                  color: theme.buttonPrimary,
-                  size: IconSize.medium,
-                ),
-              ),
-              const SizedBox(width: Spacing.sm),
-              Flexible(
-                child: Column(
-                  mainAxisSize: MainAxisSize.min,
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      filename,
-                      maxLines: 1,
-                      overflow: TextOverflow.ellipsis,
-                      style: AppTypography.labelStyle.copyWith(
-                        color: theme.textPrimary,
-                        fontWeight: FontWeight.w600,
-                      ),
-                    ),
-                    if (sizeLabel.isNotEmpty)
-                      Text(
-                        sizeLabel,
-                        style: AppTypography.labelMediumStyle.copyWith(
-                          color: theme.textSecondary.withValues(alpha: 0.7),
-                        ),
-                      ),
-                  ],
-                ),
-              ),
-            ],
-          ),
-        ),
-      ),
     );
   }
 
@@ -1042,8 +913,8 @@ class _UserMessageBubbleState extends ConsumerState<UserMessageBubble> {
       if (messageId == null || messageId.isEmpty) {
         return;
       }
-      // Core re-sends the edit: Hermes replays it, anything else truncates
-      // after the message and sends the new text as a new turn.
+      // Core re-sends the edit: truncate after the message and send the new
+      // text as a new turn.
       await resendEditedUserMessage(
         container,
         messageId: messageId,

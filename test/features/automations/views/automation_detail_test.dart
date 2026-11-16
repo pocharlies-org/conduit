@@ -142,28 +142,29 @@ void main() {
   });
 
   group('layout', () {
-    testWidgets('Edit is in the toolbar, and Delete comes last, after History', (
-      tester,
-    ) async {
-      await _open(tester, runs: [runJson('r1')]);
+    testWidgets(
+      'Edit is in the toolbar, and Delete comes last, after History',
+      (tester) async {
+        await _open(tester, runs: [runJson('r1')]);
 
-      final edit = find.descendant(
-        of: find.byType(AppBar),
-        matching: find.byKey(const Key('scheduled-task-edit')),
-      );
-      expect(edit, findsOneWidget);
-      final run = tester.getRect(find.byKey(const Key('scheduled-task-run')));
-      final history = tester.getRect(find.text('History'));
-      final delete = tester.getRect(
-        find.byKey(const Key('scheduled-task-delete')),
-      );
-      expect(run.top, lessThan(history.top));
-      expect(delete.top, greaterThan(history.top));
+        final edit = find.descendant(
+          of: find.byType(AppBar),
+          matching: find.byKey(const Key('scheduled-task-edit')),
+        );
+        expect(edit, findsOneWidget);
+        final run = tester.getRect(find.byKey(const Key('scheduled-task-run')));
+        final history = tester.getRect(find.text('History'));
+        final delete = tester.getRect(
+          find.byKey(const Key('scheduled-task-delete')),
+        );
+        expect(run.top, lessThan(history.top));
+        expect(delete.top, greaterThan(history.top));
 
-      await tester.tap(edit);
-      await tester.pumpAndSettle();
-      expect(find.byKey(const Key('scheduled-task-save')), findsOneWidget);
-    });
+        await tester.tap(edit);
+        await tester.pumpAndSettle();
+        expect(find.byKey(const Key('scheduled-task-save')), findsOneWidget);
+      },
+    );
 
     testWidgets('the switch moves at once and waits for the server', (
       tester,
@@ -356,9 +357,7 @@ void main() {
       expect(session.wire.runRequests, hasLength(1));
     });
 
-    testWidgets('the Last run row shows the run Run now found', (
-      tester,
-    ) async {
+    testWidgets('the Last run row shows the run Run now found', (tester) async {
       final session = await _open(
         tester,
         runs: [runJson('old', createdAt: 1790000000000000000)],
@@ -415,10 +414,7 @@ void main() {
       await tester.pump();
       expect(find.text('Running…'), findsOneWidget);
 
-      session.wire.runs['a'] = [
-        runJson('new'),
-        ...session.wire.runs['a']!,
-      ];
+      session.wire.runs['a'] = [runJson('new'), ...session.wire.runs['a']!];
       await tester.pump(scheduledTaskRunPollInterval);
       await tester.pumpAndSettle();
       expect(find.text('Run finished.'), findsOneWidget);

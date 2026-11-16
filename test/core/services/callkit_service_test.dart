@@ -62,9 +62,8 @@ void main() {
       telecomConnection.complete(true);
       await marking;
       check(pluginCalls.last.method).equals('callConnected');
-      check(
-        pluginCalls.last.arguments as Map<Object?, Object?>,
-      ).deepEquals({'id': id});
+      check(pluginCalls.last.arguments as Map<Object?, Object?>)
+          .deepEquals({'id': id});
     });
 
     test('leaves a call hung up while Telecom set it up ended', () async {

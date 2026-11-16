@@ -1,4 +1,3 @@
-import 'dart:convert';
 import 'dart:developer' as developer;
 
 import 'package:riverpod/riverpod.dart';
@@ -9,10 +8,7 @@ import '../providers/app_providers.dart' show settledActiveAccountIdProvider;
 import '../persistence/persistence_keys.dart';
 import '../persistence/preferences_store.dart';
 
-import 'package:conduit_core/features/chat/server_speech/direct_voice_provider_settings.dart';
-import 'package:conduit_core/features/web_search/models/web_search_preferences.dart';
 import 'package:conduit_core/models/animation_settings.dart';
-import 'package:conduit_ddgs/conduit_ddgs.dart' show SafeSearch;
 
 part 'settings_service.g.dart';
 
@@ -728,61 +724,38 @@ class SettingsService {
         PreferencesStore.getStringList(scopedPreferenceReadKey(key));
     return AppSettings(
       reduceMotion: get<bool>(_reduceMotionKey) ?? false,
-      animationSpeed:
-          get<num>(_animationSpeedKey)?.toDouble() ?? 1.0,
+      animationSpeed: get<num>(_animationSpeedKey)?.toDouble() ?? 1.0,
       disableHapticsWhileStreaming:
           get<bool>(_disableHapticsWhileStreamingKey) ?? false,
-      citationShowTitles:
-          get<bool>(PreferenceKeys.citationShowTitles) ??
-          false,
+      citationShowTitles: get<bool>(PreferenceKeys.citationShowTitles) ?? false,
       highContrast: get<bool>(_highContrastKey) ?? false,
       darkMode: get<bool>(_darkModeKey) ?? true,
       defaultModel: get<String>(_defaultModelKey),
       openRouterImageGenerationModel: get<String>(
         _openRouterImageGenerationModelKey,
       ),
-      voiceLocaleId: normalizeVoiceLocaleId(
-        get<String>(_voiceLocaleKey),
-      ),
+      voiceLocaleId: normalizeVoiceLocaleId(get<String>(_voiceLocaleKey)),
       voiceHoldToTalk: get<bool>(_voiceHoldToTalkKey) ?? false,
-      voiceAutoSendFinal:
-          get<bool>(_voiceAutoSendKey) ?? false,
+      voiceAutoSendFinal: get<bool>(_voiceAutoSendKey) ?? false,
       voiceBargeInEnabled:
-          get<bool>(PreferenceKeys.voiceBargeInEnabled) ??
-          false,
+          get<bool>(PreferenceKeys.voiceBargeInEnabled) ?? false,
       voiceCallMode: VoiceCallMode.values.firstWhere(
         (mode) => mode.name == get<String>(PreferenceKeys.voiceCallMode),
         orElse: () => VoiceCallMode.auto,
       ),
-      socketTransportMode:
-          get<String>(_socketTransportModeKey) ?? 'ws',
+      socketTransportMode: get<String>(_socketTransportModeKey) ?? 'ws',
       quickPills: getStringList(_quickPillsKey) ?? const [],
-      chatWebSearchEnabled: get<bool>(
-        _chatWebSearchEnabledKey,
-      ),
-      chatImageGenerationEnabled: get<bool>(
-        _chatImageGenerationEnabledKey,
-      ),
+      chatWebSearchEnabled: get<bool>(_chatWebSearchEnabledKey),
+      chatImageGenerationEnabled: get<bool>(_chatImageGenerationEnabledKey),
       sendOnEnter: get<bool>(_sendOnEnterKey) ?? false,
       ttsVoice: get<String>(PreferenceKeys.ttsVoice),
       ttsVoiceName: get<String>(PreferenceKeys.ttsVoiceName),
-      ttsSpeechRate:
-          get<num>(PreferenceKeys.ttsSpeechRate)?.toDouble() ??
-          0.5,
-      ttsPitch:
-          get<num>(PreferenceKeys.ttsPitch)?.toDouble() ?? 1.0,
-      ttsVolume:
-          get<num>(PreferenceKeys.ttsVolume)?.toDouble() ??
-          1.0,
-      ttsEngine: _parseTtsEngine(
-        get<String>(PreferenceKeys.ttsEngine),
-      ),
-      ttsServerVoiceId: get<String>(
-        PreferenceKeys.ttsServerVoiceId,
-      ),
-      ttsServerVoiceName: get<String>(
-        PreferenceKeys.ttsServerVoiceName,
-      ),
+      ttsSpeechRate: get<num>(PreferenceKeys.ttsSpeechRate)?.toDouble() ?? 0.5,
+      ttsPitch: get<num>(PreferenceKeys.ttsPitch)?.toDouble() ?? 1.0,
+      ttsVolume: get<num>(PreferenceKeys.ttsVolume)?.toDouble() ?? 1.0,
+      ttsEngine: _parseTtsEngine(get<String>(PreferenceKeys.ttsEngine)),
+      ttsServerVoiceId: get<String>(PreferenceKeys.ttsServerVoiceId),
+      ttsServerVoiceName: get<String>(PreferenceKeys.ttsServerVoiceName),
       sttPreference: _parseSttPreference(
         get<String>(PreferenceKeys.voiceSttPreference),
       ),
@@ -793,54 +766,24 @@ class SettingsService {
         get<String>(_androidAssistantTriggerKey),
       ),
       voiceSilenceDuration:
-          (get<int>(_voiceSilenceDurationKey) ??
-                  defaultVoiceSilenceDurationMs)
+          (get<int>(_voiceSilenceDurationKey) ?? defaultVoiceSilenceDurationMs)
               .clamp(minVoiceSilenceDurationMs, maxVoiceSilenceDurationMs),
       temporaryChatByDefault:
-          get<bool>(PreferenceKeys.temporaryChatByDefault) ??
-          false,
+          get<bool>(PreferenceKeys.temporaryChatByDefault) ?? false,
       advancedFeaturesEnabled:
-          get<bool>(PreferenceKeys.advancedFeaturesEnabled) ??
-          false,
+          get<bool>(PreferenceKeys.advancedFeaturesEnabled) ?? false,
       pinnedModels: sanitizePinnedModels(
         getStringList(_pinnedModelsKey) ?? const <String>[],
       ),
-      notificationsEnabled:
-          get<bool>(_notificationsEnabledKey) ?? false,
-      notificationSound:
-          get<bool>(_notificationSoundKey) ?? true,
-      notificationSoundAlways:
-          get<bool>(_notificationSoundAlwaysKey) ?? false,
-      notificationInAppBanner:
-          get<bool>(_notificationInAppBannerKey) ?? true,
-      notificationSystem:
-          get<bool>(_notificationSystemKey) ?? true,
-      notificationChatEnabled:
-          get<bool>(_notificationChatEnabledKey) ?? true,
+      notificationsEnabled: get<bool>(_notificationsEnabledKey) ?? false,
+      notificationSound: get<bool>(_notificationSoundKey) ?? true,
+      notificationSoundAlways: get<bool>(_notificationSoundAlwaysKey) ?? false,
+      notificationInAppBanner: get<bool>(_notificationInAppBannerKey) ?? true,
+      notificationSystem: get<bool>(_notificationSystemKey) ?? true,
+      notificationChatEnabled: get<bool>(_notificationChatEnabledKey) ?? true,
       notificationChannelEnabled:
           get<bool>(_notificationChannelEnabledKey) ?? true,
-      webSearchEngine: WebSearchEngineChoice.parse(
-        get<String>(PreferenceKeys.webSearchEngine),
-      ),
-      webSearchSafeSearch: parseSafeSearch(
-        get<String>(PreferenceKeys.webSearchSafeSearch),
-      ),
-      webSearchRegion: get<String>(
-        PreferenceKeys.webSearchRegion,
-      ),
-      directVoiceProvider: _parseDirectVoiceProvider(
-        get<String>(PreferenceKeys.directVoiceProvider),
-      ),
     );
-  }
-
-  static DirectVoiceProviderSettings? _parseDirectVoiceProvider(String? raw) {
-    if (raw == null || raw.isEmpty) return null;
-    try {
-      return DirectVoiceProviderSettings.fromJson(jsonDecode(raw));
-    } on FormatException {
-      return null;
-    }
   }
 }
 
@@ -892,16 +835,6 @@ class AppSettings {
   final bool notificationSystem;
   final bool notificationChatEnabled;
   final bool notificationChannelEnabled;
-  // On-device web search (Direct models without provider-hosted search).
-  final WebSearchEngineChoice webSearchEngine;
-  final SafeSearch webSearchSafeSearch;
-
-  /// `null` follows the device locale; see [resolveWebSearchRegion].
-  final String? webSearchRegion;
-
-  /// The Direct connection that speaks and listens for Direct and Apple
-  /// chats, or `null` when none is chosen.
-  final DirectVoiceProviderSettings? directVoiceProvider;
   const AppSettings({
     this.reduceMotion = false,
     this.animationSpeed = 1.0,
@@ -943,10 +876,6 @@ class AppSettings {
     this.notificationSystem = true,
     this.notificationChatEnabled = true,
     this.notificationChannelEnabled = true,
-    this.webSearchEngine = WebSearchEngineChoice.auto,
-    this.webSearchSafeSearch = SafeSearch.moderate,
-    this.webSearchRegion,
-    this.directVoiceProvider,
   });
 
   AppSettings copyWith({
@@ -990,10 +919,6 @@ class AppSettings {
     bool? notificationSystem,
     bool? notificationChatEnabled,
     bool? notificationChannelEnabled,
-    WebSearchEngineChoice? webSearchEngine,
-    SafeSearch? webSearchSafeSearch,
-    Object? webSearchRegion = const _DefaultValue(),
-    Object? directVoiceProvider = const _DefaultValue(),
   }) {
     return AppSettings(
       reduceMotion: reduceMotion ?? this.reduceMotion,
@@ -1060,14 +985,6 @@ class AppSettings {
           notificationChatEnabled ?? this.notificationChatEnabled,
       notificationChannelEnabled:
           notificationChannelEnabled ?? this.notificationChannelEnabled,
-      webSearchEngine: webSearchEngine ?? this.webSearchEngine,
-      webSearchSafeSearch: webSearchSafeSearch ?? this.webSearchSafeSearch,
-      webSearchRegion: webSearchRegion is _DefaultValue
-          ? this.webSearchRegion
-          : webSearchRegion as String?,
-      directVoiceProvider: directVoiceProvider is _DefaultValue
-          ? this.directVoiceProvider
-          : directVoiceProvider as DirectVoiceProviderSettings?,
     );
   }
 
@@ -1113,10 +1030,6 @@ class AppSettings {
         other.notificationSystem == notificationSystem &&
         other.notificationChatEnabled == notificationChatEnabled &&
         other.notificationChannelEnabled == notificationChannelEnabled &&
-        other.webSearchEngine == webSearchEngine &&
-        other.webSearchSafeSearch == webSearchSafeSearch &&
-        other.webSearchRegion == webSearchRegion &&
-        other.directVoiceProvider == directVoiceProvider &&
         _listEquals(other.pinnedModels, pinnedModels) &&
         _listEquals(other.quickPills, quickPills);
     // socketTransportMode intentionally not included in == to avoid frequent rebuilds
@@ -1162,10 +1075,6 @@ class AppSettings {
       notificationSystem,
       notificationChatEnabled,
       notificationChannelEnabled,
-      webSearchEngine,
-      webSearchSafeSearch,
-      webSearchRegion,
-      directVoiceProvider,
       Object.hashAllUnordered(quickPills),
       Object.hashAll(pinnedModels),
     ]);
@@ -1404,54 +1313,6 @@ class AppSettingsNotifier extends _$AppSettingsNotifier {
     await SettingsService.setChatImageGenerationEnabled(value);
   }
 
-  /// Waits for startup hydration so a write can't be overwritten by the
-  /// stored value it replaces. Returns false if the notifier was disposed.
-  Future<bool> _awaitHydration() async {
-    final pendingLoad = _pendingLoad;
-    if (pendingLoad == null) return true;
-    await pendingLoad;
-    return ref.mounted;
-  }
-
-  Future<void> setWebSearchEngine(WebSearchEngineChoice value) async {
-    if (!await _awaitHydration()) return;
-    state = state.copyWith(webSearchEngine: value);
-    await SettingsService._putPreference(
-      PreferenceKeys.webSearchEngine,
-      value.name,
-    );
-  }
-
-  Future<void> setWebSearchSafeSearch(SafeSearch value) async {
-    if (!await _awaitHydration()) return;
-    state = state.copyWith(webSearchSafeSearch: value);
-    await SettingsService._putPreference(
-      PreferenceKeys.webSearchSafeSearch,
-      value.name,
-    );
-  }
-
-  /// [code] is a [kWebSearchRegions] code, `wt-wt`, or `null` for the
-  /// device locale.
-  Future<void> setWebSearchRegion(String? code) async {
-    if (!await _awaitHydration()) return;
-    final value = code == kWebSearchRegionAuto ? null : code;
-    state = state.copyWith(webSearchRegion: value);
-    await SettingsService._putOrRemove(PreferenceKeys.webSearchRegion, value);
-  }
-
-  /// Chooses the Voice provider for Direct and Apple chats; `null` clears it.
-  Future<void> setDirectVoiceProvider(
-    DirectVoiceProviderSettings? value,
-  ) async {
-    if (!await _awaitHydration()) return;
-    state = state.copyWith(directVoiceProvider: value);
-    await SettingsService._putOrRemove(
-      PreferenceKeys.directVoiceProvider,
-      value == null ? null : jsonEncode(value.toJson()),
-    );
-  }
-
   Future<void> setSendOnEnter(bool value) async {
     state = state.copyWith(sendOnEnter: value);
     await SettingsService.setSendOnEnter(value);
@@ -1600,11 +1461,6 @@ class AppSettingsNotifier extends _$AppSettingsNotifier {
   Future<void> resetToDefaults() async {
     const defaultSettings = AppSettings();
     await SettingsService.saveSettings(defaultSettings);
-    // Written only by its own setter, so the bulk save leaves it.
-    await SettingsService._putOrRemove(
-      PreferenceKeys.directVoiceProvider,
-      null,
-    );
     state = defaultSettings;
   }
 }

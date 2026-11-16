@@ -135,10 +135,6 @@ class ChatMessagesNotifier extends Notifier<List<ChatMessage>> {
   int _streamingProfileChunkCount = 0;
   int _streamingProfileCharacters = 0;
   int _streamingProfileUtf8Bytes = 0;
-  int _coldHermesRecoveryGeneration = 0;
-  CancelToken? _coldHermesRecoveryCancelToken;
-  HermesRunKey? _coldHermesRecoveryKey;
-  String? _coldHermesRecoveryMessageId;
 
   bool _initialized = false;
   bool _disposed = false;
@@ -164,18 +160,6 @@ class ChatMessagesNotifier extends Notifier<List<ChatMessage>> {
         openWebUiAuthSessionEpochProvider,
         (_, _) => _onOpenWebUiContextChanged(),
       );
-      ref.listen<HermesBackendService?>(hermesApiServiceProvider, (_, next) {
-        // A cold recovery is authorized and routed by the concrete Hermes
-        // service that started it. Retire that attempt on every owner change;
-        // otherwise the old poll blocks the new service behind the same-message
-        // guard and can leave the checkpoint streaming forever.
-        _cancelColdHermesRecovery();
-        if (next == null) return;
-        final active = ref.read(activeConversationProvider);
-        if (active != null) {
-          unawaited(_recoverColdHermesCheckpointIfNeeded(active));
-        }
-      });
       _conversationListener = ref.listen(activeConversationProvider, (
         previous,
         next,
@@ -250,14 +234,9 @@ class ChatMessagesNotifier extends Notifier<List<ChatMessage>> {
         _cancelMessageStream();
         _stopRemoteTaskMonitor();
         _stopNonTailToolTaskMonitor();
-        _cancelColdHermesRecovery();
 
         if (next != null) {
-          final nextMessages = _restoreLiveTransportRunState(
-            _preserveFreshLocalMessageState(next.messages),
-            next,
-            settleOrphanedDirect: true,
-          );
+          final nextMessages = _preserveFreshLocalMessageState(next.messages);
           final currentMessagesAlreadyVisible =
               state.isNotEmpty &&
               !_messagesDifferByStreamingSignatures(nextMessages, state);
@@ -265,22 +244,6 @@ class ChatMessagesNotifier extends Notifier<List<ChatMessage>> {
             state = nextMessages;
           }
           _syncStreamingProfileWithState();
-          final restoredHermesCheckpoint =
-              nextMessages.isNotEmpty &&
-                  nextMessages.last.role == 'assistant' &&
-                  nextMessages.last.isStreaming &&
-                  nextMessages.last.metadata?['transport'] == kHermesTransport
-              ? nextMessages.last
-              : null;
-          if (restoredHermesCheckpoint != null) {
-            unawaited(
-              _recoverColdHermesCheckpointIfNeeded(
-                next,
-                settleUnrecoverable: true,
-                expectedMessageId: restoredHermesCheckpoint.id,
-              ),
-            );
-          }
 
           // Update selected model if conversation has a different model
           _updateModelForConversation(next, generation: modelRebindGeneration);
@@ -317,7 +280,6 @@ class ChatMessagesNotifier extends Notifier<List<ChatMessage>> {
         _cancelMessageStream(clearStreamingContent: false);
         _stopRemoteTaskMonitor();
         _stopNonTailToolTaskMonitor();
-        _cancelColdHermesRecovery();
         _streamingSyncTimer?.cancel();
         _streamingSyncTimer = null;
         _streamingContentTimer?.cancel();
@@ -337,36 +299,7 @@ class ChatMessagesNotifier extends Notifier<List<ChatMessage>> {
     }
     _configurePassiveConversationSync(activeConversation);
     _configureDbMessagesWatch(activeConversation);
-    final initialMessages = _restoreLiveTransportRunState(
-      activeConversation?.messages ?? const [],
-      activeConversation,
-      settleOrphanedDirect: true,
-    );
-    final initialHermesCheckpoint =
-        initialMessages.isNotEmpty &&
-            initialMessages.last.role == 'assistant' &&
-            initialMessages.last.isStreaming &&
-            initialMessages.last.metadata?['transport'] == kHermesTransport
-        ? initialMessages.last
-        : null;
-    if (activeConversation != null && initialHermesCheckpoint != null) {
-      Future.microtask(() {
-        if (_disposed ||
-            !isSameStoredConversation(
-              ref.read(activeConversationProvider),
-              activeConversation,
-            )) {
-          return;
-        }
-        unawaited(
-          _recoverColdHermesCheckpointIfNeeded(
-            activeConversation,
-            settleUnrecoverable: true,
-            expectedMessageId: initialHermesCheckpoint.id,
-          ),
-        );
-      });
-    }
+    final initialMessages = activeConversation?.messages ?? const [];
     if (activeConversation != null && _activeOpenWebUiApi is ApiService) {
       Future.microtask(() {
         if (_disposed ||
@@ -474,9 +407,7 @@ class ChatMessagesNotifier extends Notifier<List<ChatMessage>> {
       return;
     }
     final explicitStorage = chatStorageKindOf(conversation);
-    // Native Hermes/runtime-direct chats have no Conduit database owner. An
-    // absent provenance marker means OpenWebUI only for historical OpenWebUI
-    // conversations, not for an explicitly backend-owned runtime session.
+    // An absent provenance marker means OpenWebUI storage.
     if (explicitStorage == null &&
         !conversationUsesOpenWebUiStorage(conversation)) {
       _cancelDbMessagesWatch();
@@ -986,10 +917,7 @@ class ChatMessagesNotifier extends Notifier<List<ChatMessage>> {
     // first cleared that binding (and the resume task monitor), so a stale
     // empty echo under the foreign server id could replace the local streaming
     // tail and retire the stream early.
-    state = _restoreLiveTransportRunState(
-      _preserveFreshLocalMessageState(serverMessages),
-      ref.read(activeConversationProvider),
-    );
+    state = _preserveFreshLocalMessageState(serverMessages);
     _syncStreamingProfileWithState();
 
     // Only tear down transport when this adopt ends the stream. A preserved
@@ -1022,8 +950,8 @@ class ChatMessagesNotifier extends Notifier<List<ChatMessage>> {
       return;
     }
 
-    // Do not instantiate OpenWebUI auth/network providers merely because the
-    // shared message notifier is displaying a native Hermes/direct chat.
+    // The OpenWebUI providers are only touched once the chat above is known
+    // to use the OpenWebUI context.
     final database = _readAppDatabaseOrNull(ref);
     final api = _readApiServiceOrNull(ref);
     final socket = _readOpenWebUiSocketForApi(ref, api);
@@ -1318,526 +1246,6 @@ class ChatMessagesNotifier extends Notifier<List<ChatMessage>> {
     return changed ? List<ChatMessage>.unmodifiable(merged) : serverMessages;
   }
 
-  List<ChatMessage> _restoreLiveDirectRunState(
-    List<ChatMessage> messages,
-    Conversation? conversation, {
-    bool settleOrphaned = false,
-  }) {
-    if (conversation == null || messages.isEmpty) return messages;
-    DirectRunRegistry registry;
-    try {
-      registry = ref.read(directRunRegistryProvider);
-    } catch (_) {
-      return messages;
-    }
-    final owner = _directRunOwnerScopeForConversation(ref, conversation);
-    ChatDatabaseLocation? location;
-    String? persistenceOwnerId;
-    final storage = _directStoredStorageOf(conversation);
-    final authSessionEpoch = storage == ChatStorageKind.openWebUi
-        ? _readOpenWebUiAuthSessionEpoch(ref)
-        : null;
-    if (storage != null) {
-      try {
-        location = ref
-            .read(chatDatabaseRepositoryProvider)
-            .locationFor(storage);
-        persistenceOwnerId = _directPersistenceOwnerIdForLocation(
-          ref,
-          location,
-        );
-      } catch (_) {
-        // The server database may still be opening. A later conversation/DB
-        // emission will retry restoration without exposing another server's
-        // retained output.
-      }
-    }
-    var changed = false;
-    final restored = <ChatMessage>[];
-    for (final message in messages) {
-      final key = _directRunKeyForOwner(owner, message.id);
-      final retained = persistenceOwnerId == null
-          ? null
-          : registry.retainedFinalizedOutput(
-              key,
-              persistenceOwnerId,
-              authSessionEpoch: authSessionEpoch,
-            );
-      if (retained != null &&
-          message.role == 'assistant' &&
-          message.metadata?['transport'] == kDirectTransport) {
-        restored.add(retained.message);
-        changed = changed || retained.message != message;
-        unawaited(
-          _retryRetainedDirectFinalOutput(
-            registry: registry,
-            output: retained,
-            conversation: conversation,
-            location: location!,
-            persistenceOwnerId: persistenceOwnerId!,
-            authSessionEpoch: authSessionEpoch,
-          ),
-        );
-        continue;
-      }
-      final shouldStream =
-          message.role == 'assistant' &&
-          message.metadata?['transport'] == kDirectTransport &&
-          registry.hasLiveIntent(key);
-      if (shouldStream && !message.isStreaming) {
-        restored.add(message.copyWith(isStreaming: true));
-        changed = true;
-      } else if (!shouldStream &&
-          settleOrphaned &&
-          message.isStreaming &&
-          message.role == 'assistant' &&
-          message.metadata?['transport'] == kDirectTransport) {
-        // Direct transports are client-owned. After process death there is no
-        // server task to resume, so an orphaned pause checkpoint is a retained
-        // partial answer rather than a live stream.
-        restored.add(message.copyWith(isStreaming: false));
-        changed = true;
-      } else {
-        restored.add(message);
-      }
-    }
-    return changed ? List<ChatMessage>.unmodifiable(restored) : messages;
-  }
-
-  List<ChatMessage> _restoreLiveTransportRunState(
-    List<ChatMessage> messages,
-    Conversation? conversation, {
-    bool settleOrphanedDirect = false,
-  }) => _restoreLiveHermesRunState(
-    _restoreLiveDirectRunState(
-      messages,
-      conversation,
-      settleOrphaned: settleOrphanedDirect,
-    ),
-    conversation,
-  );
-
-  List<ChatMessage> _restoreLiveHermesRunState(
-    List<ChatMessage> messages,
-    Conversation? conversation,
-  ) {
-    if (conversation == null) return messages;
-    _HermesRunProjectionStore store;
-    HermesRunBackendIdentity? backendIdentity;
-    try {
-      store = ref.read(_hermesRunProjectionStoreProvider);
-      backendIdentity = _hermesBackendIdentityForMutation(
-        captureChatMutationOwner(ref, conversation),
-      );
-    } catch (_) {
-      return messages;
-    }
-    final projections = store.forOwner(
-      ownerConversationId: chatMutationOwnerScopeForConversation(conversation),
-      backendIdentity: backendIdentity,
-    );
-    if (projections.isEmpty) return messages;
-
-    final restored = List<ChatMessage>.from(messages);
-    final matched = <_HermesRunProjection>{};
-    for (var index = 0; index < restored.length; index++) {
-      final message = restored[index];
-      if (message.role != 'assistant') continue;
-      final messageTransportId = _hermesMessageTransportId(message);
-      _HermesRunProjection? projection = projections
-          .where(
-            (candidate) =>
-                !matched.contains(candidate) &&
-                candidate.message.id == message.id,
-          )
-          .firstOrNull;
-      if (projection == null && messageTransportId != null) {
-        projection = projections
-            .where(
-              (candidate) =>
-                  !matched.contains(candidate) &&
-                  _hermesMessageTransportId(candidate.message) ==
-                      messageTransportId,
-            )
-            .firstOrNull;
-      }
-      if (projection == null) continue;
-      matched.add(projection);
-      restored[index] = projection.message;
-      if (projection.finalized && projection.dispatchSettled) {
-        // A final projection is a single-use recovery bridge once its captured
-        // OpenWebUI write is durable. Failed writes remain owner-bound and are
-        // retried below; native Hermes can retire immediately because its
-        // session server is authoritative.
-        store.markRecoveryDelivered(projection);
-        _retryHermesProjectionPersistenceAfterAdoption(
-          ref,
-          conversation: conversation,
-          projectionStore: store,
-          projection: projection,
-        );
-      }
-    }
-
-    // A live approval/stream may not have a server transcript row yet. Append
-    // every unmatched owner-bound projection so a lagging transcript cannot
-    // silently lose concurrent turns merely because it already contains some
-    // other assistant. Final snapshots are consumed after this one recovery
-    // adoption only when their OpenWebUI write is durable; otherwise adoption
-    // starts an owner-bound retry. Live snapshots remain bound for later
-    // deltas. Content is deliberately never an identity: repeated short
-    // answers such as "OK" are common across independent turns.
-    for (final projection in projections) {
-      if (matched.contains(projection)) continue;
-      restored.add(projection.message);
-      if (projection.finalized && projection.dispatchSettled) {
-        store.markRecoveryDelivered(projection);
-        _retryHermesProjectionPersistenceAfterAdoption(
-          ref,
-          conversation: conversation,
-          projectionStore: store,
-          projection: projection,
-        );
-      }
-    }
-    return List<ChatMessage>.unmodifiable(restored);
-  }
-
-  bool _hasLiveHermesProjection(
-    Conversation conversation,
-    ChatMessage message,
-  ) {
-    try {
-      final owner = captureChatMutationOwner(ref, conversation);
-      final projections = ref
-          .read(_hermesRunProjectionStoreProvider)
-          .forOwner(
-            ownerConversationId: chatMutationOwnerScopeForConversation(
-              conversation,
-            ),
-            backendIdentity: _hermesBackendIdentityForMutation(owner),
-          );
-      final transportId = _hermesMessageTransportId(message);
-      return projections.any(
-        (projection) =>
-            projection.message.id == message.id ||
-            (transportId != null &&
-                _hermesMessageTransportId(projection.message) == transportId),
-      );
-    } catch (_) {
-      return false;
-    }
-  }
-
-  bool _canRecoverHermesCheckpointFromProvider(
-    Conversation conversation,
-    ChatMessage message,
-  ) {
-    if (!conversationUsesOpenWebUiStorage(conversation)) {
-      return true;
-    }
-    try {
-      final owner = _HermesConversationOwner.capture(ref, conversation);
-      final provenance = _captureHermesMixedSessionProvenance(
-        ref,
-        owner: owner,
-        databaseManager: ref.read(databaseManagerProvider),
-      );
-      return provenance != null &&
-          _mixedHermesMessageHasLocalProvenance(message, provenance);
-    } catch (_) {
-      return false;
-    }
-  }
-
-  void _cancelColdHermesRecovery() {
-    _coldHermesRecoveryGeneration += 1;
-    final token = _coldHermesRecoveryCancelToken;
-    final key = _coldHermesRecoveryKey;
-    _coldHermesRecoveryCancelToken = null;
-    _coldHermesRecoveryKey = null;
-    _coldHermesRecoveryMessageId = null;
-    if (token == null || token.isCancelled) return;
-    try {
-      if (key != null) {
-        // Owner changes only detach this local recovery attempt. They must not
-        // invoke the registry's user-stop callback or stop the durable remote
-        // run; a replacement service can immediately resume the same checkpoint.
-        ref.read(hermesRunRegistryProvider).complete(key, cancelToken: token);
-      }
-      token.cancel('Hermes checkpoint owner changed');
-    } catch (_) {
-      token.cancel('Hermes checkpoint owner changed');
-    }
-  }
-
-  ChatMessageError? _coldHermesTerminalError(String status) {
-    return switch (status) {
-      'completed' => null,
-      'cancelled' || 'canceled' => const ChatMessageError(
-        content: 'Hermes run was cancelled.',
-      ),
-      'stopped' => const ChatMessageError(content: 'Hermes run was stopped.'),
-      'incomplete' => const ChatMessageError(
-        content: 'Hermes stopped this response before it completed.',
-      ),
-      _ => const ChatMessageError(content: 'Hermes run failed.'),
-    };
-  }
-
-  void _settleColdHermesCheckpoint(
-    _HermesConversationOwner owner,
-    ChatMessage checkpoint, {
-    String? authoritativeContent,
-    ChatMessageError? error,
-  }) {
-    if (!owner.isActive(ref)) return;
-    updateMessageById(checkpoint.id, (current) {
-      if (current.metadata?['transport'] != kHermesTransport) return current;
-      return current.copyWith(
-        content: authoritativeContent != null && authoritativeContent.isNotEmpty
-            ? authoritativeContent
-            : current.content,
-        error: error,
-      );
-    });
-    finishStreamingMessage(
-      checkpoint.id,
-      ownerConversationId: owner.scopedConversationId,
-      requireConversationOwner: true,
-    );
-  }
-
-  Future<void> _recoverColdHermesCheckpointIfNeeded(
-    Conversation conversation, {
-    bool settleUnrecoverable = false,
-    String? expectedMessageId,
-  }) async {
-    if (_disposed || state.isEmpty) return;
-    final checkpoint = state.last;
-    if (checkpoint.role != 'assistant' ||
-        (expectedMessageId != null && checkpoint.id != expectedMessageId) ||
-        !checkpoint.isStreaming ||
-        isRestoredHermesDesktopRunningMessage(checkpoint) ||
-        checkpoint.metadata?['transport'] != kHermesTransport ||
-        _hasLiveHermesProjection(conversation, checkpoint) ||
-        _coldHermesRecoveryMessageId == checkpoint.id) {
-      return;
-    }
-
-    final owner = _HermesConversationOwner.capture(ref, conversation);
-    final service = ref.read(hermesApiServiceProvider);
-    if (service == null) {
-      if (settleUnrecoverable) {
-        _settleColdHermesCheckpoint(
-          owner,
-          checkpoint,
-          error: const ChatMessageError(
-            content: 'Hermes recovery service is unavailable.',
-          ),
-        );
-      }
-      return;
-    }
-    if (service is! HermesApiService) {
-      if (settleUnrecoverable) {
-        _settleColdHermesCheckpoint(
-          owner,
-          checkpoint,
-          error: const ChatMessageError(
-            content: 'Hermes Desktop will reconcile this session when opened.',
-          ),
-        );
-      }
-      return;
-    }
-    if (!_canRecoverHermesCheckpointFromProvider(conversation, checkpoint)) {
-      if (settleUnrecoverable) {
-        _settleColdHermesCheckpoint(
-          owner,
-          checkpoint,
-          error: const ChatMessageError(
-            content: 'Hermes checkpoint ownership could not be verified.',
-          ),
-        );
-      }
-      return;
-    }
-
-    final metadata = checkpoint.metadata ?? const <String, dynamic>{};
-    final runId = metadata['hermesRunId'] is String
-        ? metadata['hermesRunId'] as String
-        : null;
-    final responseId = metadata['hermesResponseId'] is String
-        ? metadata['hermesResponseId'] as String
-        : null;
-    final transportMode = metadata['hermesTransportMode'] is String
-        ? metadata['hermesTransportMode'] as String
-        : null;
-    if ((transportMode == kHermesResponsesMode && responseId == null) ||
-        (transportMode != kHermesResponsesMode && runId == null)) {
-      if (settleUnrecoverable) {
-        _settleColdHermesCheckpoint(
-          owner,
-          checkpoint,
-          error: const ChatMessageError(
-            content: 'Hermes checkpoint is missing its recovery identifier.',
-          ),
-        );
-      }
-      return;
-    }
-
-    _cancelColdHermesRecovery();
-    final generation = _coldHermesRecoveryGeneration;
-    final cancelToken = CancelToken();
-    final key = owner.runKey(checkpoint.id);
-    final registry = ref.read(hermesRunRegistryProvider);
-    final recoverySettled = Completer<void>();
-    _coldHermesRecoveryCancelToken = cancelToken;
-    _coldHermesRecoveryKey = key;
-    _coldHermesRecoveryMessageId = checkpoint.id;
-    registry.registerPending(
-      key,
-      cancelToken: cancelToken,
-      cancellationSettled: recoverySettled.future,
-      onCancelled: () {
-        _settleColdHermesCheckpoint(owner, checkpoint);
-      },
-    );
-    final cleanupSubscription = const Stream<void>.empty().listen((_) {});
-    final attached = transportMode == kHermesResponsesMode
-        ? registry.attachStream(
-            key,
-            cancelToken: cancelToken,
-            subscription: cleanupSubscription,
-          )
-        : registry.attachRun(
-            key,
-            cancelToken: cancelToken,
-            runId: runId!,
-            subscription: cleanupSubscription,
-            stopRemote: (id) => service.stopRun(id),
-          );
-    if (!attached) {
-      if (!recoverySettled.isCompleted) recoverySettled.complete();
-      registry.complete(key, cancelToken: cancelToken);
-      if (identical(_coldHermesRecoveryCancelToken, cancelToken)) {
-        _coldHermesRecoveryCancelToken = null;
-        _coldHermesRecoveryKey = null;
-        _coldHermesRecoveryMessageId = null;
-      }
-      return;
-    }
-
-    try {
-      final recovered = await recoverHermesCheckpoint(
-        service: service,
-        runId: runId,
-        responseId: responseId,
-        transportMode: transportMode,
-        cancelToken: cancelToken,
-      );
-      if (recovered == null ||
-          cancelToken.isCancelled ||
-          _disposed ||
-          generation != _coldHermesRecoveryGeneration ||
-          !identical(ref.read(hermesApiServiceProvider), service) ||
-          !owner.isActive(ref) ||
-          !registry.owns(key, cancelToken: cancelToken)) {
-        return;
-      }
-      _settleColdHermesCheckpoint(
-        owner,
-        checkpoint,
-        authoritativeContent: recovered.text,
-        error: _coldHermesTerminalError(recovered.status),
-      );
-    } catch (_) {
-      if (!cancelToken.isCancelled &&
-          !_disposed &&
-          generation == _coldHermesRecoveryGeneration &&
-          identical(ref.read(hermesApiServiceProvider), service) &&
-          owner.isActive(ref) &&
-          registry.owns(key, cancelToken: cancelToken)) {
-        _settleColdHermesCheckpoint(
-          owner,
-          checkpoint,
-          error: const ChatMessageError(
-            content: 'Hermes could not recover this interrupted response.',
-          ),
-        );
-      }
-    } finally {
-      if (!recoverySettled.isCompleted) recoverySettled.complete();
-      registry.complete(key, cancelToken: cancelToken);
-      if (identical(_coldHermesRecoveryCancelToken, cancelToken)) {
-        _coldHermesRecoveryCancelToken = null;
-        _coldHermesRecoveryKey = null;
-        _coldHermesRecoveryMessageId = null;
-      }
-    }
-  }
-
-  Future<void> _retryRetainedDirectFinalOutput({
-    required DirectRunRegistry registry,
-    required DirectFinalizedOutput output,
-    required Conversation conversation,
-    required ChatDatabaseLocation location,
-    required String persistenceOwnerId,
-    required Object? authSessionEpoch,
-  }) async {
-    await output.primaryPersistenceSettled;
-    if (_disposed) return;
-    if (!registry.beginRetainedPersistenceRetry(output)) return;
-    final manager = _directDatabaseManager(ref, location);
-    final managedDatabase =
-        manager.serverIdForDatabase(location.database) != null ||
-        _knownManagedDirectDatabases[location.database] == true;
-    final lease = manager.tryAcquireLease(location.database);
-    var persisted = false;
-    try {
-      // A null lease is expected for provider-test databases that were not
-      // opened by DatabaseManager. For a managed database it means close or
-      // deletion has already claimed the executor, so a retained retry must
-      // wait for a later adoption against the reopened location.
-      if (managedDatabase && lease == null) return;
-      if (!registry.retainedFinalizedOutputIsCurrent(output)) return;
-      SyncEngine? capturedSyncEngine;
-      if (location.storage == ChatStorageKind.openWebUi) {
-        try {
-          capturedSyncEngine = ref.read(syncEngineProvider.notifier);
-        } catch (_) {}
-      }
-      final owner = _DirectConversationOwner(
-        conversationId: conversation.id,
-        location: location,
-        persistenceOwnerId: persistenceOwnerId,
-        openWebUiAuthSessionEpoch: authSessionEpoch,
-        openWebUiSyncEngine: capturedSyncEngine,
-      );
-      await _persistCompletedDirectAssistant(
-        ref,
-        owner: owner,
-        assistant: output.message,
-        isCurrentGeneration: () =>
-            registry.retainedFinalizedOutputIsCurrent(output),
-      );
-      persisted = registry.retainedFinalizedOutputIsCurrent(output);
-    } catch (error, stackTrace) {
-      DebugLogger.error(
-        'retained-completion-persist-failed',
-        scope: 'direct-connections/chat',
-        error: error,
-        stackTrace: stackTrace,
-        data: {'conversationId': conversation.id},
-      );
-    } finally {
-      registry.finishRetainedPersistenceRetry(output, persisted: persisted);
-      await lease?.release();
-    }
-  }
-
   bool _shouldPreserveLocalAssistantStreamingState(
     ChatMessage localMessage,
     ChatMessage serverMessage, {
@@ -2094,7 +1502,6 @@ class ChatMessagesNotifier extends Notifier<List<ChatMessage>> {
     final activeConversation = ref.read(activeConversationProvider);
     if (activeConversation == null ||
         activeOpenWebUiChatIdForMutation(ref, owner) == null ||
-        isDirectLocalConversation(activeConversation) ||
         activeConversation.id != conversationId) {
       return;
     }
@@ -2120,9 +1527,7 @@ class ChatMessagesNotifier extends Notifier<List<ChatMessage>> {
       }
 
       final currentActive = ref.read(activeConversationProvider);
-      if (currentActive == null ||
-          isDirectLocalConversation(currentActive) ||
-          currentActive.id != conversationId) {
+      if (currentActive == null || currentActive.id != conversationId) {
         return;
       }
 
@@ -2491,11 +1896,6 @@ class ChatMessagesNotifier extends Notifier<List<ChatMessage>> {
       );
 
   /// Whether the visible tail can be recovered through OpenWebUI's task API.
-  ///
-  /// Storage and transport are independent: a Hermes/direct turn may live in
-  /// an OpenWebUI-backed chat, but its lifecycle remains owned by that provider
-  /// and must never start an OpenWebUI task poll. A null transport marker is a
-  /// normal OpenWebUI preseed/resume shape and therefore remains eligible.
   bool _hasOpenWebUiTaskRecoverableTail(
     Conversation? conversation, {
     bool requireStreaming = true,
@@ -2506,8 +1906,7 @@ class ChatMessagesNotifier extends Notifier<List<ChatMessage>> {
         !_conversationUsesOpenWebUiContext(conversation)) {
       return false;
     }
-    final transport = state.last.metadata?['transport'];
-    return transport != kDirectTransport && transport != kHermesTransport;
+    return true;
   }
 
   bool get _hasTrackedStreamingTransport {
@@ -2537,14 +1936,6 @@ class ChatMessagesNotifier extends Notifier<List<ChatMessage>> {
     if (_hasStreamingSlotTransport) return true;
 
     final lastMessageId = state.last.id;
-    // Direct and Hermes reservations/runs do not use the notifier's HTTP/socket
-    // transport fields. Their streaming placeholders are nevertheless locally
-    // authoritative until dispatch finalizes them; a Drift echo emitted during
-    // preflight must not roll an optimistic turn back to the previous tip.
-    final transport = state.last.metadata?['transport'];
-    if (transport == kDirectTransport || transport == kHermesTransport) {
-      return true;
-    }
     if (_activeStreamingTransportMessageId != lastMessageId) {
       return false;
     }
@@ -3755,50 +3146,28 @@ class ChatMessagesNotifier extends Notifier<List<ChatMessage>> {
 
     final conversationModelId = conversation.model!.trim();
     final currentSelectedModel = ref.read(selectedModelProvider);
-    final directRegistry = ref.read(directModelRegistryProvider);
     final mutationOwner = captureChatMutationOwner(ref, conversation);
 
     bool stillOwnsSelection() =>
         !_disposed &&
         generation == _modelRebindGeneration &&
-        identical(ref.read(directModelRegistryProvider), directRegistry) &&
         identical(ref.read(selectedModelProvider), currentSelectedModel) &&
         chatMutationTokenStillActive(ref, mutationOwner);
 
-    final currentDirectBinding = currentSelectedModel == null
-        ? null
-        : directRegistry.resolve(currentSelectedModel);
-
-    final currentMatchesPersistedModel =
-        currentSelectedModel?.id == conversationModelId;
-    final currentMatchesOpenWebUiDirectModel =
-        currentDirectBinding?.source == DirectModelSource.openWebUi &&
-        currentDirectBinding?.openWebUiModelId == conversationModelId;
-    if (currentMatchesOpenWebUiDirectModel ||
-        (currentMatchesPersistedModel &&
-            !directRegistry.hasOpenWebUiWireModel(conversationModelId))) {
+    if (currentSelectedModel?.id == conversationModelId) {
       return;
     }
 
-    // Open WebUI persists the provider-facing id for direct models. Prefer the
-    // current trusted synthetic model that owns that wire id before considering
-    // a same-id server model, matching Open WebUI's direct-model last-wins rule.
     // Existing chats must keep using their saved model, even if an admin later
     // hides it from selectors.
     try {
       final api = ref.read(apiServiceProvider);
       final visibleModels = await ref.read(modelsProvider.future);
       if (!stillOwnsSelection()) return;
-      Model? conversationModel = directRegistry.resolveOpenWebUiWireModel(
-        visibleModels,
-        conversationModelId,
-      );
-      conversationModel ??= visibleModels
+      Model? conversationModel = visibleModels
           .where((model) => model.id == conversationModelId)
           .firstOrNull;
 
-      // Locally minted direct models live only in modelsProvider and must never
-      // be replaced by an untrusted server object with the same id.
       if (conversationModel == null && api != null) {
         final serverModels = await api.getModels(includeHidden: true);
         if (!stillOwnsSelection()) return;
@@ -4306,10 +3675,7 @@ class ChatMessagesNotifier extends Notifier<List<ChatMessage>> {
   }
 
   void setMessages(List<ChatMessage> messages) {
-    state = _restoreLiveTransportRunState(
-      messages,
-      ref.read(activeConversationProvider),
-    );
+    state = messages;
     _syncStreamingProfileWithState();
   }
 
@@ -4521,23 +3887,6 @@ class ChatMessagesNotifier extends Notifier<List<ChatMessage>> {
         }
       }
 
-      final isHermesTool = action?.startsWith('hermes_tool_') ?? false;
-      if (isHermesTool) {
-        final pendingToolIndex = history.lastIndexWhere(
-          (status) => status.action == action && status.done != true,
-        );
-        if (pendingToolIndex >= 0) {
-          if (_statusUpdatesEquivalent(
-            history[pendingToolIndex],
-            withTimestamp,
-          )) {
-            return current;
-          }
-          history[pendingToolIndex] = withTimestamp;
-          return current.copyWith(statusHistory: history);
-        }
-      }
-
       if (history.isNotEmpty) {
         final last = history.last;
         if (_statusUpdatesEquivalent(last, withTimestamp)) {
@@ -4549,7 +3898,7 @@ class ChatMessagesNotifier extends Notifier<List<ChatMessage>> {
             (withTimestamp.description?.isNotEmpty ?? false) &&
             withTimestamp.description == last.description;
         final updatesMatchingStatus =
-            sameAction && sameDescription && !isHermesTool;
+            sameAction && sameDescription;
         if (updatesMatchingStatus) {
           history[history.length - 1] = withTimestamp;
           return current.copyWith(statusHistory: history);
@@ -4646,26 +3995,6 @@ class ChatMessagesNotifier extends Notifier<List<ChatMessage>> {
     _touchStreamingActivity();
   }
 
-  /// Appends a Hermes chunk to the assistant message that owns the run.
-  ///
-  /// Hermes runs can outlive a navigation transition. Never redirect a late
-  /// chunk to whichever assistant happens to be the list tail at that point.
-  void appendToMessageById(String messageId, String content) {
-    if (content.isEmpty) return;
-    final index = state.indexWhere((message) => message.id == messageId);
-    if (index < 0) return;
-    final message = state[index];
-    if (message.role != 'assistant' || !message.isStreaming) return;
-    if (index == state.length - 1) {
-      appendToLastMessage(content);
-      return;
-    }
-    updateMessageById(
-      messageId,
-      (current) => current.copyWith(content: '${current.content}$content'),
-    );
-  }
-
   void replaceMessageContentById(String messageId, String content) {
     final index = state.indexWhere((message) => message.id == messageId);
     if (index < 0) return;
@@ -4681,46 +4010,12 @@ class ChatMessagesNotifier extends Notifier<List<ChatMessage>> {
     );
   }
 
-  /// Restores an authoritative direct-run placeholder after its persisted
-  /// preflight echo was reloaded as non-streaming. The dispatcher must verify
-  /// run-generation ownership before calling this method.
-  void reconcileDirectStreamingMessageById(String messageId) {
-    final index = state.indexWhere((message) => message.id == messageId);
-    if (index < 0) return;
-    final message = state[index];
-    if (message.role != 'assistant' || message.isStreaming) return;
-    final next = [...state];
-    next[index] = message.copyWith(isStreaming: true);
-    state = next;
-    if (index == state.length - 1) {
-      _beginStreamingProfile(next[index]);
-      _touchStreamingActivity();
-    }
-  }
-
   bool isMessageStreaming(String messageId) => state.any(
     (message) =>
         message.id == messageId &&
         message.role == 'assistant' &&
         message.isStreaming,
   );
-
-  /// Opaque identity for the visible projection owned by [messageId].
-  ///
-  /// Tail streaming updates retain their StringBuffer across appends. A chat
-  /// reload clears that buffer even when the same assistant id is restored,
-  /// allowing direct dispatch to detect A → B → A navigation that happened
-  /// entirely between provider events without comparing the growing content.
-  Object? directStreamingProjectionTokenForMessage(String messageId) {
-    final index = state.indexWhere((message) => message.id == messageId);
-    if (index < 0) return null;
-    final message = state[index];
-    if (message.role != 'assistant' || !message.isStreaming) return null;
-    if (index == state.length - 1 && _streamingBuffer != null) {
-      return _streamingBuffer;
-    }
-    return message;
-  }
 
   void _scheduleStreamingContentUpdate({
     bool immediate = false,
@@ -5045,13 +4340,10 @@ class ChatMessagesNotifier extends Notifier<List<ChatMessage>> {
   void _syncConversationStateAfterStreamingUpdate() {
     final activeConversation = ref.read(activeConversationProvider);
     if (activeConversation != null) {
-      final updatedActive = inheritNativeHermesConversationProvenance(
-        activeConversation,
-        activeConversation.copyWith(
+      final updatedActive = activeConversation.copyWith(
           messages: List<ChatMessage>.unmodifiable(state),
           updatedAt: DateTime.now(),
-        ),
-      );
+        );
       ref.read(activeConversationProvider.notifier).set(updatedActive);
 
       // Skip conversations list update for temporary chats
@@ -5084,8 +4376,7 @@ class ChatMessagesNotifier extends Notifier<List<ChatMessage>> {
 
     // Skip server cache refresh for temporary or no-active-conversation chats.
     if (activeConversation != null &&
-        !isTemporaryChat(activeConversation.id) &&
-        !isDirectLocalConversation(activeConversation)) {
+        !isTemporaryChat(activeConversation.id)) {
       try {
         refreshConversationsCache(ref);
       } catch (_) {}
@@ -5150,49 +4441,6 @@ class ChatMessagesNotifier extends Notifier<List<ChatMessage>> {
     if (persistTurn) {
       _persistCompletedTurn();
     }
-  }
-
-  /// Ends a direct-provider run in memory without invoking the generic
-  /// Open WebUI local-echo writer. The direct completion owner persists the
-  /// stopped assistant in its recorded store once preflight/dispatch unwinds.
-  void completeStoppedDirectStreamingUi(String messageId) {
-    if (state.lastOrNull?.id != messageId) return;
-    _completeStreamingMessage(releaseTransport: true, persistTurn: false);
-  }
-
-  /// Installs the final snapshot produced by a direct run's accumulator.
-  /// Unlike generic stream completion this deliberately does not trust the
-  /// current UI row: navigation may have reloaded a stale empty placeholder.
-  void completeDirectStreamingMessage(
-    ChatMessage completed, {
-    required String ownerConversationId,
-  }) {
-    final active = ref.read(activeConversationProvider);
-    if (active == null ||
-        !_conversationMatchesDirectRunOwner(ref, active, ownerConversationId)) {
-      return;
-    }
-    final index = state.indexWhere((message) => message.id == completed.id);
-    if (index < 0 || state[index].role != 'assistant') return;
-    final isTail = index == state.length - 1;
-    if (isTail) {
-      _streamingContentTimer?.cancel();
-      _streamingContentTimer = null;
-      _streamingSyncTimer?.cancel();
-      _streamingSyncTimer = null;
-      _clearStreamingBuffer();
-      _clearStreamingContent();
-    }
-    final next = [...state];
-    next[index] = completed.copyWith(
-      isStreaming: false,
-      content: _stripStreamingPlaceholders(completed.content),
-    );
-    state = next;
-    if (isTail) {
-      _finishStreamingProfile(reason: 'direct_completed', message: next[index]);
-    }
-    _syncConversationStateAfterStreamingUpdate();
   }
 
   void completeStreamingUi() {
@@ -5263,8 +4511,8 @@ class ChatMessagesNotifier extends Notifier<List<ChatMessage>> {
     bool requireConversationOwner = false,
     bool persistTurn = true,
   }) {
-    // A Hermes run can finish after navigation. Its callbacks own the chat
-    // that launched the run, never whichever conversation is active now.
+    // A run can finish after navigation. Its callbacks own the chat that
+    // launched the run, never whichever conversation is active now.
     if (requireConversationOwner &&
         !_isActiveConversationOwner(ownerConversationId)) {
       return;
@@ -5407,9 +4655,8 @@ class ChatMessagesNotifier extends Notifier<List<ChatMessage>> {
   }
 
   /// Reconciles stream leases the native background service could no longer
-  /// protect. Live client transports keep their registry ownership; orphaned
-  /// direct/Hermes checkpoints use their cold-recovery paths, while OpenWebUI
-  /// streams re-enter the task/socket reconciliation flow.
+  /// protect. Live client transports keep their registry ownership, and the
+  /// failed OpenWebUI stream re-enters the task/socket reconciliation flow.
   Future<void> reconcileBackgroundServiceFailure(
     Iterable<String> streamIds,
   ) async {
@@ -5441,27 +4688,6 @@ class ChatMessagesNotifier extends Notifier<List<ChatMessage>> {
       return;
     }
 
-    final transport = target.metadata?['transport'];
-    if (transport == kDirectTransport) {
-      final restored = _restoreLiveDirectRunState(
-        state,
-        active,
-        settleOrphaned: true,
-      );
-      if (!identical(restored, state)) {
-        state = restored;
-        _syncConversationStateAfterStreamingUpdate();
-        _persistCompletedTurn();
-      }
-      return;
-    }
-    if (transport == kHermesTransport) {
-      await _recoverColdHermesCheckpointIfNeeded(
-        active,
-        settleUnrecoverable: true,
-      );
-      return;
-    }
     if (_hasOpenWebUiTaskRecoverableTail(active)) {
       if (_shouldProtectLocalStreamingState) {
         _ensureRemoteTaskMonitor();

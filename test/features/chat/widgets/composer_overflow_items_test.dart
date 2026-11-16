@@ -8,11 +8,7 @@ import 'package:conduit/features/chat/services/ios_keyboard_attachment_bridge.da
 import 'package:conduit/features/chat/widgets/composer_overflow_items.dart';
 import 'package:conduit/features/chat/widgets/modern_chat_input.dart';
 import 'package:conduit/platform/conduit_platform_apis.g.dart';
-import 'package:conduit_core/features/hermes/models/hermes_model.dart';
 import 'package:conduit_core/features/integrations/providers/personal_connections_providers.dart';
-import 'package:conduit_core/features/terminal/models/terminal_models.dart';
-import 'package:conduit_core/features/terminal/providers/terminal_providers.dart';
-import 'package:conduit_core/features/terminal/services/terminal_service.dart';
 import 'package:conduit_core/features/tools/providers/tools_providers.dart';
 import 'package:conduit_core/providers/app_providers.dart';
 import 'package:conduit_core/services/api_service.dart';
@@ -68,8 +64,6 @@ void main() {
     final actions = buildIosKeyboardAttachmentActions(
       l10n: l10n,
       attachmentAvailability: const ComposerOverflowAttachmentAvailability(),
-      hermesMode: false,
-      directMode: false,
       webSearchAvailable: false,
       webSearchEnabled: false,
       imageGenerationAvailable: false,
@@ -102,8 +96,6 @@ void main() {
       attachmentAvailability: const ComposerOverflowAttachmentAvailability(
         file: true,
       ),
-      hermesMode: false,
-      directMode: false,
       webSearchAvailable: true,
       webSearchEnabled: false,
       imageGenerationAvailable: false,
@@ -154,58 +146,11 @@ void main() {
     );
   });
 
-  test('iOS action configuration keeps direct and Hermes restrictions', () {
-    const attachmentAvailability = ComposerOverflowAttachmentAvailability(
-      file: true,
-      serverFile: true,
-      photo: true,
-      camera: true,
-      web: true,
-    );
-
-    List<String> actionIds({
-      required bool hermesMode,
-      required bool directMode,
-    }) {
-      return buildIosKeyboardAttachmentActions(
-        l10n: l10n,
-        attachmentAvailability: attachmentAvailability,
-        hermesMode: hermesMode,
-        directMode: directMode,
-        webSearchAvailable: true,
-        webSearchEnabled: true,
-        imageGenerationAvailable: true,
-        imageGenerationEnabled: true,
-        availableTools: const [],
-        selectedToolIds: const [],
-        availableFilters: const [_toggleFilter],
-        selectedFilterIds: const ['test-toggle-filter'],
-        // Personal valves are an Open WebUI feature, even when offered.
-        toolSettingsAvailable: true,
-      ).map((action) => action.id).toList();
-    }
-
-    expect(actionIds(hermesMode: false, directMode: true), [
-      ComposerOverflowActionIds.file,
-      ComposerOverflowActionIds.photo,
-      ComposerOverflowActionIds.camera,
-      ComposerOverflowActionIds.webSearch,
-      ComposerOverflowActionIds.imageGeneration,
-    ]);
-    expect(actionIds(hermesMode: true, directMode: false), [
-      ComposerOverflowActionIds.file,
-      ComposerOverflowActionIds.photo,
-      ComposerOverflowActionIds.camera,
-    ]);
-  });
-
   test('iOS menu offers Tool settings as a command in the tools section', () {
     List<IosKeyboardAttachmentActionConfig> actions({required bool available}) {
       return buildIosKeyboardAttachmentActions(
         l10n: l10n,
         attachmentAvailability: const ComposerOverflowAttachmentAvailability(),
-        hermesMode: false,
-        directMode: false,
         webSearchAvailable: false,
         webSearchEnabled: false,
         imageGenerationAvailable: false,
@@ -262,14 +207,10 @@ void main() {
             .toList();
 
     List<IosKeyboardAttachmentActionConfig> nativeActions(
-      CodeInterpreterOffer? offer, {
-      bool hermesMode = false,
-      bool directMode = false,
-    }) => buildIosKeyboardAttachmentActions(
+      CodeInterpreterOffer? offer,
+    ) => buildIosKeyboardAttachmentActions(
       l10n: l10n,
       attachmentAvailability: const ComposerOverflowAttachmentAvailability(),
-      hermesMode: hermesMode,
-      directMode: directMode,
       webSearchAvailable: false,
       webSearchEnabled: false,
       imageGenerationAvailable: false,
@@ -353,16 +294,11 @@ void main() {
       });
     }
 
-    test(
-      'is absent without an offer, and never offered to Direct or Hermes',
-      () {
-        expect(flutterItems(null), isEmpty);
-        expect(nativeActions(null), isEmpty);
-        expect(nativeActions(usable, directMode: true), isEmpty);
-        expect(nativeActions(usable, hermesMode: true), isEmpty);
-        expect(nativeActions(usable), hasLength(1));
-      },
-    );
+    test('is absent without an offer', () {
+      expect(flutterItems(null), isEmpty);
+      expect(nativeActions(null), isEmpty);
+      expect(nativeActions(usable), hasLength(1));
+    });
 
     testWidgets('toggles the selection through the shared action', (
       tester,
@@ -501,23 +437,20 @@ void main() {
         await tester.pumpAndSettle();
       }
 
-      testWidgets(
-        'with Advanced off, the panel row selects it, and the panel and '
-        'composer show it',
-        (tester) async {
-          final container = await pump(tester, block: null, advanced: false);
-          await openPanel(tester);
+      testWidgets('with Advanced off, the panel row selects it, and the panel and '
+          'composer show it', (tester) async {
+        final container = await pump(tester, block: null, advanced: false);
+        await openPanel(tester);
 
-          expect(find.text('Code interpreter'), findsOneWidget);
-          await tester.tap(find.text('Code interpreter'));
-          await tester.pumpAndSettle();
-          expect(container.read(codeInterpreterEnabledProvider), isTrue);
+        expect(find.text('Code interpreter'), findsOneWidget);
+        await tester.tap(find.text('Code interpreter'));
+        await tester.pumpAndSettle();
+        expect(container.read(codeInterpreterEnabledProvider), isTrue);
 
-          // The panel's check mark and the composer's own indicator both show it.
-          expect(find.byIcon(Icons.check_rounded), findsOneWidget);
-          expect(find.byIcon(Icons.code), findsWidgets);
-        },
-      );
+        // The panel's check mark and the composer's own indicator both show it.
+        expect(find.byIcon(Icons.check_rounded), findsOneWidget);
+        expect(find.byIcon(Icons.code), findsWidgets);
+      });
 
       testWidgets('a chosen interpreter stays in view and turns off there', (
         tester,
@@ -540,7 +473,8 @@ void main() {
         final container = await pump(tester, block: null);
         container.read(codeInterpreterEnabledProvider.notifier).set(true);
         // The account loses the interpreter after it was chosen.
-        container.read(_block.notifier).block = CodeInterpreterBlock.noPermission;
+        container.read(_block.notifier).block =
+            CodeInterpreterBlock.noPermission;
         await tester.pump();
 
         final pill = find.byKey(
@@ -600,30 +534,19 @@ void main() {
         expect(container.read(codeInterpreterEnabledProvider), isFalse);
       });
 
-      testWidgets('a browser-engine server is explained only with Advanced on', (
-        tester,
-      ) async {
-        await pump(
-          tester,
-          block: CodeInterpreterBlock.unsupportedEngine,
-          advanced: false,
-        );
-        await openPanel(tester);
+      testWidgets(
+        'a browser-engine server is explained only with Advanced on',
+        (tester) async {
+          await pump(
+            tester,
+            block: CodeInterpreterBlock.unsupportedEngine,
+            advanced: false,
+          );
+          await openPanel(tester);
 
-        expect(find.text('Code interpreter'), findsNothing);
-      });
-
-      testWidgets('Hermes never shows it', (tester) async {
-        final container = await pump(
-          tester,
-          block: null,
-          model: hermesSyntheticModel(),
-        );
-        container.read(codeInterpreterEnabledProvider.notifier).set(true);
-        await tester.pump();
-
-        expect(find.text('Code interpreter'), findsNothing);
-      });
+          expect(find.text('Code interpreter'), findsNothing);
+        },
+      );
     });
   });
 
@@ -658,43 +581,6 @@ void main() {
     expect(container.read(selectedFilterIdsProvider), isEmpty);
   });
 
-  testWidgets('local MCP and provider features are mutually exclusive', (
-    tester,
-  ) async {
-    final container = ProviderContainer();
-    addTearDown(container.dispose);
-    late WidgetRef ref;
-    await tester.pumpWidget(
-      UncontrolledProviderScope(
-        container: container,
-        child: Consumer(
-          builder: (context, widgetRef, child) {
-            ref = widgetRef;
-            return const SizedBox.shrink();
-          },
-        ),
-      ),
-    );
-
-    container.read(imageGenerationEnabledProvider.notifier).set(true);
-    container.read(webSearchEnabledProvider.notifier).set(true);
-    setComposerOverflowSelection(
-      ref,
-      actionId: ComposerOverflowActionIds.tool('local_mcp:home'),
-      selected: true,
-    );
-    expect(container.read(selectedToolIdsProvider), ['local_mcp:home']);
-    expect(container.read(imageGenerationEnabledProvider), isFalse);
-    expect(container.read(webSearchEnabledProvider), isFalse);
-
-    setComposerOverflowSelection(
-      ref,
-      actionId: ComposerOverflowActionIds.imageGeneration,
-      selected: true,
-    );
-    expect(container.read(selectedToolIdsProvider), isEmpty);
-  });
-
   group('native personal connections', _nativePersonalConnectionTests);
 
   group('Compare models command', () {
@@ -716,15 +602,11 @@ void main() {
 
     List<IosKeyboardAttachmentActionConfig> nativeActions({
       required bool available,
-      bool hermes = false,
-      bool direct = false,
     }) => buildIosKeyboardAttachmentActions(
       l10n: l10n,
       attachmentAvailability: const ComposerOverflowAttachmentAvailability(
         file: true,
       ),
-      hermesMode: hermes,
-      directMode: direct,
       webSearchAvailable: false,
       webSearchEnabled: false,
       imageGenerationAvailable: false,
@@ -754,8 +636,6 @@ void main() {
       final native = buildIosKeyboardAttachmentActions(
         l10n: l10n,
         attachmentAvailability: const ComposerOverflowAttachmentAvailability(),
-        hermesMode: false,
-        directMode: false,
         webSearchAvailable: false,
         webSearchEnabled: false,
         imageGenerationAvailable: false,
@@ -773,14 +653,13 @@ void main() {
 
     test('is an action row only when the command is available', () {
       expect(
-        items(
-          available: false,
-        ).any((item) => item.id == ComposerOverflowActionIds.compareModels),
+        items(available: false)
+            .any((item) => item.id == ComposerOverflowActionIds.compareModels),
         isFalse,
       );
-      final item = items(
-        available: true,
-      ).singleWhere((item) => item.id == ComposerOverflowActionIds.compareModels);
+      final item = items(available: true).singleWhere(
+        (item) => item.id == ComposerOverflowActionIds.compareModels,
+      );
       expect(item.kind, ComposerOverflowItemKind.action);
       expect(item.section, ComposerOverflowSection.features);
       expect(item.selected, isFalse);
@@ -788,9 +667,9 @@ void main() {
     });
 
     test('reaches the native iOS panel under the id the composer handles', () {
-      final action = nativeActions(
-        available: true,
-      ).singleWhere((action) => action.id == ComposerOverflowActionIds.compareModels);
+      final action = nativeActions(available: true).singleWhere(
+        (action) => action.id == ComposerOverflowActionIds.compareModels,
+      );
       expect(action.section, 'features');
       expect(action.selected, isFalse);
       expect(action.label, l10n.chatCompareModelsAction);
@@ -801,20 +680,6 @@ void main() {
         isFalse,
       );
     });
-
-    test('is never offered for Hermes or Direct models', () {
-      for (final actions in [
-        nativeActions(available: true, hermes: true),
-        nativeActions(available: true, direct: true),
-      ]) {
-        expect(
-          actions.any(
-            (action) => action.id == ComposerOverflowActionIds.compareModels,
-          ),
-          isFalse,
-        );
-      }
-    });
   });
 }
 
@@ -823,8 +688,6 @@ const _server = ServerConfig(
   name: 'Home server',
   url: 'https://owui.example',
 );
-const _boxUrl = 'https://box.example:8443/term?token=terminal-secret';
-const _labUrl = 'https://lab.example/term?token=terminal-secret';
 
 final class _AccountEpoch extends Notifier<int> {
   @override
@@ -851,23 +714,6 @@ Map<String, dynamic> _toolServer(
   'info': <String, dynamic>{'id': ?id, 'name': name, 'description': ''},
 };
 
-Map<String, dynamic> _terminalEntry(String url, String name) =>
-    <String, dynamic>{
-      'url': url,
-      'key': 'terminal-secret',
-      'name': name,
-      'path': '/openapi.json',
-      'enabled': false,
-      'config': <String, dynamic>{},
-    };
-
-TerminalServerInfo _terminal(String url, String name) => TerminalServerInfo(
-  kind: TerminalServerKind.direct,
-  selectionId: url,
-  baseUrl: Uri.parse(url),
-  name: name,
-);
-
 /// The tool servers account A starts with: two keyed, one of them switched
 /// off, and two that never had an id.
 List<dynamic> _accountATools() => <dynamic>[
@@ -887,22 +733,15 @@ void _nativePersonalConnectionTests() {
   late WidgetRef ref;
 
   Future<void> start(WidgetTester tester) async {
-    // Both accounts own a tool server keyed `alpha` and a terminal at the same
-    // URL, so only the owner tells a stale tap from a current one.
+    // Both accounts own a tool server keyed `alpha`, so only the owner tells
+    // a stale tap from a current one.
     settings = FakeUserSettingsServer(const <String, dynamic>{})
       ..addAccount('token-a', <String, dynamic>{
-        'ui': <String, dynamic>{
-          'toolServers': _accountATools(),
-          'terminalServers': <dynamic>[
-            _terminalEntry(_boxUrl, 'Build box'),
-            _terminalEntry(_labUrl, 'Lab'),
-          ],
-        },
+        'ui': <String, dynamic>{'toolServers': _accountATools()},
       })
       ..addAccount('token-b', <String, dynamic>{
         'ui': <String, dynamic>{
           'toolServers': <dynamic>[_toolServer('B alpha', id: 'alpha')],
-          'terminalServers': <dynamic>[_terminalEntry(_boxUrl, 'Build box')],
         },
       });
     // The service queues its settings writes on a future made at construction,
@@ -926,17 +765,6 @@ void _nativePersonalConnectionTests() {
             isCurrent: () => ref.mounted && ref.read(_accountEpoch) == epoch,
           );
         }),
-        terminalServiceProvider.overrideWith((ref) {
-          ref.watch(_accountEpoch);
-          return TerminalService(api);
-        }),
-        terminalAvailableServersProvider.overrideWith((ref) async {
-          final epoch = ref.watch(_accountEpoch);
-          return <TerminalServerInfo>[
-            _terminal(_boxUrl, 'Build box'),
-            if (epoch == 0) _terminal(_labUrl, 'Lab'),
-          ];
-        }),
       ],
     );
     addTearDown(container.dispose);
@@ -953,27 +781,20 @@ void _nativePersonalConnectionTests() {
     );
   }
 
-  /// The connections once the signed-in account's settings and terminals
-  /// have resolved.
+  /// The connections once the signed-in account's settings have resolved.
   Future<ComposerPersonalConnections> load(WidgetTester tester) async {
     final connections = await tester.runAsync(() async {
       await container.read(personalConnectionsProvider.future);
-      await container.read(terminalAvailableServersProvider.future);
       return readComposerPersonalConnections(container.read);
     });
     return connections!;
   }
 
   /// The panel configuration for the account that is signed in now.
-  List<IosKeyboardAttachmentActionConfig> panel({
-    bool directMode = false,
-    bool hermesMode = false,
-  }) {
+  List<IosKeyboardAttachmentActionConfig> panel() {
     return buildIosKeyboardAttachmentActions(
       l10n: l10n,
       attachmentAvailability: const ComposerOverflowAttachmentAvailability(),
-      hermesMode: hermesMode,
-      directMode: directMode,
       webSearchAvailable: false,
       webSearchEnabled: false,
       imageGenerationAvailable: false,
@@ -1033,38 +854,16 @@ void _nativePersonalConnectionTests() {
 
     // The switched-off server is not offered; the others follow the ordinary
     // tools, in the tools section the native panel already renders.
-    expect(toolLabels(actions), [
-      'Plain tool',
-      'Alpha',
-      'Bare',
-      'Other',
-      'Build box',
-      'Lab',
-    ]);
+    expect(toolLabels(actions), ['Plain tool', 'Alpha', 'Bare', 'Other']);
     expect(selectedLabels(actions), isEmpty);
     for (final action in actions) {
       final text = '${action.id} ${action.subtitle}';
       expect(text, isNot(contains('secret')));
       expect(text, isNot(contains('token=')));
     }
-    expect(
-      actions.singleWhere((a) => a.label == 'Build box').subtitle,
-      'box.example:8443/term',
-    );
-
-    // Direct and Hermes composers have no Open WebUI account behind them.
-    for (final restricted in [
-      panel(directMode: true),
-      panel(hermesMode: true),
-    ]) {
-      expect(toolLabels(restricted), isNot(contains('Alpha')));
-      expect(toolLabels(restricted), isNot(contains('Build box')));
-    }
   });
 
-  testWidgets('native taps select and clear a tool server and a terminal', (
-    tester,
-  ) async {
+  testWidgets('native taps select and clear a tool server', (tester) async {
     await start(tester);
     container.read(selectedToolIdsProvider.notifier).set(['tool-x']);
     container.read(selectedFilterIdsProvider.notifier).set(['filter-1']);
@@ -1081,21 +880,6 @@ void _nativePersonalConnectionTests() {
     await tap(tester, idOf(panel(), 'Alpha'), opened: opened);
     expect(container.read(selectedToolIdsProvider), ['tool-x']);
     expect(container.read(selectedFilterIdsProvider), ['filter-1']);
-
-    await tap(tester, idOf(panel(), 'Build box'), opened: opened);
-    expect(container.read(selectedTerminalIdProvider), _boxUrl);
-    // One terminal at a time: Lab replaces Build box, and the saved terminal
-    // flags follow.
-    await tap(tester, idOf(panel(), 'Lab'), opened: opened);
-    expect(container.read(selectedTerminalIdProvider), _labUrl);
-    expect(selectedLabels(panel()), {'Plain tool', 'Lab'});
-    final saved =
-        (settings.settingsOf('token-a')['ui'] as Map)['terminalServers']
-            as List;
-    expect([for (final t in saved) (t as Map)['enabled']], [false, true]);
-
-    await tap(tester, idOf(panel(), 'Lab'), opened: opened);
-    expect(container.read(selectedTerminalIdProvider), isNull);
   });
 
   final staleTools = <String, void Function(List<dynamic> tools)>{
@@ -1154,39 +938,27 @@ void _nativePersonalConnectionTests() {
     final connectionsA = await load(tester);
     final panelA = panel();
     final alphaA = idOf(panelA, 'Alpha');
-    final boxA = idOf(panelA, 'Build box');
-    final labA = idOf(panelA, 'Lab');
 
     api.updateAuthToken('token-b');
     container.read(_accountEpoch.notifier).bump();
-    // While B's settings and terminals load, A's are not offered.
-    // The read starts B's requests, so it runs on the real clock.
+    // While B's settings load, A's are not offered. The read starts B's
+    // requests, so it runs on the real clock.
     final loading = await tester.runAsync(
       () async => readComposerPersonalConnections(container.read),
     );
     expect(loading!.toolServers, isEmpty);
-    expect(loading.terminals, isEmpty);
 
     final connectionsB = await load(tester);
-    expect(toolLabels(panel()), ['Plain tool', 'B alpha', 'Build box']);
+    expect(toolLabels(panel()), ['Plain tool', 'B alpha']);
 
-    // B holds a server keyed `alpha` and a terminal at the same URL as A.
-    for (final id in [alphaA, boxA, labA]) {
-      await tap(tester, id, opened: connectionsA.owner);
-    }
+    // B holds a server keyed `alpha`, as A did.
+    await tap(tester, alphaA, opened: connectionsA.owner);
     expect(container.read(selectedToolIdsProvider), isEmpty);
-    expect(container.read(selectedTerminalIdProvider), isNull);
 
-    // A terminal B does not have is not selected even by a current panel.
-    await tap(tester, labA, opened: connectionsB.owner);
-    expect(container.read(selectedTerminalIdProvider), isNull);
-
-    // The same taps from B's own panel go through.
+    // The same tap from B's own panel goes through.
     final panelB = panel();
     await tap(tester, idOf(panelB, 'B alpha'), opened: connectionsB.owner);
-    await tap(tester, idOf(panelB, 'Build box'), opened: connectionsB.owner);
     expect(container.read(selectedToolIdsProvider), ['direct_server:alpha']);
-    expect(container.read(selectedTerminalIdProvider), _boxUrl);
   });
 }
 

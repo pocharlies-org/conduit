@@ -18,7 +18,6 @@ import android.util.AtomicFile
 import android.util.Log
 import android.view.View
 import android.view.WindowInsets
-import android.webkit.CookieManager
 import android.webkit.MimeTypeMap
 import androidx.core.view.WindowCompat
 import androidx.core.view.WindowInsetsControllerCompat
@@ -34,21 +33,6 @@ import java.util.concurrent.ExecutorService
 import java.util.concurrent.Executors
 import org.json.JSONArray
 import org.json.JSONObject
-
-internal fun cookieValuesFromHeader(cookieHeader: String?): Map<String, String> {
-    if (cookieHeader.isNullOrBlank()) return emptyMap()
-    val values = linkedMapOf<String, String>()
-    cookieHeader.split(";").forEach { cookie ->
-        val parts = cookie.trim().split("=", limit = 2)
-        val name = parts.firstOrNull()?.trim().orEmpty()
-        if (parts.size == 2 && name.isNotEmpty()) {
-            // Cookie headers are ordered with longer paths first. Keep that
-            // first, more-specific value when the same name appears again.
-            values.putIfAbsent(name, parts[1].trim())
-        }
-    }
-    return values
-}
 
 internal fun validatedPendingSharePayload(
     id: String?,
@@ -682,30 +666,6 @@ class MainActivity : FlutterFragmentActivity() {
             }
         }
 
-        // Setup cookie manager channel for WebView cookie access
-        val cookieChannel = MethodChannel(
-            flutterEngine.dartExecutor.binaryMessenger,
-            "com.conduit.app/cookies"
-        )
-        
-        cookieChannel.setMethodCallHandler { call, result ->
-            if (call.method == "getCookies") {
-                val url = call.argument<String>("url")
-                if (url == null) {
-                    result.error("INVALID_ARGS", "Invalid URL", null)
-                    return@setMethodCallHandler
-                }
-                
-                // Get cookies from Android's CookieManager (shared with WebView)
-                val cookieManager = CookieManager.getInstance()
-                val cookieString = cookieManager.getCookie(url)
-                
-                result.success(cookieValuesFromHeader(cookieString))
-            } else {
-                result.notImplemented()
-            }
-        }
-        
         // Check if started with context
         handleIntent(intent)
     }

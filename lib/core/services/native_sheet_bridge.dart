@@ -114,11 +114,8 @@ class NativeSheetRoutes {
   static const appearance = 'appearance';
   static const chats = 'chats';
   static const voice = 'voice';
-  static const voiceProvider = 'voice-provider';
   static const aiMemory = 'ai-memory';
   static const dataConnection = 'data-connection';
-  static const hermes = 'hermes';
-  static const directConnections = 'open-direct-connections';
   static const personalConnections = 'open-personal-connections';
   static const scheduledTasks = 'open-scheduled-tasks';
   static const calendar = 'open-calendar';
@@ -1001,7 +998,6 @@ class NativeSheetItemConfig {
     required this.title,
     this.subtitle,
     this.sfSymbol = 'circle',
-    this.iconAsset,
     this.iconSize,
     this.showsDisclosure,
     this.destructive = false,
@@ -1035,7 +1031,6 @@ class NativeSheetItemConfig {
   final String title;
   final String? subtitle;
   final String sfSymbol;
-  final String? iconAsset;
   final double? iconSize;
   final bool? showsDisclosure;
   final bool destructive;
@@ -1084,7 +1079,6 @@ class NativeSheetItemConfig {
       'title': title,
       'subtitle': subtitle,
       'sfSymbol': sfSymbol,
-      if (iconAsset != null) 'iconAsset': iconAsset,
       if (iconSize != null) 'iconSize': iconSize,
       if (showsDisclosure != null) 'showsDisclosure': showsDisclosure,
       'destructive': destructive,
@@ -1407,7 +1401,6 @@ extension on NativeSheetItemConfig {
       title: title,
       subtitle: subtitle,
       sfSymbol: sfSymbol,
-      iconAsset: iconAsset,
       iconSize: iconSize,
       showsDisclosure: showsDisclosure,
       destructive: destructive,

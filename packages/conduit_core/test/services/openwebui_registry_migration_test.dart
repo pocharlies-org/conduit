@@ -11,6 +11,7 @@ import 'package:conduit_core/persistence/persistence_keys.dart';
 import 'package:conduit_core/persistence/preferences_store.dart';
 import 'package:conduit_core/ports/key_value_store.dart';
 import 'package:conduit_core/ports/secure_key_value_store.dart';
+import 'package:conduit_core/services/openwebui_seed.dart';
 import 'package:conduit_core/services/optimized_storage_service.dart';
 import 'package:conduit_core/services/worker_manager.dart';
 import 'package:hive_ce/hive.dart';
@@ -76,6 +77,7 @@ void main() {
   tearDown(() async {
     workerManager.dispose();
     PreferencesStore.debugReset();
+    OpenWebUiSeed.installLoader(() async => '{}');
     await Hive.close();
     if (tempDir.existsSync()) tempDir.deleteSync(recursive: true);
   });
@@ -316,6 +318,37 @@ void main() {
 
     check(configs.map((config) => config.id)).deepEquals(['current']);
     check(secureStore.readCounts[_legacyKey]).isNull();
+  });
+
+  // OWU-134: the app is pre-configured with the one Chat server, so a stored
+  // registry with no server (a wipe, or the removal of the last account) must
+  // re-seed it: the next boot lands on that server's sign-in, never a chooser.
+  test('a stored registry with no server re-seeds the build seed', () async {
+    OpenWebUiSeed.installLoader(
+      () async =>
+          '{"servers":[{"name":"Chat","url":"https://chat.e-dani.com"}]}',
+    );
+    secureStore.values[_registryKey] = OpenWebUiRegistry.empty.encode();
+
+    final registry = await newStorage().getOpenWebUiRegistryStrict();
+
+    check(registry.servers).length.equals(1);
+    check(registry.servers.single.endpoints.single.url)
+        .equals('https://chat.e-dani.com');
+    // The re-seed is persisted, so a later read finds it without the seed.
+    check((await newStorage().getOpenWebUiRegistryStrict()).servers).length
+        .equals(1);
+  });
+
+  // With no build seed to fall back on, an empty registry stays empty rather
+  // than inventing a server.
+  test('an empty registry with no seed stays empty', () async {
+    OpenWebUiSeed.installLoader(() async => '{}');
+    secureStore.values[_registryKey] = OpenWebUiRegistry.empty.encode();
+
+    final registry = await newStorage().getOpenWebUiRegistryStrict();
+
+    check(registry.servers).isEmpty();
   });
 }
 

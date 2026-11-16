@@ -335,12 +335,11 @@ void main() {
     await tester.pumpAndSettle();
     check(fake.accessSaves).length.equals(1);
     // Still open, with the edit and the reason.
-    check(
-      find.byKey(const Key('workspace-access-save-error')).evaluate(),
-    ).length.equals(1);
-    check(
-      find.byKey(const Key('workspace-access-list')).evaluate(),
-    ).isNotEmpty();
+    check(find.byKey(const Key('workspace-access-save-error')).evaluate())
+        .length
+        .equals(1);
+    check(find.byKey(const Key('workspace-access-list')).evaluate())
+        .isNotEmpty();
 
     await tester.tap(find.byKey(const Key('workspace-access-save')));
     await tester.pumpAndSettle();

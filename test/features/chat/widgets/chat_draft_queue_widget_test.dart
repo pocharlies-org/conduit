@@ -187,10 +187,7 @@ List<ChatMessage> _comparisonTurn({required Set<String> running}) =>
           timestamp: DateTime.utc(2026, 10, 6, 0, 0, 1 + slot),
           model: 'model-${slot + 1}',
           isStreaming: running.contains('c$slot'),
-          metadata: <String, dynamic>{
-            'parentId': 'cu',
-            'modelIdx': slot,
-          },
+          metadata: <String, dynamic>{'parentId': 'cu', 'modelIdx': slot},
         ),
     ];
 
@@ -213,9 +210,8 @@ class _Rig {
     await tester.pump();
   }
 
-  String get typed => tester.widget<TextField>(find.byType(TextField).first)
-      .controller!
-      .text;
+  String get typed =>
+      tester.widget<TextField>(find.byType(TextField).first).controller!.text;
 
   Future<List<String>> userTurns() async => [
     for (final row in await db.messagesDao.getForChat(_chatId))
@@ -326,9 +322,7 @@ Future<_Rig> _pump(
   );
   await tester.pump();
   final rig = _Rig(tester, db, api, sent);
-  rig.container
-      .read(chatMessagesProvider.notifier)
-      .setMessages(messages);
+  rig.container.read(chatMessagesProvider.notifier).setMessages(messages);
   await tester.pump();
   return rig;
 }
@@ -394,8 +388,9 @@ void main() {
     expect(await tester.runAsync(rig.userTurns), isEmpty);
   });
 
-  testWidgets('Enter queues instead of starting a second turn mid-response',
-      (tester) async {
+  testWidgets('Enter queues instead of starting a second turn mid-response', (
+    tester,
+  ) async {
     final rig = await _pump(tester);
 
     await rig.type('by keyboard');
@@ -407,18 +402,20 @@ void main() {
     expect(rig.typed, isEmpty);
   });
 
-  testWidgets('without a running response Enter still sends, and no Queue shows',
-      (tester) async {
-    final rig = await _pump(tester, streaming: false);
+  testWidgets(
+    'without a running response Enter still sends, and no Queue shows',
+    (tester) async {
+      final rig = await _pump(tester, streaming: false);
 
-    await rig.type('ordinary');
-    expect(find.text(queueLabel), findsNothing);
-    await tester.sendKeyEvent(LogicalKeyboardKey.enter);
-    await tester.pump();
+      await rig.type('ordinary');
+      expect(find.text(queueLabel), findsNothing);
+      await tester.sendKeyEvent(LogicalKeyboardKey.enter);
+      await tester.pump();
 
-    expect(rig.sent, ['ordinary']);
-    expect(rig.drafts, isEmpty);
-  });
+      expect(rig.sent, ['ordinary']);
+      expect(rig.drafts, isEmpty);
+    },
+  );
 
   testWidgets('the sheet edits and removes by draft, and send now stops the '
       'response and sends only that draft', (tester) async {
@@ -433,7 +430,9 @@ void main() {
     await openQueue(tester);
     await tester.pumpAndSettle();
 
-    await tester.tap(find.byKey(Key('chat-draft-edit-action-${ids['second']}')));
+    await tester.tap(
+      find.byKey(Key('chat-draft-edit-action-${ids['second']}')),
+    );
     await tester.pump();
     await tester.enterText(
       find.byKey(Key('chat-draft-edit-${ids['second']}')),
@@ -462,13 +461,11 @@ void main() {
   });
 
   testWidgets('while one answer of a comparison still runs the composer keeps '
-      'Stop and Queue, and the queue goes out when the last answer ends',
-      (tester) async {
+      'Stop and Queue, and the queue goes out when the last answer ends', (
+    tester,
+  ) async {
     // The second model has finished; the first is still answering.
-    final rig = await _pump(
-      tester,
-      turn: _comparisonTurn(running: {'c0'}),
-    );
+    final rig = await _pump(tester, turn: _comparisonTurn(running: {'c0'}));
 
     await rig.type('next question');
     expect(find.text(queueLabel), findsOneWidget);
@@ -478,16 +475,15 @@ void main() {
     expect(rig.drafts.map((d) => d.text), ['next question']);
 
     // The queued draft stays in view and Stop stays, whatever Advanced says.
-    (rig.container.read(appSettingsProvider.notifier) as _Settings)
-        .setAdvanced(false);
+    (rig.container.read(appSettingsProvider.notifier) as _Settings).setAdvanced(
+      false,
+    );
     await tester.pump();
     expect(find.byKey(const Key('chat-draft-queue-row')), findsOneWidget);
     expect(stop, findsOneWidget);
     expect(await tester.runAsync(rig.userTurns), isEmpty);
 
-    rig.container
-        .read(chatMessagesProvider.notifier)
-        .finishSlotMessage('c0');
+    rig.container.read(chatMessagesProvider.notifier).finishSlotMessage('c0');
     await tester.runAsync(() async {
       for (var i = 0; i < 200 && rig.drafts.isNotEmpty; i++) {
         await Future<void>.delayed(const Duration(milliseconds: 10));
@@ -507,9 +503,9 @@ void main() {
     final directory = Directory.systemTemp.createTempSync('queue-widget-');
     addTearDown(() => directory.deleteSync(recursive: true));
     final picked = File('${directory.path}/slow.txt')..writeAsBytesSync([1]);
-    rig.container
-        .read(attachedFilesProvider.notifier)
-        .addFiles([LocalAttachment(file: picked, displayName: 'slow.txt')]);
+    rig.container.read(attachedFilesProvider.notifier).addFiles([
+      LocalAttachment(file: picked, displayName: 'slow.txt'),
+    ]);
     await rig.type('with a file');
     await tester.tap(find.text(queueLabel));
     await tester.pump();
@@ -519,10 +515,7 @@ void main() {
     await tester.pumpAndSettle();
 
     expect(find.text('slow.txt'), findsOneWidget);
-    expect(
-      find.text('Waiting for a file to finish uploading'),
-      findsOneWidget,
-    );
+    expect(find.text('Waiting for a file to finish uploading'), findsOneWidget);
     final sendNow = tester.widget<ConduitButton>(
       find.byKey(Key('chat-draft-send-now-$id')),
     );
@@ -544,9 +537,9 @@ void main() {
     final directory = Directory.systemTemp.createTempSync('queue-widget-');
     addTearDown(() => directory.deleteSync(recursive: true));
     final picked = File('${directory.path}/shared.txt')..writeAsBytesSync([1]);
-    rig.container
-        .read(attachedFilesProvider.notifier)
-        .addFiles([LocalAttachment(file: picked, displayName: 'shared.txt')]);
+    rig.container.read(attachedFilesProvider.notifier).addFiles([
+      LocalAttachment(file: picked, displayName: 'shared.txt'),
+    ]);
     await rig.type('with a file');
     await tester.tap(find.text(queueLabel));
     await tester.pump();
@@ -652,9 +645,7 @@ void main() {
       double top(String text) {
         final undo = find.byKey(Key('chat-draft-undo-${byText[text]}'));
         final card = find.byKey(Key('chat-draft-delete-${byText[text]}'));
-        return tester
-            .getTopLeft(undo.evaluate().isEmpty ? card : undo)
-            .dy;
+        return tester.getTopLeft(undo.evaluate().isEmpty ? card : undo).dy;
       }
 
       expect(top('a'), lessThan(top('b')));
@@ -723,7 +714,10 @@ void main() {
 
     await tester.tap(find.byKey(Key('chat-draft-edit-action-${draft.id}')));
     await tester.pump();
-    await tester.enterText(find.byKey(Key('chat-draft-edit-${draft.id}')), '  ');
+    await tester.enterText(
+      find.byKey(Key('chat-draft-edit-${draft.id}')),
+      '  ',
+    );
     await tester.pump();
     final save = find.byKey(Key('chat-draft-save-${draft.id}'));
     expect(tester.widget<ConduitButton>(save).onPressed, isNull);

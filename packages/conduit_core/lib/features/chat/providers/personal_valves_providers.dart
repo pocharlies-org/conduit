@@ -7,8 +7,6 @@ import 'package:riverpod/riverpod.dart';
 import 'package:conduit_core/auth/api_auth_interceptor.dart';
 import 'package:conduit_core/features/auth/providers/unified_auth_providers.dart';
 import 'package:conduit_core/features/chat/models/personal_valves.dart';
-import 'package:conduit_core/features/direct_connections/services/direct_model_registry.dart';
-import 'package:conduit_core/features/hermes/models/hermes_model.dart';
 import 'package:conduit_core/features/tools/providers/tools_providers.dart';
 import 'package:conduit_core/features/workspace/models/workspace_valve_values.dart';
 import 'package:conduit_core/models/model.dart';
@@ -433,9 +431,7 @@ final personalValvesTargetsProvider = Provider<List<PersonalValvesTarget>>((
   ref,
 ) {
   final model = ref.watch(selectedModelProvider);
-  if (model == null ||
-      hasReservedDirectIdentity(model) ||
-      isHermesModel(model)) {
+  if (model == null) {
     return const [];
   }
   final permissions = ref

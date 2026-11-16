@@ -5,47 +5,9 @@ import 'package:conduit_core/auth/openwebui_two_step.dart';
 
 import 'package:conduit_core/models/user.dart';
 import 'package:conduit_core/models/server_config.dart';
-import 'package:conduit_core/providers/backend_mode_providers.dart';
-import 'package:conduit_core/utils/debug_logger.dart';
 
 /// Unified auth providers using the new auth state manager
 /// These replace the old auth providers for better efficiency
-
-/// Runs an Open WebUI authentication attempt and persists the backend choice
-/// only after the attempt has been confirmed successful.
-///
-/// Keeping this boundary shared prevents server discovery/config persistence
-/// from being mistaken for completed authentication by individual UI flows.
-Future<bool> completeOpenWebUiAuthentication({
-  required Future<bool> Function() authenticate,
-  required Future<void> Function() persistPreference,
-}) async {
-  final success = await authenticate();
-  if (success) {
-    try {
-      await persistPreference();
-    } catch (error) {
-      // The session is already authenticated. A best-effort routing preference
-      // write must not make the sign-in UI report that authentication failed.
-      DebugLogger.warning(
-        'preferred-backend-persist-failed',
-        scope: 'auth/backend',
-        data: {'errorType': error.runtimeType.toString()},
-      );
-    }
-  }
-  return success;
-}
-
-/// Persists Open WebUI as primary unless it was added as an optional sync
-/// target for an existing direct-primary install.
-Future<void> persistOpenWebUiBackendPreference({
-  required PreferredBackend current,
-  required Future<void> Function(PreferredBackend backend) persist,
-}) async {
-  if (current == PreferredBackend.direct) return;
-  await persist(PreferredBackend.owui);
-}
 
 /// Imperative auth actions wrapper to avoid side-effects during provider build
 class AuthActions {
@@ -54,26 +16,15 @@ class AuthActions {
 
   AuthStateManager get _auth => _ref.read(authStateManagerProvider.notifier);
 
-  Future<bool> _completeOpenWebUiAuth(Future<bool> Function() authenticate) =>
-      completeOpenWebUiAuthentication(
-        authenticate: authenticate,
-        persistPreference: () => persistOpenWebUiBackendPreference(
-          current: _ref.read(preferredBackendProvider),
-          persist: _ref.read(preferredBackendProvider.notifier).set,
-        ),
-      );
-
   Future<bool> login(
     String username,
     String password, {
     bool rememberCredentials = false,
   }) {
-    return _completeOpenWebUiAuth(
-      () => _auth.login(
-        username,
-        password,
-        rememberCredentials: rememberCredentials,
-      ),
+    return _auth.login(
+      username,
+      password,
+      rememberCredentials: rememberCredentials,
     );
   }
 
@@ -83,29 +34,11 @@ class AuthActions {
     String authType = 'token',
     ServerConfig? expectedServerConfig,
   }) {
-    return _completeOpenWebUiAuth(
-      () => _auth.loginWithApiKey(
-        apiKey,
-        rememberCredentials: rememberCredentials,
-        authType: authType,
-        expectedServerConfig: expectedServerConfig,
-      ),
-    );
-  }
-
-  Future<bool> commitPrevalidatedProxySession({
-    required ServerConfig serverConfig,
-    required String token,
-    required User user,
-    bool Function()? canCommit,
-  }) {
-    return _completeOpenWebUiAuth(
-      () => _auth.commitPrevalidatedProxySession(
-        serverConfig: serverConfig,
-        token: token,
-        user: user,
-        canCommit: canCommit,
-      ),
+    return _auth.loginWithApiKey(
+      apiKey,
+      rememberCredentials: rememberCredentials,
+      authType: authType,
+      expectedServerConfig: expectedServerConfig,
     );
   }
 
@@ -114,12 +47,10 @@ class AuthActions {
     String password, {
     bool rememberCredentials = false,
   }) {
-    return _completeOpenWebUiAuth(
-      () => _auth.ldapLogin(
-        username,
-        password,
-        rememberCredentials: rememberCredentials,
-      ),
+    return _auth.ldapLogin(
+      username,
+      password,
+      rememberCredentials: rememberCredentials,
     );
   }
 
@@ -141,9 +72,8 @@ class AuthActions {
     String resetToken,
   ) => _auth.redeemTwoStepResetToken(challenge, resetToken);
 
-  Future<bool> finishTwoStepSignIn(OpenWebUiTwoStepSession session) {
-    return _completeOpenWebUiAuth(() => _auth.finishTwoStepSignIn(session));
-  }
+  Future<bool> finishTwoStepSignIn(OpenWebUiTwoStepSession session) =>
+      _auth.finishTwoStepSignIn(session);
 
   Future<bool> silentLogin() {
     return _auth.silentLogin();

@@ -1,588 +1,5 @@
 part of 'chat_providers.dart';
 
-Future<void> _regenerateHermesMessage(
-  dynamic ref, {
-  required Model selectedModel,
-  required String input,
-  required HermesConfigController configController,
-  required int configAdmission,
-  required HermesBackendService? serviceGeneration,
-}) async {
-  final reasoningEffort = ref.read(configuredReasoningEffortProvider);
-  final activeAtStart = ref.read(activeConversationProvider) as Conversation?;
-  final mutationOwner = captureChatMutationOwner(ref, activeAtStart);
-  final existingMessages = List<ChatMessage>.from(
-    ref.read(chatMessagesProvider) as List<ChatMessage>,
-    growable: false,
-  );
-  final previousAssistant = existingMessages.lastOrNull?.role == 'assistant'
-      ? existingMessages.last
-      : null;
-
-  // Regeneration branches from the history before the replayed user turn. Do
-  // not chain previous_response_id to the answer being replaced.
-  var replayedUserIndex = -1;
-  for (var index = existingMessages.length - 1; index >= 0; index--) {
-    if (existingMessages[index].role == 'user') {
-      replayedUserIndex = index;
-      break;
-    }
-  }
-  final continuityMessages = replayedUserIndex < 0
-      ? const <ChatMessage>[]
-      : existingMessages.sublist(0, replayedUserIndex);
-  final replayedUser = replayedUserIndex < 0
-      ? null
-      : existingMessages[replayedUserIndex];
-  final trustedReplayDocumentPrompt = _trustedHermesReplayDocumentPrompt(
-    replayedUser,
-  );
-
-  final hasPreviousResponse =
-      _lastHermesMetadataId(
-        continuityMessages,
-        'hermesResponseId',
-        allowNativeHermesMetadata: true,
-      ) !=
-      null;
-  final replayedFiles = replayedUser?.files ?? const <Map<String, dynamic>>[];
-  final replayedAttachments = replayedUser?.attachmentIds ?? const <String>[];
-  final assistantMessageId = previousAssistant?.id ?? const Uuid().v4();
-  final notifier = ref.read(chatMessagesProvider.notifier);
-  ChatMessage assistantMessage({
-    required bool isStreaming,
-    ChatMessageError? error,
-  }) => ChatMessage(
-    id: assistantMessageId,
-    role: 'assistant',
-    content: '',
-    timestamp: DateTime.now(),
-    model: selectedModel.id,
-    isStreaming: isStreaming,
-    error: error,
-    versions: previousAssistant == null
-        ? const <ChatMessageVersion>[]
-        : _buildReplayVersions(previousAssistant),
-    metadata: {'modelName': selectedModel.name, 'transport': kHermesTransport},
-  );
-  void installAssistant(ChatMessage message) {
-    if (previousAssistant == null) {
-      notifier.addMessage(message);
-    } else {
-      notifier.updateLastMessageWithFunction((_) => message);
-    }
-  }
-
-  if (replayedFiles.any(
-    (file) =>
-        file['source'] == 'hermes_desktop_file' ||
-        file['source'] == 'hermes_responses_file',
-  )) {
-    const error = HermesAttachmentsUnsupportedException(
-      'File attachments cannot be regenerated. Send the file again.',
-    );
-    installAssistant(
-      assistantMessage(
-        isStreaming: false,
-        error: ChatMessageError(content: chatErrorContentForException(error)),
-      ),
-    );
-    throw error;
-  }
-  final useResponses =
-      previousAssistant?.metadata?['hermesTransportMode'] ==
-          kHermesResponsesMode ||
-      hasPreviousResponse ||
-      _persistedHermesReplayRequiresResponses(
-        replayedFiles,
-        replayedAttachments,
-      );
-  final inputImagesSupported = await _hermesInputImagesSupported(ref);
-  if (!chatMutationTokenStillActive(ref, mutationOwner)) return;
-  if (!configController.sessionActionAdmissionIsCurrent(configAdmission) ||
-      !identical(ref.read(hermesApiServiceProvider), serviceGeneration)) {
-    return;
-  }
-
-  // Historical regeneration leaves the selected assistant at the tail. Reuse
-  // that message rather than retaining an archived record plus a second
-  // placeholder; its previous content remains available through [versions].
-  final assistant = assistantMessage(isStreaming: true);
-  installAssistant(assistant);
-  await _dispatchHermesRunFromChat(
-    ref,
-    assistantMessageId: assistantMessageId,
-    assistantSeed: assistant,
-    input: replayedUser?.content ?? input,
-    existingMessages: continuityMessages,
-    forceNewSession: true,
-    // Regeneration branches from [continuityMessages]. Chaining the response
-    // being replaced would restore the wrong tail and the wrong server session.
-    previousResponseIdOverride: null,
-    responseInput: useResponses
-        ? replayedUser == null
-              ? HermesChatInput.text(input)
-              : _hermesInputFromPersistedMessage(
-                  replayedUser,
-                  inputImagesSupported: inputImagesSupported,
-                )
-        : null,
-    localDocumentPromptText: trustedReplayDocumentPrompt?.promptText,
-    localDocumentEnvelopes:
-        trustedReplayDocumentPrompt?.documentEnvelopes ?? const <String>[],
-    reasoningEffort: reasoningEffort,
-    responseHistory: useResponses
-        ? _hermesVisibleHistory(
-            continuityMessages,
-            inputImagesSupported: inputImagesSupported,
-          )
-        : null,
-  );
-}
-
-Future<void> _regenerateDirectMessage(
-  dynamic ref, {
-  required _ResolvedDirectRoute route,
-}) async {
-  final reasoningEffort = ref.read(configuredReasoningEffortProvider);
-  final enableWebSearch =
-      ref.read(webSearchEnabledProvider) &&
-      ref.read(webSearchAvailableProvider);
-  final enableImageGeneration =
-      ref.read(imageGenerationEnabledProvider) &&
-      ref.read(imageGenerationAvailableProvider);
-  final localMcpToolIds =
-      (ref.read(selectedToolIdsProvider) as Iterable<String>)
-          .where((id) => id.startsWith(kDirectMcpToolIdPrefix))
-          .toList(growable: false);
-  final active = ref.read(activeConversationProvider) as Conversation?;
-  if (active == null) throw StateError('No active conversation');
-  final directMutationOwner = captureChatMutationOwner(ref, active);
-  final Object? sourceApi = directMutationOwner.usesOpenWebUiContext
-      ? directMutationOwner.openWebUiApi
-      : ref.read(apiServiceProvider);
-  final sourceAuthSnapshot = sourceApi is ApiService
-      ? sourceApi.captureAuthSnapshot()
-      : null;
-  final Object? sourceAuthSessionEpoch = sourceApi == null
-      ? null
-      : _readOpenWebUiAuthSessionEpoch(ref);
-  Stream<RemapEvent>? remapEvents;
-  SyncEngine? openWebUiSyncEngine;
-  if (directMutationOwner.usesOpenWebUiContext) {
-    try {
-      final engine = ref.read(syncEngineProvider.notifier);
-      openWebUiSyncEngine = engine;
-      remapEvents = engine.remapEvents;
-    } catch (_) {}
-  }
-  final existing = List<ChatMessage>.from(
-    ref.read(chatMessagesProvider) as List<ChatMessage>,
-    growable: false,
-  );
-  var userIndex = -1;
-  for (var index = existing.length - 1; index >= 0; index--) {
-    if (existing[index].role == 'user') {
-      userIndex = index;
-      break;
-    }
-  }
-  if (userIndex < 0) return;
-
-  final visiblePreviousAssistant = existing.lastOrNull?.role == 'assistant'
-      ? existing.last
-      : null;
-  final previousAssistant = visiblePreviousAssistant == null
-      ? null
-      : _directRegenerationCompletedBase(visiblePreviousAssistant);
-  final assistantId = previousAssistant?.id ?? const Uuid().v4();
-  final metadata =
-      <String, dynamic>{
-          ...?previousAssistant?.metadata,
-          'parentId': existing[userIndex].id,
-          'childrenIds': const <String>[],
-          'transport': kDirectTransport,
-          'modelName': route.model.name,
-        }
-        ..remove('archivedVariant')
-        ..remove(kDirectMcpApprovalMetadataKey);
-  final assistant = ChatMessage(
-    id: assistantId,
-    role: 'assistant',
-    content: '',
-    timestamp: DateTime.now(),
-    model: route.model.id,
-    isStreaming: true,
-    versions: previousAssistant == null
-        ? const <ChatMessageVersion>[]
-        : _buildReplayVersions(previousAssistant),
-    metadata: metadata,
-  );
-  final notifier =
-      ref.read(chatMessagesProvider.notifier) as ChatMessagesNotifier;
-  if (previousAssistant == null) {
-    notifier.addMessage(assistant);
-  } else {
-    notifier.updateLastMessageWithFunction((_) => assistant);
-  }
-  final DirectRunRegistry registry = ref.read(directRunRegistryProvider);
-  final stopIndex = ref.read(_directRunStopIndexProvider);
-  final initialRunKey = _directRunKeyForConversation(ref, active, assistant.id);
-  final reservation = registry.reserve(initialRunKey, route.binding.profileId);
-  stopIndex.track(initialRunKey);
-  final preflightCancelToken = CancelToken();
-  ChatDatabaseLocation? location;
-  DatabaseLifetimeLease? databaseLease;
-  String? persistenceOwnerId;
-  Object? ownerAuthSessionEpoch(ChatDatabaseLocation? ownerLocation) =>
-      ownerLocation?.storage == ChatStorageKind.openWebUi
-      ? directMutationOwner.openWebUiAuthSessionEpoch
-      : null;
-  SyncEngine? ownerSyncEngine(ChatDatabaseLocation? ownerLocation) =>
-      ownerLocation?.storage == ChatStorageKind.openWebUi
-      ? openWebUiSyncEngine
-      : null;
-  try {
-    final stored = chatStorageKindOf(active) != null;
-    final temporary =
-        ref.read(temporaryChatEnabledProvider) ||
-        (isTemporaryChat(active.id) && !stored);
-    if (!temporary) {
-      final ChatDatabaseRepository repository = ref.read(
-        chatDatabaseRepositoryProvider,
-      );
-      final preferredStorage =
-          chatStorageKindOf(active) ?? ChatStorageKind.openWebUi;
-      ChatDatabaseLocation? initiallyOwnedLocation;
-      try {
-        initiallyOwnedLocation = repository.locationFor(preferredStorage);
-      } on StateError {
-        // Resolve below preserves the historical unavailable-storage behavior.
-      }
-      if (initiallyOwnedLocation != null) {
-        persistenceOwnerId = _directPersistenceOwnerIdForLocation(
-          ref,
-          initiallyOwnedLocation,
-        );
-        databaseLease = _tryAcquireDirectDatabaseLease(
-          ref,
-          initiallyOwnedLocation,
-        );
-      }
-      location = await repository.resolveChat(
-        active.id,
-        preferred: preferredStorage,
-      );
-      if (location != null) {
-        _requireDirectLocationAuthSession(
-          ref,
-          location: location,
-          capturedEpoch: directMutationOwner.openWebUiAuthSessionEpoch,
-        );
-      }
-      if (registry.isCancelled(reservation)) {
-        throw const _DirectRunStoppedDuringPreflight();
-      }
-      final resolvedLocation = location;
-      if (resolvedLocation == null) {
-        throw StateError('Conversation storage is unavailable');
-      }
-      if (!identical(
-        initiallyOwnedLocation?.database,
-        resolvedLocation.database,
-      )) {
-        // Acquire the actual resolved owner before yielding to release a stale
-        // candidate, so no server switch can close it in between.
-        final resolvedLease = _tryAcquireDirectDatabaseLease(
-          ref,
-          resolvedLocation,
-        );
-        await databaseLease?.release();
-        databaseLease = resolvedLease;
-        persistenceOwnerId = _directPersistenceOwnerIdForLocation(
-          ref,
-          resolvedLocation,
-        );
-      }
-      registry.bindPersistenceIdentity(
-        reservation,
-        persistenceOwnerId!,
-        authSessionEpoch: ownerAuthSessionEpoch(resolvedLocation),
-      );
-      final row = _directMessageRow(
-        chatId: active.id,
-        message: assistant,
-        parentId: existing[userIndex].id,
-        childrenIds: const <String>[],
-        orderIndex: existing.length,
-      );
-      final locks = ref.read(chatLocksProvider) as ChatLocks;
-      await locks.runExclusive(active.id, () async {
-        if (!registry.isLatest(reservation)) return;
-        _requireDirectLocationAuthSession(
-          ref,
-          location: resolvedLocation,
-          capturedEpoch: directMutationOwner.openWebUiAuthSessionEpoch,
-        );
-        await repository.persistDirectMessages(
-          resolvedLocation,
-          chatId: active.id,
-          messages: <MessageRowData>[row],
-          currentMessageId: assistant.id,
-          updatedAt: ref.read(syncClockProvider).nowEpochSeconds(),
-        );
-        _requireDirectLocationAuthSession(
-          ref,
-          location: resolvedLocation,
-          capturedEpoch: directMutationOwner.openWebUiAuthSessionEpoch,
-        );
-      });
-      if (!registry.isLatest(reservation)) return;
-    }
-    final replayAnnotationEnvelope =
-        previousAssistant?.metadata?[kOpenRouterFileAnnotationsMetadataKey];
-    final requestMessages = withDirectConversationSystemPrompt(
-      messages: <ChatMessage>[
-        ...existing.sublist(0, userIndex + 1),
-        if (replayAnnotationEnvelope != null)
-          ChatMessage(
-            id: 'direct-openrouter-regeneration-annotations',
-            role: 'assistant',
-            content: '',
-            timestamp: DateTime.fromMillisecondsSinceEpoch(0, isUtc: true),
-            metadata: <String, dynamic>{
-              'transport': kDirectTransport,
-              kOpenRouterFileAnnotationsMetadataKey: replayAnnotationEnvelope,
-            },
-          ),
-      ],
-      systemPrompt: active.systemPrompt,
-    );
-    await _dispatchDirectRunFromChat(
-      ref,
-      route: route,
-      assistantMessageId: assistant.id,
-      assistantSeed: assistant,
-      requestMessages: requestMessages,
-      owner: _DirectConversationOwner(
-        conversationId: active.id,
-        location: location,
-        persistenceOwnerId: persistenceOwnerId,
-        sourceApi: sourceApi,
-        sourceAuthSnapshot: sourceAuthSnapshot,
-        sourceAuthSessionEpoch: sourceAuthSessionEpoch,
-        remapEvents: remapEvents,
-        openWebUiAuthSessionEpoch: ownerAuthSessionEpoch(location),
-        openWebUiSyncEngine: ownerSyncEngine(location),
-        unstoredOwnerScope: _directRunOwnerScopeForConversation(ref, active),
-      ),
-      reservation: reservation,
-      preflightCancelToken: preflightCancelToken,
-      enableWebSearch: enableWebSearch,
-      enableImageGeneration: enableImageGeneration,
-      reasoningEffort: reasoningEffort,
-      localMcpToolIds: localMcpToolIds,
-    );
-  } on _DirectOpenWebUiAuthSessionChanged {
-    registry.discardFinalizedOutput(reservation);
-    final owner = _DirectConversationOwner(
-      conversationId: active.id,
-      location: location,
-      persistenceOwnerId: persistenceOwnerId,
-      sourceApi: sourceApi,
-      sourceAuthSnapshot: sourceAuthSnapshot,
-      sourceAuthSessionEpoch: sourceAuthSessionEpoch,
-      remapEvents: remapEvents,
-      openWebUiAuthSessionEpoch: ownerAuthSessionEpoch(location),
-      openWebUiSyncEngine: ownerSyncEngine(location),
-      unstoredOwnerScope: _directRunOwnerScopeForConversation(ref, active),
-    );
-    try {
-      await _settleDirectAssistantAfterAuthSessionChange(
-        ref,
-        owner: owner,
-        assistantMessageId: assistant.id,
-        isCurrentGeneration: () => registry.isLatest(reservation),
-      );
-    } catch (settlementError, stackTrace) {
-      DebugLogger.error(
-        'auth-change-placeholder-settlement-failed',
-        scope: 'direct-connections/chat',
-        error: settlementError,
-        stackTrace: stackTrace,
-        data: {'conversationId': owner.conversationId},
-      );
-    }
-    return;
-  } on _DirectRunStoppedDuringPreflight {
-    if (!registry.isLatest(reservation)) return;
-    final owner = _DirectConversationOwner(
-      conversationId: active.id,
-      location: location,
-      persistenceOwnerId: persistenceOwnerId,
-      sourceApi: sourceApi,
-      sourceAuthSnapshot: sourceAuthSnapshot,
-      sourceAuthSessionEpoch: sourceAuthSessionEpoch,
-      remapEvents: remapEvents,
-      openWebUiAuthSessionEpoch: ownerAuthSessionEpoch(location),
-      openWebUiSyncEngine: ownerSyncEngine(location),
-      unstoredOwnerScope: _directRunOwnerScopeForConversation(ref, active),
-    );
-    final ownerIsActive = _isDirectConversationOwnerActive(ref, owner);
-    final stopped =
-        (ownerIsActive
-            ? (ref.read(chatMessagesProvider) as List<ChatMessage>)
-                  .where((message) => message.id == assistant.id)
-                  .firstOrNull
-            : null) ??
-        assistant;
-    // Regeneration replaces the previous answer with a same-id placeholder
-    // before attachment/message preflight. If that preflight is cancelled,
-    // restore the completed answer rather than making the empty replacement
-    // the default visible and durable version.
-    final stoppedSnapshot =
-        previousAssistant?.copyWith(isStreaming: false) ??
-        stopped.copyWith(isStreaming: false);
-    if (ownerIsActive) {
-      notifier.updateMessageById(assistant.id, (_) => stoppedSnapshot);
-    }
-    if (location != null) {
-      await _persistCompletedDirectAssistant(
-        ref,
-        owner: owner,
-        assistant: stoppedSnapshot,
-        isCurrentGeneration: () => registry.isLatest(reservation),
-      );
-      if (registry.isLatest(reservation) &&
-          _isDirectConversationOwnerActive(ref, owner)) {
-        notifier.updateMessageById(assistant.id, (_) => stoppedSnapshot);
-      }
-    }
-  } catch (error) {
-    DebugLogger.error(
-      'regenerate-failed',
-      scope: 'direct-connections/chat',
-      data: {'errorType': error.runtimeType.toString()},
-    );
-    if (registry.isOutputFinalized(reservation)) rethrow;
-    // Superseded work has no error surface to report. Propagating it would let
-    // an outer id-only recovery handler attach the stale failure to the newer
-    // same-id assistant generation.
-    if (!registry.isLatest(reservation)) return;
-    final owner = _DirectConversationOwner(
-      conversationId: active.id,
-      location: location,
-      persistenceOwnerId: persistenceOwnerId,
-      sourceApi: sourceApi,
-      sourceAuthSnapshot: sourceAuthSnapshot,
-      sourceAuthSessionEpoch: sourceAuthSessionEpoch,
-      remapEvents: remapEvents,
-      openWebUiAuthSessionEpoch: ownerAuthSessionEpoch(location),
-      openWebUiSyncEngine: ownerSyncEngine(location),
-      unstoredOwnerScope: _directRunOwnerScopeForConversation(ref, active),
-    );
-    final ownerIsActive = _isDirectConversationOwnerActive(ref, owner);
-    final failed =
-        (ownerIsActive
-            ? (ref.read(chatMessagesProvider) as List<ChatMessage>)
-                  .where((message) => message.id == assistant.id)
-                  .firstOrNull
-            : null) ??
-        assistant;
-    final failedSnapshot = failed.copyWith(
-      isStreaming: false,
-      error: ChatMessageError(content: chatErrorContentForException(error)),
-    );
-    if (ownerIsActive) {
-      notifier.failLastStreamingAssistant(
-        error,
-        assistantMessageId: assistant.id,
-      );
-      // `failLastStreamingAssistant` releases streaming bookkeeping and may
-      // synchronously enable a database-watch adoption. Reinstall the exact
-      // failure snapshot and persist that same value so the earlier
-      // error-free placeholder can never win this race.
-      notifier.updateMessageById(assistant.id, (_) => failedSnapshot);
-    }
-    if (location != null) {
-      await _persistCompletedDirectAssistant(
-        ref,
-        owner: owner,
-        assistant: failedSnapshot,
-        isCurrentGeneration: () => registry.isLatest(reservation),
-      );
-      if (registry.isLatest(reservation) &&
-          _isDirectConversationOwnerActive(ref, owner)) {
-        notifier.updateMessageById(assistant.id, (_) => failedSnapshot);
-      }
-    }
-    rethrow;
-  } finally {
-    await databaseLease?.release();
-    stopIndex.untrack(initialRunKey);
-    registry.releaseReservation(reservation);
-  }
-}
-
-/// Replays an edited user turn in a Hermes session while retaining Conduit's
-/// persisted local image/document descriptors. Reopened local documents no
-/// longer have a source filesystem attachment, so sending their old opaque id
-/// through the normal composer pipeline would either fail or silently drop the
-/// reference text.
-Future<void> regenerateEditedHermesUserMessage(
-  dynamic ref, {
-  required String messageId,
-  required String content,
-}) async {
-  final active = ref.read(activeConversationProvider) as Conversation?;
-  if (!isNativeHermesConversation(active)) {
-    throw StateError('The active conversation is not a Hermes session.');
-  }
-  final activeConversationId = conversationScopedId(active!);
-  final messages = List<ChatMessage>.from(
-    ref.read(chatMessagesProvider) as List<ChatMessage>,
-    growable: false,
-  );
-  final index = messages.indexWhere(
-    (message) => message.id == messageId && message.role == 'user',
-  );
-  if (index < 0) throw StateError('The Hermes user message was not found.');
-
-  final edited = messages[index].copyWith(
-    content: content,
-    metadata: <String, dynamic>{
-      ...?messages[index].metadata,
-      'childrenIds': const <String>[],
-    },
-  );
-  final notifier =
-      ref.read(chatMessagesProvider.notifier) as ChatMessagesNotifier;
-  final optimisticMessages = List<ChatMessage>.unmodifiable(<ChatMessage>[
-    ...messages.sublist(0, index),
-    edited,
-  ]);
-  notifier.setMessages(optimisticMessages);
-  try {
-    await regenerateMessage(ref, content, null);
-  } catch (_) {
-    // Editing is a branch operation, but the original branch must remain
-    // intact when the replacement cannot even be started. Restore only while
-    // our exact optimistic list still owns this storage-scoped conversation;
-    // a chat switch or independent same-chat mutation wins the race.
-    final current = ref.read(activeConversationProvider) as Conversation?;
-    final currentMessages = ref.read(chatMessagesProvider) as List<ChatMessage>;
-    if (current != null &&
-        conversationMatchesScopedId(current, activeConversationId) &&
-        identical(currentMessages, optimisticMessages)) {
-      notifier.setMessages(messages);
-    }
-    rethrow;
-  }
-}
-
-// Regenerate a message without duplicating its user prompt. Image replay uses
-// a request-scoped force flag so it never mutates the persisted composer
-// preference while provider preflight is in flight.
 /// The model and column a regeneration belongs to when the answer being
 /// regenerated is one of several models' answers to one prompt.
 ///
@@ -633,108 +50,31 @@ Future<void> regenerateMessage(
   final reviewerMode = ref.read(reviewerModeProvider);
   final api = ref.read(apiServiceProvider);
   final selectedModelCandidate = ref.read(selectedModelProvider) as Model?;
-  // Admitted with the account and model this regeneration started under. The
-  // request below drops it if a terminal turns out to be part of it.
+  // Admitted with the account and model this regeneration started under.
   final codeInterpreterAtRegenerationStart = _admitCodeInterpreter(ref);
-  final usesHermesAtRegenerationStart =
-      !reviewerMode &&
-      selectedModelCandidate != null &&
-      usesHermesTransportForRegeneration(
-        selectedModel: selectedModelCandidate,
-        activeConversation: conversationAtRegenerationStart,
-      );
-  final HermesConfigController? hermesConfigController =
-      usesHermesAtRegenerationStart
-      ? ref.read(hermesConfigProvider.notifier)
-      : null;
-  final int? hermesConfigAdmission = hermesConfigController
-      ?.captureSessionActionAdmission();
-  if (usesHermesAtRegenerationStart && hermesConfigAdmission == null) return;
-  final HermesBackendService? hermesServiceGeneration =
-      usesHermesAtRegenerationStart ? ref.read(hermesApiServiceProvider) : null;
-  final resolvedDirectRoute = await _resolveDirectRoute(
-    ref,
-    selectedModelCandidate,
-  );
-  final directRoute =
-      resolvedDirectRoute?.binding.source == DirectModelSource.device
-      ? resolvedDirectRoute
-      : null;
-  final openWebUiDirectRoute =
-      resolvedDirectRoute?.binding.source == DirectModelSource.openWebUi
-      ? resolvedDirectRoute
-      : null;
   if (!ownsCurrentPreparationState()) {
     return;
   }
   if (!chatMutationTokenStillActive(ref, regenerationMutationOwner)) {
     throw StateError('The conversation changed while preparing regeneration.');
   }
-  if (usesHermesAtRegenerationStart &&
-      (!hermesConfigController!.sessionActionAdmissionIsCurrent(
-            hermesConfigAdmission!,
-          ) ||
-          !identical(
-            ref.read(hermesApiServiceProvider),
-            hermesServiceGeneration,
-          ))) {
-    return;
-  }
-
-  // Standalone transports do not require an OpenWebUI API. Reserved direct
-  // identities still fail closed unless this exact model object has a current
-  // registry binding.
   if (isSendBlocked(
     reviewerMode: reviewerMode,
     api: api,
     selectedModel: selectedModelCandidate,
-    hasTrustedDirectBinding: resolvedDirectRoute != null,
   )) {
     throw Exception('No API service or model selected');
   }
-  if (!reviewerMode && openWebUiDirectRoute != null && api == null) {
-    throw Exception('Open WebUI direct connections require a server session.');
-  }
   Model selectedModel = selectedModelCandidate!;
-  var serverModelId = openWebUiDirectRoute == null
-      ? selectedModel.id
-      : _openWebUiDirectWireModelId(openWebUiDirectRoute);
+  var serverModelId = selectedModel.id;
 
   var activeConversation = ref.read(activeConversationProvider);
-  if (!isModelCompatibleWithConversation(
-    conversation: activeConversation,
-    hasTrustedDirectBinding: directRoute != null,
-  )) {
-    throw StateError(
-      'On-device direct chats can only continue with a direct connection model.',
-    );
-  }
-  if (!reviewerMode &&
-      usesHermesTransportForRegeneration(
-        selectedModel: selectedModel,
-        activeConversation: activeConversation,
-      )) {
-    await _regenerateHermesMessage(
-      ref,
-      selectedModel: selectedModel,
-      input: userMessageContent,
-      configController: hermesConfigController!,
-      configAdmission: hermesConfigAdmission!,
-      serviceGeneration: hermesServiceGeneration,
-    );
-    return;
-  }
   if (activeConversation == null) {
     throw Exception('No active conversation');
   }
-  if (!reviewerMode && directRoute != null) {
-    await _regenerateDirectMessage(ref, route: directRoute);
-    return;
-  }
   // Regenerating one answer of a multi-model turn keeps that answer's model and
-  // column whatever the picker holds now. Read only once the turn is known to be
-  // an Open WebUI one, so the other transports never touch the transcript here.
-  final comparisonTarget = reviewerMode || openWebUiDirectRoute != null
+  // column whatever the picker holds now.
+  final comparisonTarget = reviewerMode
       ? null
       : _comparisonRegenerationTarget(
           ref.read(chatMessagesProvider) as List<ChatMessage>,
@@ -829,7 +169,6 @@ Future<void> regenerateMessage(
     // Include selected tool ids so provider-native tool calling is triggered
     final selectedToolIds = ref.read(selectedToolIdsProvider);
     final toolIdsForApi = _extractToolIdsForApi(selectedToolIds);
-    final selectedTerminalId = ref.read(selectedTerminalIdProvider);
     // Include selected filter ids (toggle filters enabled by user)
     final selectedFilterIds = selectedFilterIdsForModel(ref, selectedModel);
     // Get conversation history for context, skipping archived variants that are
@@ -851,7 +190,7 @@ Future<void> regenerateMessage(
         continue;
       }
       if (_shouldIncludeConversationHistoryMessage(msg)) {
-        final cleaned = outboundProviderReplayText(msg);
+        final cleaned = ToolCallsParser.sanitizeForApi(msg.content);
 
         // Prefer provided attachments for the last user message; otherwise use message attachments
         final bool isLastUser = i == lastUserIndex && msg.role == 'user';
@@ -986,7 +325,6 @@ Future<void> regenerateMessage(
 
     final modelItem = _buildLocalModelItem(
       selectedModel,
-      trustedDirectBinding: openWebUiDirectRoute?.binding,
       wireModelId: serverModelId,
     );
 
@@ -996,11 +334,6 @@ Future<void> regenerateMessage(
     final socketSessionId = await _ensureConnectedSocketSessionId(
       socketService,
     );
-    if (openWebUiDirectRoute != null && socketSessionId == null) {
-      throw StateError(
-        'Open WebUI direct connections require an active server socket.',
-      );
-    }
     if (!ownsLiveRegenerationPlaceholder()) {
       _clearOpenWebUiRegenerationAttemptMarker(
         ref,
@@ -1028,11 +361,7 @@ Future<void> regenerateMessage(
       );
       return;
     }
-    final terminalIdForApi = modelSupportsTerminal(selectedModel)
-        ? _resolveTerminalIdForRequest(selectedTerminalId: selectedTerminalId)
-        : null;
-    final codeInterpreterEnabled =
-        codeInterpreterAtRegenerationStart && terminalIdForApi == null;
+    final codeInterpreterEnabled = codeInterpreterAtRegenerationStart;
 
     // Background tasks should follow backend-synced user settings instead of
     // forcing local defaults.
@@ -1059,7 +388,6 @@ Future<void> regenerateMessage(
 
     final bool isBackgroundToolsFlowPre =
         toolIdsForApi.isNotEmpty ||
-        terminalIdForApi != null ||
         (toolServers != null && toolServers.isNotEmpty);
     final bool isBackgroundWebSearchPre = webSearchEnabled;
 
@@ -1089,7 +417,6 @@ Future<void> regenerateMessage(
         userMessageId: lastUserMessageId,
         modelId: serverModelId,
         assistantChildMessageId: assistantMessageId,
-        useModelIdForModels: openWebUiDirectRoute != null,
       );
     } catch (_) {}
     if (!ownsLiveRegenerationPlaceholder()) {
@@ -1131,7 +458,6 @@ Future<void> regenerateMessage(
         messages: requestMessages,
         model: serverModelId,
         conversationId: regenerationOwner.chatId,
-        terminalId: terminalIdForApi,
         toolIds: toolIdsForApi.isNotEmpty ? toolIdsForApi : null,
         filterIds: selectedFilterIds.isNotEmpty ? selectedFilterIds : null,
         enableWebSearch: webSearchEnabled,
@@ -1247,7 +573,6 @@ Future<void> regenerateMessage(
         modelUsesReasoning: modelUsesReasoning,
         toolsEnabled:
             toolIdsForApi.isNotEmpty ||
-            terminalIdForApi != null ||
             (toolServers != null && toolServers.isNotEmpty) ||
             imageGenerationEnabled ||
             codeInterpreterEnabled,

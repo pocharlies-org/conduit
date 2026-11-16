@@ -1,7 +1,6 @@
 import 'package:checks/checks.dart';
 import 'package:conduit_core/models/chat_message.dart';
 import 'package:conduit_core/models/message_voice.dart';
-import 'package:conduit_core/services/direct_replay_output.dart';
 import 'package:conduit_core/features/chat/providers/chat_providers.dart';
 import 'package:test/test.dart';
 
@@ -189,41 +188,6 @@ void main() {
 
         check(localEchoRowForMessage('chat-1', user).payload['content'])
             .equals(content);
-      });
-
-      test('direct payload stores the output message text too', () {
-        final payload = directPersistedMessagePayloadForTest(
-          assistant(
-            content: '${renderedDetails}It is sunny.',
-            output: structuredOutput,
-          ),
-        );
-
-        check(payload['content']).equals('It is sunny.');
-        check(payload['output'])
-            .isA<List<Object?>>()
-            .deepEquals(structuredOutput);
-      });
-
-      test('direct payload keeps the rendered content for a replay mirror', () {
-        // On load the direct replay mirror short-circuits the structured
-        // output re-synthesis, so the rendered content is the only copy of
-        // the reasoning/tool presentation the UI can show.
-        const content =
-            '<details type="reasoning" done="true" duration="2">\n'
-            '<summary>Thought for 2 seconds</summary>\n> hmm\n</details>\n'
-            'It is sunny.';
-        final payload = directPersistedMessagePayloadForTest(
-          assistant(
-            content: content,
-            output: buildConduitDirectReplayOutput(
-              assistantMessageId: 'assistant-2',
-              rawContent: 'It is sunny.',
-            ),
-          ),
-        );
-
-        check(payload['content']).equals(content);
       });
     });
 

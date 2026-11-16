@@ -8,7 +8,6 @@ import 'package:conduit_core/database/app_database.dart';
 import 'package:conduit_core/database/database_provider.dart';
 import 'package:conduit_core/features/auth/providers/unified_auth_providers.dart';
 import 'package:conduit_core/features/chat/providers/chat_providers.dart';
-import 'package:conduit_core/features/hermes/models/hermes_model.dart';
 import 'package:conduit_core/models/conversation.dart';
 import 'package:conduit_core/models/folder.dart';
 import 'package:conduit_core/models/model.dart';
@@ -320,17 +319,16 @@ void main() {
       });
     }
 
-    test('never picks a hidden or a Hermes model from a saved list', () async {
-      final hermes = hermesSyntheticModel();
+    test('never picks a hidden model from a saved list', () async {
       const hidden = Model(
         id: 'hidden-model',
         name: 'Hidden',
         metadata: {'hidden': true},
       );
-      final c = await draftIn(saved: [hermes.id, hidden.id, 'm-a']);
+      final c = await draftIn(saved: [hidden.id, 'm-a']);
 
       final started = restoreFolderDraftModel(c, 'f-1');
-      modelsGate.complete([hermes, hidden, _modelA]);
+      modelsGate.complete([hidden, _modelA]);
       await started;
 
       check(c.read(selectedModelProvider)).identicalTo(_modelA);
@@ -421,10 +419,6 @@ void main() {
     >[
       ('three usable slots', ['m-a', 'm-b', 'fallback'], _offered, null),
       ('one slot gone', ['m-a', 'retired'], _offered, null),
-      ('a Hermes slot', [hermesSyntheticModel().id, 'm-a'], [
-        hermesSyntheticModel(),
-        _modelA,
-      ], null),
       // Two still make a comparison; the one that is gone is still explained.
       ('two usable slots and one gone', ['m-a', 'retired', 'm-b'], _offered, [
         'm-a',

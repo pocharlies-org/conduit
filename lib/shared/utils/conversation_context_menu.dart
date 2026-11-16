@@ -676,17 +676,6 @@ Future<void> _confirmAndDeleteConversation(
     } else {
       final api = ref.read(apiServiceProvider);
       if (api == null) throw Exception('No API service');
-      // Revoke first: a thrown DELETE can still mean the server committed and
-      // only its response was lost. A crash must not leave replayable proof for
-      // a remotely deleted conversation. Do not restore proof based on an HTTP
-      // status: 404 already means the chat is absent, while an auth-looking
-      // response may come from an intermediary after an ambiguous upstream
-      // outcome. Losing safe continuity is preferable to authorizing replay
-      // against a deleted or later-reused conversation id.
-      await chat.forgetMixedHermesConversationProvenance(
-        ref,
-        conversation: conversation,
-      );
       await api.deleteConversation(rawConversationId);
       ref
           .read(conversationsProvider.notifier)

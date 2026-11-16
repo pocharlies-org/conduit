@@ -24,7 +24,6 @@ import 'platform/flutter_app_lifecycle.dart';
 import 'platform/flutter_clipboard_port.dart';
 import 'platform/flutter_connectivity_port.dart';
 import 'platform/realtime_pcm_audio.dart';
-import 'platform/webrtc_realtime_media.dart';
 import 'platform/url_launcher_open_external_url_port.dart';
 import 'platform/flutter_cookie_jar.dart';
 import 'platform/flutter_flush_scheduler.dart';
@@ -54,12 +53,10 @@ import 'package:conduit_core/providers/host_ports.dart';
 import 'package:conduit_core/network/conduit_user_agent.dart';
 
 import 'core/persistence/hive_bootstrap.dart';
-import 'core/utils/model_logos.dart';
 
 import 'package:conduit_core/persistence/hive_prefs_migrator.dart';
 
 import 'package:conduit_core/persistence/persistence_migrator.dart';
-import 'package:conduit_core/persistence/persistence_keys.dart';
 
 import 'package:conduit_core/persistence/persistence_providers.dart';
 import 'package:conduit_core/persistence/preferences_store.dart';
@@ -70,14 +67,9 @@ import 'core/services/native_sheet_hydration_service.dart';
 import 'shared/services/flutter_ui_requests.dart';
 import 'shared/services/navigation_service.dart';
 import 'shared/services/raster_media_policy.dart';
-import 'platform/carplay_service.dart';
-import 'core/services/native_symbol_image_service.dart';
 
-import 'package:conduit_core/navigation/route_redirect.dart'
-    show accountChooserPending, setupWizardPending;
 import 'package:conduit_core/services/openwebui_seed.dart';
 import 'package:conduit_core/services/readiness_gated_secure_storage.dart';
-import 'package:conduit_core/features/chat/server_speech/direct_voice_provider_settings.dart';
 import 'package:conduit_core/features/chat/realtime_call/realtime_call_availability.dart';
 import 'package:conduit_core/services/settings_service.dart';
 import 'package:conduit_core/features/automations/providers/automation_providers.dart'
@@ -92,14 +84,8 @@ import 'package:conduit_core/sync/request_completion_runner_provider.dart';
 
 import 'core/utils/native_sheet_utils.dart'
     show
-        nativeAccountAddActionId,
-        nativeNoVoiceProviderId,
-        nativeVoiceProviderFieldIds,
-        nativeAccountServerActionId,
         nativeAccountSignOutActionId,
         nativeAccountSwitchActionId,
-        nativeDirectEditActionId,
-        nativeHermesUseActionId,
         nativeAdvancedFeaturesId,
         nativeCitationShowTitlesId,
         nativeMemoryEditorActionPrefix,
@@ -152,29 +138,17 @@ import 'package:conduit/l10n/app_localizations.dart';
 import 'platform/quick_actions_service.dart';
 import 'core/providers/app_startup_providers.dart';
 import 'features/notifications/services/local_notification_service.dart';
-import 'shared/widgets/sign_out_options_dialog.dart';
 import 'shared/theme/theme_extensions.dart';
 import 'shared/theme/theme_providers.dart';
 import 'platform/frame_profiler.dart';
-import 'features/direct_connections/providers/apple_pcc_providers.dart';
-import 'features/direct_connections/services/apple_pcc_adapter.dart'
-    show PigeonApplePccHost;
-
-import 'package:conduit_core/features/direct_connections/providers/direct_connection_providers.dart';
 
 import 'shared/services/app_package_info.dart';
 
-import 'package:conduit_core/features/hermes/providers/hermes_providers.dart';
-
-import 'features/hermes/services/hermes_dashboard_rest_bridge.dart';
-import 'features/hermes/widgets/hermes_connection_switcher.dart';
 import 'package:conduit_core/providers/openwebui_accounts_controller.dart';
 import 'package:conduit_core/providers/openwebui_route_resolver.dart'
     show openWebUiRouteResolverProvider;
 import 'core/services/background_streaming_handler.dart';
 import 'features/profile/widgets/account_actions.dart';
-import 'features/profile/widgets/account_sheet.dart'
-    show EditDirectConnectionRequest, showAccountSheet;
 
 const bool _enableFlutterDriverExtension = bool.fromEnvironment(
   'ENABLE_FLUTTER_DRIVER_EXTENSION',
@@ -235,7 +209,7 @@ void _registerBundledLicenses() {
 }
 
 /// Whether this device runs realtime voice calls' audio: the native engine
-/// and WebRTC exist on iOS and Android.
+/// exists on iOS and Android.
 bool get _hasRealtimeAudio =>
     !kIsWeb &&
     (defaultTargetPlatform == TargetPlatform.iOS ||
@@ -248,9 +222,6 @@ void main() {
   AudioPlaybackPort.hostFactory = JustAudioPlayback.new;
   BackgroundExecutionPort.hostDefault = const MobileBackgroundExecution();
   DisplayBoostPort.hostDefault = const IosDisplayBoost();
-  if (!kIsWeb && defaultTargetPlatform == TargetPlatform.iOS) {
-    NativeSymbolImageService.hostRenderer = renderNativeSymbolThroughChannel;
-  }
   LocationPort.hostDefault = const GeolocatorLocationPort();
   WakelockPort.hostDefault = const WakelockPlusPort();
   ShareStagingPort.hostDefault = IosShareStaging(
@@ -260,14 +231,11 @@ void main() {
   // The preference store is a host capability too; installed
   // before bootstrap awaits its first synchronous read.
   PreferencesStore.installLoader(FlutterKeyValueStore.load);
-  // Cuentas precargadas (OWU-104): el seed del build entra en el registry en
-  // el primer arranque, cuando nunca hubo nada guardado.
+  // Cuentas precargadas (OWU-104, y OWU-134 también con el registry vacío):
+  // el seed del build es la única configuración: el servidor Chat.
   OpenWebUiSeed.installLoader(
     () => rootBundle.loadString('assets/seed_accounts.json'),
   );
-  // Con más de una cuenta, el selector decide con cuál se entra en este
-  // arranque; lo consume el selector al elegir.
-  accountChooserPending = true;
 
   if (_enableFlutterDriverExtension) {
     enableFlutterDriverExtension();
@@ -288,8 +256,6 @@ void main() {
       unawaited(_configureUserAgent());
 
       _registerBundledLicenses();
-      // Read by the synchronous avatar resolver; awaited before runApp.
-      final modelLogosLoaded = ModelLogos.load();
       FrameProfiler.instance.attachFrameTimings();
       AndroidImeInsetResync.instance.install();
 
@@ -365,9 +331,6 @@ void main() {
       _startupTimeline?.instant('hive_ready');
       await preferencesFuture;
       _startupTimeline?.instant('prefs_ready');
-      // OWU-105: el asistente de configuración solo sale hasta completarlo.
-      setupWizardPending =
-          PreferencesStore.getBool(PreferenceKeys.setupWizardCompleted) != true;
       await platformUiFuture;
       _startupTimeline?.instant('platform_ui_ready');
 
@@ -429,21 +392,6 @@ void main() {
               }
             };
           }),
-          // Replies still being written in the background are Open WebUI's,
-          // which arrive through the active account's address.
-          addressChangeReplyGuardProvider.overrideWith((ref) {
-            return () {
-              try {
-                return (ref.read(isChatStreamingProvider) &&
-                        conversationUsesOpenWebUiStorage(
-                          ref.read(activeConversationProvider),
-                        )) ||
-                    BackgroundStreamingHandler.instance.hasActiveReplyStreams;
-              } catch (_) {
-                return false;
-              }
-            };
-          }),
           // Posted notifications deep-link into the account that posted them.
           hostActiveAccountChangedProvider.overrideWith((ref) {
             return (_) {
@@ -467,35 +415,8 @@ void main() {
           appLanguageTagProvider.overrideWith(
             (ref) => ref.watch(appLocaleProvider)?.toLanguageTag(),
           ),
-          // Apple Foundation Models through the Pigeon bridge
-          // (ios/Runner/PccBridge.swift); the adapter lives in conduit_core.
-          applePccHostProvider.overrideWith((ref) => PigeonApplePccHost()),
-          hostDirectProviderAdaptersProvider.overrideWith(
-            (ref) => [ref.watch(applePccAdapterProvider)],
-          ),
-          // The CarPlay scene's channel (ConduitCarPlayBridge.swift); the
-          // coordinator in conduit_core stays idle without it.
-          if (!kIsWeb && defaultTargetPlatform == TargetPlatform.iOS)
-            carPlayBridgeProvider.overrideWithValue(
-              const MethodChannelCarPlayBridge(),
-            ),
-          hostHermesDashboardBridgeFactoryProvider.overrideWith(
-            (ref) =>
-                ({required root, required accessHeaders}) =>
-                    HermesDashboardRestBridge(
-                      root: root,
-                      accessHeaders: accessHeaders,
-                    ),
-          ),
           clipboardPortProvider.overrideWithValue(const FlutterClipboardPort()),
           uiRequestPortProvider.overrideWithValue(const FlutterUiRequests()),
-          hermesConnectionSwitchPromptProvider.overrideWith(
-            (ref) =>
-                (name) => confirmHermesConnectionSwitch(
-                  ref.read(uiRequestPortProvider),
-                  name,
-                ),
-          ),
           routeNavigatorProvider.overrideWithValue(const GoRouterNavigator()),
           openExternalUrlProvider.overrideWithValue(
             const UrlLauncherOpenExternalUrlPort(),
@@ -537,19 +458,10 @@ void main() {
           realtimePcmAudioFactoryProvider.overrideWithValue(
             () => _hasRealtimeAudio ? MethodChannelRealtimePcmAudio() : null,
           ),
-          // Hermes's GPT-Live calls run over WebRTC.
-          realtimeWebRtcMediaFactoryProvider.overrideWithValue(
-            () => _hasRealtimeAudio ? WebRtcRealtimeMedia() : null,
-          ),
         ],
       );
-      // CarPlay can cold-launch Conduit without a visible Flutter scene, so
-      // install its method-channel handler before frame-scheduled startup work.
-      providerContainer.read(carPlayCoordinatorProvider);
-
       installConduitErrorWidgetBuilder();
 
-      await modelLogosLoaded;
       runApp(
         UncontrolledProviderScope(
           container: providerContainer,
@@ -607,15 +519,10 @@ class _ConduitAppState extends ConsumerState<ConduitApp> {
       case NativeSheetDismissed():
         _nativeSheetDraftValues.clear();
         break;
-      case NativeSheetControlChanged(
-        id: 'sign-out',
-        value: final bool keepServerDetails,
-      ):
-        unawaited(
-          _handleNativeSheetLogoutRequested(
-            keepServerDetails: keepServerDetails,
-          ),
-        );
+      case NativeSheetControlChanged(id: 'sign-out'):
+        // The native row's keep-server-details value no longer applies: the
+        // seeded server is always kept (OWU-134).
+        unawaited(_handleNativeSheetLogoutRequested());
       case NativeSheetControlChanged():
         _nativeSheetControlQueue = _nativeSheetControlQueue.then(
           (_) => _handleNativeSheetControlChanged(event),
@@ -638,33 +545,6 @@ class _ConduitAppState extends ConsumerState<ConduitApp> {
         if (context == null || value is! String) return true;
         await switchToSavedAccount(context, ref, value);
         return true;
-      case nativeAccountAddActionId:
-        if (context == null) return true;
-        await showAddAccountSheet(
-          context,
-          ref,
-          kind: value is String
-              ? AccountKind.values.asNameMap()[value] ?? AccountKind.openWebUi
-              : AccountKind.openWebUi,
-        );
-        return true;
-      case nativeAccountServerActionId:
-        if (value is! String) return true;
-        unawaited(
-          NavigationService.router.pushNamed<void>(
-            RouteNames.serverAddresses,
-            extra: value,
-          ),
-        );
-        return true;
-      case nativeHermesUseActionId:
-        if (context == null || value is! String) return true;
-        await useHermesConnection(context, ref, value);
-        return true;
-      case nativeDirectEditActionId:
-        if (context == null || value is! String) return true;
-        await showAccountSheet(context, EditDirectConnectionRequest(value));
-        return true;
       case nativeAccountSignOutActionId:
         if (context == null) return true;
         final accounts = await ref.read(openWebUiAccountsProvider.future);
@@ -676,24 +556,11 @@ class _ConduitAppState extends ConsumerState<ConduitApp> {
     return false;
   }
 
-  Future<void> _handleNativeSheetLogoutRequested({
-    bool? keepServerDetails,
-  }) async {
+  Future<void> _handleNativeSheetLogoutRequested() async {
     try {
-      var resolvedKeepServerDetails = keepServerDetails;
-      if (resolvedKeepServerDetails == null) {
-        final navigatorContext = NavigationService.context;
-        if (navigatorContext == null) {
-          throw StateError('Native sign-out navigator is unavailable.');
-        }
-        resolvedKeepServerDetails = await showSignOutOptionsDialog(
-          navigatorContext,
-        );
-      }
-      if (!mounted || resolvedKeepServerDetails == null) return;
-      await ref
-          .read(signOutCoordinatorProvider)
-          .signOut(keepServerDetails: resolvedKeepServerDetails);
+      // OWU-134: the seeded Chat server stays; the next boot lands on its
+      // sign-in, so there is no server-detail choice to ask about.
+      await ref.read(signOutCoordinatorProvider).signOut();
     } catch (error, stackTrace) {
       DebugLogger.error(
         'native-sign-out-failed',
@@ -769,26 +636,7 @@ class _ConduitAppState extends ConsumerState<ConduitApp> {
   ) async {
     final value = event.value;
     try {
-      // Accountless (Hermes, Direct, Apple) "Connect to Open WebUI" row.
-      // Dismiss the native sheet and route into the OWUI connect flow (the
-      // router allows the serverConnection route for accountless users).
-      if (event.id == 'add-owui-server') {
-        NavigationService.openOpenWebUIConnectFromNativeSheet();
-        return;
-      }
-
       if (await _handleNativeAccountAction(event.id, value)) return;
-
-      if (event.id == NativeSheetRoutes.directConnections) {
-        final request = directConnectionsNativeSheetNavigationRequest;
-        unawaited(
-          NavigationService.router.pushNamed<void>(
-            request.routeName,
-            extra: request.extra,
-          ),
-        );
-        return;
-      }
 
       if (event.id == NativeSheetRoutes.personalConnections) {
         // The sheet was built before this arrived, and Advanced or the
@@ -961,13 +809,6 @@ class _ConduitAppState extends ConsumerState<ConduitApp> {
       }
 
       switch (event.id) {
-        case NativeSheetRoutes.hermes:
-          unawaited(
-            NavigationService.router.pushNamed<void>(
-              RouteNames.hermesSettings,
-              extra: const NativeSheetNavigationOrigin(),
-            ),
-          );
         case NativeSheetRoutes.workspace:
           final capabilities = ref.read(workspaceCapabilitiesProvider).value;
           final permitted = capabilities == null
@@ -1103,21 +944,6 @@ class _ConduitAppState extends ConsumerState<ConduitApp> {
           if (mode != null) {
             await ref.read(appSettingsProvider.notifier).setVoiceCallMode(mode);
             await _refreshNativeVoiceDetail();
-          }
-        case 'voice-provider-connection':
-          if (value is String) {
-            await _chooseNativeVoiceProvider(value);
-            await _refreshNativeVoiceDetail(NativeSheetRoutes.voiceProvider);
-          }
-        case final id when nativeVoiceProviderFieldIds.containsKey(id):
-          final current = ref.read(appSettingsProvider).directVoiceProvider;
-          if (value is String && current != null) {
-            await ref
-                .read(appSettingsProvider.notifier)
-                .setDirectVoiceProvider(
-                  current.withField(nativeVoiceProviderFieldIds[id]!, value),
-                );
-            await _refreshNativeVoiceDetail(NativeSheetRoutes.voiceProvider);
           }
         case 'theme-light':
           switch (value) {
@@ -1265,30 +1091,6 @@ class _ConduitAppState extends ConsumerState<ConduitApp> {
   String? _normalizeOptionalNativeText(String? value) {
     final trimmed = value?.trim();
     return trimmed == null || trimmed.isEmpty ? null : trimmed;
-  }
-
-  /// Makes the connection with [profileId] the Voice provider, or clears it.
-  Future<void> _chooseNativeVoiceProvider(String profileId) async {
-    final notifier = ref.read(appSettingsProvider.notifier);
-    if (profileId == nativeNoVoiceProviderId) {
-      await notifier.setDirectVoiceProvider(null);
-      return;
-    }
-    // Connections still loading are not gone: the choice waits for them.
-    final profiles = ref.read(directConnectionProfilesProvider).value;
-    if (profiles == null) return;
-    final profile = profiles
-        .where(canBeVoiceProvider)
-        .where((profile) => profile.id == profileId)
-        .firstOrNull;
-    await notifier.setDirectVoiceProvider(
-      profile == null
-          ? null
-          : DirectVoiceProviderSettings.forConnection(
-              profile,
-              current: ref.read(appSettingsProvider).directVoiceProvider,
-            ),
-    );
   }
 
   /// Redraws the Voice pages from [detailId], the one the change came from.

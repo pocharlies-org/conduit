@@ -1,11 +1,6 @@
 import 'package:conduit_core/features/chat/providers/chat_providers.dart'
     show ComparisonAdmissionException, ComparisonAdmissionFailure;
 import 'package:conduit_core/features/chat/services/chat_comparison_service.dart';
-import 'package:conduit_core/features/direct_connections/providers/direct_connection_providers.dart'
-    show directModelRegistryProvider;
-import 'package:conduit_core/features/direct_connections/services/direct_model_registry.dart'
-    show hasReservedDirectIdentity;
-import 'package:conduit_core/features/hermes/models/hermes_model.dart';
 import 'package:conduit_core/models/chat_comparison.dart';
 import 'package:conduit_core/models/model.dart';
 import 'package:conduit_core/providers/app_providers.dart';
@@ -523,19 +518,11 @@ class _ComparisonSheetHeader extends StatelessWidget {
 // Setup
 // ---------------------------------------------------------------------------
 
-/// The models a comparison may use: the server's own, visible ones. Direct,
-/// Apple and Hermes models belong to other transports and are never mixed in.
-List<Model> comparisonCandidateModels(WidgetRef ref, List<Model> all) {
-  final registry = ref.read(directModelRegistryProvider);
-  return [
-    for (final model in all)
-      if (!model.isHidden &&
-          !isHermesModel(model) &&
-          registry.resolve(model) == null &&
-          !hasReservedDirectIdentity(model))
-        model,
-  ];
-}
+/// The models a comparison may use: the server's own, visible ones.
+List<Model> comparisonCandidateModels(List<Model> all) => [
+  for (final model in all)
+    if (!model.isHidden) model,
+];
 
 /// Asks which models to compare. Returns them in slot order, or null when the
 /// sheet is dismissed. Duplicates are allowed: the same model twice is a valid
@@ -548,7 +535,7 @@ Future<List<Model>?> showComparisonSetupSheet(
       ref.read(modelsProvider).asData?.value ??
       await ref.read(modelsProvider.future);
   if (!context.mounted) return null;
-  final candidates = comparisonCandidateModels(ref, all);
+  final candidates = comparisonCandidateModels(all);
   final selected = ref.read(selectedModelProvider);
   final initialFirst =
       selected != null && candidates.any((model) => model.id == selected.id)

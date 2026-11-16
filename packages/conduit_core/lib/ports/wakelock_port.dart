@@ -1,7 +1,7 @@
 /// Keeps the screen from locking while a response is being generated.
 ///
-/// Direct and Hermes generations run inside the app process, so a device that
-/// locks mid-response suspends the transport and loses the reply (#681). The
+/// Generations run inside the app process, so a device that locks
+/// mid-response suspends the transport and loses the reply (#681). The
 /// core decides *when* the screen must stay awake; holding it is a platform
 /// capability that only a host with a screen has.
 abstract interface class WakelockPort {
