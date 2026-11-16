@@ -3,11 +3,6 @@
   "appTitle": "Conduit",
   "serverIncompatibleTitle": "Server nie je podporovaný",
   "serverIncompatibleMessage": "Tento server používa Open WebUI {serverVersion}, čo je novšia verzia, než akú táto aplikácia podporuje (maximálne {maxVersion}).",
-  "serverIncompatibleResolution": "Ak chcete pokračovať, znížte verziu servera na {maxVersion} alebo staršiu, alebo počkajte na aktualizáciu aplikácie, ktorá pridá podporu.",
-  "serverIncompatibleConnectBlocked": "Tento server je novší, než akú verziu táto aplikácia podporuje (maximálne {maxVersion}).",
-  "serverIncompatibleRecheck": "Skontrolovať server znova",
-  "serverIncompatibleSwitchServer": "Použiť iný server",
-  "serverIncompatibleStillUnsupported": "Tento server je stále novší, než akú verziu táto aplikácia podporuje.",
   "@appTitle": {
     "description": "Application name displayed in the app and OS UI."
   },
@@ -85,9 +80,7 @@
     "description": "Button/title for signing out of the app."
   },
   "endYourSession": "Ukončiť reláciu",
-  "signOutOptionsDescription": "Odhlásením sa z tohto zariadenia odstránia nastavenia aplikácie a pripojenia Direct a Hermes. Uložené konverzácie a údaje na serveri zostanú bez zmeny.",
-  "keepServerDetails": "Ponechať údaje servera",
-  "keepServerDetailsDescription": "Adresa servera a necitlivé nastavenia pripojenia; tokeny a hlavičky Cookie sa odstránia",
+  "signOutOptionsDescription": "Odhlásením sa z tohto zariadenia odstránia nastavenia aplikácie a uložené účty. Uložené konverzácie a údaje na serveri zostanú bez zmeny.",
   "@endYourSession": {
     "description": "Subtitle explaining the sign-out action."
   },
@@ -98,10 +91,6 @@
   "autoSelect": "Poskytuje server",
   "@autoSelect": {
     "description": "Option to let the app pick a suitable model automatically."
-  },
-  "loadingModels": "Načítavajú sa modely...",
-  "@loadingModels": {
-    "description": "Progress message while fetching model list."
   },
   "failedToLoadModels": "Modely sa nepodarilo načítať",
   "@failedToLoadModels": {
@@ -195,10 +184,6 @@
       }
     }
   },
-  "noItems": "Žiadne položky",
-  "@noItems": {
-    "description": "Placeholder text when a list is empty."
-  },
   "noItemsToDisplay": "Žiadne položky na zobrazenie",
   "@noItemsToDisplay": {
     "description": "Alternative empty-state description."
@@ -223,21 +208,9 @@
   "@document": {
     "description": "Generic document label used in UI."
   },
-  "backToServerSetup": "Späť na nastavenie servera",
-  "@backToServerSetup": {
-    "description": "Button/back label to return to server configuration flow."
-  },
-  "connectedToServer": "Pripojené k serveru",
-  "@connectedToServer": {
-    "description": "Status label indicating a successful server connection."
-  },
   "signIn": "Prihlásiť sa",
   "@signIn": {
     "description": "Button/heading for sign-in flows."
-  },
-  "enterCredentials": "Zadajte prihlasovacie údaje na prístup k svojim AI konverzáciám",
-  "@enterCredentials": {
-    "description": "Instructional text on the sign-in screen."
   },
   "credentials": "Prihlasovacie údaje",
   "@credentials": {
@@ -264,113 +237,21 @@
   "@signInWithToken": {
     "description": "Alternative sign-in method using a JWT token."
   },
-  "connectToServer": "Pripojiť k serveru",
-  "@connectToServer": {
-    "description": "Call-to-action button for server connection."
-  },
   "serverUrl": "URL servera",
   "@serverUrl": {
     "description": "Label for server URL field."
-  },
-  "serverUrlHint": "https://your-server.com",
-  "@serverUrlHint": {
-    "description": "Hint text showing example server URL format."
-  },
-  "enterServerUrlSemantic": "Zadajte URL alebo IP adresu servera",
-  "@enterServerUrlSemantic": {
-    "description": "Semantic/ARIA label instructing to enter server URL or IP."
   },
   "headerName": "Názov hlavičky",
   "@headerName": {
     "description": "Label for custom header key."
   },
-  "headerValue": "Hodnota hlavičky",
-  "@headerValue": {
-    "description": "Label for custom header value."
-  },
-  "headerValueHint": "api-key-123 alebo Bearer token",
-  "@headerValueHint": {
-    "description": "Hint text with example header values, including API key or Bearer token."
-  },
-  "addHeader": "Pridať hlavičku",
-  "@addHeader": {
-    "description": "Button to add a new custom header row."
-  },
-  "maximumHeadersReached": "Dosiahnutý maximálny počet hlavičiek",
-  "@maximumHeadersReached": {
-    "description": "Warning when custom header limit is reached."
-  },
-  "removeHeader": "Odstrániť hlavičku",
-  "@removeHeader": {
-    "description": "Action to remove a custom header row."
-  },
   "connecting": "Pripája sa...",
   "@connecting": {
     "description": "Status while attempting to connect to server."
   },
-  "connectToServerButton": "Pripojiť k serveru",
-  "@connectToServerButton": {
-    "description": "Primary action button to initiate server connection."
-  },
-  "demoModeActive": "Aktívny demo režim",
-  "@demoModeActive": {
-    "description": "Banner/text indicating the app runs in demo mode."
-  },
-  "skipServerSetupTryDemo": "Preskočiť nastavenie servera a vyskúšať demo",
-  "@skipServerSetupTryDemo": {
-    "description": "CTA to bypass server configuration and enter demo mode."
-  },
-  "enterDemo": "Spustiť demo",
-  "@enterDemo": {
-    "description": "Button to enter demo mode."
-  },
-  "demoBadge": "Demo",
-  "@demoBadge": {
-    "description": "Small badge label for demo content."
-  },
-  "serverNotOpenWebUI": "Toto zrejme nie je server Open-WebUI.",
-  "@serverNotOpenWebUI": {
-    "description": "Validation error when the server does not resemble Open-WebUI."
-  },
-  "serverUrlEmpty": "URL servera nesmie byť prázdna",
-  "@serverUrlEmpty": {
-    "description": "Validation message for empty server URL."
-  },
-  "invalidUrlFormat": "Neplatný formát URL. Skontrolujte zadanie.",
-  "@invalidUrlFormat": {
-    "description": "Validation message when URL format is incorrect."
-  },
-  "onlyHttpHttps": "Podporované sú iba protokoly HTTP a HTTPS.",
-  "@onlyHttpHttps": {
-    "description": "Validation note restricting protocols to HTTP/HTTPS."
-  },
-  "serverAddressRequired": "Adresa servera je povinná (napr. 192.168.1.10 alebo example.com).",
-  "@serverAddressRequired": {
-    "description": "Validation hint providing examples for server addresses."
-  },
-  "portRange": "Port musí byť v rozsahu 1 až 65535.",
-  "@portRange": {
-    "description": "Validation message for allowed port range."
-  },
-  "invalidIpFormat": "Neplatný formát IP adresy. Použite formát ako 192.168.1.10.",
-  "@invalidIpFormat": {
-    "description": "Validation message for IP addresses with example."
-  },
   "couldNotConnectGeneric": "Nepodarilo sa pripojiť. Skontrolujte adresu a skúste to znova.",
   "@couldNotConnectGeneric": {
     "description": "Generic failure when connecting to the server."
-  },
-  "weCouldntReachServer": "Server nie je dostupný. Skontrolujte pripojenie a overte, že server beží.",
-  "@weCouldntReachServer": {
-    "description": "Connectivity error with hints to verify server status."
-  },
-  "connectionTimedOut": "Časový limit pripojenia vypršal. Server môže byť zaneprázdnený alebo blokovaný firewallom.",
-  "@connectionTimedOut": {
-    "description": "Timeout error while connecting to server."
-  },
-  "useHttpOrHttpsOnly": "Používajte iba http:// alebo https://.",
-  "@useHttpOrHttpsOnly": {
-    "description": "Note instructing the user to include protocol in URL."
   },
   "loginFailed": "Prihlásenie zlyhalo",
   "@loginFailed": {
@@ -522,6 +403,10 @@
       }
     }
   },
+  "startChattingGreeting": "Start chatting",
+  "@startChattingGreeting": {
+    "description": "Heading shown on the empty chat page when the account has no display name."
+  },
   "attachmentLabel": "Príloha",
   "@attachmentLabel": {
     "description": "Label shown beside attachment chips in messages."
@@ -566,37 +451,9 @@
   "@voiceStatusListening": {
     "description": "Indicates the app is actively listening during voice input."
   },
-  "voiceStatusRecording": "Nahrávanie…",
-  "@voiceStatusRecording": {
-    "description": "Indicates the app is recording audio for speech recognition."
-  },
   "voiceHoldToTalk": "Podržte a hovorte",
   "@voiceHoldToTalk": {
     "description": "Toggle label for hold-to-talk mode in voice input."
-  },
-  "voiceAutoSend": "Automaticky odoslať",
-  "@voiceAutoSend": {
-    "description": "Toggle label for automatically sending the final transcript."
-  },
-  "voiceTranscript": "Prepis",
-  "@voiceTranscript": {
-    "description": "Label above the transcribed voice input text."
-  },
-  "voicePromptSpeakNow": "Hovorte teraz…",
-  "@voicePromptSpeakNow": {
-    "description": "Placeholder prompting the user to start speaking."
-  },
-  "voicePromptTapStart": "Začnite klepnutím na Štart",
-  "@voicePromptTapStart": {
-    "description": "Placeholder instructing the user to tap Start to begin recording."
-  },
-  "voiceActionStop": "Zastaviť",
-  "@voiceActionStop": {
-    "description": "Button label to stop voice recording."
-  },
-  "voiceActionStart": "Spustiť",
-  "@voiceActionStart": {
-    "description": "Button label to start voice recording."
   },
   "voiceCallTitle": "Hlasový hovor",
   "@voiceCallTitle": {
@@ -609,10 +466,6 @@
   "voiceCallResume": "Pokračovať",
   "@voiceCallResume": {
     "description": "Button label to resume a paused voice call."
-  },
-  "voiceCallStop": "Zastaviť",
-  "@voiceCallStop": {
-    "description": "Button label to stop the active voice call."
   },
   "voiceCallEnd": "Ukončiť hovor",
   "@voiceCallEnd": {
@@ -645,10 +498,6 @@
   "voiceCallDisconnected": "Odpojené",
   "@voiceCallDisconnected": {
     "description": "Status label shown when the voice call has ended or disconnected."
-  },
-  "voiceCallErrorHelp": "Skontrolujte, prosím:\n• Je povolený prístup k mikrofónu\n• Rozpoznávanie reči je na vašom zariadení dostupné\n• Ste pripojení k serveru",
-  "@voiceCallErrorHelp": {
-    "description": "Guidance shown when the voice call encounters an error."
   },
   "messageHintText": "Opýtať sa Conduitu",
   "@messageHintText": {
@@ -690,10 +539,6 @@
   "@webPage": {
     "description": "Attach a web page label."
   },
-  "pasteImage": "Vložiť obrázok",
-  "@pasteImage": {
-    "description": "Context menu action to paste an image from the clipboard."
-  },
   "apiUnavailable": "Služba API nie je dostupná",
   "@apiUnavailable": {
     "description": "Shown when backend API service is unavailable."
@@ -729,14 +574,6 @@
   "failedToDecodeImage": "Obrázok sa nepodarilo dekódovať",
   "@failedToDecodeImage": {
     "description": "Error when decoding image bytes/base64."
-  },
-  "invalidImageFormat": "Neplatný formát obrázka",
-  "@invalidImageFormat": {
-    "description": "Error when image type/format is not supported."
-  },
-  "emptyImageData": "Prázdne dáta obrázka",
-  "@emptyImageData": {
-    "description": "Error when image data buffer is empty."
   },
   "confirm": "Potvrdiť",
   "@confirm": {
@@ -853,10 +690,6 @@
   "reviewerMode": "REŽIM RECENZENTA",
   "@reviewerMode": {
     "description": "Developer/reviewer mode indicator."
-  },
-  "selectLanguage": "Vybrať jazyk",
-  "@selectLanguage": {
-    "description": "Dialog title to pick application language."
   },
   "newFolder": "Nový priečinok",
   "@newFolder": {
@@ -986,10 +819,6 @@
   "@russian": {
     "description": "Language name: Russian."
   },
-  "chinese": "Čínština",
-  "@chinese": {
-    "description": "Language name: Chinese."
-  },
   "chineseSimplified": "Čínština (zjednodušená)",
   "@chineseSimplified": {
     "description": "Language name: Chinese (Simplified)."
@@ -1063,10 +892,6 @@
   "aboutApp": "O aplikácii",
   "@aboutApp": {
     "description": "Settings tile title to view app information."
-  },
-  "aboutAppSubtitle": "Informácie o Conduite a odkazy",
-  "@aboutAppSubtitle": {
-    "description": "Subtitle/description for the About section."
   },
   "web": "Web",
   "@web": {
@@ -1210,10 +1035,6 @@
   "@passwordHint": {
     "description": "Hint text for password input."
   },
-  "enterToken": "Zadajte svoj token JWT",
-  "@enterToken": {
-    "description": "Hint text for JWT token input."
-  },
   "tokenHint": "Token JWT získate v nastaveniach Open WebUI. Kľúče API (sk-...) nie sú pre streamovanie podporované.",
   "@tokenHint": {
     "description": "Help text explaining what type of token to use."
@@ -1234,124 +1055,13 @@
   "@signingIn": {
     "description": "Status message shown while signing in."
   },
-  "advancedSettings": "Pokročilé nastavenia",
-  "@advancedSettings": {
-    "description": "Section that contains additional/optional configuration."
-  },
   "customHeaders": "Vlastné hlavičky",
   "@customHeaders": {
     "description": "Section title for adding custom HTTP headers."
   },
-  "customHeadersDescription": "Pridajte vlastné HTTP hlavičky pre overovanie, kľúče API alebo špeciálne požiadavky servera.",
-  "@customHeadersDescription": {
-    "description": "Helper text explaining use-cases for custom headers."
-  },
   "allowSelfSignedCertificates": "Dôverovať certifikátom podpísaným vlastným podpisom",
   "@allowSelfSignedCertificates": {
     "description": "Toggle label that allows trusting self-signed TLS certificates for the configured server."
-  },
-  "allowSelfSignedCertificatesDescription": "Prijať certifikát TLS tohto servera, aj keď je podpísaný vlastným podpisom. Zapínajte iba pri serveroch, ktorým dôverujete.",
-  "@allowSelfSignedCertificatesDescription": {
-    "description": "Helper text clarifying the risks of enabling the self-signed certificate toggle."
-  },
-  "mutualTlsSectionTitle": "Klientsky certifikát mTLS",
-  "@mutualTlsSectionTitle": {
-    "description": "Section title for configuring a client certificate and private key for mutual TLS."
-  },
-  "mutualTlsSectionDescription": "Pripojte reťazec certifikátov PEM a súkromný kľúč PEM, ak váš server pri nastavovaní pripojenia vyžaduje vzájomné TLS.",
-  "@mutualTlsSectionDescription": {
-    "description": "Helper text explaining when to use the mTLS configuration section."
-  },
-  "mutualTlsSelectCertificate": "Vybrať certifikát",
-  "@mutualTlsSelectCertificate": {
-    "description": "Button label for picking a PEM client certificate chain file."
-  },
-  "mutualTlsSelectPrivateKey": "Vybrať súkromný kľúč",
-  "@mutualTlsSelectPrivateKey": {
-    "description": "Button label for picking a PEM private key file."
-  },
-  "mutualTlsCertificateReady": "Certifikát",
-  "@mutualTlsCertificateReady": {
-    "description": "Short label used in a badge once an mTLS certificate file has been selected."
-  },
-  "mutualTlsPrivateKeyReady": "Súkromný kľúč",
-  "@mutualTlsPrivateKeyReady": {
-    "description": "Short label used in a badge once an mTLS private key file has been selected."
-  },
-  "mutualTlsPrivateKeyPasswordHint": "Heslo súkromného kľúča (voliteľné)",
-  "@mutualTlsPrivateKeyPasswordHint": {
-    "description": "Placeholder for the optional password used to decrypt an mTLS private key."
-  },
-  "mutualTlsClearCredentials": "Vymazať súbory mTLS",
-  "@mutualTlsClearCredentials": {
-    "description": "Button label that removes selected mTLS certificate material from the form."
-  },
-  "mutualTlsMissingCredentialPair": "Na použitie mTLS vyberte klientsky certifikát aj súkromný kľúč.",
-  "@mutualTlsMissingCredentialPair": {
-    "description": "Validation message shown when only one half of the mTLS credential pair is configured."
-  },
-  "mutualTlsCertificatePemRequired": "Vybraný súbor certifikátu musí obsahovať reťazec certifikátov PEM.",
-  "@mutualTlsCertificatePemRequired": {
-    "description": "Error shown when the selected mTLS certificate file does not look like PEM certificate content."
-  },
-  "mutualTlsPrivateKeyPemRequired": "Vybraný súbor súkromného kľúča musí obsahovať súkromný kľúč PEM.",
-  "@mutualTlsPrivateKeyPemRequired": {
-    "description": "Error shown when the selected mTLS private key file does not look like PEM private key content."
-  },
-  "mutualTlsFileReadFailed": "Vybraný súbor mTLS sa nepodarilo prečítať.",
-  "@mutualTlsFileReadFailed": {
-    "description": "Error shown when a picked certificate or key file cannot be read as text."
-  },
-  "mutualTlsHandshakeFailed": "Server odmietol prihlasovacie údaje mTLS. Overte, že certifikát, súkromný kľúč a heslo sú správne.",
-  "mutualTlsConnectionClosed": "Server ukončil spojenie pred odpoveďou. Ak vyžaduje klientsky certifikát, overte, že certifikát, súkromný kľúč a heslo sú správne.",
-  "@mutualTlsHandshakeFailed": {
-    "description": "Connection error shown when the TLS handshake fails while mTLS credentials are configured."
-  },
-  "headerNameTooLong": "Názov hlavičky je príliš dlhý (max. 64 znakov)",
-  "@headerNameTooLong": {
-    "description": "Validation message for header name length."
-  },
-  "headerNameInvalidChars": "Neplatný názov hlavičky. Používajte iba písmená, číslice a tieto symboly: !#$&-^_`|~",
-  "@headerNameInvalidChars": {
-    "description": "Validation message for invalid characters in header name."
-  },
-  "headerNameReserved": "Vyhradenú hlavičku „{key}“ nemožno prepísať",
-  "@headerNameReserved": {
-    "description": "Error when attempting to override a reserved HTTP header {key}.",
-    "placeholders": {
-      "key": {
-        "type": "String"
-      }
-    }
-  },
-  "headerValueTooLong": "Hodnota hlavičky je príliš dlhá (max. 1024 znakov)",
-  "@headerValueTooLong": {
-    "description": "Validation message for header value length."
-  },
-  "headerValueInvalidChars": "Hodnota hlavičky obsahuje neplatné znaky. Používajte iba tlačiteľné ASCII.",
-  "@headerValueInvalidChars": {
-    "description": "Validation message for invalid characters in header value."
-  },
-  "headerValueUnsafe": "Hodnota hlavičky zrejme obsahuje potenciálne nebezpečný obsah",
-  "@headerValueUnsafe": {
-    "description": "Security warning for suspicious header values."
-  },
-  "headerAlreadyExists": "Hlavička „{key}“ už existuje. Ak ju chcete aktualizovať, najprv ju odstráňte.",
-  "@headerAlreadyExists": {
-    "description": "Error when a custom header with key {key} already exists.",
-    "placeholders": {
-      "key": {
-        "type": "String"
-      }
-    }
-  },
-  "maxHeadersReachedDetail": "Je povolených maximálne 10 vlastných hlavičiek. Ak chcete pridať ďalšiu, niektoré odstráňte.",
-  "@maxHeadersReachedDetail": {
-    "description": "Explains the upper limit of custom headers."
-  },
-  "noModelsAvailable": "Nie sú dostupné žiadne modely",
-  "@noModelsAvailable": {
-    "description": "Shown when model list is empty or failed to load."
   },
   "followingSystem": "Podľa systému: {theme}",
   "@followingSystem": {
@@ -1422,10 +1132,6 @@
   "@currentlyUsingLightTheme": {
     "description": "Status text indicating light theme is active."
   },
-  "aboutConduit": "O Conduite",
-  "@aboutConduit": {
-    "description": "Dialog title for app information."
-  },
   "versionLabel": "Verzia: {version} ({build})",
   "@versionLabel": {
     "description": "Displays version and build number in the About dialog.",
@@ -1475,10 +1181,6 @@
   "appCustomization": "Prispôsobenie",
   "@appCustomization": {
     "description": "Title of the customization settings page."
-  },
-  "appCustomizationSubtitle": "Motív, jazyk, hlas a rýchle voľby",
-  "@appCustomizationSubtitle": {
-    "description": "Subtitle shown under App Customization tile and page header."
   },
   "quickActionsDescription": "Rýchle voľby v chate",
   "@quickActionsDescription": {
@@ -1636,18 +1338,6 @@
   "@ttsServerUnavailableWarning": {
     "description": "Warning shown when server text-to-speech is unavailable."
   },
-  "voiceProviderTitle": "Poskytovateľ hlasu",
-  "voiceProviderDescription": "Chaty Direct a Apple používajú toto pripojenie, keď je „Reč na text“ alebo „Text na reč“ nastavené na „Server“.",
-  "voiceProviderConnection": "Pripojenie",
-  "voiceProviderNone": "Žiadny",
-  "voiceProviderNoConnections": "Pridajte pripojenie Direct kompatibilné s OpenAI, aby ste ho tu mohli vybrať.",
-  "voiceProviderTranscriptionModel": "Model prepisu",
-  "voiceProviderSpeechModel": "Model syntézy reči",
-  "voiceProviderModelsHint": "Použite názvy modelov, ktoré uvádza váš poskytovateľ. Ak pole necháte prázdne, daný smer použije toto zariadenie.",
-  "voiceProviderRealtimeModel": "Model v reálnom čase",
-  "voiceProviderRealtimeInstructions": "Pokyny",
-  "voiceProviderRealtimeInstructionsHint": "Nechajte prázdne, aby sa použili pokyny Conduit.",
-  "voiceProviderRealtimeFooter": "Hovory v chatoch Direct a Apple vedie tento hlas a model prepisu vyššie mu pomáha sledovať, čo hovoríte.",
   "voiceCallModeTitle": "Hovory",
   "voiceCallModeRealtime": "V reálnom čase",
   "voiceCallModeStandard": "Štandardné",
@@ -2212,10 +1902,6 @@
   "@ldapUsernameHint": {
     "description": "Hint text for LDAP username field."
   },
-  "moreSignInOptions": "Ďalšie možnosti prihlásenia",
-  "@moreSignInOptions": {
-    "description": "Section header for additional authentication methods."
-  },
   "ldapNotEnabled": "Overovanie LDAP nie je na tomto serveri povolené",
   "@ldapNotEnabled": {
     "description": "Error message when LDAP is not configured on the server."
@@ -2240,10 +1926,6 @@
   "@proxyAuthFailed": {
     "description": "Error message when proxy authentication fails."
   },
-  "proxyAuthHelpText": "Dokončite prihlásenie cez proxy vašej organizácie a potom sa prihláste do Open WebUI. Budete automaticky presmerovaní.",
-  "@proxyAuthHelpText": {
-    "description": "Help text explaining how to complete proxy authentication."
-  },
   "proxyAuthHelpTextSimple": "Prihláste sa cez proxy. Po overení pokračujte klepnutím na Pokračovať.",
   "@proxyAuthHelpTextSimple": {
     "description": "Simplified help text for proxy-only authentication flow."
@@ -2255,24 +1937,6 @@
   "proxyAuthRequired": "Tento server vyžaduje overenie cez proxy",
   "@proxyAuthRequired": {
     "description": "Message when server is behind an authentication proxy."
-  },
-  "proxyAuthRequiredDescription": "Server je zrejme za overovacou proxy (napr. oauth2-proxy). Najprv sa musíte prihlásiť cez proxy.",
-  "@proxyAuthRequiredDescription": {
-    "description": "Detailed explanation of proxy authentication requirement."
-  },
-  "authenticateThroughProxy": "Overiť",
-  "@authenticateThroughProxy": {
-    "description": "Button text to start proxy authentication."
-  },
-  "continueWithProvider": "Pokračovať cez {provider}",
-  "@continueWithProvider": {
-    "description": "Button text for OAuth provider sign-in.",
-    "placeholders": {
-      "provider": {
-        "type": "String",
-        "example": "Google"
-      }
-    }
   },
   "or": "alebo",
   "@or": {
@@ -2626,10 +2290,6 @@
   "@sidebarChatsTab": {
     "description": "Label for the Chats tab in the sidebar"
   },
-  "sidebarTerminalTab": "Terminál",
-  "@sidebarTerminalTab": {
-    "description": "Label for the Terminal tab in the sidebar"
-  },
   "sidebarNotesTab": "Poznámky",
   "@sidebarNotesTab": {
     "description": "Label for the Notes tab in the sidebar"
@@ -2655,110 +2315,6 @@
   "@sidebarChannelsTab": {
     "description": "Label for the Channels tab in the sidebar"
   },
-  "terminalSelectServer": "Vyberte terminálový server",
-  "@terminalSelectServer": {
-    "description": "Prompt shown when the user needs to choose a terminal server."
-  },
-  "terminalNoServersConfigured": "Nie sú dostupné žiadne terminálové servery.",
-  "@terminalNoServersConfigured": {
-    "description": "Empty state shown when there are no terminal servers configured."
-  },
-  "terminalConnectAction": "Pripojiť",
-  "@terminalConnectAction": {
-    "description": "Button label used to connect to a terminal session."
-  },
-  "terminalDisconnectAction": "Odpojiť",
-  "@terminalDisconnectAction": {
-    "description": "Button label used to disconnect from a terminal session."
-  },
-  "terminalConnectedStatus": "Pripojené",
-  "@terminalConnectedStatus": {
-    "description": "Status label shown when the terminal is connected."
-  },
-  "terminalDisconnectedStatus": "Odpojené",
-  "@terminalDisconnectedStatus": {
-    "description": "Status label shown when the terminal is disconnected."
-  },
-  "terminalConnectingStatus": "Pripája sa...",
-  "@terminalConnectingStatus": {
-    "description": "Status label shown while the terminal connection is being established."
-  },
-  "terminalUploadAction": "Nahrať",
-  "@terminalUploadAction": {
-    "description": "Action label for uploading a file into the terminal workspace."
-  },
-  "terminalOpenInBrowserAction": "Otvoriť v prehliadači",
-  "@terminalOpenInBrowserAction": {
-    "description": "Action label for opening a forwarded port in the browser."
-  },
-  "terminalHomeAction": "Domovský adresár",
-  "@terminalHomeAction": {
-    "description": "Tooltip for navigating back to the terminal home directory."
-  },
-  "terminalCurrentPathLabel": "Aktuálna cesta",
-  "@terminalCurrentPathLabel": {
-    "description": "Label displayed above the current terminal working directory."
-  },
-  "terminalPortsSectionLabel": "Počúvajúce porty",
-  "@terminalPortsSectionLabel": {
-    "description": "Section title for ports discovered in the terminal environment."
-  },
-  "terminalNoFiles": "V tomto adresári nie sú žiadne súbory.",
-  "@terminalNoFiles": {
-    "description": "Empty state shown when the current terminal directory has no files."
-  },
-  "terminalNoPorts": "Neboli zistené žiadne počúvajúce porty.",
-  "@terminalNoPorts": {
-    "description": "Empty state shown when the terminal server reports no listening ports."
-  },
-  "terminalPreviewUnavailable": "Ukážka nie je dostupná. Namiesto toho použite stiahnutie.",
-  "@terminalPreviewUnavailable": {
-    "description": "Message shown when a terminal file cannot be previewed inline."
-  },
-  "terminalFeatureDisabled": "Tento terminálový server nesprístupňuje interaktívny shell.",
-  "@terminalFeatureDisabled": {
-    "description": "Message shown when the selected terminal server disables interactive terminal sessions."
-  },
-  "terminalFolderNameHint": "Názov priečinka",
-  "@terminalFolderNameHint": {
-    "description": "Hint text used when creating a new folder in the terminal workspace."
-  },
-  "terminalFailedToLoadFiles": "Súbory terminálu sa nedajú načítať.",
-  "@terminalFailedToLoadFiles": {
-    "description": "Error message shown when the terminal file list cannot be loaded."
-  },
-  "terminalFailedToLoadPorts": "Počúvajúce porty sa nedajú načítať.",
-  "@terminalFailedToLoadPorts": {
-    "description": "Error message shown when terminal port discovery fails."
-  },
-  "terminalFailedToConnect": "K terminálu sa nedá pripojiť.",
-  "@terminalFailedToConnect": {
-    "description": "Error message shown when the terminal websocket session cannot be opened."
-  },
-  "terminalDownloadFailed": "Vybraný súbor sa nedá stiahnuť.",
-  "@terminalDownloadFailed": {
-    "description": "Error message shown when downloading a terminal file fails."
-  },
-  "terminalUploadFailed": "Vybraný súbor sa nedá nahrať.",
-  "@terminalUploadFailed": {
-    "description": "Error message shown when uploading a terminal file fails."
-  },
-  "terminalRenameFailed": "Vybranú položku sa nedá premenovať.",
-  "@terminalRenameFailed": {
-    "description": "Error message shown when renaming a file or folder in the terminal workspace fails."
-  },
-  "terminalDeleteFailed": "Vybranú položku sa nedá odstrániť.",
-  "@terminalDeleteFailed": {
-    "description": "Error message shown when deleting a file or folder in the terminal workspace fails."
-  },
-  "terminalFolderCreateFailed": "Priečinok sa nedá vytvoriť.",
-  "@terminalFolderCreateFailed": {
-    "description": "Error message shown when creating a new terminal folder fails."
-  },
-  "closeSidebar": "Zavrieť bočný panel",
-  "@closeSidebar": {
-    "description": "Tooltip for the sidebar close button"
-  },
   "channelCreateTitle": "Vytvoriť kanál",
   "@channelCreateTitle": {
     "description": "Title for the create channel dialog"
@@ -2774,10 +2330,6 @@
   "channelPrivate": "Súkromný kanál",
   "@channelPrivate": {
     "description": "Label for the private channel toggle"
-  },
-  "channelJoin": "Pripojiť sa ku kanálu",
-  "@channelJoin": {
-    "description": "Button label to join a channel"
   },
   "channelLeave": "Opustiť kanál",
   "@channelLeave": {
@@ -2840,10 +2392,6 @@
   "@channelSendError": {
     "description": "Error message when a channel message fails to send"
   },
-  "channelDeleted": "Tento kanál bol odstránený",
-  "@channelDeleted": {
-    "description": "Snackbar message when a viewed channel is deleted"
-  },
   "searchChannels": "Hľadať kanály...",
   "@searchChannels": {
     "description": "Hint text for the channel search field"
@@ -2865,20 +2413,6 @@
       "filename": {
         "type": "String",
         "example": "report.md"
-      }
-    }
-  },
-  "channelMessageHint": "Správa...",
-  "@channelMessageHint": {
-    "description": "Hint text for the channel message input field"
-  },
-  "audioUploadError": "Zvuk sa nepodarilo nahrať: {error}",
-  "@audioUploadError": {
-    "description": "Error message when audio upload fails",
-    "placeholders": {
-      "error": {
-        "type": "String",
-        "description": "The error message"
       }
     }
   },
@@ -2930,10 +2464,6 @@
   "@deleteSharedLinkFailed": {
     "description": "Snackbar shown when deleting a shared chat link fails."
   },
-  "systemPrompts": "Systémové prompty",
-  "@systemPrompts": {
-    "description": "Section title for server-backed system prompt settings."
-  },
   "globalSystemPrompt": "Globálny systémový prompt",
   "@globalSystemPrompt": {
     "description": "Title for the Open WebUI user-level system prompt setting."
@@ -2942,17 +2472,9 @@
   "@modelSystemPrompts": {
     "description": "Title for the Open WebUI model-level system prompts list."
   },
-  "folderSystemPrompts": "Systémové prompty priečinkov",
-  "@folderSystemPrompts": {
-    "description": "Title for the Open WebUI folder-level system prompts list."
-  },
   "openWebuiModelSettings": "Nastavenia modelov Open WebUI",
   "@openWebuiModelSettings": {
     "description": "Subtitle for model prompt settings before models load."
-  },
-  "openWebuiFolderSettings": "Nastavenia priečinkov Open WebUI",
-  "@openWebuiFolderSettings": {
-    "description": "Subtitle for folder prompt settings before folders load."
   },
   "accessibleModelsCount": "{count, plural, one{1 dostupný model} few{{count} dostupné modely} other{{count} dostupných modelov}}",
   "@accessibleModelsCount": {
@@ -2964,16 +2486,6 @@
       }
     }
   },
-  "accessibleFoldersCount": "{count, plural, one{1 dostupný priečinok} few{{count} dostupné priečinky} other{{count} dostupných priečinkov}}",
-  "@accessibleFoldersCount": {
-    "description": "Subtitle showing how many accessible folders are listed.",
-    "placeholders": {
-      "count": {
-        "type": "int",
-        "example": "3"
-      }
-    }
-  },
   "unableToLoadOpenWebuiSettings": "Nastavenia Open WebUI sa nedajú načítať.",
   "@unableToLoadOpenWebuiSettings": {
     "description": "Error shown when user settings cannot be loaded from Open WebUI."
@@ -2982,25 +2494,13 @@
   "@unableToLoadModels": {
     "description": "Error shown when server models cannot be loaded."
   },
-  "unableToLoadFolders": "Priečinky sa nedajú načítať.",
-  "@unableToLoadFolders": {
-    "description": "Error shown when server folders cannot be loaded."
-  },
   "noAccessibleModelsFound": "Nenašli sa žiadne dostupné modely.",
   "@noAccessibleModelsFound": {
     "description": "Empty state for model system prompt settings."
   },
-  "noAccessibleFoldersFound": "Nenašli sa žiadne dostupné priečinky.",
-  "@noAccessibleFoldersFound": {
-    "description": "Empty state for folder system prompt settings."
-  },
   "tapToLoadServerPromptSettings": "Klepnutím načítate nastavenia promptov servera.",
   "@tapToLoadServerPromptSettings": {
     "description": "Subtitle for model rows whose prompt details are loaded on demand."
-  },
-  "loadingFromOpenWebui": "Načítava sa z Open WebUI...",
-  "@loadingFromOpenWebui": {
-    "description": "Loading subtitle for server-backed settings."
   },
   "globalSystemPromptEditorDescription": "Uložené do používateľských nastavení Open WebUI a použité ako predvolený systémový prompt chatu.",
   "@globalSystemPromptEditorDescription": {
@@ -3066,13 +2566,9 @@
   "@personalization": {
     "description": "Title for the personalization settings page."
   },
-  "personalizationSubtitle": "Predvolený model, osobný prompt a pamäte",
   "defaultImageGenerationModel": "Predvolený model generovania obrázkov",
   "defaultImageGenerationModelDescription": "Zadajte ID obrázkového modelu OpenRouter. Ak chcete použiť predvolený model OpenRouter, nechajte pole prázdne.",
   "openRouterDefaultImageGenerationModel": "Predvolený model OpenRouter (openai/gpt-5-image)",
-  "@personalizationSubtitle": {
-    "description": "Subtitle for the personalization hub tile."
-  },
   "yourSystemPrompt": "Váš systémový prompt",
   "@yourSystemPrompt": {
     "description": "Label for the user's server-backed system prompt."
@@ -3166,10 +2662,6 @@
   "@audioSettingsTitle": {
     "description": "Title for the audio settings page."
   },
-  "audioSettingsSubtitle": "Reč na text a text na reč",
-  "@audioSettingsSubtitle": {
-    "description": "Subtitle for the audio settings hub tile."
-  },
   "accountSettingsTitle": "Účet",
   "@accountSettingsTitle": {
     "description": "Title for the account settings page."
@@ -3209,10 +2701,6 @@
   "avatarUrl": "URL avatara",
   "@avatarUrl": {
     "description": "Label for the avatar URL field."
-  },
-  "avatarUrlHint": "https://example.com/avatar.png",
-  "@avatarUrlHint": {
-    "description": "Hint text for the avatar URL field."
   },
   "bioLabel": "Bio",
   "@bioLabel": {
@@ -3262,10 +2750,6 @@
   "@selectBirthDate": {
     "description": "Placeholder for picking a birth date."
   },
-  "birthDateHint": "RRRR-MM-DD",
-  "@birthDateHint": {
-    "description": "Hint text for the birth date field."
-  },
   "currentAvatar": "Aktuálny avatar",
   "@currentAvatar": {
     "description": "Label shown above the current avatar preview."
@@ -3285,14 +2769,6 @@
   "avatarUploadFailed": "Avatar sa nepodarilo aktualizovať.",
   "@avatarUploadFailed": {
     "description": "Error shown when avatar selection or conversion fails."
-  },
-  "timezoneLabel": "Časové pásmo",
-  "@timezoneLabel": {
-    "description": "Label for the timezone field."
-  },
-  "timezoneHint": "Europe/Bratislava",
-  "@timezoneHint": {
-    "description": "Hint text for the timezone field."
   },
   "saveProfile": "Uložiť profil",
   "@saveProfile": {
@@ -3374,61 +2850,9 @@
   "@latestVersionLabel": {
     "description": "Label for the latest available version row."
   },
-  "deploymentIdLabel": "ID nasadenia",
-  "@deploymentIdLabel": {
-    "description": "Label for the deployment identifier row."
-  },
-  "defaultLocaleLabel": "Predvolená lokalizácia",
-  "@defaultLocaleLabel": {
-    "description": "Label for the server default locale row."
-  },
-  "userCountLabel": "Počet používateľov",
-  "@userCountLabel": {
-    "description": "Label for the server user count row."
-  },
-  "serverDefaultModelsLabel": "Predvolené modely",
-  "@serverDefaultModelsLabel": {
-    "description": "Label for the server default models row."
-  },
-  "loginFormLabel": "Prihlasovací formulár",
-  "@loginFormLabel": {
-    "description": "Label for whether the login form is enabled."
-  },
-  "passwordChangesLabel": "Zmeny hesla",
-  "@passwordChangesLabel": {
-    "description": "Label for whether password changes are enabled."
-  },
-  "apiKeysLabel": "Kľúče API",
-  "@apiKeysLabel": {
-    "description": "Label for whether API keys are enabled."
-  },
-  "audioInputLabel": "Zvukový vstup",
-  "@audioInputLabel": {
-    "description": "Label for whether speech-to-text is enabled on the server."
-  },
-  "audioOutputLabel": "Zvukový výstup",
-  "@audioOutputLabel": {
-    "description": "Label for whether text-to-speech is enabled on the server."
-  },
-  "speechToTextEngineLabel": "Modul reči na text",
-  "@speechToTextEngineLabel": {
-    "description": "Label for the server speech-to-text engine."
-  },
-  "textToSpeechEngineLabel": "Modul textu na reč",
-  "@textToSpeechEngineLabel": {
-    "description": "Label for the server text-to-speech engine."
-  },
-  "licenseMetadataLabel": "Metadáta licencie",
-  "@licenseMetadataLabel": {
-    "description": "Heading for server license metadata."
-  },
   "enabledLabel": "Povolené",
   "@enabledLabel": {
     "description": "Label for an enabled boolean value."
-  },
-  "disabledLabel": "Zakázané",
-  "@disabledLabel": {
-    "description": "Label for a disabled boolean value."
   },
   "noEmailLabel": "Žiadny e-mail",
   "@noEmailLabel": {
@@ -3932,27 +3356,8 @@
   "@securityCertificateError": {
     "description": "Error shown when the server TLS certificate cannot be trusted or verified."
   },
-  "terminalExpandAction": "Celá obrazovka",
-  "terminalReopenFullscreen": "Otvorené na celú obrazovku - ťuknutím znova otvoríte",
-  "terminalKeyTab": "Tab",
-  "terminalKeyUp": "Nahor",
-  "terminalKeyDown": "Nadol",
-  "terminalKeyCtrlC": "Ctrl-C",
-  "terminalCopyAction": "Kopírovať",
-  "terminalPasteAction": "Prilepiť",
-  "terminalNothingToCopy": "Nie je vybratý žiadny text na kopírovanie",
-  "terminalCopied": "Skopírované do schránky",
-  "terminalPasteWhileDisconnected": "Na prilepenie sa pripojte",
-  "terminalPortsToggle": "Počúvajúce porty",
-  "releaseNotesManualSubtitle": "Zabudovaný changelog pre verziu {currentVersion}",
-  "settingsCategoryApp": "Aplikácia",
-  "settingsCategoryAi": "AI",
-  "settingsCategoryServer": "Server",
-  "settingsCategorySupport": "Podpora",
   "settingsDataAndConnection": "Dáta a pripojenie",
   "settingsAppearance": "Vzhľad",
-  "settingsAppearanceSubtitle": "Motív, paleta farieb a jazyk",
-  "settingsChatSubtitle": "Správanie chatu, rýchle akcie a pokročilé prompty",
   "workspaceTitle": "Pracovný priestor",
   "workspaceSubtitle": "Manage server resources and access.",
   "workspaceModels": "Models",
@@ -3998,7 +3403,6 @@
   "workspaceEditorKeepEditing": "Keep editing",
   "workspaceEditorSaveTooltip": "Save changes",
   "workspaceEditorSaving": "Saving…",
-  "workspaceEditorMoreActions": "More actions",
   "workspaceImportChooseFile": "Choose JSON file",
   "workspaceImportPasteLabel": "Or paste JSON",
   "workspaceImportPasteHint": "Paste exported JSON here",
@@ -4394,10 +3798,6 @@
   "workspaceKnowledgeRoot": "Root",
   "@workspaceKnowledgeRoot": {
     "description": "Breadcrumb label for the top level of a knowledge base."
-  },
-  "workspaceKnowledgeAddMenu": "Add files",
-  "@workspaceKnowledgeAddMenu": {
-    "description": "Tooltip for the menu that adds files or folders to a knowledge base."
   },
   "workspaceKnowledgeUpload": "Upload file",
   "@workspaceKnowledgeUpload": {
@@ -4985,8 +4385,6 @@
   "workspaceValveNone": "None",
   "workspaceValveEnabled": "Enabled",
   "workspaceValveDisabled": "Disabled",
-  "noteConflictCopyBadge": "Konfliktná kópia",
-  "noteConflictCopySuffix": " (konfliktná kópia)",
   "notificationChannelDescription": "Upozorniť, keď niekto pošle správu v kanáli alebo súkromnej správe.",
   "notificationChannelMessagesDescription": "Odpovede, správy kanála a dokončené odpovede",
   "notificationChannelMessagesName": "Správy",
@@ -5006,20 +4404,8 @@
   "notificationsEnabledDescription": "Dostávať upozornenia, keď je aplikácia na pozadí a v aplikácii.",
   "notificationsEnabledTitle": "Zapnúť upozornenia",
   "notificationsPermissionDenied": "Upozornenia sú vypnuté v systémových nastaveniach.",
-  "notificationsSubtitle": "Upozornenia na odpovede, správy a dokončené odpovede",
   "notificationsTitle": "Upozornenia",
-  "hermesSecretsUnavailable": "Could not access saved Hermes credentials. Unlock secure storage and retry.",
-  "hermesAgentSettingsTitle": "Hermes Agent",
-  "hermesAgentSettingsSubtitle": "Connect a self-hosted Hermes agent",
-  "connectOpenWebUITitle": "Connect to Open WebUI",
-  "connectOpenWebUISubtitle": "Add a self-hosted Open WebUI server",
-  "backendChooserWelcome": "Welcome to Conduit",
-  "backendChooserPrompt": "Choose how you want to connect.",
-  "backendChooserOpenWebUISubtitle": "Use your self-hosted Open WebUI server with full chat, notes, and more.",
-  "backendChooserHermesTitle": "Use a Hermes Agent",
-  "backendChooserHermesSubtitle": "Connect directly to a self-hosted Hermes agent — no Open WebUI server needed.",
-  "hermesApprovalRequired": "Approval required",
-  "hermesApprovalFallback": "The agent is requesting permission to continue.",
+  "toolApprovalRequired": "Approval required",
   "openWebUiPromptOther": "Iné",
   "@openWebUiPromptOther": {
     "description": "Label for a free-form answer to an Open WebUI ask-user question."
@@ -5032,146 +4418,18 @@
   "@openWebUiPromptSubmit": {
     "description": "Action that submits all answers to an Open WebUI ask-user prompt."
   },
-  "hermesApprovalApproved": "Approved ✓",
-  "hermesApprovalDenied": "Denied",
-  "hermesApprovalApproveAction": "Approve",
-  "hermesApprovalDenyAction": "Deny",
-  "hermesEnableTitle": "Enable Hermes Agent",
-  "hermesEnableSubtitle": "Use your self-hosted Hermes agent as a model in the picker.",
-  "hermesServerUrlTitle": "Server URL",
-  "hermesApiKeyTitle": "API key",
-  "hermesConfiguredReplacePlaceholder": "Configured — enter to replace",
-  "hermesApiKeyPlaceholder": "Enter API key",
-  "hermesMemoryKeyTitle": "Memory key (optional)",
-  "hermesMemoryKeyPlaceholder": "Auto-generated if left blank",
-  "hermesCapabilitiesTitle": "Capabilities",
-  "hermesCapabilityApproval": "Approval",
-  "hermesCapabilitySkills": "Skills",
-  "hermesCapabilityToolsets": "Toolsets",
-  "hermesCapabilityJobs": "Jobs",
-  "hermesCapabilitySessions": "Sessions",
-  "hermesTabInfoTitle": "Conversations & Scheduled Agents",
-  "hermesTabInfoSubtitle": "Available in the Hermes tab once enabled.",
-  "hermesNativeSettingsSubtitle": "Connect directly to a self-hosted Hermes agent.",
-  "hermesSelfHostedAgentLabel": "Self-hosted agent",
-  "hermesNoConversationsMessage": "No Hermes conversations yet.\nStart a new chat with the Hermes Agent and it will appear here.",
-  "hermesConversationsTitle": "Conversations",
-  "hermesBotsTitle": "Boti",
-  "hermesConversationsLoadError": "Could not load Hermes conversations.\nCheck the connection in Settings → Hermes Agent.",
-  "hermesSchedulesLoading": "Loading schedules…",
-  "hermesSchedulesUnavailable": "Schedules unavailable",
-  "hermesNoSchedulesYet": "No schedules yet",
-  "hermesSchedulesSummary": "{active} active · {total, plural, =1{1 schedule} other{{total} schedules}}",
-  "hermesReviewSchedules": "Review schedules",
-  "hermesScheduledAgentsTitle": "Scheduled agents",
+  "toolApprovalApproveAction": "Approve",
+  "toolApprovalDenyAction": "Deny",
   "workspaceToolImportUrlHost": "Only GitHub tool URLs can be imported.",
-  "signInServerDescription": "Use your Open WebUI account to sign in to the server below.",
   "openWebUIServer": "Open WebUI server",
   "serverAddressUnavailable": "Server address unavailable",
   "showPassword": "Show password",
   "hidePassword": "Hide password",
-  "reviewerModeEnabled": "Reviewer mode enabled. You can open the demo without a server.",
-  "reviewerModeDisabled": "Reviewer mode disabled.",
   "openSourceLicenses": "Open source licenses",
-  "directConnectionsTitle": "Priame pripojenia",
-  "directConnectionsSubtitle": "Connect to OpenAI-compatible APIs and Ollama",
-  "directConnectionsDescription": "Connect to model providers without Open WebUI. Credentials are stored securely on this device and sent to the provider with requests.",
-  "directConnectionsCombinedDescription": "Pripojte sa priamo k poskytovateľom modelov pomocou pripojení synchronizovaných z Open WebUI alebo uložených iba v tomto zariadení.",
-  "openWebUiDirectConnectionsSectionTitle": "Server Open WebUI",
-  "openWebUiDirectConnectionsSectionDescription": "Uložené vo vašom účte Open WebUI a dostupné aj v ostatných prihlásených klientoch.",
-  "deviceDirectConnectionsSectionTitle": "V tomto zariadení",
-  "deviceDirectConnectionsSectionDescription": "Prihlasovacie údaje sú bezpečne uložené v tomto zariadení.",
-  "openWebUiDirectProfilesEmptyTitle": "Na serveri zatiaľ nie sú žiadne pripojenia",
-  "openWebUiDirectProfilesEmptySubtitle": "Pridajte pripojenie k API kompatibilnému s OpenAI, ktoré sa bude synchronizovať cez Open WebUI.",
-  "openWebUiDirectConnectionsLoadFailed": "Pripojenia z Open WebUI sa nepodarilo synchronizovať.",
-  "openWebUiDirectConnectionSourceLabel": "Open WebUI",
-  "deviceDirectConnectionSourceLabel": "Toto zariadenie",
-  "openWebUiDirectConnectionUnsupportedAuth": "Toto pripojenie používa spôsob overovania, ktorý Conduit nemôže bezpečne použiť.",
-  "directConnectionUnavailableLabel": "Nedostupné",
-  "openWebUiDirectConnectionEditorDescription": "Zmeny sa uložia do vášho účtu Open WebUI.",
-  "openWebUiDirectConnectionProviderDescription": "Používateľské pripojenia v Open WebUI podporujú API kompatibilné s OpenAI.",
-  "openWebUiDirectConnectionFallbackName": "Pripojenie Open WebUI",
-  "openWebUiDirectConnectionsUnavailable": "Pripojenia Open WebUI nie sú dostupné.",
-  "directConnectionNoLongerExists": "Toto pripojenie už neexistuje.",
-  "openWebUiDirectConnectionDeleteMessage": "Pripojenie {name} sa odstráni z vášho účtu Open WebUI aj z ostatných prihlásených klientov.",
-  "@openWebUiDirectConnectionDeleteMessage": {
-    "description": "Confirmation message shown before deleting an Open WebUI-synced direct connection.",
-    "placeholders": {
-      "name": {
-        "type": "String"
-      }
-    }
-  },
-  "addDirectConnection": "Add connection",
-  "editDirectConnection": "Edit connection",
-  "directConnectionName": "Connection name",
-  "directDefaultConnectionName": "Môj poskytovateľ",
   "sidebarButtonLabel": "Bočný panel",
-  "directConnectionNameRequired": "Enter a connection name.",
-  "directConnectionUrlInvalid": "Use a valid http:// or https:// URL.",
-  "directConnectionCredentialsReentryRequired": "Re-enter credentials when changing servers.",
-  "directConnectionApiKeyRequired": "Enter an API key or choose no authentication.",
-  "directConnectionHeaderNameRequired": "Enter a header name, then add the header.",
-  "directConnectionCredentialTransferTitle": "Use credentials with new server?",
-  "directConnectionCredentialTransferMessage": "This sends the API key and complete custom-header map to the new server. Only continue if you trust it.",
-  "directConnectionCredentialTransferConfirm": "Use credentials",
-  "directConnectionSaveFailed": "Could not save this connection.",
-  "directConnectionSaveConflict": "Toto pripojenie bolo zmenené inde. Pred uložením ho znova otvorte.",
-  "directConnectionReachFailed": "Could not reach the provider.",
-  "directConnectionDeleteTitle": "Delete connection?",
-  "directConnectionDeleteMessage": "This removes {name} and its credentials from this device.",
-  "directConnectionDeleteFailed": "Could not delete this connection.",
-  "directConnectionProbeConnected": "Connected",
-  "directConnectionProbeConnectedModels": "{count, plural, =1{Connected · 1 model} other{Connected · {count} models}}",
-  "directProvider": "Provider type",
-  "openAICompatible": "OpenAI-compatible",
   "ollama": "Ollama",
-  "openRouterProviderName": "OpenRouter",
-  "directApiBaseUrl": "Base URL",
-  "directOpenRouterUrlInvalid": "Použite koreňovú adresu HTTPS /api/v1 služby OpenRouter (globálnu alebo EÚ).",
-  "directOpenRouterBaseUrlDescription": "Používa váš kľúč API OpenRouter, overený katalóg modelov a nástroje spravované aplikáciou Conduit.",
-  "directOpenRouterChatCompletionsDescription": "Chat Completions sa používa na natívne vyhľadávanie na webe, generovanie obrázkov, analýzu PDF a opakovane použiteľné anotácie PDF.",
-  "directCompletionApi": "Completion API",
-  "directChatCompletions": "Chat Completions",
-  "directResponses": "Responses",
-  "directChatCompletionsDescription": "Works with OpenAI-compatible providers such as LM Studio, vLLM, LocalAI, and OpenRouter.",
-  "directResponsesDescription": "Use the typed Responses event stream. Choose this only when the provider exposes /responses.",
-  "directApiVersion": "API version",
-  "directApiVersionDescription": "Optional. Adds the api-version query parameter required by Azure OpenAI endpoints.",
-  "directAuthentication": "Authentication",
-  "noAuthentication": "No authentication",
-  "bearerToken": "Bearer token",
-  "directApiKeyHeader": "API-key header",
-  "directApiKeyHeaderDescription": "Sends the credential in the api-key header used by Azure OpenAI.",
-  "directApiKey": "API key",
-  "directCustomHeaders": "Custom headers",
-  "directManualModelIds": "Manual model IDs",
-  "directManualModelIdsDescription": "Voliteľné. Ak server nedokáže vypísať modely, zadajte jedno ID na riadok.",
-  "@directManualModelIdsDescription": {
-    "placeholders": {}
-  },
-  "directModelIdPrefix": "Model ID prefix",
-  "directModelIdPrefixDescription": "Optional. Adds a visible namespace such as studio.model-name without changing the model ID sent to the provider.",
-  "directModelTags": "Model tags",
-  "directModelTagsDescription": "Optional. Separate tags with commas or new lines.",
-  "syncDirectHistory": "Open WebUI history",
-  "syncDirectHistorySubtitle": "New direct chats sync when signed in. Existing chats keep their current location.",
-  "directHistoryLocalOnlySubtitle": "New direct chats stay on this device. Existing chats keep their current location.",
-  "backendChooserDirectTitle": "Connect directly",
-  "backendChooserDirectSubtitle": "Use an OpenAI-compatible API or Ollama without Open WebUI.",
-  "testDirectConnection": "Test connection",
-  "directConnectionTestUnavailable": "Connection testing is not available yet.",
-  "finishDirectSetup": "Start chatting",
-  "directProfilesEmptyTitle": "No direct connections yet",
-  "directProfilesEmptySubtitle": "Add an OpenAI-compatible or Ollama server to get started.",
-  "directConnectionsSectionTitle": "Connections",
-  "directSavedDataUnreadable": "The saved connection data could not be read.",
-  "directSecureStorageUnavailable": "Check secure storage access and try again.",
   "onDevice": "On device",
-  "directConnectionError": "Direct connection error",
-  "directAttachmentUnsupported": "This direct model does not support this attachment.",
-  "backendChooserOpenWebUITitle": "Open WebUI",
-  "hermesMemoryKeyDescription": "The memory key scopes the agent's long-term memory to you (X-Hermes-Session-Key). A stable key is generated automatically the first time you chat if you leave this blank.",
+  "openWebUi": "Open WebUI",
   "moreModels": "Viac modelov",
   "reasoningEffort": "Úroveň uvažovania",
   "reasoningEffortLow": "Nízka",
@@ -5191,113 +4449,9 @@
   "loadMermaidPreview": "Načítať ukážku Mermaid",
   "loadChartPreview": "Načítať ukážku grafu",
   "loadPdfPreview": "Načítať ukážku PDF: {title}",
-  "ollamaCloudDefaultName": "Ollama Cloud",
-  "ollamaCloudBaseUrlHint": "https://ollama.com",
-  "ollamaCloudBaseUrlDescription": "Pre Ollama Cloud použite https://ollama.com s kľúčom API.",
-  "ollamaModelLoaded": "Načítaný",
-  "ollamaModelActions": "Pamäť modelu",
-  "ollamaModelActionsDescription": "Spravujte tento model v pamäti RAM alebo VRAM služby Ollama.",
-  "ollamaLoadModel": "Načítať model",
-  "ollamaLoadModelDescription": "Načítajte ho teraz, aby bola prvá odpoveď rýchlejšia.",
-  "ollamaUnloadModel": "Uvoľniť model",
-  "ollamaUnloadModelDescription": "Uvoľnite jeho pamäť RAM alebo VRAM. Pri ďalšej správe sa automaticky načíta.",
-  "ollamaUnloadModelConfirmTitle": "Uvoľniť {name}?",
-  "ollamaUnloadModelConfirmMessage": "Týmto sa uvoľní pamäť RAM alebo VRAM modelu. Ollama ho automaticky načíta znova, keď odošlete správu.",
-  "ollamaKeepAlive": "Ponechať v pamäti",
-  "ollamaKeepAliveDescription": "Použije sa na tento model po každej požiadavke chatu.",
-  "ollamaKeepAliveServerDefault": "Predvolené nastavenie servera",
-  "ollamaKeepAliveFiveMinutes": "5 minút",
-  "ollamaKeepAliveThirtyMinutes": "30 minút",
-  "ollamaKeepAliveOneHour": "1 hodina",
-  "ollamaKeepAliveAlways": "Vždy načítaný",
-  "ollamaKeepAliveImmediate": "Uvoľniť po každej odpovedi",
-  "ollamaKeepAliveCustom": "Vlastné",
-  "ollamaKeepAliveCustomHint": "Príklady: 10m, 24h, 3600, -1 alebo 0",
-  "ollamaKeepAliveInvalid": "Použite sekundy alebo trvanie, napríklad 10m alebo 24h.",
-  "ollamaModelLoadedMessage": "Model {name} je načítaný.",
-  "ollamaModelUnloadedMessage": "Model {name} bol uvoľnený.",
-  "ollamaModelActionFailed": "Stav tohto modelu v pamäti sa nepodarilo aktualizovať.",
-  "ollamaThinking": "Uvažovanie",
-  "ollamaCloudModelActionsDescription": "Nastavte spôsob odpovedania tohto modelu Ollama Cloud.",
-  "ollamaThinkingDescription": "Vyberte, koľko uvažovania má model použiť. Dostupné úrovne závisia od modelu.",
   "ollamaThinkingAutomatic": "Automaticky",
-  "ollamaThinkingDisabled": "Vypnuté",
-  "ollamaThinkingLow": "Nízka",
-  "ollamaThinkingMedium": "Stredná",
-  "ollamaThinkingHigh": "Vysoká",
-  "ollamaThinkingMaximum": "Maximálna",
   "releaseNotesSupportPromptHeading": "Páči sa vám Conduit?",
   "releaseNotesSupportPromptMessage": "Krátka recenzia pomôže viacerým ľuďom objaviť Conduit. Malé prepitné mi pomáha pokračovať vo vývoji. Oboje pre mňa veľa znamená.",
-  "directConnectProvider": "Pripojiť poskytovateľa",
-  "directConnectProviderTitle": "Pripojiť poskytovateľa",
-  "directConnectionEnabledSubtitle": "Zobrazovať modely tohto pripojenia vo výbere modelov.",
-  "directConnectionDetailsTitle": "Podrobnosti pripojenia",
-  "directBaseUrlDescription": "Zahrňte predponu API očakávanú poskytovateľom, zvyčajne /v1.",
-  "directConfiguredReplacePlaceholder": "Nakonfigurované, nahraďte zadaním novej hodnoty",
-  "directApiKeyPlaceholder": "Zadajte kľúč API",
-  "hermesOnboardingFailed": "Nastavenie Hermes sa nepodarilo dokončiť. Skontrolujte zabezpečené úložisko a skúste to znova.",
-  "hermesConnectionDetailsTitle": "Podrobnosti pripojenia",
-  "hermesMemoryKeyShortDescription": "Priradí dlhodobú pamäť agenta k vám. Nechajte prázdne a Conduit vytvorí kľúč.",
-  "hermesConnectAction": "Pripojiť Hermes",
-  "hermesToolCount": "{count, plural, one{1 nástroj} few{{count} nástroje} other{{count} nástrojov}}",
-  "@hermesToolCount": {
-    "placeholders": {
-      "count": {
-        "type": "int"
-      }
-    }
-  },
-  "hermesNoToolsets": "Server neohlásil žiadne sady nástrojov.",
-  "hermesToolsetsNewSessions": "Zmeny sa použijú na nové relácie Hermes. Existujúce chaty si ponechajú svoje súčasné nástroje.",
-  "hermesServerStatusTitle": "Stav servera",
-  "hermesNoServerStatus": "Server neohlásil žiadny stav.",
-  "hermesLegacySessionToken": "Staršie tokeny relácie",
-  "hermesLegacySessionTokenHint": "Vložte token relácie Hermes",
-  "hermesGatewayStopped": "Nástenka Hermes je online, ale Desktop Gateway je zastavená. Spustite bránu na serveri Hermes a skúste to znova.",
-  "hermesProfile": "Profil Hermes",
-  "hermesProfileLabel": "Profil",
-  "hermesRefreshProfiles": "Obnoviť profily",
-  "hermesDesktopAuthentication": "Overenie pre počítač",
-  "hermesDashboardAuthHelp": "Otvorte nástenku Hermes v prihlasovacom okne a potom sa sem vráťte a otestujte pripojenie.",
-  "hermesAuthLegacy": "Staršie",
-  "hermesAuthNative": "Natívne",
-  "hermesAuthDashboard": "Nástenka",
-  "hermesNativeSignIn": "Prihlásiť sa cez Hermes",
-  "hermesDashboardSignIn": "Otvoriť prihlásenie do nástenky",
-  "hermesGatewayAccessHeaders": "Prístupové hlavičky brány",
-  "hermesGatewayAccessHeadersHelp": "Voliteľné hlavičky pre chránenú nástenku Hermes.",
-  "hermesDesktopGateway": "Desktop Gateway",
-  "hermesReloadSkills": "Znova načítať zručnosti",
-  "hermesNoInstalledSkills": "Žiadne nainštalované zručnosti",
-  "hermesMcpServers": "Servery MCP",
-  "hermesSignOut": "Odhlásiť sa z Hermes",
-  "hermesActionFailed": "Akcia Hermes zlyhala.",
-  "hermesToolsetUpdateFailed": "Aktualizácia sady nástrojov Hermes zlyhala.",
-  "hermesJobStateLabel": "Stav",
-  "hermesJobDeliveryLabel": "Doručenie",
-  "hermesJobLastLabel": "Posledné",
-  "hermesJobNextLabel": "Ďalšie",
-  "hermesJobRunHistory": "História spustení",
-  "hermesApprovalAllowOnce": "Povoliť raz",
-  "hermesApprovalAllowSession": "Povoliť pre reláciu",
-  "hermesApprovalAlwaysAllow": "Vždy povoliť",
-  "hermesClarificationTitle": "Hermes potrebuje spresnenie",
-  "hermesSudoTitle": "Hermes potrebuje prístup sudo",
-  "hermesSecretTitle": "Hermes potrebuje tajný kľúč",
-  "hermesMcpSetupTitle": "Hermes potrebuje nastavenie MCP",
-  "hermesResponseSent": "Odpoveď odoslaná",
-  "hermesNotNow": "Teraz nie",
-  "hermesSetUp": "Nastaviť",
-  "hermesSensitiveResponse": "Citlivá odpoveď",
-  "hermesResponse": "Odpoveď",
-  "hermesSendResponse": "Odoslať odpoveď",
-  "hermesFastTier": "Rýchla úroveň",
-  "hermesFastTierOn": "Zapnuté",
-  "hermesFastTierOff": "Vypnuté",
-  "hermesTurnSteer": "Nasmerovať",
-  "hermesTurnSendNext": "Odoslať ďalšie",
-  "hermesTurnControlsUnsupported": "Aktualizujte Hermes, aby ste povolili bezpečné ovládanie ťahov.",
-  "sidebarHermesTab": "Hermes",
   "markdownShowMoreLines": "{count, plural, one{Zobraziť 1 ďalší riadok} few{Zobraziť ďalšie {count} riadky} other{Zobraziť ďalších {count} riadkov}}",
   "@markdownShowMoreLines": {
     "placeholders": {
@@ -5319,222 +4473,10 @@
   "notificationRequiresSound": "Ak chcete zmeniť toto nastavenie, zapnite zvuk.",
   "enabled": "Zapnuté",
   "disabled": "Vypnuté",
-  "hermesJobNew": "Nová naplánovaná úloha",
-  "hermesJobAdminDisabled": "Správa úloh je na tomto serveri vypnutá. Plány sú iba na čítanie.",
-  "hermesJobEmptyMessage": "Vytvorte naplánovanú úlohu, ktorá automaticky spustí pokyn.",
-  "hermesJobLoadFailed": "Naplánované úlohy sa nepodarilo načítať. Skontrolujte pripojenie Hermes a skúste to znova.",
-  "hermesJobCreateFailed": "Naplánovanú úlohu sa nepodarilo vytvoriť.",
-  "hermesJobCreated": "Naplánovaná úloha bola vytvorená.",
-  "hermesJobPaused": "Pozastavené",
-  "hermesJobRunNow": "Spustiť teraz",
-  "hermesJobEdit": "Upraviť naplánovanú úlohu",
-  "hermesJobDelete": "Odstrániť naplánovanú úlohu",
-  "hermesJobResumeFailed": "Naplánovanú úlohu sa nepodarilo obnoviť.",
-  "hermesJobPauseFailed": "Naplánovanú úlohu sa nepodarilo pozastaviť.",
-  "hermesJobResumed": "Naplánovaná úloha bola obnovená.",
-  "hermesJobPausedSuccess": "Naplánovaná úloha bola pozastavená.",
-  "hermesJobRunFailed": "Naplánovanú úlohu sa nepodarilo spustiť.",
-  "hermesJobStarted": "Naplánovaná úloha bola spustená.",
-  "hermesJobUpdateFailed": "Naplánovanú úlohu sa nepodarilo aktualizovať.",
-  "hermesJobUpdated": "Naplánovaná úloha bola aktualizovaná.",
-  "hermesJobDeleteTitle": "Odstrániť úlohu",
-  "hermesJobDeleteMessage": "Odstrániť túto naplánovanú úlohu? Túto akciu nemožno vrátiť späť.",
-  "hermesJobDeleteFailed": "Naplánovanú úlohu sa nepodarilo odstrániť.",
-  "hermesJobDeleted": "Naplánovaná úloha bola odstránená.",
-  "hermesJobEditorEditTitle": "Upraviť úlohu",
-  "hermesJobNameHint": "Denný súhrn",
-  "hermesJobPromptLabel": "Pokyn",
-  "hermesJobPromptHint": "Čo má agent urobiť pri každom spustení?",
-  "hermesJobScheduleLabel": "Plán",
-  "hermesJobScheduleHint": "0 9 * * * alebo every 2h",
-  "hermesJobTooLong": "Použite najviac {count} znakov",
-  "hermesJobScheduleInvalid": "Zadajte trvanie, interval, dátum, čas alebo platný plán cron.",
-  "hermesJobScheduleHelp": "Použite cron (0 9 * * *), interval (every 2h), oneskorenie (30m) alebo dátum a čas ISO.",
-  "hermesJobsSheetSubtitle": "Pozastavte plány alebo skontrolujte, čo sa spustí ďalej.",
-  "hermesJobsSheetReview": "Skontrolujte časy spustenia a pozastavte plány.",
-  "hermesJobsManageDescription": "Vytvárajte, upravujte, spúšťajte alebo odstraňujte plány.",
-  "hermesJobsEmptyManageHint": "Pomocou možnosti Spravovať vytvorte naplánovaný pokyn.",
-  "hermesLastStatus": "Posledný stav: {status}",
-  "hermesSessionUntitled": "Konverzácia bez názvu",
-  "hermesSessionFork": "Rozvetviť",
-  "hermesSessionRenameTitle": "Premenovať konverzáciu",
-  "hermesSessionNameHint": "Názov konverzácie",
-  "hermesSessionDeleteTitle": "Odstrániť konverzáciu",
-  "hermesSessionDeleteMessage": "Odstrániť túto konverzáciu Hermes? Túto akciu nemožno vrátiť späť.",
-  "hermesSessionForkFailed": "Konverzáciu sa nepodarilo rozvetviť.",
-  "hermesSessionRenameFailed": "Konverzáciu sa nepodarilo premenovať.",
-  "hermesSessionDeleteFailed": "Konverzáciu sa nepodarilo odstrániť.",
-  "hermesSessionLoadFailed": "Túto konverzáciu sa nepodarilo načítať. Skontrolujte pripojenie a skúste to znova.",
-  "hermesMemoryKeyFieldLabel": "Kľúč pamäte",
-  "directMcpServersTitle": "MCP servers",
-  "directMcpEmptyTitle": "No MCP servers yet",
-  "directMcpReachabilityHelp": "Add a Streamable HTTP endpoint that this phone can reach.",
-  "directMcpEditorTitle": "Edit MCP server",
-  "directMcpAddTitle": "Add MCP server",
-  "directMcpName": "Server name",
-  "directMcpEndpoint": "Streamable HTTP endpoint",
-  "directMcpBearerToken": "Bearer token (optional)",
-  "directMcpCustomHeaders": "Custom headers (optional)",
-  "directMcpCustomHeadersHint": "One per line: Name: Value",
-  "directMcpTestConnection": "Test connection",
-  "directMcpTesting": "Testing connection…",
-  "directMcpTestSucceeded": "Connected — {count} tools found.",
-  "directMcpTestFailed": "Could not list tools from this MCP server.",
-  "directMcpSaveFailed": "Could not save this MCP server.",
-  "directMcpLoadFailed": "Could not load MCP servers from secure storage.",
-  "directMcpMissing": "This MCP server no longer exists.",
-  "directMcpCredentialTransferTitle": "Use credentials with new server?",
-  "directMcpCredentialTransferMessage": "This sends the bearer token and custom headers to the new server. Continue only if you trust it. Cancel saves the server without credentials.",
-  "directMcpCredentialTransferConfirm": "Use credentials",
-  "directMcpDeleteTitle": "Delete MCP server?",
-  "directMcpDeleteMessage": "This removes {name} and its credentials from this device.",
-  "directMcpDeleteFailed": "Could not delete this MCP server.",
-  "directMcpAuthMode": "Authentication",
   "directMcpAuthNone": "None",
   "directMcpAuthBearer": "Bearer token",
-  "directMcpAuthOAuth": "OAuth",
-  "directMcpOAuthConnect": "Connect in browser",
-  "directMcpOAuthReconnect": "Reconnect in browser",
-  "directMcpOAuthDisconnect": "Disconnect OAuth",
-  "directMcpOAuthPending": "Waiting for authorization in the browser…",
-  "directMcpOAuthConnected": "OAuth connected.",
-  "directMcpOAuthConnectionDetails": "Connected to {issuerHost} · {scopes}",
-  "directMcpOAuthNoScopes": "No scopes reported",
-  "directMcpOAuthConnectFailed": "Could not connect this MCP server with OAuth.",
-  "directMcpOAuthDisconnectFailed": "Could not disconnect OAuth from this MCP server.",
-  "directMcpApprovalTitle": "Tool approval",
-  "directMcpApprovalAllowOnce": "Allow once",
-  "directMcpApprovalAllowSession": "Allow for session",
-  "directMcpApprovalAllowAlways": "Always allow",
-  "directMcpApprovalAlwaysTitle": "Always allow this tool?",
-  "directMcpApprovalAlwaysMessage": "{serverName} will be allowed to run {toolName} without asking again. The approval is revoked automatically if the tool schema changes.",
-  "@directMcpApprovalAlwaysMessage": {
-    "placeholders": {
-      "serverName": {
-        "type": "String"
-      },
-      "toolName": {
-        "type": "String"
-      }
-    }
-  },
-  "directMcpApprovalSaveFailed": "Could not remember this approval. You can retry or choose another option.",
-  "directMcpApprovalDeny": "Deny",
-  "directMcpApprovalAllowed": "Allowed once",
-  "directMcpApprovalAllowedSession": "Allowed for session",
-  "directMcpApprovalAllowedAlways": "Always allowed",
-  "directMcpApprovalDenied": "Denied",
-  "directMcpApprovalExpired": "Approval expired",
-  "directMcpRememberedApprovalsTitle": "Always allowed tools",
-  "directMcpRememberedApprovalsSubtitle": "These exact tools can run without asking while their server and input schema remain unchanged.",
-  "directMcpRememberedApprovalRevoke": "Revoke",
-  "directMcpRememberedApprovalsRevokeAll": "Revoke all",
-  "directMcpRememberedApprovalRevokeFailed": "Could not revoke the remembered approval.",
-  "directMcpContentAction": "MCP content",
-  "directMcpContentTitle": "MCP content",
-  "directMcpContentServer": "MCP server",
-  "directMcpContentSearch": "Search prompts and resources",
-  "directMcpContentPrompts": "Prompts",
-  "directMcpContentResources": "Resources",
-  "directMcpContentEmpty": "This server has no prompts or resources.",
-  "directMcpContentNoMatches": "No matching prompts or resources.",
-  "directMcpContentLoadFailed": "Could not load content from this MCP server.",
-  "directMcpContentRefresh": "Refresh MCP content",
-  "directMcpContentPreviewTitle": "Preview",
-  "directMcpContentInsert": "Insert",
-  "directMcpContentPromptHeading": "MCP prompt from {serverName}: {promptName}",
-  "@directMcpContentPromptHeading": {
-    "placeholders": {
-      "serverName": {
-        "type": "String"
-      },
-      "promptName": {
-        "type": "String"
-      }
-    }
-  },
-  "directMcpContentResourceHeading": "MCP resource from {serverName}: {resourceUri}",
-  "@directMcpContentResourceHeading": {
-    "placeholders": {
-      "serverName": {
-        "type": "String"
-      },
-      "resourceUri": {
-        "type": "String"
-      }
-    }
-  },
-  "directMcpContentRoleUser": "User",
-  "directMcpContentRoleAssistant": "Assistant",
-  "directMcpContentRequestFailed": "Could not load this MCP content. Try again.",
-  "directMcpContentUnsupported": "This item is binary or unsupported. Choose a text prompt or text resource.",
-  "directMcpContentChanged": "This item changed on the server. Refresh and choose it again.",
-  "directMcpContentTooLarge": "This content is too large to insert.",
-  "directMcpContentComposerTooLarge": "The draft and this content exceed the 256 KiB message limit. Shorten the draft or content and try again.",
-  "directMcpContentLoading": "Loading MCP content…",
-  "directMcpInsecureCredentialsTitle": "Send credentials without encryption?",
-  "directMcpInsecureCredentialsMessage": "This server uses unencrypted HTTP. Your bearer token, OAuth token, and custom headers could be read or changed on the network.",
-  "directMcpInsecureCredentialsConfirm": "Send without encryption",
-  "hermesSessionTooLarge": "Táto konverzácia je príliš veľká na načítanie na tomto zariadení.",
-  "hermesSessionNotFound": "Táto konverzácia už nie je na serveri Hermes dostupná.",
-  "hermesSessionLoadFailedDetail": "Túto konverzáciu sa nepodarilo načítať: {detail}",
-  "@hermesSessionLoadFailedDetail": {
-    "placeholders": {
-      "detail": {
-        "type": "String"
-      }
-    }
-  },
-  "directBearerDescription": "Odošle prihlasovacie údaje v hlavičke Authorization: Bearer. Väčšina serverov kompatibilných s OpenAI (llama.cpp, vLLM, LM Studio, Ollama) to očakáva.",
-  "directApiKeyHeaderAzureOnlyDescription": "Odošle prihlasovacie údaje v hlavičke api-key. Používajte iba pre Azure OpenAI; ostatné servery kompatibilné s OpenAI očakávajú token Bearer.",
-  "appleOnDeviceUnavailable": "Apple On-Device nie je na tomto zariadení dostupný.",
-  "applePccContextSize": "Kontext {tokens} tokenov",
-  "@applePccContextSize": {
-    "description": "Apple PCC context size label.",
-    "placeholders": {
-      "tokens": {
-        "type": "String"
-      }
-    }
-  },
-  "applePccCurrentLanguageUnsupported": "Aktuálny jazyk zariadenia nemusí byť podporovaný.",
-  "applePccOnDeviceFallback": "Záloha v zariadení",
-  "applePccOnDeviceFallbackSubtitle": "Použiť menší model Apple v zariadení, keď je PCC nedostupné. Požiadavky s uvažovaním túto zálohu nikdy nepoužijú.",
-  "applePccQuotaApproaching": "Blížite sa k dennému limitu využitia",
-  "applePccQuotaReached": "Denný limit využitia vyčerpaný",
-  "applePccQuotaResetsAt": "Obnovenie: {time}",
-  "@applePccQuotaResetsAt": {
-    "description": "Apple PCC quota reset time.",
-    "placeholders": {
-      "time": {
-        "type": "String"
-      }
-    }
-  },
-  "applePccShowQuotaOptions": "Zobraziť možnosti využitia",
-  "applePccStatusAvailable": "Dostupné",
-  "applePccUnavailable": "Apple Private Cloud Compute nie je na tomto zariadení dostupný.",
-  "backendChooserAppleOnDeviceSubtitle": "Spustite súkromný model Apple priamo v tomto zariadení, aj bez pripojenia.",
-  "backendChooserAppleOnDeviceTitle": "Apple On-Device",
-  "backendChooserApplePccSubtitle": "Používajte súkromný cloudový model Apple bez kľúča API.",
-  "backendChooserApplePccTitle": "Apple Private Cloud Compute",
-  "backendChooserAppleSectionTitle": "Apple Intelligence",
-  "backendChooserModelApisSectionTitle": "API modelov",
-  "backendChooserSelfHostedSectionTitle": "Vlastné hostované služby",
   "citationShowTitles": "Zobrazovať názvy stránok pri citáciách",
   "citationShowTitlesDescription": "V odznakoch citácií používať názvy stránok namiesto domén webov",
-  "directContextCompactionDescription": "Tieto modely neuvádzajú veľkosť kontextového okna. Conduit použije zvolený limit na zhustenie starších správ skôr, než budú požiadavky príliš veľké.",
-  "directContextCompactionPickerDescription": "Vyberte kontextové okno, ktoré má Conduit použiť na automatické zhustenie.",
-  "directContextCompactionTitle": "Zhustenie kontextu",
-  "directContextLimit": "Limit kontextu: {tokens}",
-  "@directContextLimit": {
-    "description": "Provider-neutral model context limit label.",
-    "placeholders": {
-      "tokens": {
-        "type": "String"
-      }
-    }
-  },
   "notificationSystemSettingsDescription": "Zmeňte povolenia, zvuk a možnosti bannerov pre Conduit.",
   "notificationSystemSettingsOpenFailed": "Systémové nastavenia upozornení sa nepodarilo otvoriť.",
   "notificationTargetsTitle": "Ciele webhookov",
@@ -5609,35 +4551,6 @@
   "chatTaskInProgress": "Prebieha",
   "chatTaskCompleted": "Dokončené",
   "chatTaskCancelled": "Zrušené",
-  "webSearchSettingsFooterAuto": "Používajú modely Direct bez vlastného vyhľadávania na webe. Vyhľadávanie prebieha z tohto zariadenia: dopyty idú do DuckDuckGo, a ak neodpovie, do Brave, Bing, Mojeek alebo Wikipédie. Stránky, ktoré model číta, sa tiež načítavajú z tohto zariadenia.",
-  "webSearchSettingsFooterEngine": "Používajú modely Direct bez vlastného vyhľadávania na webe. Vyhľadávanie prebieha z tohto zariadenia a dopyty idú iba do {engine}. Stránky, ktoré model číta, sa tiež načítavajú z tohto zariadenia.",
-  "@webSearchSettingsFooterEngine": {
-    "placeholders": {
-      "engine": {
-        "type": "String",
-        "example": "DuckDuckGo"
-      }
-    }
-  },
-  "webSearchEngineLabel": "Vyhľadávač",
-  "webSearchEngineAuto": "Automaticky",
-  "webSearchSafeSearchLabel": "Bezpečné vyhľadávanie",
-  "webSearchSafeSearchStrict": "Prísne",
-  "webSearchSafeSearchModerate": "Stredné",
-  "webSearchSafeSearchOff": "Vypnuté",
-  "webSearchRegionLabel": "Oblasť",
-  "webSearchRegionAuto": "Podľa zariadenia",
-  "webSearchRegionWorldwide": "Celosvetovo",
-  "directModelToolsUnsupported": "Tento model nevie používať nástroje, a preto nemôže vyhľadávať na webe. Vypnite vyhľadávanie na webe a všetky nástroje a skúste to znova.",
-  "directContextCompactionModelCount": "{count, plural, one{{count} model} few{{count} modely} many{{count} modelu} other{{count} modelov}}",
-  "@directContextCompactionModelCount": {
-    "placeholders": {
-      "count": {
-        "type": "int",
-        "example": "42"
-      }
-    }
-  },
   "imageViewerPosition": "{current} z {total}",
   "@imageViewerPosition": {
     "placeholders": {
@@ -6403,38 +5316,9 @@
   "chatDataControlsUnsharedAll": "Všetky odkazy na zdieľanie boli odstránené.",
   "chatDataControlsDeletedAll": "Všetky chaty boli odstránené.",
   "notificationTargetMakeDefaultNeedsSave": "Ak to chcete nastaviť ako predvolené, najprv uložte zmeny.",
-  "hermesConnectionsSectionTitle": "Pripojenia",
-  "hermesAddConnection": "Pridať pripojenie",
-  "hermesNewConnectionTitle": "Nové pripojenie",
-  "hermesConnectionNameHint": "Zobrazuje sa vo výbere modelu a na bočnom paneli",
-  "hermesNoConnectionsTitle": "Žiadne pripojenia Hermes",
-  "hermesNoConnectionsSubtitle": "Pridajte server Hermes a chatujte so svojím agentom.",
-  "hermesActiveConnection": "Aktívne",
-  "hermesUseConnection": "Použiť toto pripojenie",
-  "hermesInactiveConnectionNotice": "Prepnite na toto pripojenie, aby ste videli jeho stav a mohli spravovať server.",
-  "hermesSignInActivatesConnection": "Prihlásením sa z neho stane aktívne pripojenie.",
-  "hermesDeleteConnectionTitle": "Odstrániť pripojenie?",
-  "hermesDeleteConnectionMessage": "Týmto z tohto zariadenia odstránite {name} a jeho prihlasovacie údaje.",
-  "hermesDeleteConnectionFailed": "Toto pripojenie sa nepodarilo odstrániť.",
-  "hermesSwitchConnectionFailed": "Na toto pripojenie sa nepodarilo prepnúť.",
-  "hermesSwitchConnectionTitle": "Prepnúť pripojenie",
-  "hermesSwitchConnectionPromptTitle": "Prepnúť na {name}?",
-  "hermesSwitchConnectionPromptMessage": "Relácia Hermes tohto chatu patrí k pripojeniu {name}. Prepnite, ak v nej chcete pokračovať, alebo ponechajte aktuálne pripojenie a začnite novú reláciu.",
-  "hermesSwitchConnectionConfirm": "Prepnúť",
-  "hermesKeepCurrentConnection": "Ponechať aktuálne",
   "accountsTitle": "Účty",
-  "accountChooserTitle": "Vyberte účet",
-  "accountsAddAccount": "Pridať účet",
-  "accountsManage": "Spravovať účty",
   "accountsSignedOut": "Odhlásené",
   "accountsActive": "Aktívny",
-  "accountsAddAccountTitle": "Pridať účet",
-  "accountsAddAccountMessage": "Prihláste sa do ďalšieho účtu na uloženom serveri alebo sa pripojte k novému.",
-  "accountsNewServer": "Nový server",
-  "accountsContinueWith": "Pokračovať na {server}",
-  "accountsKindDirect": "Priame",
-  "accountsAddOnThisServer": "Pridať účet na tomto serveri",
-  "accountsSwitch": "Prepnúť",
   "accountsSignOutOf": "Odhlásiť sa z účtu {name}",
   "accountsSignOutConfirmTitle": "Odhlásiť sa z účtu {name}?",
   "accountsSignOutConfirmMessage": "Účet a chaty, ktoré uložil, sa z tohto zariadenia odstránia. Ostatné účty zostanú prihlásené.",
@@ -6443,25 +5327,6 @@
   "accountsSwitchStopsReply": "Prepnutie účtu ju zastaví.",
   "accountsSignOutStopsReply": "Odhlásenie ju zastaví.",
   "accountsSwitchAnyway": "Napriek tomu prepnúť",
-  "accountsAddressChangeStopsReply": "Zmena používanej adresy ju zastaví.",
-  "accountsAddressChangeAnyway": "Napriek tomu zmeniť",
   "accountsSignOutAnyway": "Napriek tomu sa odhlásiť",
-  "accountsServerAddresses": "Adresy",
-  "accountsServerAddressesHelp": "Conduit sa pripojí cez prvú adresu, ktorá odpovie, počnúc zhora. Poradie zmeníte potiahnutím.",
-  "accountsAddAddress": "Pridať adresu",
-  "accountsEditAddress": "Upraviť adresu",
-  "accountsSaveAddress": "Uložiť adresu",
-  "accountsAddressInUse": "Používa sa",
-  "accountsAddressName": "Názov (voliteľné)",
-  "accountsAddressNameHint": "Domáca sieť, Tailscale…",
-  "accountsAddressDifferentServer": "Táto adresa vedie na iný server alebo k inému účtu na ňom.",
-  "accountsAddressNeedsSignIn": "Najprv sa prihláste do účtu na tomto serveri, aby bolo možné adresu overiť.",
-  "accountsRemoveAddress": "Odstrániť adresu",
-  "accountsRemoveAddressMessage": "Conduit prestane skúšať túto adresu. Vaše účty zostanú prihlásené.",
-  "accountsAddressConfirmTitle": "Overiť túto adresu?",
-  "accountsAddressConfirmMessage": "Aby Conduit overil, že {host} je tento server, pošle mu reláciu účtu uloženého v tomto zariadení. Pokračujte, len ak tejto adrese dôverujete.",
-  "accountsAddressConfirmAction": "Overiť adresu",
-  "setupWizardTitle": "Set up the app",
-  "setupWizardSubtitle": "Choose the account to enter with. You can change it later in Settings.",
   "proxyAuthInAppWebView": "Otvoriť v aplikácii"
 }

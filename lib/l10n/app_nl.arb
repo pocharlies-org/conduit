@@ -3,11 +3,6 @@
   "appTitle": "Conduit",
   "serverIncompatibleTitle": "Server niet ondersteund",
   "serverIncompatibleMessage": "Deze server draait Open WebUI {serverVersion}, wat nieuwer is dan deze app ondersteunt (tot {maxVersion}).",
-  "serverIncompatibleResolution": "Om door te gaan, zet je je server terug naar {maxVersion} of eerder, of wacht je op een app-update die ondersteuning toevoegt.",
-  "serverIncompatibleConnectBlocked": "Deze server is nieuwer dan deze app ondersteunt (tot {maxVersion}).",
-  "serverIncompatibleRecheck": "Server opnieuw controleren",
-  "serverIncompatibleSwitchServer": "Andere server gebruiken",
-  "serverIncompatibleStillUnsupported": "Deze server is nog steeds nieuwer dan deze app ondersteunt.",
   "retry": "Opnieuw proberen",
   "back": "Terug",
   "you": "Jij",
@@ -43,12 +38,9 @@
   "releaseNotesDoneButton": "Gereed",
   "signOut": "Uitloggen",
   "endYourSession": "Beëindig je sessie",
-  "signOutOptionsDescription": "Bij afmelden worden appvoorkeuren en Direct- en Hermes-verbindingen van dit apparaat gewist. Opgeslagen gesprekken en gegevens op je server blijven behouden.",
-  "keepServerDetails": "Servergegevens bewaren",
-  "keepServerDetailsDescription": "Serveradres en niet-gevoelige verbindingsinstellingen; tokens en Cookie-headers worden verwijderd",
+  "signOutOptionsDescription": "Bij afmelden worden appvoorkeuren en opgeslagen accounts van dit apparaat gewist. Opgeslagen gesprekken en gegevens op je server blijven behouden.",
   "defaultModel": "Standaardmodel",
   "autoSelect": "Serverstandaard",
-  "loadingModels": "Modellen laden...",
   "failedToLoadModels": "Kan modellen niet laden",
   "failedToLoadFiles": "Kan bestanden niet laden",
   "availableModels": "Beschikbare modellen",
@@ -58,17 +50,13 @@
   "errorMessage": "Er is iets misgegaan. Probeer het opnieuw.",
   "closeButtonSemantic": "Sluiten",
   "loadingContent": "Inhoud laden",
-  "noItems": "Geen items",
   "noItemsToDisplay": "Geen items om weer te geven",
   "knowledgeBase": "Kennisbank",
   "attachments": "Bijlagen",
   "files": "Bestanden",
   "takePhoto": "Foto maken",
   "document": "Document",
-  "backToServerSetup": "Terug naar serverinstelling",
-  "connectedToServer": "Verbonden met server",
   "signIn": "Inloggen",
-  "enterCredentials": "Voer je inloggegevens in om toegang te krijgen tot je AI-gesprekken",
   "credentials": "Inloggegevens",
   "apiKey": "API-sleutel",
   "token": "Token",
@@ -76,33 +64,10 @@
   "usernameOrEmail": "Gebruikersnaam of e-mail",
   "password": "Wachtwoord",
   "signInWithToken": "Inloggen met token",
-  "connectToServer": "Verbinden met server",
   "serverUrl": "Server-URL",
-  "serverUrlHint": "https://jouw-server.com",
-  "enterServerUrlSemantic": "Voer je server-URL of IP-adres in",
   "headerName": "Header-naam",
-  "headerValue": "Header-waarde",
-  "headerValueHint": "api-key-123 of Bearer token",
-  "addHeader": "Header toevoegen",
-  "maximumHeadersReached": "Maximum aantal headers bereikt",
-  "removeHeader": "Header verwijderen",
   "connecting": "Verbinden...",
-  "connectToServerButton": "Verbinden met server",
-  "demoModeActive": "Demomodus actief",
-  "skipServerSetupTryDemo": "Serverinstelling overslaan en demo proberen",
-  "enterDemo": "Demo starten",
-  "demoBadge": "Demo",
-  "serverNotOpenWebUI": "Dit lijkt geen Open-WebUI server te zijn.",
-  "serverUrlEmpty": "Server-URL mag niet leeg zijn",
-  "invalidUrlFormat": "Ongeldig URL-formaat. Controleer je invoer.",
-  "onlyHttpHttps": "Alleen HTTP- en HTTPS-protocollen worden ondersteund.",
-  "serverAddressRequired": "Serveradres is vereist (bijv. 192.168.1.10 of example.com).",
-  "portRange": "Poort moet tussen 1 en 65535 zijn.",
-  "invalidIpFormat": "Ongeldig IP-adresformaat. Gebruik een formaat zoals 192.168.1.10.",
   "couldNotConnectGeneric": "Kan geen verbinding maken. Controleer het adres en probeer het opnieuw.",
-  "weCouldntReachServer": "We konden de server niet bereiken. Controleer je verbinding en of de server actief is.",
-  "connectionTimedOut": "Verbinding time-out. De server is mogelijk druk of geblokkeerd door een firewall.",
-  "useHttpOrHttpsOnly": "Gebruik alleen http:// of https://.",
   "loginFailed": "Inloggen mislukt",
   "invalidCredentials": "Ongeldige gebruikersnaam of wachtwoord. Probeer het opnieuw.",
   "signInAccountPendingApproval": "Je account wacht op goedkeuring door een beheerder. Probeer het opnieuw zodra het is goedgekeurd.",
@@ -147,14 +112,7 @@
   "voiceInput": "Spraakinvoer",
   "voice": "Stem",
   "voiceStatusListening": "Luisteren...",
-  "voiceStatusRecording": "Opnemen...",
   "voiceHoldToTalk": "Houd ingedrukt om te praten",
-  "voiceAutoSend": "Automatisch verzenden",
-  "voiceTranscript": "Transcriptie",
-  "voicePromptSpeakNow": "Spreek nu...",
-  "voicePromptTapStart": "Tik op Start om te beginnen",
-  "voiceActionStop": "Stop",
-  "voiceActionStart": "Start",
   "messageHintText": "Vraag Conduit",
   "stopGenerating": "Stop met genereren",
   "codeCopiedToClipboard": "Code gekopieerd naar klembord.",
@@ -163,15 +121,12 @@
   "file": "Bestand",
   "photo": "Foto",
   "camera": "Camera",
-  "pasteImage": "Afbeelding plakken",
   "apiUnavailable": "API-service niet beschikbaar",
   "unableToLoadImage": "Kan afbeelding niet laden",
   "notAnImageFile": "Geen afbeeldingsbestand: {fileName}",
   "failedToLoadImage": "Kan afbeelding niet laden: {error}",
   "invalidDataUrl": "Ongeldig data-URL-formaat",
   "failedToDecodeImage": "Kan afbeelding niet decoderen",
-  "invalidImageFormat": "Ongeldig afbeeldingsformaat",
-  "emptyImageData": "Lege afbeeldingsgegevens",
   "confirm": "Bevestigen",
   "cancel": "Annuleren",
   "chatQueuedOfflineTitle": "Offline in wachtrij",
@@ -190,7 +145,6 @@
   "save": "Opslaan",
   "chooseModel": "Model kiezen",
   "reviewerMode": "BEOORDELAARSMODUS",
-  "selectLanguage": "Taal selecteren",
   "newFolder": "Nieuwe map",
   "folderName": "Mapnaam",
   "newChat": "Nieuwe chat",
@@ -223,7 +177,6 @@
   "espanol": "Español",
   "nederlands": "Nederlands",
   "russian": "Русский",
-  "chinese": "中文",
   "chineseSimplified": "Chinees (vereenvoudigd)",
   "chineseTraditional": "Chinees (traditioneel)",
   "korean": "한국어",
@@ -254,7 +207,6 @@
   "deleteFolderMessage": "Deze map en zijn toewijzingen worden verwijderd.",
   "failedToDeleteFolder": "Kan map niet verwijderen",
   "aboutApp": "Over",
-  "aboutAppSubtitle": "Conduit informatie en links",
   "web": "Web",
   "imageGen": "Afbeeldingsgeneratie",
   "pinned": "Vastgepind",
@@ -274,60 +226,16 @@
   "noConversationsYet": "Nog geen gesprekken",
   "usernameOrEmailHint": "Voer je gebruikersnaam of e-mail in",
   "passwordHint": "Voer je wachtwoord in",
-  "enterToken": "Voer je JWT-token in",
   "tokenHint": "Haal het JWT-token uit de Open WebUI-instellingen. API-sleutels (sk-...) worden niet ondersteund voor streaming.",
   "apiKeyNotSupported": "API-sleutels (sk-...) worden niet ondersteund. Gebruik in plaats daarvan een JWT-token.",
   "apiKeyNoLongerSupported": "Je bent uitgelogd omdat API-sleutels niet meer worden ondersteund. Log in met een JWT-token uit de Open WebUI-instellingen.",
   "tokenTooShort": "Token is te kort",
   "signingIn": "Inloggen...",
-  "advancedSettings": "Geavanceerde instellingen",
   "customHeaders": "Aangepaste headers",
-  "customHeadersDescription": "Voeg aangepaste HTTP-headers toe voor authenticatie, API-sleutels of speciale serververeisten.",
   "allowSelfSignedCertificates": "Vertrouw zelfondertekende certificaten",
   "@allowSelfSignedCertificates": {
     "description": "Schakelaar waarmee zelfondertekende TLS-certificaten voor de geconfigureerde server vertrouwd kunnen worden."
   },
-  "allowSelfSignedCertificatesDescription": "Accepteer het TLS-certificaat van deze server, zelfs als het zelfondertekend is. Schakel dit alleen in voor servers die je vertrouwt.",
-  "@allowSelfSignedCertificatesDescription": {
-    "description": "Hulptekst die de risico's van het inschakelen van de schakelaar voor zelfondertekende certificaten verduidelijkt."
-  },
-  "mutualTlsSectionTitle": "mTLS-clientcertificaat",
-  "mutualTlsSectionDescription": "Voeg een PEM-certificaatketen en PEM-privésleutel toe wanneer je server wederzijdse TLS vereist tijdens het opzetten van de verbinding.",
-  "mutualTlsSelectCertificate": "Certificaat selecteren",
-  "mutualTlsSelectPrivateKey": "Privésleutel selecteren",
-  "mutualTlsCertificateReady": "Certificaat",
-  "mutualTlsPrivateKeyReady": "Privésleutel",
-  "mutualTlsPrivateKeyPasswordHint": "Wachtwoord voor privésleutel (optioneel)",
-  "mutualTlsClearCredentials": "mTLS-bestanden wissen",
-  "mutualTlsMissingCredentialPair": "Selecteer zowel een clientcertificaat als een privésleutel om mTLS te gebruiken.",
-  "mutualTlsCertificatePemRequired": "Het geselecteerde certificaatbestand moet een PEM-certificaatketen bevatten.",
-  "mutualTlsPrivateKeyPemRequired": "Het geselecteerde privésleutelbestand moet een PEM-privésleutel bevatten.",
-  "mutualTlsFileReadFailed": "Kan het geselecteerde mTLS-bestand niet lezen.",
-  "mutualTlsHandshakeFailed": "De server heeft de mTLS-inloggegevens geweigerd. Controleer of het certificaat, de privésleutel en het wachtwoord correct zijn.",
-  "mutualTlsConnectionClosed": "De server heeft de verbinding gesloten voordat hij antwoordde. Als hij een clientcertificaat vereist, controleer dan of het certificaat, de privésleutel en het wachtwoord correct zijn.",
-  "headerNameTooLong": "Header-naam te lang (max 64 tekens)",
-  "headerNameInvalidChars": "Ongeldige header-naam. Gebruik alleen letters, cijfers en deze symbolen: !#$&-^_`|~",
-  "headerNameReserved": "Kan gereserveerde header '{key}' niet overschrijven",
-  "@headerNameReserved": {
-    "placeholders": {
-      "key": {
-        "type": "String"
-      }
-    }
-  },
-  "headerValueTooLong": "Header-waarde te lang (max 1024 tekens)",
-  "headerValueInvalidChars": "Header-waarde bevat ongeldige tekens. Gebruik alleen afdrukbare ASCII.",
-  "headerValueUnsafe": "Header-waarde lijkt mogelijk onveilige inhoud te bevatten",
-  "headerAlreadyExists": "Header '{key}' bestaat al. Verwijder deze eerst om bij te werken.",
-  "@headerAlreadyExists": {
-    "placeholders": {
-      "key": {
-        "type": "String"
-      }
-    }
-  },
-  "maxHeadersReachedDetail": "Maximaal 10 aangepaste headers toegestaan. Verwijder er enkele om meer toe te voegen.",
-  "noModelsAvailable": "Geen modellen beschikbaar",
   "followingSystem": "Volgt systeem: {theme}",
   "@followingSystem": {
     "placeholders": {
@@ -344,7 +252,6 @@
   "themeLight": "Licht",
   "currentlyUsingDarkTheme": "Momenteel donker thema in gebruik",
   "currentlyUsingLightTheme": "Momenteel licht thema in gebruik",
-  "aboutConduit": "Over Conduit",
   "versionLabel": "Versie: {version} ({build})",
   "@versionLabel": {
     "placeholders": {
@@ -373,7 +280,6 @@
   "analyzing": "Analyseren…",
   "analyzed": "Geanalyseerd",
   "appCustomization": "Aanpassing",
-  "appCustomizationSubtitle": "Thema, taal, stem en quick actions",
   "quickActionsDescription": "Snelkoppelingen in chat",
   "chatSettings": "Chat",
   "sendOnEnter": "Verzenden met Enter",
@@ -412,18 +318,6 @@
   "ttsEngineServerDescription": "Maakt spraak op de server van de chat: Open WebUI, Hermes of, bij Direct- en Apple-chats, de spraakprovider.",
   "ttsDeviceUnavailableWarning": "Spraaksynthese op het apparaat is niet beschikbaar op dit apparaat.",
   "ttsServerUnavailableWarning": "Verbind met een server met tekst-naar-spraak ingeschakeld om deze optie te gebruiken.",
-  "voiceProviderTitle": "Spraakprovider",
-  "voiceProviderDescription": "Direct- en Apple-chats gebruiken deze verbinding wanneer ‘Spraak naar tekst’ of ‘Tekst naar spraak’ op ‘Server’ staat.",
-  "voiceProviderConnection": "Verbinding",
-  "voiceProviderNone": "Geen",
-  "voiceProviderNoConnections": "Voeg een OpenAI-compatibele Direct-verbinding toe om die hier te kiezen.",
-  "voiceProviderTranscriptionModel": "Transcriptiemodel",
-  "voiceProviderSpeechModel": "Spraakmodel",
-  "voiceProviderModelsHint": "Gebruik de modelnamen die je provider vermeldt. Blijft een veld leeg, dan gebruikt die richting dit apparaat.",
-  "voiceProviderRealtimeModel": "Realtime-model",
-  "voiceProviderRealtimeInstructions": "Instructies",
-  "voiceProviderRealtimeInstructionsHint": "Laat leeg om die van Conduit te gebruiken.",
-  "voiceProviderRealtimeFooter": "Oproepen in Direct- en Apple-chats gebruiken deze stem, die met het transcriptiemodel hierboven volgt wat je zegt.",
   "voiceCallModeTitle": "Oproepen",
   "voiceCallModeRealtime": "Realtime",
   "voiceCallModeStandard": "Standaard",
@@ -507,10 +401,6 @@
   "voiceCallResume": "Hervatten",
   "@voiceCallResume": {
     "description": "Button label to resume a paused voice call."
-  },
-  "voiceCallStop": "Stoppen",
-  "@voiceCallStop": {
-    "description": "Button label to stop the active voice call."
   },
   "voiceCallEnd": "Oproep beëindigen",
   "@voiceCallEnd": {
@@ -853,10 +743,6 @@
   "@voiceCallDisconnected": {
     "description": "Status label shown when the voice call has ended or disconnected."
   },
-  "voiceCallErrorHelp": "Controleer het volgende:\n• Microfoonmachtigingen zijn toegestaan\n• Spraakherkenning is beschikbaar op je apparaat\n• Je bent verbonden met de server",
-  "@voiceCallErrorHelp": {
-    "description": "Guidance shown when the voice call encounters an error."
-  },
   "mermaidPreviewUnavailable": "Mermaid-voorbeeld is niet beschikbaar op dit platform.",
   "chartPreviewUnavailable": "Grafiekvoorbeeld is niet beschikbaar op dit platform.",
   "notes": "Notities",
@@ -953,10 +839,8 @@
   "signInWithLdap": "Aanmelden met LDAP",
   "ldapUsername": "Gebruikersnaam",
   "ldapUsernameHint": "Voer uw LDAP-gebruikersnaam in",
-  "moreSignInOptions": "Meer aanmeldopties",
   "ldapNotEnabled": "LDAP-authenticatie is niet ingeschakeld op deze server",
   "ssoPlatformNotSupported": "SSO-authenticatie wordt niet ondersteund op dit platform. Gebruik in plaats daarvan inloggegevens of LDAP-authenticatie.",
-  "continueWithProvider": "Doorgaan met {provider}",
   "or": "of",
   "usageInfo": "Info",
   "usageInfoTitle": "Antwoordstatistieken",
@@ -998,12 +882,9 @@
   "proxyAuthPlatformNotSupported": "Proxy-authenticatie vereist een mobiel apparaat. Authenticeer eerst via een browser.",
   "proxyAuthLoading": "Authenticatiepagina laden...",
   "proxyAuthFailed": "Proxy-authenticatie mislukt",
-  "proxyAuthHelpText": "Meld u aan via de proxy van uw organisatie en vervolgens bij Open WebUI. U wordt automatisch doorgestuurd.",
   "proxyAuthHelpTextSimple": "Meld u aan via uw proxy. Na authenticatie tikt u op Doorgaan om in te loggen.",
   "continueButton": "Doorgaan",
   "proxyAuthRequired": "Deze server vereist proxy-authenticatie",
-  "proxyAuthRequiredDescription": "Uw server lijkt achter een authenticatieproxy (zoals oauth2-proxy) te staan. U moet eerst inloggen via de proxy.",
-  "authenticateThroughProxy": "Authenticeren",
   "voiceOptions": "Spraakopties",
   "dictation": "Dicteren",
   "dictationDescription": "Spreek en converteer naar tekst in realtime",
@@ -1141,10 +1022,6 @@
   "chatSaved": "Chat opgeslagen in geschiedenis",
   "chatSaveFailed": "Chat opslaan mislukt",
   "sidebarChatsTab": "Chats",
-  "sidebarTerminalTab": "Terminal",
-  "@sidebarTerminalTab": {
-    "description": "Label for the Terminal tab in the sidebar"
-  },
   "sidebarNotesTab": "Notities",
   "sidebarChannelsTab": "Kanalen",
   "sidebarResizeHandle": "Breedte van zijbalk wijzigen",
@@ -1164,112 +1041,10 @@
       }
     }
   },
-  "closeSidebar": "Zijbalk sluiten",
-  "terminalSelectServer": "Selecteer een terminalserver",
-  "@terminalSelectServer": {
-    "description": "Prompt shown when the user needs to choose a terminal server."
-  },
-  "terminalNoServersConfigured": "Geen terminalservers beschikbaar.",
-  "@terminalNoServersConfigured": {
-    "description": "Empty state shown when there are no terminal servers configured."
-  },
-  "terminalConnectAction": "Verbinden",
-  "@terminalConnectAction": {
-    "description": "Button label used to connect to a terminal session."
-  },
-  "terminalDisconnectAction": "Verbinding verbreken",
-  "@terminalDisconnectAction": {
-    "description": "Button label used to disconnect from a terminal session."
-  },
-  "terminalConnectedStatus": "Verbonden",
-  "@terminalConnectedStatus": {
-    "description": "Status label shown when the terminal is connected."
-  },
-  "terminalDisconnectedStatus": "Verbinding verbroken",
-  "@terminalDisconnectedStatus": {
-    "description": "Status label shown when the terminal is disconnected."
-  },
-  "terminalConnectingStatus": "Verbinden...",
-  "@terminalConnectingStatus": {
-    "description": "Status label shown while the terminal connection is being established."
-  },
-  "terminalUploadAction": "Uploaden",
-  "@terminalUploadAction": {
-    "description": "Action label for uploading a file into the terminal workspace."
-  },
-  "terminalOpenInBrowserAction": "Openen in browser",
-  "@terminalOpenInBrowserAction": {
-    "description": "Action label for opening a forwarded port in the browser."
-  },
-  "terminalHomeAction": "Thuismap",
-  "@terminalHomeAction": {
-    "description": "Tooltip for navigating back to the terminal home directory."
-  },
-  "terminalCurrentPathLabel": "Huidig pad",
-  "@terminalCurrentPathLabel": {
-    "description": "Label displayed above the current terminal working directory."
-  },
-  "terminalPortsSectionLabel": "Luisterende poorten",
-  "@terminalPortsSectionLabel": {
-    "description": "Section title for ports discovered in the terminal environment."
-  },
-  "terminalNoFiles": "Geen bestanden in deze map.",
-  "@terminalNoFiles": {
-    "description": "Empty state shown when the current terminal directory has no files."
-  },
-  "terminalNoPorts": "Geen luisterende poorten gedetecteerd.",
-  "@terminalNoPorts": {
-    "description": "Empty state shown when the terminal server reports no listening ports."
-  },
-  "terminalPreviewUnavailable": "Voorvertoning niet beschikbaar. Gebruik Downloaden.",
-  "@terminalPreviewUnavailable": {
-    "description": "Message shown when a terminal file cannot be previewed inline."
-  },
-  "terminalFeatureDisabled": "Deze terminalserver biedt geen interactieve shell.",
-  "@terminalFeatureDisabled": {
-    "description": "Message shown when the selected terminal server disables interactive terminal sessions."
-  },
-  "terminalFolderNameHint": "Mapnaam",
-  "@terminalFolderNameHint": {
-    "description": "Hint text used when creating a new folder in the terminal workspace."
-  },
-  "terminalFailedToLoadFiles": "Kan terminalbestanden niet laden.",
-  "@terminalFailedToLoadFiles": {
-    "description": "Error message shown when the terminal file list cannot be loaded."
-  },
-  "terminalFailedToLoadPorts": "Kan luisterende poorten niet laden.",
-  "@terminalFailedToLoadPorts": {
-    "description": "Error message shown when terminal port discovery fails."
-  },
-  "terminalFailedToConnect": "Kan geen verbinding maken met de terminal.",
-  "@terminalFailedToConnect": {
-    "description": "Error message shown when the terminal websocket session cannot be opened."
-  },
-  "terminalDownloadFailed": "Kan het geselecteerde bestand niet downloaden.",
-  "@terminalDownloadFailed": {
-    "description": "Error message shown when downloading a terminal file fails."
-  },
-  "terminalUploadFailed": "Kan het geselecteerde bestand niet uploaden.",
-  "@terminalUploadFailed": {
-    "description": "Error message shown when uploading a terminal file fails."
-  },
-  "terminalRenameFailed": "Kan het geselecteerde item niet hernoemen.",
-  "@terminalRenameFailed": {
-    "description": "Error message shown when renaming a file or folder in the terminal workspace fails."
-  },
-  "terminalDeleteFailed": "Kan het geselecteerde item niet verwijderen.",
-  "@terminalDeleteFailed": {
-    "description": "Error message shown when deleting a file or folder in the terminal workspace fails."
-  },
-  "terminalFolderCreateFailed": "Kan de map niet aanmaken.",
-  "@terminalFolderCreateFailed": {
-    "description": "Error message shown when creating a new terminal folder fails."
-  },
   "channelCreateTitle": "Kanaal aanmaken",
   "channelName": "Kanaalnaam",
   "channelDescription": "Beschrijving",
   "channelPrivate": "Privékanaal",
-  "channelJoin": "Kanaal deelnemen",
   "channelLeave": "Kanaal verlaten",
   "channelDelete": "Kanaal verwijderen",
   "channelEdit": "Kanaal bewerken",
@@ -1284,7 +1059,6 @@
   "channelMessageDelete": "Verwijderen",
   "channelLoadError": "Kanalen konden niet worden geladen",
   "channelSendError": "Bericht kon niet worden verzonden",
-  "channelDeleted": "Dit kanaal is verwijderd",
   "searchChannels": "Kanalen zoeken...",
   "channelUnreadCount": "{count, plural, =1{1 ongelezen bericht} other{{count} ongelezen berichten}}",
   "channelCreateError": "Kanaal kon niet worden aangemaakt",
@@ -1303,8 +1077,6 @@
       }
     }
   },
-  "channelMessageHint": "Bericht...",
-  "audioUploadError": "Audio uploaden mislukt: {error}",
   "shareChat": "Chat delen",
   "@shareChat": {
     "description": "Dialog title and action label for sharing a chat."
@@ -1353,21 +1125,14 @@
   "@deleteSharedLinkFailed": {
     "description": "Snackbar shown when deleting a shared chat link fails."
   },
-  "systemPrompts": "Systeemprompts",
   "globalSystemPrompt": "Globale systeemprompt",
   "modelSystemPrompts": "Systeemprompts voor modellen",
-  "folderSystemPrompts": "Systeemprompts voor mappen",
   "openWebuiModelSettings": "Open WebUI-modelinstellingen",
-  "openWebuiFolderSettings": "Open WebUI-mapinstellingen",
   "accessibleModelsCount": "{count} toegankelijke modellen",
-  "accessibleFoldersCount": "{count} toegankelijke mappen",
   "unableToLoadOpenWebuiSettings": "Kan Open WebUI-instellingen niet laden.",
   "unableToLoadModels": "Kan modellen niet laden.",
-  "unableToLoadFolders": "Kan mappen niet laden.",
   "noAccessibleModelsFound": "Geen toegankelijke modellen gevonden.",
-  "noAccessibleFoldersFound": "Geen toegankelijke mappen gevonden.",
   "tapToLoadServerPromptSettings": "Tik om serverpromptinstellingen te laden.",
-  "loadingFromOpenWebui": "Laden vanuit Open WebUI...",
   "globalSystemPromptEditorDescription": "Opgeslagen in je Open WebUI-gebruikersinstellingen en gebruikt als standaard systeemprompt voor chats.",
   "modelNoEditableServerRecord": "Dit model heeft geen bewerkbare serverrecord.",
   "modelSystemPromptTitle": "Systeemprompt voor {modelName}",
@@ -1381,7 +1146,6 @@
   "close": "Sluiten",
   "connectionHealth": "Verbindingsstatus",
   "personalization": "Personalisatie",
-  "personalizationSubtitle": "Standaardmodel, persoonlijke prompt en herinneringen",
   "defaultImageGenerationModel": "Standaardmodel voor afbeeldingsgeneratie",
   "defaultImageGenerationModelDescription": "Voer de ID van een OpenRouter-afbeeldingsmodel in. Laat leeg om de standaard van OpenRouter te gebruiken.",
   "openRouterDefaultImageGenerationModel": "OpenRouter-standaard (openai/gpt-5-image)",
@@ -1410,7 +1174,6 @@
   "memoryUpdatedAt": "Bijgewerkt {formattedTime}",
   "advancedPromptOverridesDescription": "Modelniveau promptoverschrijvingen staan in App en chat.",
   "audioSettingsTitle": "Audio",
-  "audioSettingsSubtitle": "Spraak naar tekst en tekst naar spraak",
   "accountSettingsTitle": "Account",
   "accountSettingsSubtitle": "Profielgegevens en wachtwoordbeheer",
   "accountDetails": "Accountgegevens",
@@ -1421,7 +1184,6 @@
   "profileDetails": "Profielgegevens",
   "name": "Naam",
   "avatarUrl": "Avatar-URL",
-  "avatarUrlHint": "https://example.com/avatar.png",
   "bioLabel": "Bio",
   "bioHint": "Een korte beschrijving over jou.",
   "genderLabel": "Gender",
@@ -1434,14 +1196,11 @@
   "customGenderRequired": "Voer een aangepast gender in of kies een andere optie.",
   "birthDateLabel": "Geboortedatum",
   "selectBirthDate": "Selecteer een datum",
-  "birthDateHint": "JJJJ-MM-DD",
   "currentAvatar": "Huidige avatar",
   "uploadFromDevice": "Uploaden vanaf apparaat",
   "useInitials": "Initialen",
   "removeAvatar": "Verwijderen",
   "avatarUploadFailed": "Kan de avatar niet bijwerken.",
-  "timezoneLabel": "Tijdzone",
-  "timezoneHint": "Europe/Amsterdam",
   "saveProfile": "Profiel opslaan",
   "changePasswordTitle": "Wachtwoord wijzigen",
   "passwordChangeUnavailable": "Wachtwoordwijzigingen zijn uitgeschakeld op deze server.",
@@ -1462,20 +1221,7 @@
   "serverNameLabel": "Servernaam",
   "serverVersionLabel": "Serverversie",
   "latestVersionLabel": "Nieuwste versie",
-  "deploymentIdLabel": "Implementatie-ID",
-  "defaultLocaleLabel": "Standaardtaal",
-  "userCountLabel": "Aantal gebruikers",
-  "serverDefaultModelsLabel": "Standaardmodellen",
-  "loginFormLabel": "Inlogformulier",
-  "passwordChangesLabel": "Wachtwoordwijzigingen",
-  "apiKeysLabel": "API-sleutels",
-  "audioInputLabel": "Audio-invoer",
-  "audioOutputLabel": "Audio-uitvoer",
-  "speechToTextEngineLabel": "Spraak-naar-tekst-engine",
-  "textToSpeechEngineLabel": "Tekst-naar-spraak-engine",
-  "licenseMetadataLabel": "Licentiemetadata",
   "enabledLabel": "Ingeschakeld",
-  "disabledLabel": "Uitgeschakeld",
   "noEmailLabel": "Geen e-mail",
   "userFallbackName": "Gebruiker",
   "unknownLabel": "Onbekend",
@@ -1881,14 +1627,9 @@
       }
     }
   },
-  "@continueWithProvider": {
-    "description": "Button text for OAuth provider sign-in.",
-    "placeholders": {
-      "provider": {
-        "type": "String",
-        "example": "Google"
-      }
-    }
+  "startChattingGreeting": "Start chatting",
+  "@startChattingGreeting": {
+    "description": "Heading shown on the empty chat page when the account has no display name."
   },
   "@channelMembers": {
     "description": "Member count display in channel header",
@@ -1898,30 +1639,12 @@
       }
     }
   },
-  "@audioUploadError": {
-    "description": "Error message when audio upload fails",
-    "placeholders": {
-      "error": {
-        "type": "String",
-        "description": "The error message"
-      }
-    }
-  },
   "@accessibleModelsCount": {
     "description": "Subtitle showing how many accessible models are listed.",
     "placeholders": {
       "count": {
         "type": "int",
         "example": "4"
-      }
-    }
-  },
-  "@accessibleFoldersCount": {
-    "description": "Subtitle showing how many accessible folders are listed.",
-    "placeholders": {
-      "count": {
-        "type": "int",
-        "example": "3"
       }
     }
   },
@@ -2023,27 +1746,8 @@
   "@failedToLoadTools": {
     "description": "Error shown when the composer overflow menu cannot load tools."
   },
-  "terminalExpandAction": "Volledig scherm",
-  "terminalReopenFullscreen": "Geopend op volledig scherm - tik om opnieuw te openen",
-  "terminalKeyTab": "Tab",
-  "terminalKeyUp": "Omhoog",
-  "terminalKeyDown": "Omlaag",
-  "terminalKeyCtrlC": "Ctrl-C",
-  "terminalCopyAction": "Kopiëren",
-  "terminalPasteAction": "Plakken",
-  "terminalNothingToCopy": "Niets geselecteerd om te kopiëren",
-  "terminalCopied": "Gekopieerd naar klembord",
-  "terminalPasteWhileDisconnected": "Maak verbinding om te plakken",
-  "terminalPortsToggle": "Luisterende poorten",
-  "releaseNotesManualSubtitle": "Meegeleverde changelog voor {currentVersion}",
-  "settingsCategoryApp": "App",
-  "settingsCategoryAi": "AI",
-  "settingsCategoryServer": "Server",
-  "settingsCategorySupport": "Ondersteuning",
   "settingsDataAndConnection": "Gegevens en verbinding",
   "settingsAppearance": "Weergave",
-  "settingsAppearanceSubtitle": "Thema, kleurenpalet en taal",
-  "settingsChatSubtitle": "Chatgedrag, snelle acties en geavanceerde prompts",
   "workspaceTitle": "Werkruimte",
   "workspaceSubtitle": "Manage server resources and access.",
   "workspaceModels": "Models",
@@ -2089,7 +1793,6 @@
   "workspaceEditorKeepEditing": "Keep editing",
   "workspaceEditorSaveTooltip": "Save changes",
   "workspaceEditorSaving": "Saving…",
-  "workspaceEditorMoreActions": "More actions",
   "workspaceImportChooseFile": "Choose JSON file",
   "workspaceImportPasteLabel": "Or paste JSON",
   "workspaceImportPasteHint": "Paste exported JSON here",
@@ -2485,10 +2188,6 @@
   "workspaceKnowledgeRoot": "Root",
   "@workspaceKnowledgeRoot": {
     "description": "Breadcrumb label for the top level of a knowledge base."
-  },
-  "workspaceKnowledgeAddMenu": "Add files",
-  "@workspaceKnowledgeAddMenu": {
-    "description": "Tooltip for the menu that adds files or folders to a knowledge base."
   },
   "workspaceKnowledgeUpload": "Upload file",
   "@workspaceKnowledgeUpload": {
@@ -3076,8 +2775,6 @@
   "workspaceValveNone": "None",
   "workspaceValveEnabled": "Enabled",
   "workspaceValveDisabled": "Disabled",
-  "noteConflictCopyBadge": "Conflictkopie",
-  "noteConflictCopySuffix": " (conflictkopie)",
   "notificationChannelDescription": "Melden wanneer iemand een bericht stuurt in een kanaal of DM.",
   "notificationChannelMessagesDescription": "Antwoorden, kanaalberichten en voltooide reacties",
   "notificationChannelMessagesName": "Berichten",
@@ -3097,20 +2794,8 @@
   "notificationsEnabledDescription": "Ontvang meldingen wanneer de app op de achtergrond draait en in de app.",
   "notificationsEnabledTitle": "Meldingen inschakelen",
   "notificationsPermissionDenied": "Meldingen zijn uitgeschakeld in de systeeminstellingen.",
-  "notificationsSubtitle": "Meldingen voor antwoorden, berichten en voltooide reacties",
   "notificationsTitle": "Meldingen",
-  "hermesSecretsUnavailable": "Could not access saved Hermes credentials. Unlock secure storage and retry.",
-  "hermesAgentSettingsTitle": "Hermes Agent",
-  "hermesAgentSettingsSubtitle": "Connect a self-hosted Hermes agent",
-  "connectOpenWebUITitle": "Connect to Open WebUI",
-  "connectOpenWebUISubtitle": "Add a self-hosted Open WebUI server",
-  "backendChooserWelcome": "Welcome to Conduit",
-  "backendChooserPrompt": "Choose how you want to connect.",
-  "backendChooserOpenWebUISubtitle": "Use your self-hosted Open WebUI server with full chat, notes, and more.",
-  "backendChooserHermesTitle": "Use a Hermes Agent",
-  "backendChooserHermesSubtitle": "Connect directly to a self-hosted Hermes agent — no Open WebUI server needed.",
-  "hermesApprovalRequired": "Approval required",
-  "hermesApprovalFallback": "The agent is requesting permission to continue.",
+  "toolApprovalRequired": "Approval required",
   "openWebUiPromptOther": "Anders",
   "@openWebUiPromptOther": {
     "description": "Label for a free-form answer to an Open WebUI ask-user question."
@@ -3123,146 +2808,18 @@
   "@openWebUiPromptSubmit": {
     "description": "Action that submits all answers to an Open WebUI ask-user prompt."
   },
-  "hermesApprovalApproved": "Approved ✓",
-  "hermesApprovalDenied": "Denied",
-  "hermesApprovalApproveAction": "Approve",
-  "hermesApprovalDenyAction": "Deny",
-  "hermesEnableTitle": "Enable Hermes Agent",
-  "hermesEnableSubtitle": "Use your self-hosted Hermes agent as a model in the picker.",
-  "hermesServerUrlTitle": "Server URL",
-  "hermesApiKeyTitle": "API key",
-  "hermesConfiguredReplacePlaceholder": "Configured — enter to replace",
-  "hermesApiKeyPlaceholder": "Enter API key",
-  "hermesMemoryKeyTitle": "Memory key (optional)",
-  "hermesMemoryKeyPlaceholder": "Auto-generated if left blank",
-  "hermesCapabilitiesTitle": "Capabilities",
-  "hermesCapabilityApproval": "Approval",
-  "hermesCapabilitySkills": "Skills",
-  "hermesCapabilityToolsets": "Toolsets",
-  "hermesCapabilityJobs": "Jobs",
-  "hermesCapabilitySessions": "Sessions",
-  "hermesTabInfoTitle": "Conversations & Scheduled Agents",
-  "hermesTabInfoSubtitle": "Available in the Hermes tab once enabled.",
-  "hermesNativeSettingsSubtitle": "Connect directly to a self-hosted Hermes agent.",
-  "hermesSelfHostedAgentLabel": "Self-hosted agent",
-  "hermesNoConversationsMessage": "No Hermes conversations yet.\nStart a new chat with the Hermes Agent and it will appear here.",
-  "hermesConversationsTitle": "Conversations",
-  "hermesBotsTitle": "Bots",
-  "hermesConversationsLoadError": "Could not load Hermes conversations.\nCheck the connection in Settings → Hermes Agent.",
-  "hermesSchedulesLoading": "Loading schedules…",
-  "hermesSchedulesUnavailable": "Schedules unavailable",
-  "hermesNoSchedulesYet": "No schedules yet",
-  "hermesSchedulesSummary": "{active} active · {total, plural, =1{1 schedule} other{{total} schedules}}",
-  "hermesReviewSchedules": "Review schedules",
-  "hermesScheduledAgentsTitle": "Scheduled agents",
+  "toolApprovalApproveAction": "Approve",
+  "toolApprovalDenyAction": "Deny",
   "workspaceToolImportUrlHost": "Only GitHub tool URLs can be imported.",
-  "signInServerDescription": "Use your Open WebUI account to sign in to the server below.",
   "openWebUIServer": "Open WebUI server",
   "serverAddressUnavailable": "Server address unavailable",
   "showPassword": "Show password",
   "hidePassword": "Hide password",
-  "reviewerModeEnabled": "Reviewer mode enabled. You can open the demo without a server.",
-  "reviewerModeDisabled": "Reviewer mode disabled.",
   "openSourceLicenses": "Open source licenses",
-  "directConnectionsTitle": "Directe verbindingen",
-  "directConnectionsSubtitle": "Connect to OpenAI-compatible APIs and Ollama",
-  "directConnectionsDescription": "Connect to model providers without Open WebUI. Credentials are stored securely on this device and sent to the provider with requests.",
-  "directConnectionsCombinedDescription": "Maak rechtstreeks verbinding met modelproviders via verbindingen die vanuit Open WebUI worden gesynchroniseerd of alleen op dit apparaat zijn opgeslagen.",
-  "openWebUiDirectConnectionsSectionTitle": "Open WebUI-server",
-  "openWebUiDirectConnectionsSectionDescription": "Opgeslagen in je Open WebUI-account en beschikbaar voor andere aangemelde clients.",
-  "deviceDirectConnectionsSectionTitle": "Op dit apparaat",
-  "deviceDirectConnectionsSectionDescription": "Inloggegevens worden veilig op dit apparaat opgeslagen.",
-  "openWebUiDirectProfilesEmptyTitle": "Nog geen serververbindingen",
-  "openWebUiDirectProfilesEmptySubtitle": "Voeg een OpenAI-compatibele API-verbinding toe om deze via Open WebUI te synchroniseren.",
-  "openWebUiDirectConnectionsLoadFailed": "Kan verbindingen uit Open WebUI niet synchroniseren.",
-  "openWebUiDirectConnectionSourceLabel": "Open WebUI",
-  "deviceDirectConnectionSourceLabel": "Dit apparaat",
-  "openWebUiDirectConnectionUnsupportedAuth": "Deze verbinding gebruikt een authenticatiemethode die Conduit niet veilig kan gebruiken.",
-  "directConnectionUnavailableLabel": "Niet beschikbaar",
-  "openWebUiDirectConnectionEditorDescription": "Wijzigingen worden opgeslagen in je Open WebUI-account.",
-  "openWebUiDirectConnectionProviderDescription": "Gebruikersverbindingen van Open WebUI ondersteunen OpenAI-compatibele API's.",
-  "openWebUiDirectConnectionFallbackName": "Open WebUI-verbinding",
-  "openWebUiDirectConnectionsUnavailable": "Open WebUI-verbindingen zijn niet beschikbaar.",
-  "directConnectionNoLongerExists": "Deze verbinding bestaat niet meer.",
-  "openWebUiDirectConnectionDeleteMessage": "Hiermee verwijder je {name} uit je Open WebUI-account en uit andere clients waarop je bent aangemeld.",
-  "@openWebUiDirectConnectionDeleteMessage": {
-    "description": "Confirmation message shown before deleting an Open WebUI-synced direct connection.",
-    "placeholders": {
-      "name": {
-        "type": "String"
-      }
-    }
-  },
-  "addDirectConnection": "Add connection",
-  "editDirectConnection": "Edit connection",
-  "directConnectionName": "Connection name",
-  "directDefaultConnectionName": "Mijn provider",
   "sidebarButtonLabel": "Zijbalk",
-  "directConnectionNameRequired": "Enter a connection name.",
-  "directConnectionUrlInvalid": "Use a valid http:// or https:// URL.",
-  "directConnectionCredentialsReentryRequired": "Re-enter credentials when changing servers.",
-  "directConnectionApiKeyRequired": "Enter an API key or choose no authentication.",
-  "directConnectionHeaderNameRequired": "Enter a header name, then add the header.",
-  "directConnectionCredentialTransferTitle": "Use credentials with new server?",
-  "directConnectionCredentialTransferMessage": "This sends the API key and complete custom-header map to the new server. Only continue if you trust it.",
-  "directConnectionCredentialTransferConfirm": "Use credentials",
-  "directConnectionSaveFailed": "Could not save this connection.",
-  "directConnectionSaveConflict": "Deze verbinding is elders gewijzigd. Open deze opnieuw voordat je opslaat.",
-  "directConnectionReachFailed": "Could not reach the provider.",
-  "directConnectionDeleteTitle": "Delete connection?",
-  "directConnectionDeleteMessage": "This removes {name} and its credentials from this device.",
-  "directConnectionDeleteFailed": "Could not delete this connection.",
-  "directConnectionProbeConnected": "Connected",
-  "directConnectionProbeConnectedModels": "{count, plural, =1{Connected · 1 model} other{Connected · {count} models}}",
-  "directProvider": "Provider type",
-  "openAICompatible": "OpenAI-compatible",
   "ollama": "Ollama",
-  "openRouterProviderName": "OpenRouter",
-  "directApiBaseUrl": "Base URL",
-  "directOpenRouterUrlInvalid": "Gebruik de HTTPS-/api/v1-hoofd-URL van OpenRouter (wereldwijd of EU).",
-  "directOpenRouterBaseUrlDescription": "Conduit gebruikt je OpenRouter-API-sleutel, geverifieerde modelcatalogus en door Conduit beheerde tools.",
-  "directOpenRouterChatCompletionsDescription": "Chat Completions wordt gebruikt voor ingebouwd zoeken op het web, afbeeldingsgeneratie, PDF-verwerking en herbruikbare PDF-annotaties.",
-  "directCompletionApi": "Completion API",
-  "directChatCompletions": "Chat Completions",
-  "directResponses": "Responses",
-  "directChatCompletionsDescription": "Works with OpenAI-compatible providers such as LM Studio, vLLM, LocalAI, and OpenRouter.",
-  "directResponsesDescription": "Use the typed Responses event stream. Choose this only when the provider exposes /responses.",
-  "directApiVersion": "API version",
-  "directApiVersionDescription": "Optional. Adds the api-version query parameter required by Azure OpenAI endpoints.",
-  "directAuthentication": "Authentication",
-  "noAuthentication": "No authentication",
-  "bearerToken": "Bearer token",
-  "directApiKeyHeader": "API-key header",
-  "directApiKeyHeaderDescription": "Sends the credential in the api-key header used by Azure OpenAI.",
-  "directApiKey": "API key",
-  "directCustomHeaders": "Custom headers",
-  "directManualModelIds": "Manual model IDs",
-  "directManualModelIdsDescription": "Optioneel. Voer één ID per regel in als de server de modellen niet kan weergeven.",
-  "@directManualModelIdsDescription": {
-    "placeholders": {}
-  },
-  "directModelIdPrefix": "Model ID prefix",
-  "directModelIdPrefixDescription": "Optional. Adds a visible namespace such as studio.model-name without changing the model ID sent to the provider.",
-  "directModelTags": "Model tags",
-  "directModelTagsDescription": "Optional. Separate tags with commas or new lines.",
-  "syncDirectHistory": "Open WebUI history",
-  "syncDirectHistorySubtitle": "New direct chats sync when signed in. Existing chats keep their current location.",
-  "directHistoryLocalOnlySubtitle": "New direct chats stay on this device. Existing chats keep their current location.",
-  "backendChooserDirectTitle": "Connect directly",
-  "backendChooserDirectSubtitle": "Use an OpenAI-compatible API or Ollama without Open WebUI.",
-  "testDirectConnection": "Test connection",
-  "directConnectionTestUnavailable": "Connection testing is not available yet.",
-  "finishDirectSetup": "Start chatting",
-  "directProfilesEmptyTitle": "No direct connections yet",
-  "directProfilesEmptySubtitle": "Add an OpenAI-compatible or Ollama server to get started.",
-  "directConnectionsSectionTitle": "Connections",
-  "directSavedDataUnreadable": "The saved connection data could not be read.",
-  "directSecureStorageUnavailable": "Check secure storage access and try again.",
   "onDevice": "On device",
-  "directConnectionError": "Direct connection error",
-  "directAttachmentUnsupported": "This direct model does not support this attachment.",
-  "backendChooserOpenWebUITitle": "Open WebUI",
-  "hermesMemoryKeyDescription": "De geheugensleutel koppelt het langetermijngeheugen van de agent aan jou (X-Hermes-Session-Key). Als je dit leeg laat, wordt automatisch een vaste sleutel gemaakt wanneer je voor het eerst chat.",
+  "openWebUi": "Open WebUI",
   "moreModels": "Meer modellen",
   "reasoningEffort": "Redeneerniveau",
   "reasoningEffortLow": "Laag",
@@ -3282,113 +2839,9 @@
   "loadMermaidPreview": "Mermaid-voorbeeld laden",
   "loadChartPreview": "Grafiekvoorbeeld laden",
   "loadPdfPreview": "PDF-voorbeeld laden: {title}",
-  "ollamaCloudDefaultName": "Ollama Cloud",
-  "ollamaCloudBaseUrlHint": "https://ollama.com",
-  "ollamaCloudBaseUrlDescription": "Gebruik https://ollama.com met een API-sleutel voor Ollama Cloud.",
-  "ollamaModelLoaded": "Geladen",
-  "ollamaModelActions": "Modelgeheugen",
-  "ollamaModelActionsDescription": "Beheer dit model in het RAM of VRAM van Ollama.",
-  "ollamaLoadModel": "Model laden",
-  "ollamaLoadModelDescription": "Laad het nu alvast om het eerste antwoord sneller te maken.",
-  "ollamaUnloadModel": "Model uitladen",
-  "ollamaUnloadModelDescription": "Maak RAM of VRAM vrij. Het model wordt bij het volgende bericht automatisch geladen.",
-  "ollamaUnloadModelConfirmTitle": "{name} uitladen?",
-  "ollamaUnloadModelConfirmMessage": "Hiermee wordt het RAM of VRAM van het model vrijgemaakt. Ollama laadt het automatisch opnieuw wanneer je een bericht verstuurt.",
-  "ollamaKeepAlive": "Geladen houden",
-  "ollamaKeepAliveDescription": "Wordt na elk chatverzoek op dit model toegepast.",
-  "ollamaKeepAliveServerDefault": "Serverstandaard",
-  "ollamaKeepAliveFiveMinutes": "5 minuten",
-  "ollamaKeepAliveThirtyMinutes": "30 minuten",
-  "ollamaKeepAliveOneHour": "1 uur",
-  "ollamaKeepAliveAlways": "Altijd geladen",
-  "ollamaKeepAliveImmediate": "Na elk antwoord uitladen",
-  "ollamaKeepAliveCustom": "Aangepast",
-  "ollamaKeepAliveCustomHint": "Voorbeelden: 10m, 24h, 3600, -1 of 0",
-  "ollamaKeepAliveInvalid": "Gebruik seconden of een duur zoals 10m of 24h.",
-  "ollamaModelLoadedMessage": "{name} is geladen.",
-  "ollamaModelUnloadedMessage": "{name} is uitgeladen.",
-  "ollamaModelActionFailed": "De geheugenstatus van dit model kon niet worden bijgewerkt.",
-  "ollamaThinking": "Redeneren",
-  "ollamaCloudModelActionsDescription": "Stel in hoe dit Ollama Cloud-model antwoordt.",
-  "ollamaThinkingDescription": "Kies hoeveel het model moet redeneren. De beschikbare niveaus hangen af van het model.",
   "ollamaThinkingAutomatic": "Automatisch",
-  "ollamaThinkingDisabled": "Uit",
-  "ollamaThinkingLow": "Laag",
-  "ollamaThinkingMedium": "Gemiddeld",
-  "ollamaThinkingHigh": "Hoog",
-  "ollamaThinkingMaximum": "Maximaal",
   "releaseNotesSupportPromptHeading": "Bevalt Conduit je?",
   "releaseNotesSupportPromptMessage": "Een korte review helpt meer mensen Conduit te vinden. Een kleine fooi helpt me om eraan te blijven bouwen. Allebei betekenen veel.",
-  "directConnectProvider": "Provider verbinden",
-  "directConnectProviderTitle": "Een provider verbinden",
-  "directConnectionEnabledSubtitle": "Modellen van deze verbinding in de modelkiezer tonen.",
-  "directConnectionDetailsTitle": "Verbindingsgegevens",
-  "directBaseUrlDescription": "Voeg het API-voorvoegsel toe dat de provider verwacht, meestal /v1.",
-  "directConfiguredReplacePlaceholder": "Geconfigureerd, voer een waarde in om te vervangen",
-  "directApiKeyPlaceholder": "API-sleutel invoeren",
-  "hermesOnboardingFailed": "De Hermes-configuratie kon niet worden voltooid. Controleer de beveiligde opslag en probeer het opnieuw.",
-  "hermesConnectionDetailsTitle": "Verbindingsgegevens",
-  "hermesMemoryKeyShortDescription": "Houdt het langetermijngeheugen van de agent aan jou gekoppeld. Laat leeg zodat Conduit een sleutel maakt.",
-  "hermesConnectAction": "Hermes verbinden",
-  "hermesToolCount": "{count, plural, =1{1 hulpmiddel} other{{count} hulpmiddelen}}",
-  "@hermesToolCount": {
-    "placeholders": {
-      "count": {
-        "type": "int"
-      }
-    }
-  },
-  "hermesNoToolsets": "De server heeft geen toolsets gemeld.",
-  "hermesToolsetsNewSessions": "Wijzigingen gelden voor nieuwe Hermes-sessies. Bestaande chats behouden hun huidige tools.",
-  "hermesServerStatusTitle": "Serverstatus",
-  "hermesNoServerStatus": "De server heeft geen status gemeld.",
-  "hermesLegacySessionToken": "Verouderd sessietoken",
-  "hermesLegacySessionTokenHint": "Plak het Hermes-sessietoken",
-  "hermesGatewayStopped": "Het Hermes-dashboard is online, maar Desktop Gateway is gestopt. Start de gateway op de Hermes-server en test opnieuw.",
-  "hermesProfile": "Hermes-profiel",
-  "hermesProfileLabel": "Profiel",
-  "hermesRefreshProfiles": "Profielen vernieuwen",
-  "hermesDesktopAuthentication": "Desktopverificatie",
-  "hermesDashboardAuthHelp": "Open het Hermes-dashboard in het aanmeldvenster en kom hier terug om de verbinding te testen.",
-  "hermesAuthLegacy": "Verouderd",
-  "hermesAuthNative": "Native",
-  "hermesAuthDashboard": "Dashboard",
-  "hermesNativeSignIn": "Aanmelden met Hermes",
-  "hermesDashboardSignIn": "Dashboard-aanmelding openen",
-  "hermesGatewayAccessHeaders": "Gateway-toegangsheaders",
-  "hermesGatewayAccessHeadersHelp": "Optionele headers voor een beveiligd Hermes-dashboard.",
-  "hermesDesktopGateway": "Desktop Gateway",
-  "hermesReloadSkills": "Vaardigheden opnieuw laden",
-  "hermesNoInstalledSkills": "Geen geïnstalleerde vaardigheden",
-  "hermesMcpServers": "MCP-servers",
-  "hermesSignOut": "Afmelden bij Hermes",
-  "hermesActionFailed": "Hermes-actie mislukt.",
-  "hermesToolsetUpdateFailed": "Bijwerken van Hermes-toolset mislukt.",
-  "hermesJobStateLabel": "Status",
-  "hermesJobDeliveryLabel": "Levering",
-  "hermesJobLastLabel": "Laatste",
-  "hermesJobNextLabel": "Volgende",
-  "hermesJobRunHistory": "Uitvoeringsgeschiedenis",
-  "hermesApprovalAllowOnce": "Eenmaal toestaan",
-  "hermesApprovalAllowSession": "Toestaan voor sessie",
-  "hermesApprovalAlwaysAllow": "Altijd toestaan",
-  "hermesClarificationTitle": "Hermes heeft verduidelijking nodig",
-  "hermesSudoTitle": "Hermes heeft sudo-toegang nodig",
-  "hermesSecretTitle": "Hermes heeft een geheim nodig",
-  "hermesMcpSetupTitle": "Hermes heeft MCP-configuratie nodig",
-  "hermesResponseSent": "Antwoord verzonden",
-  "hermesNotNow": "Niet nu",
-  "hermesSetUp": "Instellen",
-  "hermesSensitiveResponse": "Gevoelig antwoord",
-  "hermesResponse": "Antwoord",
-  "hermesSendResponse": "Antwoord verzenden",
-  "hermesFastTier": "Snelle laag",
-  "hermesFastTierOn": "Aan",
-  "hermesFastTierOff": "Uit",
-  "hermesTurnSteer": "Bijsturen",
-  "hermesTurnSendNext": "Volgende verzenden",
-  "hermesTurnControlsUnsupported": "Werk Hermes bij om veilige beurtbediening in te schakelen.",
-  "sidebarHermesTab": "Hermes",
   "markdownShowMoreLines": "{count, plural, =1{Toon nog 1 regel} other{Toon nog {count} regels}}",
   "@markdownShowMoreLines": {
     "placeholders": {
@@ -3410,222 +2863,10 @@
   "notificationRequiresSound": "Schakel geluid in om deze instelling te wijzigen.",
   "enabled": "Aan",
   "disabled": "Uit",
-  "hermesJobNew": "Nieuwe geplande taak",
-  "hermesJobAdminDisabled": "Taakbeheer is uitgeschakeld op deze server. Planningen zijn alleen-lezen.",
-  "hermesJobEmptyMessage": "Maak een geplande taak om automatisch een prompt uit te voeren.",
-  "hermesJobLoadFailed": "Geplande taken konden niet worden geladen. Controleer de Hermes-verbinding en probeer het opnieuw.",
-  "hermesJobCreateFailed": "De geplande taak kon niet worden gemaakt.",
-  "hermesJobCreated": "Geplande taak gemaakt.",
-  "hermesJobPaused": "Gepauzeerd",
-  "hermesJobRunNow": "Nu uitvoeren",
-  "hermesJobEdit": "Geplande taak bewerken",
-  "hermesJobDelete": "Geplande taak verwijderen",
-  "hermesJobResumeFailed": "De geplande taak kon niet worden hervat.",
-  "hermesJobPauseFailed": "De geplande taak kon niet worden gepauzeerd.",
-  "hermesJobResumed": "Geplande taak hervat.",
-  "hermesJobPausedSuccess": "Geplande taak gepauzeerd.",
-  "hermesJobRunFailed": "De geplande taak kon niet worden uitgevoerd.",
-  "hermesJobStarted": "Geplande taak gestart.",
-  "hermesJobUpdateFailed": "De geplande taak kon niet worden bijgewerkt.",
-  "hermesJobUpdated": "Geplande taak bijgewerkt.",
-  "hermesJobDeleteTitle": "Taak verwijderen",
-  "hermesJobDeleteMessage": "Deze geplande taak verwijderen? Dit kan niet ongedaan worden gemaakt.",
-  "hermesJobDeleteFailed": "De geplande taak kon niet worden verwijderd.",
-  "hermesJobDeleted": "Geplande taak verwijderd.",
-  "hermesJobEditorEditTitle": "Taak bewerken",
-  "hermesJobNameHint": "Dagelijks overzicht",
-  "hermesJobPromptLabel": "Prompt",
-  "hermesJobPromptHint": "Wat moet de agent bij elke uitvoering doen?",
-  "hermesJobScheduleLabel": "Planning",
-  "hermesJobScheduleHint": "0 9 * * * of every 2h",
-  "hermesJobTooLong": "Gebruik maximaal {count} tekens",
-  "hermesJobScheduleInvalid": "Voer een duur, interval, datum, tijd of geldige cron-planning in.",
-  "hermesJobScheduleHelp": "Gebruik cron (0 9 * * *), een interval (every 2h), een vertraging (30m) of een ISO-datum en -tijd.",
-  "hermesJobsSheetSubtitle": "Pauzeer planningen of bekijk wat hierna wordt uitgevoerd.",
-  "hermesJobsSheetReview": "Bekijk uitvoeringstijden en pauzeer planningen.",
-  "hermesJobsManageDescription": "Maak, bewerk, start of verwijder planningen.",
-  "hermesJobsEmptyManageHint": "Gebruik Beheren om een geplande prompt te maken.",
-  "hermesLastStatus": "Laatste status: {status}",
-  "hermesSessionUntitled": "Naamloos gesprek",
-  "hermesSessionFork": "Afsplitsen",
-  "hermesSessionRenameTitle": "Gesprek hernoemen",
-  "hermesSessionNameHint": "Naam van gesprek",
-  "hermesSessionDeleteTitle": "Gesprek verwijderen",
-  "hermesSessionDeleteMessage": "Dit Hermes-gesprek verwijderen? Dit kan niet ongedaan worden gemaakt.",
-  "hermesSessionForkFailed": "Het gesprek kon niet worden afgesplitst.",
-  "hermesSessionRenameFailed": "Het gesprek kon niet worden hernoemd.",
-  "hermesSessionDeleteFailed": "Het gesprek kon niet worden verwijderd.",
-  "hermesSessionLoadFailed": "Dit gesprek kon niet worden geladen. Controleer de verbinding en probeer het opnieuw.",
-  "hermesMemoryKeyFieldLabel": "Geheugensleutel",
-  "directMcpServersTitle": "MCP servers",
-  "directMcpEmptyTitle": "No MCP servers yet",
-  "directMcpReachabilityHelp": "Add a Streamable HTTP endpoint that this phone can reach.",
-  "directMcpEditorTitle": "Edit MCP server",
-  "directMcpAddTitle": "Add MCP server",
-  "directMcpName": "Server name",
-  "directMcpEndpoint": "Streamable HTTP endpoint",
-  "directMcpBearerToken": "Bearer token (optional)",
-  "directMcpCustomHeaders": "Custom headers (optional)",
-  "directMcpCustomHeadersHint": "One per line: Name: Value",
-  "directMcpTestConnection": "Test connection",
-  "directMcpTesting": "Testing connection…",
-  "directMcpTestSucceeded": "Connected — {count} tools found.",
-  "directMcpTestFailed": "Could not list tools from this MCP server.",
-  "directMcpSaveFailed": "Could not save this MCP server.",
-  "directMcpLoadFailed": "Could not load MCP servers from secure storage.",
-  "directMcpMissing": "This MCP server no longer exists.",
-  "directMcpCredentialTransferTitle": "Use credentials with new server?",
-  "directMcpCredentialTransferMessage": "This sends the bearer token and custom headers to the new server. Continue only if you trust it. Cancel saves the server without credentials.",
-  "directMcpCredentialTransferConfirm": "Use credentials",
-  "directMcpDeleteTitle": "Delete MCP server?",
-  "directMcpDeleteMessage": "This removes {name} and its credentials from this device.",
-  "directMcpDeleteFailed": "Could not delete this MCP server.",
-  "directMcpAuthMode": "Authentication",
   "directMcpAuthNone": "None",
   "directMcpAuthBearer": "Bearer token",
-  "directMcpAuthOAuth": "OAuth",
-  "directMcpOAuthConnect": "Connect in browser",
-  "directMcpOAuthReconnect": "Reconnect in browser",
-  "directMcpOAuthDisconnect": "Disconnect OAuth",
-  "directMcpOAuthPending": "Waiting for authorization in the browser…",
-  "directMcpOAuthConnected": "OAuth connected.",
-  "directMcpOAuthConnectionDetails": "Connected to {issuerHost} · {scopes}",
-  "directMcpOAuthNoScopes": "No scopes reported",
-  "directMcpOAuthConnectFailed": "Could not connect this MCP server with OAuth.",
-  "directMcpOAuthDisconnectFailed": "Could not disconnect OAuth from this MCP server.",
-  "directMcpApprovalTitle": "Tool approval",
-  "directMcpApprovalAllowOnce": "Allow once",
-  "directMcpApprovalAllowSession": "Allow for session",
-  "directMcpApprovalAllowAlways": "Always allow",
-  "directMcpApprovalAlwaysTitle": "Always allow this tool?",
-  "directMcpApprovalAlwaysMessage": "{serverName} will be allowed to run {toolName} without asking again. The approval is revoked automatically if the tool schema changes.",
-  "@directMcpApprovalAlwaysMessage": {
-    "placeholders": {
-      "serverName": {
-        "type": "String"
-      },
-      "toolName": {
-        "type": "String"
-      }
-    }
-  },
-  "directMcpApprovalSaveFailed": "Could not remember this approval. You can retry or choose another option.",
-  "directMcpApprovalDeny": "Deny",
-  "directMcpApprovalAllowed": "Allowed once",
-  "directMcpApprovalAllowedSession": "Allowed for session",
-  "directMcpApprovalAllowedAlways": "Always allowed",
-  "directMcpApprovalDenied": "Denied",
-  "directMcpApprovalExpired": "Approval expired",
-  "directMcpRememberedApprovalsTitle": "Always allowed tools",
-  "directMcpRememberedApprovalsSubtitle": "These exact tools can run without asking while their server and input schema remain unchanged.",
-  "directMcpRememberedApprovalRevoke": "Revoke",
-  "directMcpRememberedApprovalsRevokeAll": "Revoke all",
-  "directMcpRememberedApprovalRevokeFailed": "Could not revoke the remembered approval.",
-  "directMcpContentAction": "MCP content",
-  "directMcpContentTitle": "MCP content",
-  "directMcpContentServer": "MCP server",
-  "directMcpContentSearch": "Search prompts and resources",
-  "directMcpContentPrompts": "Prompts",
-  "directMcpContentResources": "Resources",
-  "directMcpContentEmpty": "This server has no prompts or resources.",
-  "directMcpContentNoMatches": "No matching prompts or resources.",
-  "directMcpContentLoadFailed": "Could not load content from this MCP server.",
-  "directMcpContentRefresh": "Refresh MCP content",
-  "directMcpContentPreviewTitle": "Preview",
-  "directMcpContentInsert": "Insert",
-  "directMcpContentPromptHeading": "MCP prompt from {serverName}: {promptName}",
-  "@directMcpContentPromptHeading": {
-    "placeholders": {
-      "serverName": {
-        "type": "String"
-      },
-      "promptName": {
-        "type": "String"
-      }
-    }
-  },
-  "directMcpContentResourceHeading": "MCP resource from {serverName}: {resourceUri}",
-  "@directMcpContentResourceHeading": {
-    "placeholders": {
-      "serverName": {
-        "type": "String"
-      },
-      "resourceUri": {
-        "type": "String"
-      }
-    }
-  },
-  "directMcpContentRoleUser": "User",
-  "directMcpContentRoleAssistant": "Assistant",
-  "directMcpContentRequestFailed": "Could not load this MCP content. Try again.",
-  "directMcpContentUnsupported": "This item is binary or unsupported. Choose a text prompt or text resource.",
-  "directMcpContentChanged": "This item changed on the server. Refresh and choose it again.",
-  "directMcpContentTooLarge": "This content is too large to insert.",
-  "directMcpContentComposerTooLarge": "The draft and this content exceed the 256 KiB message limit. Shorten the draft or content and try again.",
-  "directMcpContentLoading": "Loading MCP content…",
-  "directMcpInsecureCredentialsTitle": "Send credentials without encryption?",
-  "directMcpInsecureCredentialsMessage": "This server uses unencrypted HTTP. Your bearer token, OAuth token, and custom headers could be read or changed on the network.",
-  "directMcpInsecureCredentialsConfirm": "Send without encryption",
-  "hermesSessionTooLarge": "Dit gesprek is te groot om op dit apparaat te laden.",
-  "hermesSessionNotFound": "Dit gesprek is niet meer beschikbaar op de Hermes-server.",
-  "hermesSessionLoadFailedDetail": "Kan dit gesprek niet laden: {detail}",
-  "@hermesSessionLoadFailedDetail": {
-    "placeholders": {
-      "detail": {
-        "type": "String"
-      }
-    }
-  },
-  "directBearerDescription": "Verstuurt de inloggegevens in de header Authorization: Bearer. De meeste OpenAI-compatibele servers (llama.cpp, vLLM, LM Studio, Ollama) verwachten dit.",
-  "directApiKeyHeaderAzureOnlyDescription": "Verstuurt de inloggegevens in de header api-key. Gebruik dit alleen voor Azure OpenAI; andere OpenAI-compatibele servers verwachten een Bearer-token.",
-  "appleOnDeviceUnavailable": "Apple On-Device is niet beschikbaar op dit apparaat.",
-  "applePccContextSize": "Context van {tokens} tokens",
-  "@applePccContextSize": {
-    "description": "Apple PCC context size label.",
-    "placeholders": {
-      "tokens": {
-        "type": "String"
-      }
-    }
-  },
-  "applePccCurrentLanguageUnsupported": "De huidige apparaattaal wordt mogelijk niet ondersteund.",
-  "applePccOnDeviceFallback": "Terugval op apparaat",
-  "applePccOnDeviceFallbackSubtitle": "Gebruik het kleinere Apple-model op het apparaat wanneer PCC niet bereikbaar is. Verzoeken met redeneren vallen nooit terug.",
-  "applePccQuotaApproaching": "Bijna aan de daglimiet",
-  "applePccQuotaReached": "Daglimiet bereikt",
-  "applePccQuotaResetsAt": "Reset {time}",
-  "@applePccQuotaResetsAt": {
-    "description": "Apple PCC quota reset time.",
-    "placeholders": {
-      "time": {
-        "type": "String"
-      }
-    }
-  },
-  "applePccShowQuotaOptions": "Gebruiksopties tonen",
-  "applePccStatusAvailable": "Beschikbaar",
-  "applePccUnavailable": "Apple Private Cloud Compute is niet beschikbaar op dit apparaat.",
-  "backendChooserAppleOnDeviceSubtitle": "Voer het privémodel van Apple uit op dit apparaat, ook offline.",
-  "backendChooserAppleOnDeviceTitle": "Apple On-Device",
-  "backendChooserApplePccSubtitle": "Gebruik het private cloudmodel van Apple zonder API-sleutel.",
-  "backendChooserApplePccTitle": "Apple Private Cloud Compute",
-  "backendChooserAppleSectionTitle": "Apple Intelligence",
-  "backendChooserModelApisSectionTitle": "Model-API's",
-  "backendChooserSelfHostedSectionTitle": "Zelfgehoste diensten",
   "citationShowTitles": "Paginatitels in bronvermeldingen tonen",
   "citationShowTitlesDescription": "Paginatitels gebruiken in plaats van websitedomeinen in bronlabels",
-  "directContextCompactionDescription": "Deze modellen geven geen contextvenster op. Conduit gebruikt de gekozen limiet om oudere berichten te comprimeren voordat verzoeken te groot worden.",
-  "directContextCompactionPickerDescription": "Kies het contextvenster dat Conduit moet gebruiken voor automatisch comprimeren.",
-  "directContextCompactionTitle": "Context comprimeren",
-  "directContextLimit": "Contextlimiet: {tokens}",
-  "@directContextLimit": {
-    "description": "Provider-neutral model context limit label.",
-    "placeholders": {
-      "tokens": {
-        "type": "String"
-      }
-    }
-  },
   "notificationSystemSettingsDescription": "Wijzig toestemming, geluid en bannerinstellingen voor Conduit.",
   "notificationSystemSettingsOpenFailed": "Kan systeeminstellingen voor meldingen niet openen.",
   "notificationTargetsTitle": "Webhookbestemmingen",
@@ -3700,35 +2941,6 @@
   "chatTaskInProgress": "Bezig",
   "chatTaskCompleted": "Voltooid",
   "chatTaskCancelled": "Geannuleerd",
-  "webSearchSettingsFooterAuto": "Gebruikt door Direct-modellen zonder eigen webzoekfunctie. Zoekopdrachten lopen via dit apparaat: ze gaan naar DuckDuckGo en, als die niet antwoordt, naar Brave, Bing, Mojeek of Wikipedia. Pagina's die het model leest, worden ook via dit apparaat opgehaald.",
-  "webSearchSettingsFooterEngine": "Gebruikt door Direct-modellen zonder eigen webzoekfunctie. Zoekopdrachten lopen via dit apparaat en gaan alleen naar {engine}. Pagina's die het model leest, worden ook via dit apparaat opgehaald.",
-  "@webSearchSettingsFooterEngine": {
-    "placeholders": {
-      "engine": {
-        "type": "String",
-        "example": "DuckDuckGo"
-      }
-    }
-  },
-  "webSearchEngineLabel": "Zoekmachine",
-  "webSearchEngineAuto": "Automatisch",
-  "webSearchSafeSearchLabel": "Veilig zoeken",
-  "webSearchSafeSearchStrict": "Streng",
-  "webSearchSafeSearchModerate": "Gemiddeld",
-  "webSearchSafeSearchOff": "Uit",
-  "webSearchRegionLabel": "Regio",
-  "webSearchRegionAuto": "Zoals apparaat",
-  "webSearchRegionWorldwide": "Wereldwijd",
-  "directModelToolsUnsupported": "Dit model kan geen hulpmiddelen gebruiken en kan dus niet op het web zoeken. Zet webzoeken en alle hulpmiddelen uit en probeer het opnieuw.",
-  "directContextCompactionModelCount": "{count, plural, =1{1 model} other{{count} modellen}}",
-  "@directContextCompactionModelCount": {
-    "placeholders": {
-      "count": {
-        "type": "int",
-        "example": "42"
-      }
-    }
-  },
   "imageViewerPosition": "{current} van {total}",
   "@imageViewerPosition": {
     "placeholders": {
@@ -4494,38 +3706,9 @@
   "chatDataControlsUnsharedAll": "Alle deellinks verwijderd.",
   "chatDataControlsDeletedAll": "Alle chats verwijderd.",
   "notificationTargetMakeDefaultNeedsSave": "Sla je wijzigingen op om dit als standaard in te stellen.",
-  "hermesConnectionsSectionTitle": "Verbindingen",
-  "hermesAddConnection": "Verbinding toevoegen",
-  "hermesNewConnectionTitle": "Nieuwe verbinding",
-  "hermesConnectionNameHint": "Wordt getoond in de modelkiezer en de zijbalk",
-  "hermesNoConnectionsTitle": "Geen Hermes-verbindingen",
-  "hermesNoConnectionsSubtitle": "Voeg een Hermes-server toe om met je agent te chatten.",
-  "hermesActiveConnection": "Actief",
-  "hermesUseConnection": "Deze verbinding gebruiken",
-  "hermesInactiveConnectionNotice": "Schakel over naar deze verbinding om de status te zien en de server te beheren.",
-  "hermesSignInActivatesConnection": "Door in te loggen wordt dit de actieve verbinding.",
-  "hermesDeleteConnectionTitle": "Verbinding verwijderen?",
-  "hermesDeleteConnectionMessage": "Hiermee worden {name} en de bijbehorende inloggegevens van dit apparaat verwijderd.",
-  "hermesDeleteConnectionFailed": "Kan deze verbinding niet verwijderen.",
-  "hermesSwitchConnectionFailed": "Kan niet overschakelen naar deze verbinding.",
-  "hermesSwitchConnectionTitle": "Verbinding wisselen",
-  "hermesSwitchConnectionPromptTitle": "Overschakelen naar {name}?",
-  "hermesSwitchConnectionPromptMessage": "De Hermes-sessie van deze chat hoort bij {name}. Schakel over om verder te gaan, of houd de huidige verbinding om een nieuwe sessie te starten.",
-  "hermesSwitchConnectionConfirm": "Overschakelen",
-  "hermesKeepCurrentConnection": "Huidige houden",
   "accountsTitle": "Accounts",
-  "accountChooserTitle": "Kies een account",
-  "accountsAddAccount": "Account toevoegen",
-  "accountsManage": "Accounts beheren",
   "accountsSignedOut": "Uitgelogd",
   "accountsActive": "Actief",
-  "accountsAddAccountTitle": "Een account toevoegen",
-  "accountsAddAccountMessage": "Log in op een ander account op een opgeslagen server, of maak verbinding met een nieuwe.",
-  "accountsNewServer": "Nieuwe server",
-  "accountsContinueWith": "Doorgaan met {server}",
-  "accountsKindDirect": "Direct",
-  "accountsAddOnThisServer": "Account op deze server toevoegen",
-  "accountsSwitch": "Wisselen",
   "accountsSignOutOf": "{name} uitloggen",
   "accountsSignOutConfirmTitle": "{name} uitloggen?",
   "accountsSignOutConfirmMessage": "Hiermee worden het account en de chats die het op dit apparaat heeft opgeslagen verwijderd. Je andere accounts blijven ingelogd.",
@@ -4534,25 +3717,6 @@
   "accountsSwitchStopsReply": "Als je van account wisselt, wordt het gestopt.",
   "accountsSignOutStopsReply": "Als je uitlogt, wordt het gestopt.",
   "accountsSwitchAnyway": "Toch wisselen",
-  "accountsAddressChangeStopsReply": "Als je het gebruikte adres wijzigt, wordt het gestopt.",
-  "accountsAddressChangeAnyway": "Toch wijzigen",
   "accountsSignOutAnyway": "Toch uitloggen",
-  "accountsServerAddresses": "Adressen",
-  "accountsServerAddressesHelp": "Conduit maakt verbinding via het eerste adres dat antwoordt, van boven naar beneden. Sleep om de volgorde te wijzigen.",
-  "accountsAddAddress": "Adres toevoegen",
-  "accountsEditAddress": "Adres bewerken",
-  "accountsSaveAddress": "Adres opslaan",
-  "accountsAddressInUse": "In gebruik",
-  "accountsAddressName": "Naam (optioneel)",
-  "accountsAddressNameHint": "Thuisnetwerk, Tailscale…",
-  "accountsAddressDifferentServer": "Dit adres leidt naar een andere server, of naar een ander account daarop.",
-  "accountsAddressNeedsSignIn": "Log eerst in op een account op deze server, zodat het adres kan worden gecontroleerd.",
-  "accountsRemoveAddress": "Adres verwijderen",
-  "accountsRemoveAddressMessage": "Conduit probeert dit adres niet meer. Je accounts blijven ingelogd.",
-  "accountsAddressConfirmTitle": "Dit adres controleren?",
-  "accountsAddressConfirmMessage": "Om zeker te weten dat {host} deze server is, stuurt Conduit er de sessie van een hier opgeslagen account naartoe. Ga alleen verder als je dit adres vertrouwt.",
-  "accountsAddressConfirmAction": "Adres controleren",
-  "setupWizardTitle": "Set up the app",
-  "setupWizardSubtitle": "Choose the account to enter with. You can change it later in Settings.",
   "proxyAuthInAppWebView": "Openen in de app"
 }
