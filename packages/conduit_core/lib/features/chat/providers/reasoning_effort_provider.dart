@@ -8,12 +8,6 @@ import 'package:conduit_core/persistence/persistence_keys.dart';
 import 'package:conduit_core/persistence/preferences_store.dart';
 
 import 'package:conduit_core/providers/app_providers.dart';
-import 'package:conduit_core/features/direct_connections/models/direct_connection_profile.dart';
-import 'package:conduit_core/features/direct_connections/models/ollama_thinking.dart';
-import 'package:conduit_core/features/direct_connections/models/openrouter_reasoning.dart';
-import 'package:conduit_core/features/direct_connections/providers/direct_connection_providers.dart';
-
-import 'package:conduit_core/features/hermes/models/hermes_model.dart';
 
 part 'reasoning_effort_provider.g.dart';
 
@@ -208,11 +202,6 @@ String? localReasoningEffortKeyForModel(
   ReasoningEffortReader read,
   Model model,
 ) {
-  if (isHermesModel(model)) return 'hermes:${model.id}';
-  final binding = read(directModelRegistryProvider).resolve(model);
-  if (binding != null) {
-    return 'direct:${binding.profileId}:${binding.remoteModelId}';
-  }
   return _openWebUiEffortKey(read, model);
 }
 
@@ -225,10 +214,6 @@ String? localReasoningEffortForModel(ReasoningEffortReader read, Model model) {
   return read(localReasoningEffortsProvider)[key];
 }
 
-bool _isOpenWebUiServerModel(ReasoningEffortReader read, Model model) =>
-    !isHermesModel(model) &&
-    read(directModelRegistryProvider).resolve(model) == null;
-
 String? _localEffortKey(Ref ref) {
   final model = ref.watch(selectedModelProvider);
   if (model == null) return null;
@@ -238,26 +223,10 @@ String? _localEffortKey(Ref ref) {
 final configuredReasoningEffortProvider = Provider<String?>((ref) {
   final model = ref.watch(selectedModelProvider);
   if (model == null) return null;
-  final binding = ref.watch(directModelRegistryProvider).resolve(model);
-  if (binding != null) {
-    if (binding.adapterKey == kOllamaAdapterKey) {
-      final profiles = ref.watch(directConnectionProfilesProvider);
-      if (!profiles.hasValue) return null;
-      final profile = profiles.requireValue
-          .where((candidate) => candidate.id == binding.profileId)
-          .firstOrNull;
-      return profile?.ollamaThinkingFor(binding.remoteModelId)?.storageValue;
-    }
-  }
 
-  final localKey = _localEffortKey(ref);
-  final localEffort = localKey == null
-      ? null
-      : ref.watch(localReasoningEffortsProvider)[localKey];
-  // A user's own pick always wins. Hermes and Direct models have no
-  // server-side default, so they resolve entirely from the local record.
-  if (localEffort != null ||
-      (localKey != null && !_isOpenWebUiServerModel(ref.watch, model))) {
+  final localEffort = localReasoningEffortForModel(ref.watch, model);
+  // A user's own pick always wins.
+  if (localEffort != null) {
     return ref
         .watch(reasoningEffortPolicyProvider)
         .effectiveConfiguredEffort(localEffort);
@@ -314,26 +283,6 @@ typedef ReasoningEffortReader = T Function<T>(ProviderListenable<T> provider);
 
 String reasoningEffortForModel(ReasoningEffortReader read, Model? model) {
   if (model == null) return kAutomaticReasoningEffort;
-  final binding = read(directModelRegistryProvider).resolve(model);
-  if (binding != null) {
-    if (binding.adapterKey == kOllamaAdapterKey) {
-      final profile = _readDirectProfile(read, binding.profileId);
-      return profile?.ollamaThinkingFor(binding.remoteModelId)?.storageValue ??
-          kAutomaticReasoningEffort;
-    }
-    final configured = read(
-      localReasoningEffortsProvider,
-    )['direct:${binding.profileId}:${binding.remoteModelId}'];
-    return reasoningEffortPolicyForModel(
-          read,
-          model,
-        ).effectiveConfiguredEffort(configured) ??
-        kAutomaticReasoningEffort;
-  }
-  if (isHermesModel(model)) {
-    return read(localReasoningEffortsProvider)['hermes:${model.id}'] ??
-        kAutomaticReasoningEffort;
-  }
   final localEffort = localReasoningEffortForModel(read, model);
   if (localEffort != null) {
     return reasoningEffortPolicyForModel(
@@ -388,52 +337,12 @@ ReasoningEffortPolicy reasoningEffortPolicyForModel(
       allowsCustom: false,
     );
   }
-  if (isHermesModel(model)) return ReasoningEffortPolicy.generic;
-  final binding = read(directModelRegistryProvider).resolve(model);
-  if (binding == null) {
-    final detailedModelEffort = _isOpenWebUiWorkspaceModel(model)
-        ? read(serverModelReasoningEffortProvider(model)).asData?.value.value
-        : null;
-    return model.supportsReasoningEffort || detailedModelEffort != null
-        ? ReasoningEffortPolicy.generic
-        : ReasoningEffortPolicy.unsupported;
-  }
-  if (binding.adapterKey == kOllamaAdapterKey) {
-    return const ReasoningEffortPolicy(
-      visible: true,
-      options: kReasoningEffortOptions,
-      allowsCustom: false,
-      restrictsValues: true,
-    );
-  }
-  if (binding.adapterKey == kApplePccAdapterKey &&
-      binding.profileId == kApplePccProfileId) {
-    return const ReasoningEffortPolicy(
-      visible: true,
-      options: kApplePccReasoningEfforts,
-      allowsCustom: false,
-      restrictsValues: true,
-    );
-  }
-  if (binding.adapterKey == kApplePccAdapterKey) {
-    return ReasoningEffortPolicy.unsupported;
-  }
-  if (model.capabilities?['openrouter'] != true) {
-    return ReasoningEffortPolicy.generic;
-  }
-  final support = OpenRouterReasoningSupport.tryParseCatalog(
-    model.capabilities?['reasoning'],
-  );
-  final efforts = support?.selectableEfforts ?? const <String>[];
-  return ReasoningEffortPolicy(
-    visible: efforts.isNotEmpty,
-    options: List<String>.unmodifiable(<String>[
-      if (efforts.isNotEmpty) kAutomaticReasoningEffort,
-      ...efforts,
-    ]),
-    allowsCustom: false,
-    restrictsValues: true,
-  );
+  final detailedModelEffort = _isOpenWebUiWorkspaceModel(model)
+      ? read(serverModelReasoningEffortProvider(model)).asData?.value.value
+      : null;
+  return model.supportsReasoningEffort || detailedModelEffort != null
+      ? ReasoningEffortPolicy.generic
+      : ReasoningEffortPolicy.unsupported;
 }
 
 Future<void> setReasoningEffort(
@@ -457,43 +366,6 @@ Future<void> setReasoningEffortForModel(
       'This model does not support that reasoning effort.',
     );
   }
-  final configured = normalized == kAutomaticReasoningEffort
-      ? null
-      : normalized;
-  final binding = read(directModelRegistryProvider).resolve(model);
-  if (binding != null) {
-    if (binding.adapterKey == kOllamaAdapterKey) {
-      final profiles = await read(directConnectionProfilesProvider.future);
-      final profile = profiles
-          .where(
-            (candidate) =>
-                candidate.id == binding.profileId &&
-                candidate.enabled &&
-                candidate.adapterKey == kOllamaAdapterKey,
-          )
-          .firstOrNull;
-      if (profile == null) {
-        throw StateError('Ollama connection is unavailable.');
-      }
-      await read(directConnectionProfilesProvider.notifier).setOllamaThinking(
-        binding.profileId,
-        binding.remoteModelId,
-        configured == null
-            ? null
-            : OllamaThinkingSetting.fromStorage(configured),
-      );
-      return;
-    }
-    await read(
-      localReasoningEffortsProvider.notifier,
-    ).set('direct:${binding.profileId}:${binding.remoteModelId}', configured);
-    return;
-  }
-  if (isHermesModel(model)) {
-    await read(localReasoningEffortsProvider.notifier)
-        .set('hermes:${model.id}', configured);
-    return;
-  }
   // Open WebUI server models: keep the pick per model and per server, like the
   // web client's chat-level Controls, and send it explicitly with each
   // completion so it wins over the model's configured default. An explicit
@@ -504,17 +376,4 @@ Future<void> setReasoningEffortForModel(
     await read(localReasoningEffortsProvider.notifier)
         .set(serverKey, normalized);
   }
-}
-
-DirectConnectionProfile? _readDirectProfile(
-  ReasoningEffortReader read,
-  String profileId,
-) {
-  final profiles =
-      read(directConnectionProfilesProvider).value ??
-      const <DirectConnectionProfile>[];
-  for (final profile in profiles) {
-    if (profile.id == profileId) return profile;
-  }
-  return null;
 }

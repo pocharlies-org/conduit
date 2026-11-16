@@ -3,8 +3,8 @@ part of 'chat_providers.dart';
 /// Collision-free runtime ownership for asynchronous chat mutations.
 ///
 /// Stored conversations include their database provenance. Unstored direct
-/// and Hermes conversations use backend-specific namespaces so an id collision
-/// cannot let late work from one backend mutate another backend's active chat.
+/// conversations use a runtime namespace so an id collision cannot let late
+/// work mutate another owner's active chat.
 String chatMutationOwnerScopeForConversation(Conversation conversation) {
   final storage = chatStorageKindOf(conversation);
   if (storage != null) {
@@ -13,11 +13,8 @@ String chatMutationOwnerScopeForConversation(Conversation conversation) {
       storage: storage,
     ).scopedId;
   }
-  if (conversation.metadata['backend'] == kDirectTransport) {
+  if (conversation.metadata['backend'] == kDirectChatBackend) {
     return 'conduit-direct-runtime://${Uri.encodeComponent(conversation.id)}';
-  }
-  if (isNativeHermesConversation(conversation)) {
-    return 'conduit-hermes-runtime://${Uri.encodeComponent(conversation.id)}';
   }
   // Unannotated conversations retain their historical OpenWebUI ownership.
   return ChatStorageIdentity(
@@ -38,8 +35,7 @@ String openWebUiChatMutationOwnerScope(String chatId) => ChatStorageIdentity(
 
 /// Immutable ownership captured before an asynchronous chat mutation starts.
 /// OpenWebUI ownership includes the exact API and database instances so equal
-/// raw ids on two configured servers remain distinct. Direct/Hermes ownership
-/// continues to use its backend-scoped conversation identity.
+/// raw ids on two configured servers remain distinct.
 final class ChatMutationOwnerToken {
   const ChatMutationOwnerToken._({
     required this.conversation,

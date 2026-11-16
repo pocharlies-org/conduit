@@ -69,8 +69,6 @@ import '../../chat/widgets/server_file_picker_sheet.dart';
 import '../../chat/voice_call/presentation/voice_call_launcher.dart';
 import '../../chat/voice_mode/voice_mode_error_text.dart';
 
-import 'package:conduit_core/features/hermes/models/hermes_config.dart';
-import 'package:conduit_core/features/hermes/providers/hermes_providers.dart';
 import 'package:conduit_core/features/tools/providers/tools_providers.dart';
 
 import '../providers/conversation_selection_provider.dart';
@@ -827,17 +825,7 @@ class _FolderPageState extends ConsumerState<FolderPage> {
     }
 
     try {
-      final attachments = await fileService.pickFiles(
-        allowedExtensions: localFilePickerExtensionsForModel(
-          ref.read(selectedModelProvider),
-          desktopHermes:
-              ref.read(hermesConfigProvider).mode ==
-              HermesBackendMode.desktopGateway,
-          hermesResponsesFiles:
-              ref.read(hermesCapabilitiesProvider).asData?.value.inputFiles ==
-              true,
-        ),
-      );
+      final attachments = await fileService.pickFiles();
       if (attachments.isEmpty) {
         return;
       }

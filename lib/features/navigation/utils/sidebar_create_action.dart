@@ -58,12 +58,6 @@ const chatSidebarCreateAction = SidebarCreateAction(
   handler: _startNewChat,
 );
 
-const hermesChatSidebarCreateAction = SidebarCreateAction(
-  iconBuilder: _newChatIcon,
-  sfSymbol: 'square.and.pencil',
-  handler: _startNewHermesChat,
-);
-
 const noteSidebarCreateAction = SidebarCreateAction(
   iconBuilder: _newNoteIcon,
   sfSymbol: 'doc.badge.plus',
@@ -79,14 +73,6 @@ const channelSidebarCreateAction = SidebarCreateAction(
 Future<void> _startNewChat(BuildContext context, WidgetRef ref) async {
   ConduitHaptics.selectionClick();
   chat.startNewChat(ref);
-  NavigationService.router.go(Routes.chat);
-  _closeSidebarIfNeeded(context);
-}
-
-Future<void> _startNewHermesChat(BuildContext context, WidgetRef ref) async {
-  ConduitHaptics.selectionClick();
-  await chat.startNewHermesChat(ref);
-  if (!context.mounted) return;
   NavigationService.router.go(Routes.chat);
   _closeSidebarIfNeeded(context);
 }

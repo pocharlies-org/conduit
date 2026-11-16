@@ -21,12 +21,9 @@ import 'package:conduit_core/features/chat/providers/chat_providers.dart'
         localChatGenerationActiveProvider,
         stopGenerationProvider,
         stopOpenWebUiMainResponse;
-import 'package:conduit_core/features/direct_connections/providers/direct_connection_providers.dart';
-import 'package:conduit_core/features/hermes/providers/hermes_providers.dart';
 import 'package:conduit_core/persistence/persistence_keys.dart';
 import 'package:conduit_core/persistence/preferences_store.dart';
 import 'package:conduit_core/providers/app_providers.dart';
-import 'package:conduit_core/providers/backend_mode_providers.dart';
 import 'package:conduit_core/utils/debug_logger.dart';
 
 enum OpenWebUiAccountChangeResult {
@@ -282,7 +279,6 @@ class OpenWebUiAccountsController {
       return OpenWebUiAccountChangeResult.done;
     }
     if (now == null) {
-      await _fallBackWithoutOpenWebUi();
       _afterActiveAccountChanged(null);
     } else if (now == next) {
       await _ref.read(openWebUiAccountSummariesProvider.notifier).touch(next!);
@@ -431,44 +427,6 @@ class OpenWebUiAccountsController {
         return bUsed.compareTo(aUsed);
       });
     return candidates.firstOrNull?.id;
-  }
-
-  Future<void> _fallBackWithoutOpenWebUi() async {
-    var fallback = PreferredBackend.hermes;
-    if (!_ref.read(hermesConfigProvider).isUsable) {
-      // The synchronous view can still be loading with no value, which would
-      // send a user who has usable Direct profiles back to backend selection.
-      var hasUsableDirect = false;
-      try {
-        final direct = await _ref.read(
-          effectiveDirectConnectionProfilesFutureProvider.future,
-        );
-        hasUsableDirect = direct.any((profile) => profile.isUsable);
-      } catch (error) {
-        DebugLogger.warning(
-          'direct-profiles-unavailable',
-          scope: 'auth/accounts',
-          data: {'errorType': error.runtimeType.toString()},
-        );
-      }
-      fallback = hasUsableDirect
-          ? PreferredBackend.direct
-          : PreferredBackend.unset;
-    }
-    // A sign-in can have made an account active while this waited; the app
-    // stays on Open WebUI then, and when that cannot be read.
-    try {
-      if (await _activeAccountId() != null) return;
-    } catch (error, stackTrace) {
-      DebugLogger.error(
-        'active-account-read-failed',
-        scope: 'auth/accounts',
-        error: error,
-        stackTrace: stackTrace,
-      );
-      return;
-    }
-    await _ref.read(preferredBackendProvider.notifier).set(fallback);
   }
 
   void _afterActiveAccountChanged(String? accountId) {

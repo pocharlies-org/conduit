@@ -1,30 +1,15 @@
 import 'package:conduit_core/features/auth/providers/unified_auth_providers.dart';
 import 'package:conduit_core/persistence/persistence_keys.dart';
 import 'package:conduit_core/persistence/preferences_store.dart';
-import 'package:conduit_core/providers/backend_mode_providers.dart';
 
 import 'models/release_note.dart';
 import 'release_notes_banner_controller.dart';
 import 'release_notes_bootstrap.dart';
 import 'services/release_notes_service.dart';
 
-/// Whether the release-notes flow may run now: a signed-in Open WebUI
-/// session, or an accountless backend (Direct, Hermes) the user has set up.
-bool canPresentReleaseNotes(
-  AuthNavigationState authState,
-  PreferredBackend preferredBackend,
-) {
-  if (authState == AuthNavigationState.authenticated) {
-    return true;
-  }
-  return switch (preferredBackend) {
-    PreferredBackend.direct =>
-      PreferencesStore.getBool(PreferenceKeys.directConnectionsConfigured) ==
-          true,
-    PreferredBackend.hermes =>
-      PreferencesStore.getBool(PreferenceKeys.hermesEnabled) == true,
-    PreferredBackend.unset || PreferredBackend.owui => false,
-  };
+/// Whether the release-notes flow may run now: a signed-in Open WebUI session.
+bool canPresentReleaseNotes(AuthNavigationState authState) {
+  return authState == AuthNavigationState.authenticated;
 }
 
 /// The version release notes are evaluated against: the last one the user

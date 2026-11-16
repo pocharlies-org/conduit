@@ -14,7 +14,6 @@ export 'package:conduit_core/database/account_storage_isolation.dart';
 import 'package:conduit_core/database/local_conversation_loader.dart';
 import 'package:conduit_core/auth/auth_state_manager.dart';
 
-import 'package:conduit_core/features/hermes/services/hermes_session_provenance.dart';
 import 'package:conduit_core/providers/app_providers.dart';
 
 import 'package:conduit_core/sync/sync_triggers.dart';
@@ -31,7 +30,6 @@ import 'package:conduit_core/features/notes/providers/notes_providers.dart'
 import 'package:conduit_core/features/prompts/providers/prompts_providers.dart'
     show activePromptCommandProvider;
 import '../../platform/app_intents_service.dart';
-import '../../platform/carplay_service.dart';
 import '../../platform/home_widget_service.dart';
 import '../services/image_attachment_cache_service.dart';
 import '../services/media_upload_controller.dart';
@@ -64,8 +62,6 @@ import 'package:conduit_core/features/channels/providers/channel_providers.dart'
 
 import '../../features/channels/providers/channel_socket_handler.dart';
 
-import 'package:conduit_core/features/direct_connections/direct_connections.dart';
-import 'package:conduit_core/features/hermes/models/hermes_model.dart';
 
 import '../../features/notifications/providers/notification_socket_listener.dart';
 import '../../features/notifications/services/local_notification_service.dart';
@@ -222,27 +218,19 @@ Future<void> _cleanupUserScopedProvidersAfterSignOut(
 }
 
 /// Drops every keepAlive provider holding the previous Open WebUI account's
-/// data or selections. Direct and Hermes state survives: a local chat or
-/// model does not belong to any account.
+/// data or selections.
 void _resetUserScopedProviders(Ref ref) {
   try {
     final active = ref.read(activeConversationProvider);
     final preserveLocalConversation =
         active != null && !conversationUsesOpenWebUiStorage(active);
-    final selectedModel = ref.read(selectedModelProvider);
-    final preserveLocalModel =
-        selectedModel != null &&
-        (isLocallyMintedDirectModel(selectedModel) ||
-            isHermesModel(selectedModel));
     ref.invalidate(conversationsProvider);
     if (!preserveLocalConversation) {
       ref.invalidate(activeConversationProvider);
     }
     ref.invalidate(foldersProvider);
     ref.invalidate(modelsProvider);
-    if (!preserveLocalModel) {
-      ref.invalidate(selectedModelProvider);
-    }
+    ref.invalidate(selectedModelProvider);
     ref.invalidate(currentUserProvider);
     ref.invalidate(userSettingsProvider);
     ref.invalidate(rawUserSettingsProvider);
@@ -837,7 +825,6 @@ class AppStartupFlow extends _$AppStartupFlow {
   bool _started = false;
   ProviderSubscription<SocketService?>? _socketSubscription;
   ProviderSubscription<void>? _defaultModelAutoSelectionSubscription;
-  ProviderSubscription<void>? _directCompletionRelaySubscription;
   Timer? _defaultModelPreloadTimer;
   final _postAuthStartupRunner = _QueuedLatestRunner();
   final _startupTaskQueue = _FrameBudgetedStartupQueue();
@@ -863,32 +850,11 @@ class AppStartupFlow extends _$AppStartupFlow {
     );
   }
 
-  void _keepDirectCompletionRelayAlive() {
-    if (!_hasAuthenticatedSession()) return;
-    _directCompletionRelaySubscription ??= ref.listen<void>(
-      openWebUiDirectCompletionSocketRelayProvider,
-      (previous, value) {},
-      fireImmediately: true,
-    );
-  }
-
-  void _stopDirectCompletionRelay() {
-    _directCompletionRelaySubscription?.close();
-    _directCompletionRelaySubscription = null;
-    // This relay is an always-alive provider so closing its only listener does
-    // not by itself run the Socket.IO handler's teardown. Explicitly revoke
-    // the cached provider state at the auth boundary.
-    if (ref.mounted) {
-      ref.invalidate(openWebUiDirectCompletionSocketRelayProvider);
-    }
-  }
-
   void _disposeStartupResources() {
     _socketSubscription?.close();
     _socketSubscription = null;
     _defaultModelAutoSelectionSubscription?.close();
     _defaultModelAutoSelectionSubscription = null;
-    _stopDirectCompletionRelay();
     _cancelDefaultModelPreload();
     _startupTaskQueue.dispose();
   }
@@ -1023,11 +989,6 @@ class AppStartupFlow extends _$AppStartupFlow {
       const Duration(milliseconds: 48),
       appIntentCoordinatorProvider,
       label: 'app-intents',
-    );
-    _scheduleDeferredKeepAlive(
-      const Duration(milliseconds: 56),
-      carPlayCoordinatorProvider,
-      label: 'carplay',
     );
     _scheduleDeferredKeepAlive(
       const Duration(milliseconds: 64),
@@ -1177,10 +1138,6 @@ class AppStartupFlow extends _$AppStartupFlow {
     // fetch) so the sidebar generating spinner is correct app-wide, including
     // for generations started by other sessions. keepAlive keeps it running.
     ref.read(activeChatsSyncProvider);
-    // Match Open WebUI's layout-scoped direct-completion RPC handler. It must
-    // be listening before a completion POST can ask this client to contact the
-    // saved provider and relay its stream through the server.
-    _keepDirectCompletionRelayAlive();
     // Activate the notification listener (global chat/channel handlers feeding
     // the NotificationRouter). The router gates on the master toggle, so this is
     // safe to run unconditionally. Then drain any cold-launch notification tap.
@@ -1239,7 +1196,6 @@ class AppStartupFlow extends _$AppStartupFlow {
       if (next == AuthNavigationState.authenticated) {
         _requestPostAuthenticationStartup(apiWaitTimeout: apiWaitTimeout);
       } else {
-        _stopDirectCompletionRelay();
         _clearQueuedAuthenticatedStartupWork();
         _resetConversationWarmup(ref);
       }
@@ -1436,7 +1392,6 @@ Future<void> _refreshActiveConversationOnResume(Ref ref) async {
     if (active == null ||
         isTemporaryChat(active.id) ||
         isDirectLocalConversation(active) ||
-        isNativeHermesConversation(active) ||
         ref.read(shouldProtectLocalStreamingStateProvider)) {
       return;
     }

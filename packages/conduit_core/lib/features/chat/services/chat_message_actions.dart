@@ -10,7 +10,6 @@ import 'package:conduit_core/features/chat/providers/chat_providers.dart';
 import 'package:conduit_core/features/chat/services/chat_transport_dispatch.dart';
 import 'package:conduit_core/features/chat/utils/file_utils.dart';
 import 'package:conduit_core/features/chat/utils/message_targeting.dart';
-import 'package:conduit_core/features/hermes/services/hermes_session_provenance.dart';
 import 'package:conduit_core/features/tools/providers/tools_providers.dart';
 import 'package:conduit_core/models/chat_message.dart';
 import 'package:conduit_core/models/conversation.dart';
@@ -95,13 +94,10 @@ Future<ChatMessageDeleteOutcome> deleteChatMessageGroup(
       ref.read(activeConversationProvider) as Conversation?;
   if (activeConversation == null) return ChatMessageDeleteOutcome.deleted;
 
-  final updatedConversation = inheritNativeHermesConversationProvenance(
-    activeConversation,
-    activeConversation.copyWith(
+  final updatedConversation = activeConversation.copyWith(
       messages: updatedMessages,
       updatedAt: DateTime.now(),
-    ),
-  );
+    );
   ref.read(activeConversationProvider.notifier).set(updatedConversation);
   ref
       .read(conversationsProvider.notifier)
@@ -142,10 +138,7 @@ Future<ChatMessageDeleteOutcome> deleteChatMessageGroup(
     }
     final restoredConversation = deletedOnServer.isEmpty
         ? activeConversation
-        : inheritNativeHermesConversationProvenance(
-            activeConversation,
-            activeConversation.copyWith(messages: restoredMessages),
-          );
+        : activeConversation.copyWith(messages: restoredMessages);
     messagesNotifier.setMessages(restoredMessages);
     ref.read(activeConversationProvider.notifier).set(restoredConversation);
     ref
@@ -163,9 +156,8 @@ final RegExp _fileIdPattern = RegExp(r'/api/v1/files/([^/]+)(?:/content)?$');
 /// The uploaded-file ids an edited [message] re-sends with its new text.
 ///
 /// Prefers `attachmentIds`; otherwise reads the `files` array, skipping note
-/// attachments (a note id is not a file id) and Hermes local descriptors
-/// (historical references, not uploads), and taking a file's id from its
-/// `id` or its `/api/v1/files/{id}` URL.
+/// attachments (a note id is not a file id), and taking a file's id from
+/// its `id` or its `/api/v1/files/{id}` URL.
 List<String>? editedMessageAttachmentIds(ChatMessage message) {
   final attachmentIds = message.attachmentIds;
   if (attachmentIds != null && attachmentIds.isNotEmpty) {
@@ -189,7 +181,6 @@ List<String>? editedMessageAttachmentIds(ChatMessage message) {
 
   for (final file in files) {
     if (file['type'] == 'note') continue;
-    if (file['source'] == 'hermes_local') continue;
     final explicitId = file['id']?.toString();
     if (explicitId != null && explicitId.trim().isNotEmpty) {
       addId(explicitId);
@@ -203,10 +194,9 @@ List<String>? editedMessageAttachmentIds(ChatMessage message) {
 }
 
 /// Re-sends the user message [messageId] with [newText] as a new turn, as
-/// the Flutter bubble's inline edit did: a native Hermes chat replays through
-/// Hermes; any other chat drops the message and everything after it, then
-/// sends the edited text (with the message's uploads and the selected tools)
-/// through [durableSend].
+/// the Flutter bubble's inline edit did: drops the message and everything
+/// after it, then sends the edited text (with the message's uploads and the
+/// selected tools) through [durableSend].
 ///
 /// Returns false when there is nothing to do (blank or unchanged text, or
 /// the message is gone). A failed send recovers its optimistic assistant and
@@ -226,15 +216,6 @@ Future<bool> resendEditedUserMessage(
 
   ChatSendPlaceholderHandle? pendingSend;
   try {
-    final active = ref.read(activeConversationProvider) as Conversation?;
-    if (isNativeHermesConversation(active)) {
-      await regenerateEditedHermesUserMessage(
-        ref,
-        messageId: messageId,
-        content: text,
-      );
-      return true;
-    }
     final keep = truncateMessagesAfterId(
       messages,
       messageId,

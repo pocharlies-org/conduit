@@ -25,14 +25,8 @@ import '../../../shared/widgets/sheet_handle.dart';
 import '../../../shared/widgets/themed_dialogs.dart';
 import '../../../shared/widgets/themed_sheets.dart';
 
-import 'package:conduit_core/features/direct_connections/models/direct_connection_profile.dart';
-import 'package:conduit_core/features/direct_connections/providers/direct_connection_providers.dart';
-import 'package:conduit_core/features/direct_connections/services/direct_model_registry.dart';
 
-import '../../direct_connections/views/ollama_model_actions.dart';
 
-import 'package:conduit_core/features/hermes/models/hermes_model.dart';
-import 'package:conduit_core/features/hermes/providers/hermes_providers.dart';
 
 import 'package:conduit_core/features/chat/models/model_selector_layout.dart';
 import 'package:conduit_core/features/chat/providers/chat_providers.dart'
@@ -188,11 +182,6 @@ class ModelSelectorSheetState extends ConsumerState<ModelSelectorSheet> {
         .toList(growable: false);
     final l10n = AppLocalizations.of(context)!;
     final effortPolicy = ref.watch(reasoningEffortPolicyProvider);
-    final selectedModel = ref.watch(selectedModelProvider);
-    final supportsHermesFast =
-        selectedModel != null &&
-        isHermesModel(selectedModel) &&
-        selectedModel.metadata?['hermesFast'] == true;
 
     return DraggableScrollableSheet(
       expand: false,
@@ -280,29 +269,6 @@ class ModelSelectorSheetState extends ConsumerState<ModelSelectorSheet> {
                               onTap: _showEffortSelector,
                             ),
                           ],
-                          if (widget.onPick == null && supportsHermesFast) ...[
-                            const SizedBox(height: Spacing.md),
-                            _ActionCard(
-                              icon: Platform.isIOS
-                                  ? CupertinoIcons.bolt
-                                  : Icons.bolt_rounded,
-                              title: l10n.hermesFastTier,
-                              subtitle:
-                                  ref.watch(hermesFastTierSelectionProvider)
-                                  ? l10n.hermesFastTierOn
-                                  : l10n.hermesFastTierOff,
-                              onTap: () {
-                                final enabled = ref.read(
-                                  hermesFastTierSelectionProvider,
-                                );
-                                ref
-                                    .read(
-                                      hermesFastTierSelectionProvider.notifier,
-                                    )
-                                    .set(!enabled);
-                              },
-                            ),
-                          ],
                           if (layout.more.isNotEmpty) ...[
                             const SizedBox(height: Spacing.md),
                             _ActionCard(
@@ -347,10 +313,8 @@ String reasoningEffortLabelForTest(AppLocalizations l10n, String effort) =>
 bool modelSelectorQueryMatches(Model model, String query) {
   final normalizedQuery = query.trim().toLowerCase();
   if (normalizedQuery.isEmpty) return true;
-  final directSource = directModelSourceLabel(model)?.toLowerCase();
   return model.name.toLowerCase().contains(normalizedQuery) ||
       model.id.toLowerCase().contains(normalizedQuery) ||
-      (directSource?.contains(normalizedQuery) ?? false) ||
       model.modelTags.any((tag) => tag.toLowerCase().contains(normalizedQuery));
 }
 
@@ -433,10 +397,6 @@ class _ModelGroup extends ConsumerWidget {
     final pinnedModelIds = ref.watch(effectivePinnedModelIdsProvider);
     final canToggle = ref.watch(canTogglePinnedModelsProvider);
     final api = ref.watch(apiServiceProvider);
-    final directRegistry = ref.watch(directModelRegistryProvider);
-    final profiles =
-        ref.watch(directConnectionProfilesProvider).value ??
-        const <DirectConnectionProfile>[];
     final l10n = AppLocalizations.of(context)!;
 
     Widget buildRow(int index) => _buildModelRow(
@@ -449,8 +409,6 @@ class _ModelGroup extends ConsumerWidget {
       canToggle: canToggle,
       onPick: onPick,
       api: api,
-      directRegistry: directRegistry,
-      profiles: profiles,
       l10n: l10n,
     );
 
@@ -481,26 +439,8 @@ class _ModelGroup extends ConsumerWidget {
     required bool canToggle,
     required ValueChanged<Model>? onPick,
     required ApiService? api,
-    required DirectModelRegistry directRegistry,
-    required List<DirectConnectionProfile> profiles,
     required AppLocalizations l10n,
   }) {
-    final binding = directRegistry.resolve(model);
-    final profile = binding == null
-        ? null
-        : profiles.where((item) => item.id == binding.profileId).firstOrNull;
-    final lifecycleEnabled =
-        binding?.adapterKey == kOllamaAdapterKey &&
-        binding?.source == DirectModelSource.device &&
-        profile?.supportsOllamaModelLifecycle == true;
-    final lifecycle = lifecycleEnabled
-        ? ref.watch(ollamaModelLifecycleProvider(binding!.profileId))
-        : null;
-    final remoteModelId = binding?.remoteModelId ?? '';
-    final isLoaded = lifecycle?.value?.isLoaded(remoteModelId) ?? false;
-    final isBusy =
-        lifecycle?.isLoading == true ||
-        (lifecycle?.value?.isBusy(remoteModelId) ?? false);
     final isPinned = pinnedModelIds.contains(model.id);
 
     return Column(
@@ -524,22 +464,7 @@ class _ModelGroup extends ConsumerWidget {
             model: model,
             isSelected: selectedModelId == model.id,
             isPinned: isPinned,
-            isLoaded: isLoaded,
             iconUrl: resolveModelIconUrlForModel(api, model),
-            trailing: lifecycleEnabled && profile != null
-                ? OllamaModelActionsButton(
-                    profileId: binding!.profileId,
-                    remoteModelId: remoteModelId,
-                    modelName: model.name,
-                    isLoaded: isLoaded,
-                    isStatusKnown: lifecycle?.hasValue ?? false,
-                    isBusy: isBusy,
-                    currentKeepAlive: profile.ollamaKeepAliveFor(remoteModelId),
-                    supportsLifecycle: lifecycleEnabled,
-                    isCloud: false,
-                    currentThinking: profile.ollamaThinkingFor(remoteModelId),
-                  )
-                : null,
             onTap: () {
               if (onPick != null) {
                 onPick(model);

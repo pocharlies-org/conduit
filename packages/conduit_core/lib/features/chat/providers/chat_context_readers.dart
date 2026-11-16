@@ -86,12 +86,10 @@ bool _conversationUsesOpenWebUiContext(Conversation? conversation) {
   final storage = chatStorageKindOf(conversation);
   // Explicit storage provenance is authoritative. The conversation-level
   // backend marker describes the transport used by a turn and may legitimately
-  // be direct/Hermes inside an OpenWebUI-owned chat.
+  // be direct inside an OpenWebUI-owned chat.
   if (storage == ChatStorageKind.openWebUi) return true;
   if (storage == ChatStorageKind.directLocal) return false;
-  final backend = conversation.metadata['backend'];
-  return backend != kDirectTransport &&
-      !isNativeHermesConversation(conversation);
+  return conversation.metadata['backend'] != kDirectChatBackend;
 }
 
 /// Whether chat content is owned by the account-scoped OpenWebUI database.

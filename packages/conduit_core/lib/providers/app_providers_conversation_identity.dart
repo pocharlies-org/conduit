@@ -189,7 +189,6 @@ String conversationScopedId(Conversation conversation) {
   // created server chat can briefly expose an ambiguous raw id to listeners.
   if (storage == null &&
       !isTemporaryChat(conversation.id) &&
-      !isNativeHermesConversation(conversation) &&
       !_isUnstoredDirectConversation(conversation)) {
     storage = ChatStorageKind.openWebUi;
   }
@@ -200,12 +199,10 @@ bool conversationMatchesScopedId(Conversation conversation, String scopedId) {
   final identity = ChatStorageIdentity.parse(scopedId);
   if (conversation.id != identity.rawId) return false;
   final storage = identity.storage;
-  // Native Hermes shells are runtime-owned and intentionally unscoped. A
+  // An unstored direct shell is runtime-owned and intentionally unscoped. A
   // persisted row can legally reuse the same raw id, but its scoped selection
-  // must never match or mutate the native shell.
-  if (storage != null &&
-      (isNativeHermesConversation(conversation) ||
-          _isUnstoredDirectConversation(conversation))) {
+  // must never match or mutate the shell.
+  if (storage != null && _isUnstoredDirectConversation(conversation)) {
     return false;
   }
   return storage == null ||
@@ -214,16 +211,9 @@ bool conversationMatchesScopedId(Conversation conversation, String scopedId) {
 
 bool isSameStoredConversation(Conversation? left, Conversation? right) {
   if (left == null || right == null || left.id != right.id) return false;
-  // A native Hermes shell is process-owned and deliberately has no persisted
-  // storage annotation. Do not let a server row with the same raw id collide
-  // with it through the legacy "unannotated means OpenWebUI" fallback.
-  final leftIsNativeHermes = isNativeHermesConversation(left);
-  final rightIsNativeHermes = isNativeHermesConversation(right);
-  if (leftIsNativeHermes != rightIsNativeHermes) return false;
-  if (leftIsNativeHermes) return true;
-  // A temporary direct shell is runtime-owned just like a native Hermes
-  // shell. It must not alias a colliding legacy OpenWebUI row merely because
-  // both currently lack a storage annotation.
+  // A temporary direct shell is runtime-owned and deliberately has no
+  // persisted storage annotation. It must not alias a colliding legacy
+  // OpenWebUI row merely because both currently lack a storage annotation.
   final leftIsUnstoredDirect = _isUnstoredDirectConversation(left);
   final rightIsUnstoredDirect = _isUnstoredDirectConversation(right);
   if (leftIsUnstoredDirect != rightIsUnstoredDirect) return false;

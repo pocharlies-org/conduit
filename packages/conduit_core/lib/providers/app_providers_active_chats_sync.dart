@@ -8,9 +8,9 @@ Future<Model?> selectCachedModel(
   String? desiredModelId,
 ) async {
   try {
-    final cachedModels = sanitizeRemoteHermesModels(
-      sanitizeRemoteDirectModels(await storage.getLocalModels()),
-    ).where((model) => !model.isHidden).toList();
+    final cachedModels = (await storage.getLocalModels())
+        .where((model) => !model.isHidden)
+        .toList();
     if (cachedModels.isEmpty) return null;
 
     Model? match;

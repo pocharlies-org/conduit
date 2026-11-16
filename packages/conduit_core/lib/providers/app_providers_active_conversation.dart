@@ -5,7 +5,7 @@ final activeConversationProvider =
       ActiveConversationNotifier.new,
     );
 
-enum ActiveConversationRemapNamespace { openWebUi, direct, hermes }
+enum ActiveConversationRemapNamespace { openWebUi, direct }
 
 @immutable
 class ActiveConversationInPlaceRemap {
@@ -136,14 +136,6 @@ class ActiveConversationNotifier extends Notifier<Conversation?> {
   Conversation? build() => null;
 
   void set(Conversation? conversation) {
-    final previous = state;
-    final selectionChanged = previous == null
-        ? conversation != null
-        : conversation == null ||
-              !isSameStoredConversation(previous, conversation);
-    if (selectionChanged) {
-      ref.read(hermesSessionNavigationEpochProvider.notifier).bump();
-    }
     state = conversation;
   }
 
@@ -154,14 +146,10 @@ class ActiveConversationNotifier extends Notifier<Conversation?> {
     ref
         .read(activeConversationInPlaceRemapProvider.notifier)
         .mark(fromId: fromId, toId: toId, namespace: namespace);
-    state = inheritNativeHermesConversationProvenance(
-      current,
-      current.copyWith(id: toId),
-    );
+    state = current.copyWith(id: toId);
   }
 
   void clear() {
-    ref.read(hermesSessionNavigationEpochProvider.notifier).bump();
     state = null;
   }
 }
@@ -171,13 +159,10 @@ ActiveConversationRemapNamespace _activeConversationRemapNamespaceFor(
 ) {
   final storage = chatStorageKindOf(conversation);
   // Storage ownership and the transport used by the latest turn are separate.
-  // A direct/Hermes turn inside a server-owned chat still needs the exact
-  // OpenWebUI database/API remap fence.
+  // A direct turn inside a server-owned chat still needs the exact OpenWebUI
+  // database/API remap fence.
   if (storage == ChatStorageKind.openWebUi) {
     return ActiveConversationRemapNamespace.openWebUi;
-  }
-  if (isNativeHermesConversation(conversation)) {
-    return ActiveConversationRemapNamespace.hermes;
   }
   if (conversation.metadata['backend'] == 'direct' ||
       storage == ChatStorageKind.directLocal) {

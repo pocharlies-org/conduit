@@ -9,7 +9,6 @@ import 'package:conduit_core/features/integrations/personal_connection_client.da
 import 'package:conduit_core/features/integrations/personal_connection_drafts.dart';
 import 'package:conduit_core/features/integrations/personal_connection_edits.dart';
 import 'package:conduit_core/features/integrations/personal_connection_settings.dart';
-import 'package:conduit_core/features/terminal/providers/terminal_providers.dart';
 import 'package:conduit_core/features/tools/providers/tools_providers.dart';
 import 'package:conduit_core/providers/app_providers.dart';
 import 'package:conduit_core/services/api_service.dart';
@@ -368,10 +367,6 @@ class PersonalConnectionsController
       PersonalConnectionKind.toolServer => _reconcileToolSelections(write),
       PersonalConnectionKind.terminal => _reconcileTerminalSelection(write),
     };
-    // Re-probe the terminal list so the composer and terminal tab see the
-    // edited entry.
-    ref.invalidate(terminalAvailableServersProvider);
-    ref.invalidate(terminalSelectedServerProvider);
     if (cleared.isNotEmpty) {
       ref.read(personalSelectionNoticeProvider.notifier).add(cleared);
     }

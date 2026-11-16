@@ -14,12 +14,6 @@ import 'package:uuid/uuid.dart';
 
 import '../../features/chat/services/file_attachment_service.dart';
 
-import 'package:conduit_core/features/direct_connections/direct_connections.dart';
-import 'package:conduit_core/features/hermes/models/hermes_chat_input.dart';
-import 'package:conduit_core/features/hermes/models/hermes_config.dart';
-import 'package:conduit_core/features/hermes/models/hermes_model.dart';
-import 'package:conduit_core/features/hermes/providers/hermes_providers.dart';
-import 'package:conduit_core/features/hermes/services/hermes_local_document_service.dart';
 
 import 'package:conduit_core/models/file_info.dart';
 
@@ -37,7 +31,6 @@ import 'package:conduit_core/services/share_staging_cleanup.dart';
 
 part 'media_upload_controller.g.dart';
 
-typedef DirectImageDataUrlEncoder = Future<String?> Function(File file);
 typedef ImageUploadConverter = Future<String?> Function(String filePath);
 typedef StagingFileCopy = Future<File> Function(
   File source,
@@ -51,7 +44,6 @@ typedef OwnedStagingConversionReplacer =
     });
 
 const int kUploadImagePrecacheMaxBytes = 4 * 1024 * 1024;
-const int _kDirectMaxAggregatePdfBytes = 2 * kDirectMaxLocalDocumentBytes;
 
 String _localDocumentOpaqueId(File file, FileStat stat) => sha256
     .convert(
@@ -107,15 +99,6 @@ final class NativeShareUploadAcceptance {
   /// False means this attempt joined an earlier row and skipped publishing a
   /// duplicate composer attachment; the caller may roll this extra copy back.
   final bool providedPathOwned;
-}
-
-/// Local Direct/Hermes composer state is not a crash-durable native owner.
-final class NativeShareDurableOwnershipUnavailable implements Exception {
-  const NativeShareDurableOwnershipUnavailable();
-
-  @override
-  String toString() =>
-      'Native shared files require a server-backed model before import.';
 }
 
 typedef UploadImagePrecacheReader = Future<Uint8List?> Function(
@@ -267,12 +250,6 @@ replaceOwnedStagingFileWithConvertedUpload({
   return OwnedStagingConversionReplacementResult.replaced;
 }
 
-/// Encoding seam used to prove oversized files are rejected before base64
-/// allocation. Production keeps the existing compatibility conversion path.
-final directImageDataUrlEncoderProvider = Provider<DirectImageDataUrlEncoder>(
-  (ref) => convertImageFileToDataUrl,
-);
-
 final imageUploadConverterProvider = Provider<ImageUploadConverter>(
   (ref) => convertImageForUpload,
 );
@@ -302,26 +279,6 @@ final mediaUploadCleanupBarrierProvider = Provider<MediaUploadCleanupBarrier>(
   (ref) => (_) async {},
 );
 
-/// Validates an encoder result without allocating a second decoded image.
-/// Returns the current image's decoded byte count for persisted UI metadata.
-int validatePreparedDirectImageDataUrl(
-  String dataUrl, {
-  required int otherImageBytes,
-  int maxDecodedImageBytes = kDirectMaxDecodedImageBytes,
-}) {
-  final decodedBytes = decodedImageByteLength(
-    dataUrl,
-    maxDecodedBytes: maxDecodedImageBytes - otherImageBytes,
-  );
-  if (otherImageBytes + decodedBytes > maxDecodedImageBytes) {
-    throw DirectChatInputException(
-      maxDecodedImageBytes == kDirectMaxDecodedImageBytes
-          ? 'Direct chat images must be 20 MB or less in total.'
-          : 'Direct chat images exceed the decoded byte limit.',
-    );
-  }
-  return decodedBytes;
-}
 
 /// Shared media-upload controller (CDT-RFC-001 §7.2, Group 2 of the task_queue
 /// retirement).
@@ -527,9 +484,8 @@ class MediaUploadController {
   /// Takes durable ownership of an upload without waiting for its terminal
   /// network result.
   ///
-  /// The returned future completes only after local/direct preparation has
-  /// finished or the OpenWebUI queue row and its lifecycle listener have been
-  /// installed. Terminal upload work continues in the background. Preparation
+  /// The returned future completes once the OpenWebUI queue row and its
+  /// lifecycle listener have been installed. Terminal upload work continues in the background. Preparation
   /// failures update attachment state but retain app-owned staging so the
   /// visible failed attachment remains readable and explicitly retryable.
   Future<void> enqueueUpload({
@@ -673,7 +629,6 @@ class MediaUploadController {
       mimeType: mimeType,
       checksum: checksum,
       nativeShareIdentity: nativeShareIdentity,
-      onLocalOwnershipAcquired: publishAttachmentOnce,
       onQueueOwnershipAcquired: publishAttachmentOnce,
     );
     final inflight = start.inflight;
@@ -730,7 +685,6 @@ class MediaUploadController {
     required String? mimeType,
     required String? checksum,
     NativeShareUploadIdentity? nativeShareIdentity,
-    void Function(_InflightUpload)? onLocalOwnershipAcquired,
     void Function(_InflightUpload)? onQueueOwnershipAcquired,
     FileUploadState? attachment,
   }) {
@@ -756,7 +710,6 @@ class MediaUploadController {
       mimeType: mimeType,
       checksum: checksum,
       nativeShareIdentity: nativeShareIdentity,
-      onLocalOwnershipAcquired: onLocalOwnershipAcquired,
       onQueueOwnershipAcquired: onQueueOwnershipAcquired,
       inflight: inflight,
     );
@@ -771,7 +724,6 @@ class MediaUploadController {
     required String? mimeType,
     required String? checksum,
     required NativeShareUploadIdentity? nativeShareIdentity,
-    void Function(_InflightUpload)? onLocalOwnershipAcquired,
     void Function(_InflightUpload)? onQueueOwnershipAcquired,
     required _InflightUpload inflight,
   }) async {
@@ -783,7 +735,6 @@ class MediaUploadController {
         mimeType: mimeType,
         checksum: checksum,
         nativeShareIdentity: nativeShareIdentity,
-        onLocalOwnershipAcquired: onLocalOwnershipAcquired,
         onQueueOwnershipAcquired: onQueueOwnershipAcquired,
         inflight: inflight,
       );
@@ -1178,92 +1129,12 @@ class MediaUploadController {
     required String? mimeType,
     required String? checksum,
     required NativeShareUploadIdentity? nativeShareIdentity,
-    void Function(_InflightUpload)? onLocalOwnershipAcquired,
     void Function(_InflightUpload)? onQueueOwnershipAcquired,
     required _InflightUpload inflight,
   }) async {
     _throwIfOperationNotActive(filePath, inflight);
     final lowerName = fileName.toLowerCase();
     final bool isImage = allSupportedImageFormats.any(lowerName.endsWith);
-
-    final selectedModel = _ref.read(selectedModelProvider);
-    if (nativeShareIdentity != null &&
-        selectedModel != null &&
-        (isHermesModel(selectedModel) ||
-            hasReservedDirectIdentity(selectedModel))) {
-      // Direct/Hermes attachment data currently lives only in composer memory.
-      // A native exact-ID acknowledgement would therefore lose the recovery
-      // oracle on process death. Fail before publication and leave the native
-      // payload/source retryable until a server-backed model is selected.
-      throw const NativeShareDurableOwnershipUnavailable();
-    }
-    if (selectedModel != null && isHermesModel(selectedModel)) {
-      await _localAttachmentPreparationLock.synchronized(() async {
-        _throwIfOperationNotActive(filePath, inflight);
-        // A local attachment must never fall through to a different backend
-        // after a model switch: it may contain private bytes intended only for
-        // the selected Hermes connection.
-        final currentModel = _ref.read(selectedModelProvider);
-        if (currentModel == null || !isHermesModel(currentModel)) {
-          throw const HermesChatInputException(
-            'The selected backend changed while preparing this attachment.',
-          );
-        }
-        onLocalOwnershipAcquired?.call(inflight);
-        _captureCurrentAttachment(filePath, inflight);
-        _throwIfOperationNotActive(filePath, inflight);
-        await _prepareHermesAttachment(
-          filePath: filePath,
-          fileName: fileName,
-          isImage: isImage,
-          inflight: inflight,
-        );
-        _throwIfOperationNotActive(filePath, inflight);
-        inflight.markAccepted();
-      });
-      _throwIfOperationNotActive(filePath, inflight);
-      return;
-    }
-    if (selectedModel != null && hasReservedDirectIdentity(selectedModel)) {
-      final preparedDirect = await _localAttachmentPreparationLock.synchronized(
-        () async {
-          _throwIfOperationNotActive(filePath, inflight);
-          // Waiting for an earlier image can outlive a model switch. Resolve
-          // the route only after this upload owns the preparation lock so a
-          // queued item cannot write a direct data URL into an OpenWebUI send.
-          final currentModel = _ref.read(selectedModelProvider);
-          if (currentModel == null ||
-              !hasReservedDirectIdentity(currentModel)) {
-            return false;
-          }
-          final directBinding = _ref
-              .read(directModelRegistryProvider)
-              .resolve(currentModel);
-          if (directBinding == null) {
-            throw const DirectChatInputException(
-              'The selected direct model is no longer available.',
-            );
-          }
-          onLocalOwnershipAcquired?.call(inflight);
-          _captureCurrentAttachment(filePath, inflight);
-          _throwIfOperationNotActive(filePath, inflight);
-          await _prepareDirectAttachment(
-            filePath: filePath,
-            fileName: fileName,
-            isImage: isImage,
-            selectedModelSupportsImages: currentModel.isMultimodal == true,
-            selectedModelSupportsOpenRouterPdf:
-                currentModel.capabilities?['pdf_input'] == true,
-            inflight: inflight,
-          );
-          _throwIfOperationNotActive(filePath, inflight);
-          inflight.markAccepted();
-          return true;
-        },
-      );
-      _throwIfOperationNotActive(filePath, inflight);
-      if (preparedDirect) return;
-    }
 
     // Upload all files (including images) to the server — mirrors OpenWebUI:
     // images go to /api/v1/files/ and the server resolves them when sending to
@@ -1278,7 +1149,7 @@ class MediaUploadController {
     // Capture the OpenWebUI owner when this upload commits to the server path,
     // not when it later reaches a terminal queue snapshot. An account switch
     // during upload must never place the old response bytes in the new owner's
-    // image cache. Local/direct routes intentionally do not initialize the API.
+    // image cache.
     final uploadApi = _ref.read(apiServiceProvider);
     final imageCacheScope = ImageAttachmentCacheScope(
       api: uploadApi,
@@ -1696,9 +1567,7 @@ class MediaUploadController {
     }
 
     // Publishing here transfers UI/staging ownership only after the durable
-    // row exists and its terminal listener is installed. Local direct/Hermes
-    // routes publish earlier through [onLocalOwnershipAcquired] because their
-    // preparation updates the attachment in place.
+    // row exists and its terminal listener is installed.
     try {
       _throwIfOperationNotActive(filePath, inflight);
       onQueueOwnershipAcquired?.call(inflight);
@@ -1731,354 +1600,6 @@ class MediaUploadController {
       if (insertedQueueRow) uploader.releaseOwnerHold(id);
     }
     await completer.future;
-  }
-
-  Future<void> _prepareDirectAttachment({
-    required String filePath,
-    required String fileName,
-    required bool isImage,
-    required bool selectedModelSupportsImages,
-    required bool selectedModelSupportsOpenRouterPdf,
-    required _InflightUpload inflight,
-  }) async {
-    if (!isImage) {
-      final isOpenRouterPdf =
-          selectedModelSupportsOpenRouterPdf &&
-          isDirectOpenRouterPdfFileNameSupported(fileName);
-      if (!isOpenRouterPdf &&
-          !isDirectLocalDocumentFileNameSupported(fileName)) {
-        throw const DirectChatInputException(
-          'Direct chats support local UTF-8 text and DOCX documents.',
-        );
-      }
-      final attachments = _ref.read(attachedFilesProvider);
-      final documentPaths = <String>{
-        for (final attachment in attachments)
-          if (attachment.isImage != true &&
-              attachment.status != FileUploadStatus.failed)
-            attachment.file.path,
-        filePath,
-      };
-      if (documentPaths.length > kDirectMaxLocalDocuments) {
-        throw const DirectChatInputException(
-          'Direct chats support up to 4 local documents per message.',
-        );
-      }
-      final file = File(filePath);
-      final stat = await file.stat();
-      _throwIfOperationNotActive(filePath, inflight);
-      if (stat.size > kDirectMaxLocalDocumentBytes) {
-        throw const DirectChatInputException(
-          'This document exceeds the Direct local-document size limit.',
-        );
-      }
-      if (isOpenRouterPdf) {
-        final pdfBytesByPath = <String, int>{
-          for (final attachment in attachments)
-            if (attachment.isImage != true &&
-                attachment.status != FileUploadStatus.failed &&
-                isDirectOpenRouterPdfFileNameSupported(attachment.fileName))
-              attachment.file.path: attachment.fileSize,
-          filePath: stat.size,
-        };
-        var aggregatePdfBytes = 0;
-        for (final bytes in pdfBytesByPath.values) {
-          aggregatePdfBytes += bytes;
-          _throwIfOperationNotActive(filePath, inflight);
-          if (aggregatePdfBytes > _kDirectMaxAggregatePdfBytes) {
-            throw const DirectChatInputException(
-              'The attached PDFs exceed the Direct attachment size limit.',
-            );
-          }
-        }
-      }
-      final opaqueId = _localDocumentOpaqueId(file, stat);
-      _updatePreparedDirectState(
-        filePath: filePath,
-        fileName: fileName,
-        fileSize: stat.size,
-        fileId:
-            '${isOpenRouterPdf ? kDirectOpenRouterPdfAttachmentPrefix : kDirectLocalDocumentAttachmentPrefix}$opaqueId',
-        isImage: false,
-        inflight: inflight,
-      );
-      return;
-    }
-
-    if (!selectedModelSupportsImages) {
-      throw const DirectChatInputException(
-        'This direct model does not support image attachments.',
-      );
-    }
-
-    final attachments = _ref.read(attachedFilesProvider);
-    final imagesByPath = <String, FileUploadState>{
-      for (final attachment in attachments)
-        if (attachment.isImage == true &&
-            attachment.status != FileUploadStatus.failed)
-          attachment.file.path: attachment,
-    };
-    final imagePaths = <String>{...imagesByPath.keys, filePath};
-    if (imagePaths.length > kDirectMaxImages) {
-      throw const DirectChatInputException(
-        'Direct chats support up to 4 images per request.',
-      );
-    }
-
-    var measuredTotalBytes = 0;
-    var currentSourceBytes = 0;
-    for (final path in imagePaths) {
-      final attachment = imagesByPath[path];
-      final preparedDataUrl =
-          attachment?.base64DataUrl ??
-          ((attachment?.fileId?.startsWith('data:image/') ?? false)
-              ? attachment!.fileId
-              : null);
-      final bytes = preparedDataUrl != null
-          ? decodedImageByteLength(
-              preparedDataUrl,
-              maxDecodedBytes: kDirectMaxDecodedImageBytes - measuredTotalBytes,
-            )
-          : await File(path).length();
-      _throwIfOperationNotActive(filePath, inflight);
-      measuredTotalBytes += bytes;
-      if (path == filePath) currentSourceBytes = bytes;
-      if (measuredTotalBytes > kDirectMaxDecodedImageBytes) {
-        throw const DirectChatInputException(
-          'Direct chat images must be 20 MB or less in total.',
-        );
-      }
-    }
-
-    final dataUrl = await _ref.read(directImageDataUrlEncoderProvider)(
-      File(filePath),
-    );
-    _throwIfOperationNotActive(filePath, inflight);
-    if (dataUrl == null) {
-      throw const DirectChatInputException(
-        'The selected image could not be prepared for this direct model.',
-      );
-    }
-    final decodedBytes = validatePreparedDirectImageDataUrl(
-      dataUrl,
-      otherImageBytes: measuredTotalBytes - currentSourceBytes,
-    );
-
-    final existing = _ownedAttachment(filePath, inflight);
-    if (existing != null) {
-      _updatePreparedDirectState(
-        filePath: filePath,
-        fileName: existing.fileName,
-        fileSize: decodedBytes,
-        fileId: dataUrl,
-        isImage: true,
-        base64DataUrl: dataUrl,
-        inflight: inflight,
-      );
-    }
-    // Keep the local staging file composer-owned until removal/clear. Eager
-    // deletion from this async continuation cannot be made atomic with a user
-    // cancelling and re-staging different bytes at the exact same pathname.
-  }
-
-  void _updatePreparedDirectState({
-    required String filePath,
-    required String fileName,
-    required int fileSize,
-    required String fileId,
-    required bool isImage,
-    required _InflightUpload inflight,
-    String? base64DataUrl,
-  }) {
-    final existing = _ownedAttachment(filePath, inflight);
-    if (existing == null) return;
-    _updateAttachmentIfOwned(
-      filePath,
-      inflight,
-      FileUploadState(
-        file: existing.file,
-        fileName: fileName,
-        fileSize: fileSize,
-        progress: 1,
-        status: FileUploadStatus.completed,
-        fileId: fileId,
-        isImage: isImage,
-        base64DataUrl: base64DataUrl,
-      ),
-    );
-  }
-
-  Future<void> _prepareHermesAttachment({
-    required String filePath,
-    required String fileName,
-    required bool isImage,
-    required _InflightUpload inflight,
-  }) async {
-    final attachments = _ref.read(attachedFilesProvider);
-    final activeAttachments = attachments
-        .where((attachment) => attachment.status != FileUploadStatus.failed)
-        .toList(growable: false);
-
-    if (!isImage) {
-      final desktop =
-          _ref.read(hermesConfigProvider).mode ==
-          HermesBackendMode.desktopGateway;
-      final responsesPdf =
-          !desktop &&
-          hermesCapabilitiesNow(_ref).inputFiles &&
-          isHermesResponsesPdfFileNameSupported(fileName);
-      if (!desktop &&
-          !responsesPdf &&
-          !isHermesLocalDocumentFileNameSupported(fileName)) {
-        throw HermesChatInputException(
-          isHermesResponsesPdfFileNameSupported(fileName)
-              ? 'This Hermes server does not advertise Responses file input.'
-              : 'Hermes supports local UTF-8 text and DOCX documents.',
-        );
-      }
-      final documentPaths = <String>{
-        for (final attachment in activeAttachments)
-          if (attachment.isImage != true) attachment.file.path,
-        filePath,
-      };
-      if (documentPaths.length > kHermesMaxLocalDocuments) {
-        throw const HermesChatInputException(
-          'Hermes supports up to 4 local documents per message.',
-        );
-      }
-      final file = File(filePath);
-      final stat = await file.stat();
-      _throwIfOperationNotActive(filePath, inflight);
-      if (stat.size > kHermesMaxLocalDocumentBytes) {
-        throw const HermesChatInputException(
-          'This document exceeds the Hermes local-document size limit.',
-        );
-      }
-      final opaqueId = _localDocumentOpaqueId(file, stat);
-      _updatePreparedHermesState(
-        filePath: filePath,
-        fileName: fileName,
-        fileSize: stat.size,
-        fileId: '$kHermesLocalDocumentIdPrefix$opaqueId',
-        isImage: false,
-        inflight: inflight,
-      );
-      return;
-    }
-
-    final capabilities = hermesCapabilitiesNow(_ref);
-    if (!capabilities.inputImages) {
-      throw const HermesChatInputException(
-        'This Hermes server does not advertise image input support.',
-      );
-    }
-
-    final imagesByPath = <String, FileUploadState>{
-      for (final attachment in activeAttachments)
-        if (attachment.isImage == true) attachment.file.path: attachment,
-    };
-    final imagePaths = <String>{...imagesByPath.keys, filePath};
-    if (imagePaths.length > kHermesMaxInlineImages) {
-      throw const HermesChatInputException(
-        'Hermes supports up to 4 images per message.',
-      );
-    }
-
-    var measuredTotalBytes = 0;
-    var currentSourceBytes = 0;
-    for (final path in imagePaths) {
-      final attachment = imagesByPath[path];
-      final preparedDataUrl =
-          attachment?.base64DataUrl ??
-          ((attachment?.fileId?.startsWith('data:image/') ?? false)
-              ? attachment!.fileId
-              : null);
-      final int bytes;
-      try {
-        bytes = preparedDataUrl != null
-            ? decodedImageByteLength(
-                preparedDataUrl,
-                maxDecodedBytes:
-                    kHermesMaxDecodedImageBytes - measuredTotalBytes,
-              )
-            : await File(path).length();
-      } on DirectChatInputException catch (error) {
-        throw HermesChatInputException(error.message);
-      }
-      _throwIfOperationNotActive(filePath, inflight);
-      measuredTotalBytes += bytes;
-      if (path == filePath) currentSourceBytes = bytes;
-      if (measuredTotalBytes > kHermesMaxDecodedImageBytes) {
-        throw const HermesChatInputException(
-          'Hermes images must be 6 MB or less in total.',
-        );
-      }
-    }
-
-    final dataUrl = await _ref.read(directImageDataUrlEncoderProvider)(
-      File(filePath),
-    );
-    _throwIfOperationNotActive(filePath, inflight);
-    if (dataUrl == null) {
-      throw const HermesChatInputException(
-        'The selected image could not be prepared for Hermes.',
-      );
-    }
-    final int decodedBytes;
-    try {
-      decodedBytes = decodedImageByteLength(
-        dataUrl,
-        maxDecodedBytes:
-            kHermesMaxDecodedImageBytes -
-            (measuredTotalBytes - currentSourceBytes),
-      );
-    } on DirectChatInputException catch (error) {
-      throw HermesChatInputException(error.message);
-    }
-    if (measuredTotalBytes - currentSourceBytes + decodedBytes >
-        kHermesMaxDecodedImageBytes) {
-      throw const HermesChatInputException(
-        'Hermes images must be 6 MB or less in total.',
-      );
-    }
-    _updatePreparedHermesState(
-      filePath: filePath,
-      fileName: fileName,
-      fileSize: decodedBytes,
-      fileId: dataUrl,
-      isImage: true,
-      base64DataUrl: dataUrl,
-      inflight: inflight,
-    );
-    // Composer removal owns cleanup; a cancelled encoder must never delete a
-    // newly re-staged image that happens to reuse the same pathname.
-  }
-
-  void _updatePreparedHermesState({
-    required String filePath,
-    required String fileName,
-    required int fileSize,
-    required String fileId,
-    required bool isImage,
-    required _InflightUpload inflight,
-    String? base64DataUrl,
-  }) {
-    final existing = _ownedAttachment(filePath, inflight);
-    if (existing == null) return;
-    _updateAttachmentIfOwned(
-      filePath,
-      inflight,
-      FileUploadState(
-        file: existing.file,
-        fileName: fileName,
-        fileSize: fileSize,
-        progress: 1,
-        status: FileUploadStatus.completed,
-        fileId: fileId,
-        isImage: isImage,
-        base64DataUrl: base64DataUrl,
-      ),
-    );
   }
 
   Future<void> _syncUploadedFile(

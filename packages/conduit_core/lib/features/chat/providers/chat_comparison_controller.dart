@@ -16,7 +16,7 @@ const int kComparisonSlotCount = 2;
 
 enum ComparisonAdmissionFailure {
   /// The turn cannot be a durable Open WebUI comparison: no database, reviewer
-  /// or temporary chat, or a Direct/Apple/Hermes model or chat.
+  /// or temporary chat.
   unavailable,
 
   /// The wrong number of models was chosen.
@@ -73,10 +73,7 @@ final comparisonRuntimeAvailableProvider = Provider<bool>((ref) {
       !ref.watch(temporaryChatEnabledProvider) &&
       !isTemporaryChat(active?.id) &&
       (active == null || conversationUsesOpenWebUiStorage(active)) &&
-      model != null &&
-      !isHermesModel(model) &&
-      !hasReservedDirectIdentity(model) &&
-      ref.watch(directModelRegistryProvider).resolve(model) == null;
+      model != null;
 });
 
 /// Whether the composer offers "Compare models". Advanced gates only this new
@@ -94,10 +91,7 @@ final comparisonCommandAvailableProvider = Provider<bool>((ref) {
 /// What a comparison turn needs from the composer, captured once.
 CodeInterpreterBlock? _codeInterpreterBlockForModel(dynamic ref, Model model) {
   final api = ref.read(apiServiceProvider);
-  if (api == null ||
-      !ref.read(isAuthenticatedProvider2) ||
-      isHermesModel(model) ||
-      hasReservedDirectIdentity(model)) {
+  if (api == null || !ref.read(isAuthenticatedProvider2)) {
     return CodeInterpreterBlock.notOpenWebUi;
   }
   return _evaluateCodeInterpreterSupport(
@@ -161,19 +155,12 @@ Future<List<ChatSendPlaceholderHandle>> durableCompareSend(
     );
   }
   final db = _readAppDatabaseOrNull(ref);
-  final directRegistry = ref.read(directModelRegistryProvider);
   if (db == null ||
       ref.read(reviewerModeProvider) ||
       ref.read(temporaryChatEnabledProvider) ||
       isTemporaryChat(activeAtSendStart?.id) ||
       (activeAtSendStart != null &&
-          !conversationUsesOpenWebUiStorage(activeAtSendStart)) ||
-      models.any(
-        (model) =>
-            isHermesModel(model) ||
-            hasReservedDirectIdentity(model) ||
-            directRegistry.resolve(model) != null,
-      )) {
+          !conversationUsesOpenWebUiStorage(activeAtSendStart))) {
     throw const ComparisonAdmissionException(
       ComparisonAdmissionFailure.unavailable,
     );

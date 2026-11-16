@@ -1,27 +1,5 @@
-import '../features/direct_connections/services/direct_model_registry.dart';
-import '../features/direct_connections/services/model_logo_catalog.dart';
-import '../features/hermes/models/hermes_model.dart';
 import '../models/model.dart';
 import '../services/api_service.dart';
-
-/// Prefix marking an avatar URL that resolves to a system symbol rather than
-/// an image. Mirrors the `asset:` scheme handled alongside it.
-const String kNativeSymbolUrlScheme = 'symbol:';
-
-/// Apple's own mark for Apple Intelligence, used to attribute the Foundation
-/// Models running on device and on Private Cloud Compute. Available since
-/// iOS 18, well below the iOS 26 those models require.
-const String kAppleIntelligenceSymbol = 'apple.intelligence';
-
-/// Returns the symbol name in [url] when it uses [kNativeSymbolUrlScheme].
-String? nativeSymbolNameFromUrl(String? url) {
-  final trimmed = url?.trim();
-  if (trimmed == null || !trimmed.startsWith(kNativeSymbolUrlScheme)) {
-    return null;
-  }
-  final name = trimmed.substring(kNativeSymbolUrlScheme.length);
-  return name.isEmpty ? null : name;
-}
 
 /// Extracts the profile image URL from a model's metadata.
 ///
@@ -175,17 +153,6 @@ String? resolveModelIconUrl(ApiService? api, String? rawUrl) {
 /// `/api/v1/models/model/profile/image?id={modelId}`
 String? resolveModelIconUrlForModel(ApiService? api, Model? model) {
   if (model == null) return null;
-  if (isHermesModel(model)) return 'asset:$kHermesModelAvatarAsset';
-  // Apple's Foundation Models carry Apple's own mark. Provenance comes from the
-  // local binding, never from a server-supplied id or metadata field.
-  if (isAppleFoundationModel(model)) {
-    return '$kNativeSymbolUrlScheme$kAppleIntelligenceSymbol';
-  }
-  // Direct models get their maker's bundled models.dev logo. They have no
-  // Open WebUI avatar, so never ask the server for one.
-  if (hasReservedDirectIdentity(model)) {
-    return directModelLogoAvatarUrl(model);
-  }
 
   // Check for legacy profile_image_url in metadata
   final legacyUrl = deriveModelIcon(model);

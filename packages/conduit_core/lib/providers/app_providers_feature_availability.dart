@@ -207,15 +207,6 @@ bool _modelSupportsFeature(Model? model, String featureKey) {
 
 final imageGenerationAvailableProvider = Provider<bool>((ref) {
   final selectedModel = ref.watch(selectedModelProvider);
-  final directBinding = selectedModel == null
-      ? null
-      : ref.watch(directModelRegistryProvider).resolve(selectedModel);
-  if (selectedModel != null && hasReservedDirectIdentity(selectedModel)) {
-    return directBinding?.source == DirectModelSource.device &&
-        selectedModel.capabilities?['openrouter'] == true &&
-        selectedModel.capabilities?['image_generation'] == true;
-  }
-
   final perms = ref.watch(userPermissionsProvider);
   return perms.maybeWhen(
     data: (data) {
@@ -235,38 +226,8 @@ final imageGenerationAvailableProvider = Provider<bool>((ref) {
   );
 });
 
-/// How the selected Direct model would search the web, or `null` when the
-/// selected model is not a Direct model.
-final selectedDirectWebSearchModeProvider = Provider<DirectWebSearchMode?>((
-  ref,
-) {
-  final selectedModel = ref.watch(selectedModelProvider);
-  if (selectedModel == null || !hasReservedDirectIdentity(selectedModel)) {
-    return null;
-  }
-  final binding = ref.watch(directModelRegistryProvider).resolve(selectedModel);
-  if (binding == null) return DirectWebSearchMode.unavailable;
-  return directWebSearchModeFor(binding: binding, model: selectedModel);
-});
-
 final webSearchAvailableProvider = Provider<bool>((ref) {
   final selectedModel = ref.watch(selectedModelProvider);
-  final directMode = ref.watch(selectedDirectWebSearchModeProvider);
-  if (selectedModel != null && directMode != null) {
-    // Direct models never fall through to the Open WebUI model checks below:
-    // search runs at the provider or on this device, not on the server.
-    return switch (directMode) {
-      DirectWebSearchMode.unavailable => false,
-      DirectWebSearchMode.providerHosted => true,
-      // A server-configured connection still answers to that server's web
-      // search policy, even though the search itself runs on the device.
-      DirectWebSearchMode.onDevice =>
-        ref.watch(directModelRegistryProvider).resolve(selectedModel)?.source ==
-                DirectModelSource.device ||
-            _openWebUiAllowsWebSearch(ref),
-    };
-  }
-
   if (!_modelSupportsFeature(selectedModel, 'web_search')) {
     return false;
   }
@@ -321,8 +282,8 @@ class FoldersFeatureEnabledNotifier extends Notifier<bool> {
 
 /// Whether folder UI can be offered in the current session.
 ///
-/// Folders are stored on the Open WebUI server, so accountless Direct or
-/// Hermes sessions (no signed-in server) have nowhere to create or list them.
+/// Folders are stored on the Open WebUI server, so a session without a
+/// signed-in server has nowhere to create or list them.
 final foldersAvailableProvider = Provider<bool>((ref) {
   return ref.watch(openWebUiAccountAvailableProvider) &&
       ref.watch(foldersFeatureEnabledProvider);
@@ -369,34 +330,6 @@ class ChannelsFeatureEnabledNotifier extends Notifier<bool> {
   void setEnabled(bool enabled) {
     state = enabled;
     _FeatureAvailabilityCache.write('channels', enabled, scope: _scope);
-  }
-}
-
-/// Tracks whether the Terminal feature has any available servers on the active
-/// server, cached per server/user. The terminal tab's visibility is otherwise
-/// derived live from [terminalAvailableServersProvider]; this cache lets the tab
-/// reflect the last-known state when offline (loading/error) instead of
-/// optimistically defaulting to visible — matching notes/channels behavior so a
-/// server with terminal disabled doesn't surface the tab offline. The live
-/// derivation lives in `terminalTabVisibleProvider` (terminal feature), which
-/// writes back here via [setEnabled] whenever the server list resolves.
-final terminalFeatureEnabledProvider =
-    NotifierProvider<TerminalFeatureEnabledNotifier, bool>(
-      TerminalFeatureEnabledNotifier.new,
-    );
-
-class TerminalFeatureEnabledNotifier extends Notifier<bool> {
-  _FeatureAvailabilityScope? _scope;
-
-  @override
-  bool build() {
-    _scope = _featureAvailabilityScope(ref);
-    return _FeatureAvailabilityCache.read('terminal', scope: _scope) ?? true;
-  }
-
-  void setEnabled(bool enabled) {
-    state = enabled;
-    _FeatureAvailabilityCache.write('terminal', enabled, scope: _scope);
   }
 }
 

@@ -622,7 +622,6 @@ ActiveChatStream attachUnifiedChunkedStreaming({
   updateMessageById,
   void Function(String newTitle)? onChatTitleUpdated,
   void Function()? onChatTagsUpdated,
-  void Function(String type, Map<String, dynamic> data)? onTerminalEvent,
   void Function(
     String type,
     Map<String, dynamic> data,
@@ -3529,16 +3528,7 @@ ActiveChatStream attachUnifiedChunkedStreaming({
       }
 
       if (type is String && type.startsWith('terminal:') && payload is Map) {
-        if (resolveTargetMessageIdForStream(
-              messageId,
-              eventType: type,
-              incomingSessionId: incomingSessionId,
-              allowBindingForeignMessage: true,
-            ) ==
-            null) {
-          return;
-        }
-        onTerminalEvent?.call(type, Map<String, dynamic>.from(payload));
+        // The app has no terminal surface: these events are ignored.
         return;
       }
 

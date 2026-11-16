@@ -30,7 +30,7 @@ import 'package:conduit_core/features/auth/providers/unified_auth_providers.dart
 import 'proxy_auth_page.dart';
 import '../../../shared/theme/theme_extensions.dart';
 import '../../../shared/widgets/conduit_components.dart';
-import '../../../shared/widgets/sign_out_options_dialog.dart';
+import '../../../shared/widgets/themed_dialogs.dart';
 import '../../../shared/widgets/connection_components.dart';
 import '../../../shared/widgets/utility_components.dart';
 
@@ -87,7 +87,7 @@ class _ConnectionIssuePageState extends ConsumerState<ConnectionIssuePage> {
         children: [
           UtilityIdentityHeader(
             leading: const OpenWebUiConnectionMark(),
-            title: l10n.backendChooserOpenWebUITitle,
+            title: l10n.openWebUi,
             subtitle: l10n.connectionIssueSubtitle,
           ),
           const SizedBox(height: Spacing.xl),
@@ -322,10 +322,14 @@ class _ConnectionIssuePageState extends ConsumerState<ConnectionIssuePage> {
   }
 
   Future<void> _logout(AppLocalizations l10n) async {
-    final keepServerDetails = await showSignOutOptionsDialog(context);
-
-    if (!mounted) return;
-    if (keepServerDetails == null) return;
+    final confirmed = await ThemedDialogs.confirm(
+      context,
+      title: l10n.signOut,
+      message: l10n.signOutOptionsDescription,
+      confirmText: l10n.signOut,
+      isDestructive: true,
+    );
+    if (!confirmed || !mounted) return;
 
     setState(() {
       _isLoggingOut = true;
@@ -333,9 +337,7 @@ class _ConnectionIssuePageState extends ConsumerState<ConnectionIssuePage> {
     });
 
     try {
-      await ref
-          .read(signOutCoordinatorProvider)
-          .signOut(keepServerDetails: keepServerDetails);
+      await ref.read(signOutCoordinatorProvider).signOut();
     } catch (_) {
       if (!mounted) return;
       setState(() {
@@ -353,7 +355,7 @@ class _ConnectionIssuePageState extends ConsumerState<ConnectionIssuePage> {
   String _resolveHost(ServerConfig? config) {
     final url = config?.url;
     if (url == null || url.isEmpty) {
-      return AppLocalizations.of(context)!.backendChooserOpenWebUITitle;
+      return AppLocalizations.of(context)!.openWebUi;
     }
 
     try {

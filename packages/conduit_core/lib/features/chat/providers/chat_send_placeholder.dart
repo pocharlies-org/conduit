@@ -36,8 +36,7 @@ final class ChatVoiceReply {
 /// What a realtime call adds to a turn it sends.
 final class ChatSendVoiceContext {
   /// The user's words, for the chat's model to answer. [spokenContext] is
-  /// the recent spoken conversation, for a backend that reads it with the
-  /// turn (Hermes).
+  /// the recent spoken conversation, sent with the turn.
   const ChatSendVoiceContext.delegated({
     required this.userVoice,
     this.spokenContext,
@@ -249,8 +248,8 @@ final class ChatSendAdmissionReceipt {
 }
 
 /// Raised before anything is written when a send that needs a committed
-/// receipt would have gone through a path that has none (a temporary chat,
-/// Direct, Hermes, or no durable database).
+/// receipt would have gone through a path that has none (a temporary chat or
+/// no durable database).
 class ChatAdmissionNotDurableException implements Exception {
   const ChatAdmissionNotDurableException();
 
@@ -330,37 +329,6 @@ Future<void> durableSend(
   final reviewerMode = ref.read(reviewerModeProvider);
   final selectedModel = ref.read(selectedModelProvider);
   final temporary = ref.read(temporaryChatEnabledProvider);
-  final trustedDirectBinding = selectedModel == null
-      ? null
-      : ref.read(directModelRegistryProvider).resolve(selectedModel);
-  final hasTrustedDirectBinding = trustedDirectBinding != null;
-  final hasDeviceDirectBinding =
-      trustedDirectBinding?.source == DirectModelSource.device;
-
-  if (!isModelCompatibleWithConversation(
-    conversation: activeAtSendStart,
-    hasTrustedDirectBinding: hasDeviceDirectBinding,
-  )) {
-    throw StateError(
-      'On-device direct chats can only continue with a direct connection model.',
-    );
-  }
-
-  // Hermes agent chats never touch the OpenWebUI outbox/sync engine — route
-  // them through the inline path, which dispatches to the Hermes runs transport.
-  if (selectedModel != null && isHermesModel(selectedModel)) {
-    await inlineSend();
-    return;
-  }
-
-  if (hasTrustedDirectBinding) {
-    await inlineSend();
-    return;
-  }
-  if (selectedModel != null && hasReservedDirectIdentity(selectedModel)) {
-    throw StateError('The selected direct connection is no longer available.');
-  }
-
   // No durable backend (reviewer mode, no active server) OR a temporary chat
   // (never persisted): fall back to the legacy inline send path unchanged.
   if (db == null || reviewerMode || selectedModel == null || temporary) {
@@ -370,10 +338,6 @@ Future<void> durableSend(
 
   final filterIds = selectedFilterIdsForModel(ref, selectedModel);
   final now = ref.read(syncClockProvider).nowEpochSeconds();
-  final selectedTerminalId = ref.read(selectedTerminalIdProvider);
-  final terminalIdForCompletion = modelSupportsTerminal(selectedModel)
-      ? _resolveTerminalIdForRequest(selectedTerminalId: selectedTerminalId)
-      : null;
   final webSearchEnabled =
       ref.read(webSearchEnabledProvider) &&
       ref.read(webSearchAvailableProvider);
@@ -504,7 +468,6 @@ Future<void> durableSend(
       model: selectedModel.id,
       toolIds: toolIdList,
       filterIds: filterIds,
-      terminalId: terminalIdForCompletion,
       enableWebSearch: webSearchEnabled,
       enableImageGeneration: imageGenerationEnabled,
       enableCodeInterpreter: codeInterpreterEnabled,
@@ -842,8 +805,6 @@ Future<List<Map<String, dynamic>>> _resolveDurableFilesFor(
           final contentType = _contentTypeFromFileInfo(raw);
           if (contentType.isEmpty) return null;
           return MapEntry(id, contentType);
-        } on _DirectOpenWebUiAuthSessionChanged {
-          rethrow;
         } catch (_) {
           return null;
         }
@@ -980,12 +941,4 @@ Future<void> sendMessageWithContainer(
   );
 }
 
-// Internal send message implementation
-/// Bridges the chat send pipeline to the direct Hermes runs transport, wiring
-/// the chat notifier callbacks and resolving multi-turn / memory continuity.
-/// Derives a short session title from the first user message.
-String _deriveHermesSessionTitle(String input) {
-  final trimmed = input.trim().replaceAll(RegExp(r'\s+'), ' ');
-  if (trimmed.isEmpty) return 'New Hermes chat';
-  return trimmed.length <= 60 ? trimmed : '${trimmed.substring(0, 60)}…';
-}
+

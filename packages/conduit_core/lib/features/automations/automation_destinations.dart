@@ -1,7 +1,3 @@
-import 'package:conduit_core/features/direct_connections/services/direct_model_registry.dart'
-    show isLocallyMintedDirectModel;
-import 'package:conduit_core/features/hermes/models/hermes_model.dart'
-    show isHermesModel;
 import 'package:conduit_core/models/channel.dart';
 import 'package:conduit_core/models/folder.dart';
 import 'package:conduit_core/models/model.dart';
@@ -16,13 +12,8 @@ List<Folder> automationFolderOptions(Iterable<Folder> folders) => [
     if (!folder.shared) folder,
 ];
 
-/// Models a task may name: server models the picker shows. A Direct or Hermes
-/// model lives on this device and cannot be reached from the server's
-/// scheduler.
-bool automationModelSelectable(Model model) =>
-    !model.isHidden &&
-    !isLocallyMintedDirectModel(model) &&
-    !isHermesModel(model);
+/// Models a task may name: server models the picker shows.
+bool automationModelSelectable(Model model) => !model.isHidden;
 
 /// What Conduit can tell, from the channel list alone, about whether a task
 /// may post to a channel.

@@ -405,8 +405,7 @@ List<Map<String, dynamic>>? _extractTopLevelRequestFiles(
 }
 
 bool _isDirectServerToolSelection(String id) {
-  return id.startsWith('direct_server:') ||
-      id.startsWith(kDirectMcpToolIdPrefix);
+  return id.startsWith(kDirectServerSelectionPrefix);
 }
 
 List<String> _extractToolIdsForApi(Iterable<String> selectedToolIds) {
@@ -571,7 +570,7 @@ Future<List<Map<String, dynamic>>> _buildCompletionRequestMessages({
   for (final msg in messages) {
     if (_isArchivedAssistantVariant(msg)) continue;
     if (!_shouldIncludeConversationHistoryMessage(msg)) continue;
-    final cleaned = outboundProviderReplayText(msg);
+    final cleaned = ToolCallsParser.sanitizeForApi(msg.content);
     final attachments = msg.attachmentIds ?? const <String>[];
     if (attachments.isNotEmpty) {
       final messageMap = await _buildMessagePayloadWithAttachments(
@@ -741,24 +740,3 @@ String? resolveTerminalIdForRequestForTest(String? selectedTerminalId) {
   return _resolveTerminalIdForRequest(selectedTerminalId: selectedTerminalId);
 }
 
-/// Stops the Hermes run owned by the visible assistant and clears its session
-/// binding before a navigation/reset replaces the message list.
-void _observeDetachedCancellation(
-  Future<void>? cancellation, {
-  required String scope,
-}) {
-  if (cancellation == null) return;
-  unawaited(
-    cancellation.then<void>(
-      (_) {},
-      onError: (Object _, StackTrace _) {
-        // Cancellation is best-effort after registry ownership was revoked.
-        // Observe hostile transport cleanup futures so they cannot surface as
-        // uncaught zone errors from synchronous UI actions.
-        try {
-          DebugLogger.error('detached-cancellation-failed', scope: scope);
-        } catch (_) {}
-      },
-    ),
-  );
-}

@@ -21,7 +21,6 @@ class _SplashLauncherPageState extends State<SplashLauncherPage> {
     if (_didPrecacheMarks) return;
     _didPrecacheMarks = true;
     precacheImage(const AssetImage('assets/icons/open_webui.png'), context);
-    precacheImage(const AssetImage('assets/icons/hermes_agent.png'), context);
   }
 
   @override

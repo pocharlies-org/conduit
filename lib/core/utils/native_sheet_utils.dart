@@ -37,7 +37,7 @@ String nativeDataConnectionTitle(AppLocalizations l10n) =>
     l10n.settingsDataAndConnection;
 
 /// Rows of the native About page. The server rows are left out when there
-/// is no Open WebUI server (Hermes-only).
+/// is no Open WebUI server.
 List<NativeSheetItemConfig> buildNativeAboutItems(
   AppLocalizations l10n, {
   required String appVersion,

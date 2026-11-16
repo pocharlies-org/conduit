@@ -1,20 +1,5 @@
 part of 'chat_providers.dart';
 
-void resetHermesForNewChat(dynamic ref) {
-  final registry = ref.read(hermesRunRegistryProvider) as HermesRunRegistry;
-  for (final stop in registry.cancelAll()) {
-    _observeDetachedCancellation(stop, scope: 'hermes/cancel');
-  }
-  ref.read(hermesActiveSessionProvider.notifier).set(null);
-}
-
-void resetDirectRunsForNewChat(dynamic ref) {
-  final DirectRunRegistry registry = ref.read(directRunRegistryProvider);
-  for (final stop in registry.cancelAll()) {
-    _observeDetachedCancellation(stop, scope: 'direct-connections/cancel');
-  }
-}
-
 /// Toggle filters and the code interpreter are composer state, not defaults
 /// that should cross a conversation boundary when the same model remains
 /// selected.
@@ -42,8 +27,6 @@ List<String> selectedFilterIdsForModel(dynamic ref, Model model) {
 
 // Start a new chat (unified function for both "New Chat" button and home screen)
 void startNewChat(dynamic ref, {Model? modelForNewConversation}) {
-  resetHermesForNewChat(ref);
-  resetDirectRunsForNewChat(ref);
   clearSelectedFiltersForConversationBoundary(ref);
 
   // Clear active conversation
@@ -74,39 +57,11 @@ void startNewChat(dynamic ref, {Model? modelForNewConversation}) {
   ref.read(temporaryChatEnabledProvider.notifier).startNewChat();
 }
 
-/// Starts a new chat pinned to the Hermes agent model. Unlike [startNewChat],
-/// this does NOT reset to the default model (which would race past and clobber
-/// the Hermes selection); it resolves and selects the Hermes model explicitly.
-Future<void> startNewHermesChat(dynamic ref) async {
-  resetHermesForNewChat(ref);
-  resetDirectRunsForNewChat(ref);
-  clearSelectedFiltersForConversationBoundary(ref);
-
-  ref.read(activeConversationProvider.notifier).clear();
-  ref.read(chatMessagesProvider.notifier).clearMessages();
-  ref.read(contextAttachmentsProvider.notifier).clear();
-  ref.read(pendingFolderIdProvider.notifier).clear();
-
-  ref.read(temporaryChatEnabledProvider.notifier).startNewChat();
-
-  // Hermes is app-owned runtime state; starting it must never wait on an
-  // unrelated OpenWebUI model request in mixed-backend setups.
-  ref.read(isManualModelSelectionProvider.notifier).set(true);
-  ref
-      .read(selectedModelProvider.notifier)
-      .set(hermesSyntheticModel(name: ref.read(hermesConfigProvider).name));
-}
-
 /// The models a folder may save as its defaults, and a new draft may start on:
-/// plain Open WebUI server models that are not hidden. Direct, Apple and Hermes
-/// models belong to this device, not to the server's folder data, so a saved
-/// list never names them and never resolves to them.
+/// plain Open WebUI server models that are not hidden.
 List<Model> folderDefaultModelCandidates(Iterable<Model> models) => [
   for (final model in models)
-    if (!model.isHidden &&
-        !isLocallyMintedDirectModel(model) &&
-        !isHermesModel(model))
-      model,
+    if (!model.isHidden) model,
 ];
 
 /// The two models a project draft is about to compare, or null for any other
@@ -183,8 +138,7 @@ const _folderDetailWait = Duration(seconds: 4);
 /// used from the cache alone when the folder cannot answer.
 ///
 /// Runs with Advanced off: applying a saved default is not an editor. Only
-/// plain Open WebUI server models qualify, so Direct, Apple and Hermes
-/// identities are never chosen from a saved list.
+/// plain Open WebUI server models qualify.
 ///
 /// This is the draft's single model resolution, started by the folder page when
 /// it primes the draft. Everything it reads is captured first, and it applies

@@ -2208,9 +2208,7 @@ class ChatVoiceModeController extends Notifier<ChatVoiceModeSnapshot> {
   }
 
   void _updateVoiceTransport(Model? model) {
-    if (_usesOpenWebUiTransport ||
-        model == null ||
-        !voiceCallUsesOpenWebUiTransport(ref, model)) {
+    if (_usesOpenWebUiTransport || model == null) {
       return;
     }
     _usesOpenWebUiTransport = true;

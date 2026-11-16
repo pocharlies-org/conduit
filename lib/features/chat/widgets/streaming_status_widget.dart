@@ -59,13 +59,7 @@ class _StreamingStatusWidgetState extends State<StreamingStatusWidget> {
     if (displayUpdates.isEmpty) return const SizedBox.shrink();
 
     final current = displayUpdates.last;
-    final hermesTools = displayUpdates.where(_isHermesToolUpdate).toList();
-    final groupedHermesTitle = hermesTools.length > 1
-        ? _buildHermesToolGroupTitle(context, hermesTools, widget.isStreaming)
-        : null;
-    final isPending = groupedHermesTitle != null
-        ? hermesTools.any((update) => update.done != true) && widget.isStreaming
-        : current.done != true && widget.isStreaming;
+    final isPending = current.done != true && widget.isStreaming;
     final hasDetails =
         displayUpdates.length > 1 ||
         _collectQueries(current).isNotEmpty ||
@@ -85,7 +79,6 @@ class _StreamingStatusWidgetState extends State<StreamingStatusWidget> {
         padding: const EdgeInsets.only(bottom: Spacing.xs),
         child: _MinimalStatusRow(
           update: current,
-          title: groupedHermesTitle,
           isPending: isPending,
           hasDetails: hasDetails,
         ),
@@ -100,10 +93,7 @@ class _StreamingStatusWidgetState extends State<StreamingStatusWidget> {
   }) async {
     final theme = context.conduitTheme;
     final current = updates.last;
-    final hermesTools = updates.where(_isHermesToolUpdate).toList();
-    final title = hermesTools.length > 1
-        ? _buildHermesToolGroupTitle(context, hermesTools, isStreaming)
-        : _resolveStatusDescription(current);
+    final title = _resolveStatusDescription(current);
 
     if (Platform.isIOS) {
       final items = <NativeSheetItemConfig>[
@@ -293,18 +283,16 @@ class _MinimalStatusRow extends StatelessWidget {
     required this.update,
     required this.isPending,
     required this.hasDetails,
-    this.title,
   });
 
   final ChatStatusUpdate update;
-  final String? title;
   final bool isPending;
   final bool hasDetails;
 
   @override
   Widget build(BuildContext context) {
     return AssistantDetailHeader(
-      title: title ?? _resolveStatusDescription(update),
+      title: _resolveStatusDescription(update),
       showShimmer: isPending,
       showChevron: hasDetails,
     );
@@ -704,38 +692,6 @@ List<_LinkData> _collectLinks(ChatStatusUpdate update) {
   }
 
   return links;
-}
-
-bool _isHermesToolUpdate(ChatStatusUpdate update) =>
-    update.action?.startsWith('hermes_tool_') ?? false;
-
-String _buildHermesToolGroupTitle(
-  BuildContext context,
-  List<ChatStatusUpdate> updates,
-  bool isStreaming,
-) {
-  final counts = <String, int>{};
-  for (final update in updates) {
-    final action = update.action!;
-    final actionName = action.substring('hermes_tool_'.length);
-    final description = update.description?.trim();
-    final name = actionName.startsWith('opaque')
-        ? description?.split(RegExp(r'\s(?:·|failed)')).first.trim() ??
-              AppLocalizations.of(context)!.markdownDetailsGroupUnnamedTool
-        : actionName;
-    counts[name] = (counts[name] ?? 0) + 1;
-  }
-
-  final summary = counts.entries
-      .map(
-        (entry) =>
-            entry.value > 1 ? '${entry.key} (${entry.value})' : entry.key,
-      )
-      .join(', ');
-  final l10n = AppLocalizations.of(context)!;
-  return isStreaming && updates.any((update) => update.done != true)
-      ? l10n.markdownDetailsGroupPendingTitle(summary)
-      : l10n.markdownDetailsGroupCompleteTitle(summary);
 }
 
 String _resolveStatusDescription(ChatStatusUpdate update) {

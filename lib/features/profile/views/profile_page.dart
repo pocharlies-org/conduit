@@ -25,8 +25,6 @@ import 'package:conduit_core/features/chat/providers/chat_providers.dart'
     show chatDataControlsEntryVisibleProvider;
 import 'package:conduit_core/features/integrations/providers/personal_connections_providers.dart';
 
-import 'package:conduit_core/providers/backend_mode_providers.dart';
-import 'package:conduit_core/features/hermes/providers/hermes_providers.dart';
 
 import '../../../shared/services/navigation_service.dart';
 
@@ -135,13 +133,10 @@ class ProfilePage extends ConsumerWidget {
   ) {
     final mediaQuery = MediaQuery.of(context);
     final topPadding = _topContentPadding(context);
-    final directPrimary =
-        ref.watch(preferredBackendProvider) == PreferredBackend.direct;
     final hasOpenWebUiAccount = userData != null && api != null;
     final items = _buildSettingsItems(
       context,
       ref,
-      directPrimary: directPrimary,
       hasOpenWebUiAccount: hasOpenWebUiAccount,
     );
     final accountsAsync = ref.watch(openWebUiAccountsProvider);
@@ -260,9 +255,8 @@ class ProfilePage extends ConsumerWidget {
     }
   }
 
-  /// Who Settings is for -- the Open WebUI account signed in, else the
-  /// Hermes connection in use, else Direct -- leading to every account and
-  /// connection, with the way to add another under it.
+  /// Who Settings is for -- the Open WebUI account signed in -- leading to
+  /// every account.
   Widget _buildAccountCard(
     BuildContext context,
     WidgetRef ref, {
@@ -279,33 +273,14 @@ class ProfilePage extends ConsumerWidget {
       l10n,
       signedInName: signedInName,
       accounts: accounts,
-      hermesConnections: ref.watch(hermesConnectionsProvider),
-      hermesInUseId: ref.watch(hermesEnabledProvider)
-          ? ref.watch(hermesActiveConnectionIdProvider)
-          : null,
     );
-    final Widget leading = switch (card.kind) {
-      AccountCardKind.openWebUi => UserAvatar(
-        size: IconSize.xl,
-        imageUrl: resolveUserAvatarUrlForUser(api, user),
-        fallbackText: card.title.characters.isEmpty
-            ? 'U'
-            : card.title.characters.first.toUpperCase(),
-      ),
-      AccountCardKind.hermes => _buildAssetIconBadge(
-        context,
-        'assets/icons/hermes_agent.png',
-        color: theme.textPrimary,
-      ),
-      AccountCardKind.direct => _buildIconBadge(
-        context,
-        UiUtils.platformIcon(
-          ios: CupertinoIcons.link,
-          android: Icons.hub_outlined,
-        ),
-        color: theme.iconSecondary,
-      ),
-    };
+    final Widget leading = UserAvatar(
+      size: IconSize.xl,
+      imageUrl: resolveUserAvatarUrlForUser(api, user),
+      fallbackText: card.title.characters.isEmpty
+          ? 'U'
+          : card.title.characters.first.toUpperCase(),
+    );
 
     return InsetGroupedList(
       key: const Key('settings-account-card'),
@@ -318,17 +293,6 @@ class ProfilePage extends ConsumerWidget {
           showChevron: true,
           onTap: () => context.pushNamed(RouteNames.accounts),
         ),
-        UtilityRow(
-          key: const Key('settings-add-account'),
-          title: l10n.accountsAddAccount,
-          foregroundColor: theme.buttonPrimary,
-          leading: _buildIconBadge(
-            context,
-            UiUtils.platformIcon(ios: CupertinoIcons.add, android: Icons.add),
-            color: theme.buttonPrimary,
-          ),
-          onTap: () => showAddAccountSheet(context, ref),
-        ),
       ],
     );
   }
@@ -336,7 +300,6 @@ class ProfilePage extends ConsumerWidget {
   List<Widget> _buildSettingsItems(
     BuildContext context,
     WidgetRef ref, {
-    required bool directPrimary,
     required bool hasOpenWebUiAccount,
   }) {
     final l10n = AppLocalizations.of(context)!;
@@ -431,8 +394,6 @@ class ProfilePage extends ConsumerWidget {
         title: l10n.audioSettingsTitle,
         onTap: () => context.pushNamed(RouteNames.audioSettings),
       ),
-      // Without an account, Direct's default model is set there.
-      if (!hasOpenWebUiAccount && directPrimary) personalizationItem,
     ];
     // Everyday server places: things to open and use, not to configure.
     final placeItems = <Widget>[
@@ -622,7 +583,7 @@ class ProfilePage extends ConsumerWidget {
       child: Center(
         child: Image.asset(
           asset,
-          key: const Key('hermes-settings-logo'),
+          key: const Key('settings-asset-logo'),
           width: IconSize.medium + 2,
           height: IconSize.medium + 2,
           color: color,

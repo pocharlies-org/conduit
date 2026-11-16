@@ -184,8 +184,8 @@ class HomeWidgetCoordinator extends _$HomeWidgetCoordinator {
         return;
       }
 
-      // Accountless Direct/Hermes installs are ready without an Open WebUI
-      // session; otherwise keep waiting because the user might be signing in.
+      // Keep waiting while the app is not ready: the user might be signing
+      // in.
       if (ref.read(chatEntryReadyProvider)) {
         DebugLogger.log(
           'Widget: Chat ready, processing pending action',

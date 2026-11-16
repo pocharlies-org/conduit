@@ -28,8 +28,6 @@ import '../providers/chat_providers.dart';
 import 'package:conduit_core/features/chat/providers/openwebui_chat_prompt_provider.dart';
 import 'package:conduit_core/features/navigation/models/sidebar_navigation_model.dart';
 import 'package:conduit_core/features/navigation/providers/sidebar_active_tab_provider.dart';
-import 'package:conduit_core/features/terminal/models/terminal_models.dart';
-import 'package:conduit_core/features/terminal/providers/terminal_providers.dart';
 
 // ---------------------------------------------------------------------------
 // Transport metadata helpers
@@ -517,17 +515,6 @@ Future<bool> dispatchChatTransport({
               );
         } catch (_) {}
       });
-    },
-    onTerminalEvent: (type, data) {
-      if (!ownsConversation()) return;
-      if (type == 'terminal:display_file' &&
-          (data['path']?.toString().trim().isNotEmpty ?? false)) {
-        ref.read(sidebarActiveTabProvider.notifier).set(SidebarTabId.terminal);
-        ref
-            .read(terminalSidebarPanelProvider.notifier)
-            .setPanel(TerminalSidebarPanel.files);
-      }
-      ref.read(terminalDisplayFileProvider.notifier).handleEvent(type, data);
     },
     onInteractivePrompt: (type, data, acknowledge) {
       final conversationId = activeConversationId;

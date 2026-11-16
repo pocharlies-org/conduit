@@ -5,9 +5,9 @@ import 'package:url_launcher/url_launcher.dart';
 /// The Flutter app's [OpenExternalUrlPort]: the system browser.
 ///
 /// Always an external application, never an in-app view, and only for
-/// web addresses -- what the port's contract asks of every host. MCP and
-/// Hermes sign-in go through here; without this binding the core's default
-/// refused every URL, and both failed with "could not start".
+/// web addresses -- what the port's contract asks of every host. MCP
+/// sign-in goes through here; without this binding the core's default
+/// refused every URL and sign-in failed with "could not start".
 class UrlLauncherOpenExternalUrlPort implements OpenExternalUrlPort {
   const UrlLauncherOpenExternalUrlPort();
 

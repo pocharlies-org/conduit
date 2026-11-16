@@ -13,7 +13,6 @@ import '../../../shared/widgets/markdown/renderer/markdown_style.dart';
 import 'package:conduit_core/models/chat_comparison.dart';
 import 'package:conduit_core/models/chat_message.dart';
 import 'package:conduit_core/models/message_voice.dart';
-import 'package:conduit_core/features/web_search/services/direct_web_search_mode.dart';
 import 'package:conduit_markdown/conduit_markdown.dart';
 
 import '../providers/text_to_speech_provider.dart';
@@ -105,8 +104,8 @@ class AssistantMessageWidget extends ConsumerStatefulWidget {
 
   /// Whether to paint the avatar + model name above this response.
   ///
-  /// False for a row that continues the response above it (a Hermes turn can
-  /// emit several assistant messages), so one logical answer shows one header.
+  /// False for a row that continues the response above it (a turn can emit
+  /// several assistant messages), so one logical answer shows one header.
   final bool showModelHeader;
 
   /// Whether to paint the completion action bar below this response.
@@ -1663,11 +1662,7 @@ class _AssistantMessageWidgetState extends ConsumerState<AssistantMessageWidget>
     final errorColor = theme.colorScheme.error;
     final errorContent = error.content;
 
-    // A model that can't call tools rejects web search's tool definitions;
-    // say what to do instead of echoing the provider's wording.
-    final displayText = isDirectToolsUnsupportedError(errorContent)
-        ? AppLocalizations.of(context)!.directModelToolsUnsupported
-        : (errorContent != null && errorContent.isNotEmpty)
+    final displayText = errorContent != null && errorContent.isNotEmpty
         ? errorContent
         // If no content, show a generic error message
         : 'An error occurred while generating this response.';

@@ -41,11 +41,7 @@ import 'package:conduit_core/database/chat_database_repository.dart';
 import 'package:conduit_core/database/models/chat_transcript_window.dart';
 
 import 'package:conduit_core/features/auth/providers/unified_auth_providers.dart';
-import 'package:conduit_core/features/direct_connections/providers/direct_connection_providers.dart';
-import 'package:conduit_core/features/direct_connections/services/direct_chat_bridge.dart';
-import 'package:conduit_core/features/direct_connections/services/direct_model_registry.dart';
 
-import '../../direct_connections/widgets/direct_mcp_message_interactions.dart';
 
 import 'package:conduit_core/features/chat/providers/chat_providers.dart';
 import 'package:conduit_core/features/chat/composer/openwebui_prompt_answers.dart';
@@ -53,19 +49,7 @@ import 'package:conduit_core/features/chat/providers/openwebui_chat_prompt_provi
 import 'package:conduit_core/features/chat/providers/openwebui_prompt_resolution.dart';
 import 'package:conduit_core/features/chat/providers/temporary_chat_save.dart';
 
-import 'package:conduit_core/features/hermes/models/hermes_model.dart';
-import 'package:conduit_core/features/hermes/models/hermes_config.dart';
-import 'package:conduit_core/features/hermes/providers/hermes_providers.dart';
-import 'package:conduit_core/features/hermes/services/hermes_bot_chat.dart';
-import 'package:conduit_core/features/hermes/services/hermes_decision_projection.dart';
-import 'package:conduit_core/features/hermes/services/hermes_desktop_api_service.dart';
-import 'package:conduit_core/features/hermes/services/hermes_local_document_trust_store.dart';
-import 'package:conduit_core/features/hermes/services/hermes_message_mapper.dart';
-import 'package:conduit_core/features/hermes/services/hermes_pending_decision_store.dart';
-import 'package:conduit_core/features/hermes/services/hermes_session_provenance.dart';
 
-import '../../hermes/widgets/hermes_bot_avatar.dart';
-import '../../hermes/widgets/hermes_message_interactions.dart';
 
 import 'package:conduit_core/utils/debug_logger.dart';
 
@@ -218,156 +202,6 @@ class _ScrollableCenteredEmptyState extends StatelessWidget {
 const double _chatMessageScrollCachePixels = 1200.0;
 
 @visibleForTesting
-bool shouldShowChatModelDropdown({
-  required Model? selectedModel,
-  required bool isHermesOnly,
-  bool isHermesBot = false,
-}) {
-  return !isHermesBot &&
-      (selectedModel == null || !isHermesModel(selectedModel) || !isHermesOnly);
-}
-
-@visibleForTesting
-bool shouldShowTemporaryChatAction({
-  required bool isHermes,
-  required Conversation? activeConversation,
-  bool temporaryChatEnforced = false,
-}) =>
-    !isHermes &&
-    // The server keeps the chat temporary, and would refuse to save it.
-    !temporaryChatEnforced &&
-    (activeConversation == null || isTemporaryChat(activeConversation.id));
-
-@visibleForTesting
-String? chatHermesBotTitle(Conversation? conversation) {
-  return chatHermesBotPresentation(conversation)?.title;
-}
-
-@visibleForTesting
-Widget debugBuildHermesBotToolbarTitleForTesting({
-  required HermesBotChatPresentation bot,
-  required double maxWidth,
-  bool active = false,
-}) => _HermesBotToolbarTitle(bot: bot, maxWidth: maxWidth, active: active);
-
-class _HermesBotToolbarTitle extends StatelessWidget {
-  const _HermesBotToolbarTitle({
-    required this.bot,
-    required this.maxWidth,
-    required this.active,
-  });
-
-  final HermesBotChatPresentation bot;
-  final double maxWidth;
-  final bool active;
-
-  @override
-  Widget build(BuildContext context) {
-    return Semantics(
-      label: bot.title,
-      header: true,
-      excludeSemantics: true,
-      child: ConstrainedBox(
-        constraints: BoxConstraints(maxWidth: maxWidth),
-        child: Row(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            HermesBotAvatar(
-              key: const ValueKey('hermes-bot-toolbar-avatar'),
-              size: 28,
-              label: bot.title,
-              imageUrl: bot.avatar,
-              shape: bot.shape,
-              color: bot.color,
-              imageKind: bot.imageKind,
-              active: active,
-            ),
-            const SizedBox(width: Spacing.sm),
-            Flexible(
-              child: Text(
-                bot.title,
-                key: const ValueKey('hermes-bot-toolbar-title'),
-                maxLines: 1,
-                overflow: TextOverflow.ellipsis,
-                style: conduitAdaptiveToolbarLeadingTitleTextStyle(context)
-                    .copyWith(fontWeight: FontWeight.w600),
-              ),
-            ),
-            if (active) ...[
-              const SizedBox(width: Spacing.sm),
-              const _HermesBotActivityDot(),
-            ],
-          ],
-        ),
-      ),
-    );
-  }
-}
-
-class _HermesBotActivityDot extends StatefulWidget {
-  const _HermesBotActivityDot();
-
-  @override
-  State<_HermesBotActivityDot> createState() => _HermesBotActivityDotState();
-}
-
-class _HermesBotActivityDotState extends State<_HermesBotActivityDot>
-    with SingleTickerProviderStateMixin {
-  late final AnimationController _controller = AnimationController(
-    vsync: this,
-    duration: AnimationDuration.slow,
-  );
-  late final Animation<double> _opacity = Tween<double>(begin: 1, end: 0.35)
-      .animate(
-        CurvedAnimation(parent: _controller, curve: AnimationCurves.easeInOut),
-      );
-
-  @override
-  void didChangeDependencies() {
-    super.didChangeDependencies();
-    if (context.reduceMotion) {
-      _controller
-        ..stop()
-        ..value = 0;
-    } else if (!_controller.isAnimating) {
-      _controller.repeat(reverse: true);
-    }
-  }
-
-  @override
-  void dispose() {
-    _controller.dispose();
-    super.dispose();
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return FadeTransition(
-      opacity: _opacity,
-      child: DecoratedBox(
-        key: const ValueKey('hermes-bot-activity-dot'),
-        decoration: BoxDecoration(
-          color: context.conduitTheme.buttonPrimary,
-          shape: BoxShape.circle,
-        ),
-        child: const SizedBox.square(dimension: 6),
-      ),
-    );
-  }
-}
-
-@visibleForTesting
-List<String>? chatLocalFilePickerExtensions(
-  Model? selectedModel, {
-  bool desktopHermes = false,
-  bool hermesResponsesFiles = false,
-}) => localFilePickerExtensionsForModel(
-  selectedModel,
-  desktopHermes: desktopHermes,
-  hermesResponsesFiles: hermesResponsesFiles,
-);
-
-@visibleForTesting
 Future<void> handleChatBackNavigation({
   required bool hasInputFocus,
   required VoidCallback dismissInputFocus,
@@ -398,8 +232,8 @@ Future<void> handleChatBackNavigation({
 
 /// Refreshes only an unchanged OpenWebUI-owned active conversation.
 ///
-/// Native Hermes and direct-local shells can legally share a raw id with a
-/// server row. They must never be replaced by a colliding OpenWebUI response.
+/// A local shell can legally share a raw id with a server row. It must never
+/// be replaced by a colliding OpenWebUI response.
 @visibleForTesting
 Future<void> refreshActiveOpenWebUiConversation(dynamic ref) async {
   final api = ref.read(apiServiceProvider) as ApiService?;
@@ -547,11 +381,7 @@ class _ChatPageState extends ConsumerState<ChatPage> {
   ProviderSubscription<Object>? _authEpochSub;
   ProviderSubscription<ApiService?>? _apiOwnerSub;
   ProviderSubscription<AppDatabase?>? _databaseOwnerSub;
-  ProviderSubscription<AsyncValue<String>>? _hermesTranscriptSub;
-  ProviderSubscription<bool>? _hermesStreamingSub;
   late final OpenWebUiLivePromptNotifier _livePromptNotifier;
-  String? _pendingHermesTranscriptRefresh;
-  int _hermesTranscriptRefreshGeneration = 0;
   bool _viewportOwnerChangeScheduled = false;
   bool? _lastProfiledMessageCacheStreamingState;
   bool _explicitLatestNavigationInFlight = false;
@@ -600,10 +430,6 @@ class _ChatPageState extends ConsumerState<ChatPage> {
       messages: messages,
       models: models,
       apiService: apiService,
-      directModelRegistry: ref.read(directModelRegistryProvider),
-      hermesBot: chatHermesBotPresentation(
-        ref.read(activeConversationProvider),
-      ),
     );
   }
 
@@ -675,7 +501,6 @@ class _ChatPageState extends ConsumerState<ChatPage> {
   }
 
   void startNewChat() {
-    resetHermesForNewChat(ref);
     clearSelectedFiltersForConversationBoundary(ref);
 
     _saveCurrentScrollAnchor();
@@ -896,23 +721,6 @@ class _ChatPageState extends ConsumerState<ChatPage> {
         _scheduleViewportOwnerChanged();
       }
     });
-    _hermesTranscriptSub = ref.listenManual(
-      hermesDesktopTranscriptChangesProvider,
-      (_, next) => next.whenData(
-        (storedId) => unawaited(_refreshDesktopHermesTranscript(storedId)),
-      ),
-    );
-    _hermesStreamingSub = ref.listenManual(isChatStreamingProvider, (
-      wasStreaming,
-      isStreaming,
-    ) {
-      if (isStreaming || wasStreaming != true) return;
-      final storedId = _pendingHermesTranscriptRefresh;
-      _pendingHermesTranscriptRefresh = null;
-      if (storedId != null) {
-        unawaited(_refreshDesktopHermesTranscript(storedId));
-      }
-    });
 
     // Initialize chat page components
     WidgetsBinding.instance.addPostFrameCallback((_) async {
@@ -947,9 +755,6 @@ class _ChatPageState extends ConsumerState<ChatPage> {
     _authEpochSub?.close();
     _apiOwnerSub?.close();
     _databaseOwnerSub?.close();
-    _hermesTranscriptSub?.close();
-    _hermesStreamingSub?.close();
-    _hermesTranscriptRefreshGeneration++;
     _markdownPrewarmThrottle.cancel();
     _screenContextRetryTimer?.cancel();
     _cancelExplicitLatestNavigation();
@@ -999,115 +804,6 @@ class _ChatPageState extends ConsumerState<ChatPage> {
       onComparisonCommitted: (handle) => committed = handle,
     );
     return result.dispatched ? committed : null;
-  }
-
-  Future<void> _refreshDesktopHermesTranscript(String storedId) async {
-    final active = ref.read(activeConversationProvider);
-    if (active == null ||
-        !isNativeHermesConversation(active) ||
-        active.metadata['hermesSessionId'] != storedId) {
-      return;
-    }
-    final visibleTail = ref.read(chatMessagesProvider).lastOrNull;
-    if (ref.read(isChatStreamingProvider) &&
-        !isRestoredHermesDesktopRunningMessage(visibleTail)) {
-      _pendingHermesTranscriptRefresh = storedId;
-      return;
-    }
-    final service = ref.read(hermesApiServiceProvider);
-    if (service is! HermesDesktopApiService) return;
-    final generation = ++_hermesTranscriptRefreshGeneration;
-    try {
-      final raw = await service.getSessionMessages(storedId);
-      List<HermesPendingDesktopDecision> pending;
-      try {
-        pending = await service.pendingDecisionsForSession(storedId);
-      } catch (error) {
-        DebugLogger.warning(
-          'pending-decisions-refresh-failed',
-          scope: 'hermes/transcript',
-          data: {'errorType': error.runtimeType.toString()},
-        );
-        pending = const [];
-      }
-      if (!mounted ||
-          generation != _hermesTranscriptRefreshGeneration ||
-          !identical(ref.read(hermesApiServiceProvider), service) ||
-          ref.read(activeConversationProvider)?.id != active.id) {
-        return;
-      }
-      final selected = ref.read(selectedModelProvider);
-      final model = selected != null && isHermesModel(selected)
-          ? selected
-          : hermesSyntheticModel(name: service.config.name);
-      final endpoint = HermesConfigController.connectionEndpoint(
-        service.config.baseUrl,
-      );
-      final principal = ref
-          .read(hermesConfigProvider.notifier)
-          .documentTrustPrincipalId();
-      final connectionIdentity = endpoint == null
-          ? null
-          : HermesLocalDocumentTrustStore.connectionIdentity(
-              endpointIdentity: endpoint,
-              principalId: principal,
-            );
-      final trustedKeys = connectionIdentity == null
-          ? const <String>{}
-          : HermesLocalDocumentTrustStore.trustedDocumentKeys(
-              connectionIdentity: connectionIdentity,
-              sessionId: storedId,
-            );
-      var messages =
-          hermesMessagesToChatMessages(
-            raw,
-            modelId: model.id,
-            trustedLocalDocumentKeys: trustedKeys,
-          )..addAll(
-            hermesPendingDesktopDecisionMessages(pending, modelId: model.id),
-          );
-      messages = restoreHermesDesktopRunningMessage(
-        messages,
-        sessionId: storedId,
-        modelId: model.id,
-        isRunning:
-            service.turnStateFor(storedId) == HermesDesktopTurnState.running,
-      );
-      final currentMessages = ref.read(chatMessagesProvider);
-      final currentAuthoritativeCount = currentMessages
-          .where(
-            (message) =>
-                message.metadata?['restoredDesktopDecision'] != true &&
-                !isRestoredHermesDesktopRunningPlaceholder(message),
-          )
-          .length;
-      final candidateAuthoritativeCount = messages
-          .where(
-            (message) =>
-                message.metadata?['restoredDesktopDecision'] != true &&
-                !isRestoredHermesDesktopRunningPlaceholder(message),
-          )
-          .length;
-      if (currentAuthoritativeCount > 0 &&
-          candidateAuthoritativeCount < currentAuthoritativeCount) {
-        return;
-      }
-      ref.read(chatMessagesProvider.notifier).setMessages(messages);
-      ref
-          .read(activeConversationProvider.notifier)
-          .set(
-            inheritNativeHermesConversationProvenance(
-              active,
-              active.copyWith(messages: messages, updatedAt: DateTime.now()),
-            ),
-          );
-    } catch (error) {
-      DebugLogger.warning(
-        'desktop-transcript-refresh-failed',
-        scope: 'hermes/recovery',
-        data: {'errorType': error.runtimeType.toString()},
-      );
-    }
   }
 
   Future<void> _handleFollowUpSend(String text) async {
@@ -1456,17 +1152,7 @@ class _ChatPageState extends ConsumerState<ChatPage> {
     }
 
     try {
-      final attachments = await fileService.pickFiles(
-        allowedExtensions: chatLocalFilePickerExtensions(
-          ref.read(selectedModelProvider),
-          desktopHermes:
-              ref.read(hermesConfigProvider).mode ==
-              HermesBackendMode.desktopGateway,
-          hermesResponsesFiles:
-              ref.read(hermesCapabilitiesProvider).asData?.value.inputFiles ==
-              true,
-        ),
-      );
+      final attachments = await fileService.pickFiles();
       if (attachments.isEmpty) return;
 
       // Keep the 20 MB guardrail for images; non-image uploads can be larger.
@@ -3384,20 +3070,8 @@ class _ChatPageState extends ConsumerState<ChatPage> {
   }) {
     final groupIds = rowMetadata.groupMessageIds;
     final readOnly = rowRef.watch(activeConversationReadOnlyProvider);
-    final displayedMessage = groupIds.length > 1
-        ? _messageWithGroupedHermesToolStatuses(rowRef, latestMessage, groupIds)
-        : latestMessage;
-    if (displayedMessage.statusHistory.length <
-            latestMessage.statusHistory.length &&
-        debugCanCollapseGroupedAssistantRowForTesting(
-          displayedMessage,
-          showModelHeader: rowMetadata.showModelHeader,
-          showActionBar: rowMetadata.showActionBar,
-        )) {
-      return const SizedBox.shrink();
-    }
     return assistant.AssistantMessageWidget(
-      message: displayedMessage,
+      message: latestMessage,
       isStreaming: latestMessage.isStreaming,
       showFollowUps: rowMetadata.showFollowUps,
       // Suppress the mount fade for a settled (completed or failed) assistant so
@@ -3418,9 +3092,9 @@ class _ChatPageState extends ConsumerState<ChatPage> {
       suppressStreamingHaptics: suppressStreamingHaptics,
       readOnly: readOnly,
       onFollowUpSelected: readOnly ? null : _handleFollowUpSend,
-      // The bar owner acts on the whole grouped response: a Hermes turn is one
-      // answer split across rows, so copying or reading back only this row's
-      // share would hand over a fragment.
+      // The bar owner acts on the whole grouped response: one turn can be
+      // split across rows, so copying or reading back only this row's share
+      // would hand over a fragment.
       resolveGroupedResponseText: groupIds.length > 1
           ? () => _joinGroupedResponseText(rowRef, groupIds)
           : null,
@@ -3443,26 +3117,6 @@ class _ChatPageState extends ConsumerState<ChatPage> {
         groupIds.isEmpty ? <String>[messageId] : groupIds,
       ),
     );
-  }
-
-  ChatMessage _messageWithGroupedHermesToolStatuses(
-    WidgetRef rowRef,
-    ChatMessage message,
-    List<String> groupIds,
-  ) {
-    final histories = <List<ChatStatusUpdate>>[];
-    for (final id in groupIds) {
-      histories.add(
-        rowRef.watch(chatMessageByIdProvider(id))?.statusHistory ??
-            const <ChatStatusUpdate>[],
-      );
-    }
-    final grouped = debugGroupHermesToolStatusesForTesting(histories);
-    final index = groupIds.indexOf(message.id);
-    if (index < 0 || identical(grouped[index], message.statusHistory)) {
-      return message;
-    }
-    return message.copyWith(statusHistory: grouped[index]);
   }
 
   /// Current text of every row in a grouped response, in display order.
@@ -3626,7 +3280,7 @@ class _ChatPageState extends ConsumerState<ChatPage> {
     final String? resolvedGreetingName = hasGreetingName ? greetingName : null;
     final greetingText = resolvedGreetingName != null
         ? l10n.greetingTitle(resolvedGreetingName)
-        : l10n.finishDirectSetup;
+        : l10n.startChattingGreeting;
     final isTemporary = ref.watch(temporaryChatEnabledProvider);
 
     // Check if there's a pending folder for the new chat
@@ -3828,26 +3482,6 @@ class _ChatPageState extends ConsumerState<ChatPage> {
                           livePrompt.conversationId == activeConversationId
                       ? livePrompt
                       : null;
-                  final pendingHermesPrompt = composerRef.watch(
-                    chatMessagesProvider.select(
-                      findPendingHermesComposerPrompt,
-                    ),
-                  );
-                  final pendingDirectMcpMetadata = composerRef.watch(
-                    chatMessagesProvider.select(
-                      findPendingDirectMcpComposerPrompt,
-                    ),
-                  );
-                  composerRef.watch(directMcpApprovalRevisionProvider);
-                  final pendingDirectMcpPrompt =
-                      pendingDirectMcpMetadata == null
-                      ? null
-                      : findPendingDirectMcpComposerPrompt(
-                          composerRef.read(chatMessagesProvider),
-                          isLive: composerRef
-                              .read(directRunRegistryProvider)
-                              .hasLiveMcpApproval,
-                        );
                   final Widget? attachedOverlay;
                   if (persistedPrompt != null) {
                     attachedOverlay = OpenWebUiPromptOverlay(
@@ -3895,20 +3529,6 @@ class _ChatPageState extends ConsumerState<ChatPage> {
                           notifier.cancel();
                         }
                       },
-                    );
-                  } else if (pendingHermesPrompt != null) {
-                    attachedOverlay = HermesComposerPromptOverlay(
-                      key: ValueKey(pendingHermesPrompt.id),
-                      message: pendingHermesPrompt,
-                    );
-                  } else if (pendingDirectMcpPrompt != null) {
-                    final approval =
-                        pendingDirectMcpPrompt
-                                .metadata![kDirectMcpApprovalMetadataKey]
-                            as Map;
-                    attachedOverlay = DirectMcpComposerPromptOverlay(
-                      key: ValueKey(approval['id']),
-                      message: pendingDirectMcpPrompt,
                     );
                   } else {
                     attachedOverlay = null;
@@ -4020,12 +3640,10 @@ class _ChatPageState extends ConsumerState<ChatPage> {
     );
     final isLoadingConversation = ref.watch(isLoadingConversationProvider);
     final activeConversation = ref.watch(activeConversationProvider);
-    final hermesBot = chatHermesBotPresentation(activeConversation);
     final formattedModelName = selectedModel != null
         ? _formatModelDisplayName(selectedModel.name)
         : null;
-    final modelLabel =
-        hermesBot?.title ?? formattedModelName ?? l10n.chooseModel;
+    final modelLabel = formattedModelName ?? l10n.chooseModel;
     final overlayStyle = theme.appBarTheme.systemOverlayStyle;
 
     // Whether the messages list can actually scroll (avoids showing button when not needed)
@@ -4082,7 +3700,6 @@ class _ChatPageState extends ConsumerState<ChatPage> {
           ref: ref,
           isLoadingConversation: isLoadingConversation,
           modelLabel: modelLabel,
-          hermesBot: hermesBot,
         ),
         body: GestureDetector(
           behavior: HitTestBehavior.translucent,
@@ -4248,7 +3865,6 @@ class _ChatPageState extends ConsumerState<ChatPage> {
     required WidgetRef ref,
     required bool isLoadingConversation,
     required String modelLabel,
-    required HermesBotChatPresentation? hermesBot,
   }) {
     final activeConversation = ref.watch(activeConversationProvider);
     final isTemporary = ref.watch(temporaryChatEnabledProvider);
@@ -4261,29 +3877,16 @@ class _ChatPageState extends ConsumerState<ChatPage> {
       trailingActionCount: trailingActionCount,
       maxWidth: kConduitAdaptiveToolbarMaxModelSelectorWidth,
     );
-    // Hide the picker only for a true single-agent Hermes-only install. Mixed
-    // setups must retain a way to switch back to an OpenWebUI model.
-    final selectedModel = ref.watch(selectedModelProvider);
-    final showModelDropdown = shouldShowChatModelDropdown(
-      selectedModel: selectedModel,
-      isHermesOnly: ref.watch(hermesOnlyModeProvider),
-      isHermesBot: hermesBot != null,
-    );
     final title = _buildChatToolbarTitle(
       context: context,
       isLoadingConversation: isLoadingConversation,
       modelLabel: modelLabel,
       maxModelWidth: maxModelWidth,
-      showModelDropdown: showModelDropdown,
-      hermesBot: hermesBot,
-      hermesBotActive: hermesBot != null && ref.watch(isChatStreamingProvider),
+      showModelDropdown: true,
     );
     final actionDescriptors = _buildAdaptiveToolbarActions(
       context: context,
       activeConversation: activeConversation,
-      isHermes:
-          (selectedModel != null && isHermesModel(selectedModel)) ||
-          isNativeHermesConversation(activeConversation),
       isTemporary: isTemporary,
       hasMessages: hasMessages,
       showNewChatAction: showNewChatAction,
@@ -4327,16 +3930,7 @@ class _ChatPageState extends ConsumerState<ChatPage> {
     required String modelLabel,
     required double maxModelWidth,
     required bool showModelDropdown,
-    required HermesBotChatPresentation? hermesBot,
-    required bool hermesBotActive,
   }) {
-    if (hermesBot != null) {
-      return _HermesBotToolbarTitle(
-        bot: hermesBot,
-        maxWidth: maxModelWidth,
-        active: hermesBotActive,
-      );
-    }
     return ConduitAdaptiveAppBarModelSelector(
       label: modelLabel,
       maxWidth: maxModelWidth,
@@ -4349,7 +3943,6 @@ class _ChatPageState extends ConsumerState<ChatPage> {
   List<_ChatToolbarActionDescriptor> _buildAdaptiveToolbarActions({
     required BuildContext context,
     required Conversation? activeConversation,
-    required bool isHermes,
     required bool isTemporary,
     required bool hasMessages,
     required bool showNewChatAction,
@@ -4360,7 +3953,6 @@ class _ChatPageState extends ConsumerState<ChatPage> {
     final temporaryAction = _buildTemporaryChatToolbarAction(
       context: context,
       activeConversation: activeConversation,
-      isHermes: isHermes,
       isTemporary: isTemporary,
       hasMessages: hasMessages,
       tintColor: defaultTint,
@@ -4420,16 +4012,15 @@ class _ChatPageState extends ConsumerState<ChatPage> {
   _ChatToolbarActionDescriptor? _buildTemporaryChatToolbarAction({
     required BuildContext context,
     required Conversation? activeConversation,
-    required bool isHermes,
     required bool isTemporary,
     required bool hasMessages,
     required Color tintColor,
   }) {
-    final showTemporaryAction = shouldShowTemporaryChatAction(
-      isHermes: isHermes,
-      activeConversation: activeConversation,
-      temporaryChatEnforced: ref.watch(temporaryChatEnforcedProvider),
-    );
+    // The server keeps the chat temporary, and would refuse to save it.
+    final showTemporaryAction =
+        !ref.watch(temporaryChatEnforcedProvider) &&
+        (activeConversation == null ||
+            isTemporaryChat(activeConversation.id));
     if (!showTemporaryAction) {
       return null;
     }
@@ -4726,27 +4317,13 @@ String? _messageModelNameFallback(ChatMessage message) {
   return value == null || value.isEmpty ? null : value;
 }
 
-Map<String, Model>? _buildChatModelLookup(
-  List<Model>? models, {
-  DirectModelRegistry? directModelRegistry,
-}) {
+Map<String, Model>? _buildChatModelLookup(List<Model>? models) {
   if (models == null || models.isEmpty) return null;
   final lookup = <String, Model>{};
-  final trustedOpenWebUiWireModels = <String, Model>{};
   for (final model in models) {
     lookup[model.id] = model;
     lookup[model.name] = model;
-    final binding = directModelRegistry?.resolve(model);
-    final wireModelId = binding?.source == DirectModelSource.openWebUi
-        ? binding?.openWebUiModelId
-        : null;
-    if (wireModelId != null && wireModelId.isNotEmpty) {
-      trustedOpenWebUiWireModels[wireModelId] = model;
-    }
   }
-  // Apply trusted wire aliases after ordinary ids/names so a later untrusted
-  // same-id server model cannot replace the current direct binding.
-  lookup.addAll(trustedOpenWebUiWireModels);
   return lookup;
 }
 
@@ -4814,7 +4391,7 @@ typedef ChatGroupingPlacement = ({
 /// Assigns every row to a grouped response and picks which member paints the
 /// header and which owns the action bar.
 ///
-/// A single Hermes turn lands as several assistant messages. Repeating the
+/// A single assistant turn can land as several messages. Repeating the
 /// avatar + model name and the copy/listen/regenerate bar for each one reads as
 /// several answers rather than one, so the first member carries the header and
 /// the last carries the bar. Across turns the header is shown only when the
@@ -4822,7 +4399,7 @@ typedef ChatGroupingPlacement = ({
 ///
 /// [rows] is the transcript in display order. A row is `isSkipped` when it
 /// renders no response of its own — archived variants (zero-size placeholders)
-/// and restored Hermes decision cards. Skipped rows neither break a group nor
+/// and restored decision cards. Skipped rows neither break a group nor
 /// own its bar; treating them as breaks would re-show a header mid-response.
 ///
 /// A `hasVersions` row keeps its own bar so its version switcher stays
@@ -4907,59 +4484,6 @@ List<ChatGroupingPlacement> debugResolveAssistantGroupingForTesting(
   ]);
 }
 
-/// Moves Hermes tool statuses from a grouped response onto its first tool row.
-/// Non-tool statuses stay on their original rows.
-@visibleForTesting
-List<List<ChatStatusUpdate>> debugGroupHermesToolStatusesForTesting(
-  List<List<ChatStatusUpdate>> histories,
-) {
-  final tools = <ChatStatusUpdate>[];
-  var owner = -1;
-  for (var index = 0; index < histories.length; index++) {
-    final rowTools = histories[index].where(_isHermesToolStatus).toList();
-    if (owner < 0 && rowTools.isNotEmpty) owner = index;
-    tools.addAll(rowTools);
-  }
-  if (tools.length < 2 || owner < 0) return histories;
-
-  return List<List<ChatStatusUpdate>>.unmodifiable([
-    for (var index = 0; index < histories.length; index++)
-      if (index != owner)
-        List<ChatStatusUpdate>.unmodifiable(
-          histories[index].where((status) => !_isHermesToolStatus(status)),
-        )
-      else
-        List<ChatStatusUpdate>.unmodifiable([
-          for (final status in histories[index])
-            if (!_isHermesToolStatus(status)) status,
-          ...tools,
-        ]),
-  ]);
-}
-
-bool _isHermesToolStatus(ChatStatusUpdate status) =>
-    status.action?.startsWith('hermes_tool_') ?? false;
-
-@visibleForTesting
-bool debugCanCollapseGroupedAssistantRowForTesting(
-  ChatMessage message, {
-  required bool showModelHeader,
-  required bool showActionBar,
-}) {
-  return !showModelHeader &&
-      !showActionBar &&
-      message.content.trim().isEmpty &&
-      (message.attachmentIds?.isEmpty ?? true) &&
-      (message.files?.isEmpty ?? true) &&
-      (message.output?.isEmpty ?? true) &&
-      (message.embeds?.isEmpty ?? true) &&
-      message.statusHistory.isEmpty &&
-      message.followUps.isEmpty &&
-      message.codeExecutions.isEmpty &&
-      message.sources.isEmpty &&
-      message.error == null;
-}
-
 @immutable
 class _ChatRowLayoutMetadata {
   const _ChatRowLayoutMetadata({
@@ -4987,7 +4511,7 @@ class _ChatRowLayoutMetadata {
 
   /// Whether this assistant row paints its own avatar + model name.
   ///
-  /// A single Hermes turn lands as several assistant messages, which would
+  /// A single assistant turn can land as several messages, which would
   /// otherwise repeat the same identity header down the transcript. Runs of
   /// consecutive assistant rows sharing one model present as one grouped
   /// response, with only the first row carrying the header.
@@ -5059,15 +4583,11 @@ class _ChatListStableLayoutCacheKey {
     required this.signature,
     required this.models,
     required this.apiService,
-    required this.directModelRegistryRevision,
-    required this.hermesBot,
   });
 
   final _ChatListStableLayoutSignature signature;
   final List<Model>? models;
   final ApiService? apiService;
-  final int directModelRegistryRevision;
-  final HermesBotChatPresentation? hermesBot;
 
   @override
   bool operator ==(Object other) =>
@@ -5075,17 +4595,13 @@ class _ChatListStableLayoutCacheKey {
       other is _ChatListStableLayoutCacheKey &&
           signature == other.signature &&
           identical(models, other.models) &&
-          identical(apiService, other.apiService) &&
-          directModelRegistryRevision == other.directModelRegistryRevision &&
-          hermesBot == other.hermesBot;
+          identical(apiService, other.apiService);
 
   @override
   int get hashCode => Object.hash(
     signature,
     identityHashCode(models),
     identityHashCode(apiService),
-    directModelRegistryRevision,
-    hermesBot,
   );
 }
 
@@ -5095,8 +4611,6 @@ final class _ChatListStableLayoutCache {
   List<ChatMessage>? _messages;
   List<Model>? _models;
   ApiService? _apiService;
-  int? _directModelRegistryRevision;
-  HermesBotChatPresentation? _hermesBot;
   int _signatureBuildCount = 0;
 
   void invalidate() {
@@ -5105,28 +4619,21 @@ final class _ChatListStableLayoutCache {
     _messages = null;
     _models = null;
     _apiService = null;
-    _directModelRegistryRevision = null;
-    _hermesBot = null;
   }
 
   _ChatListStableLayoutMetadata resolve({
     required List<ChatMessage> messages,
     required List<Model>? models,
     required ApiService? apiService,
-    required DirectModelRegistry directModelRegistry,
-    HermesBotChatPresentation? hermesBot,
   }) {
     final cached = _metadata;
-    final registryRevision = directModelRegistry.revision;
     // Scroll callbacks and other chrome-only rebuilds reuse the immutable
     // Riverpod message list. Return before constructing the O(messages ×
     // versions) structural signature in that overwhelmingly common path.
     if (cached != null &&
         identical(_messages, messages) &&
         identical(_models, models) &&
-        identical(_apiService, apiService) &&
-        _directModelRegistryRevision == registryRevision &&
-        _hermesBot == hermesBot) {
+        identical(_apiService, apiService)) {
       return cached;
     }
 
@@ -5135,22 +4642,16 @@ final class _ChatListStableLayoutCache {
       signature: _buildChatListStableLayoutSignature(messages),
       models: models,
       apiService: apiService,
-      directModelRegistryRevision: registryRevision,
-      hermesBot: hermesBot,
     );
     _messages = messages;
     _models = models;
     _apiService = apiService;
-    _directModelRegistryRevision = registryRevision;
-    _hermesBot = hermesBot;
     if (cached != null && _key == nextKey) return cached;
 
     final next = _buildChatListStableLayoutMetadata(
       messages: messages,
       models: models,
       apiService: apiService,
-      directModelRegistry: directModelRegistry,
-      hermesBot: hermesBot,
     );
     _metadata = next;
     _key = nextKey;
@@ -5226,13 +4727,8 @@ _ChatListStableLayoutMetadata _buildChatListStableLayoutMetadata({
   required List<ChatMessage> messages,
   required List<Model>? models,
   required ApiService? apiService,
-  DirectModelRegistry? directModelRegistry,
-  HermesBotChatPresentation? hermesBot,
 }) {
-  final modelLookup = _buildChatModelLookup(
-    models,
-    directModelRegistry: directModelRegistry,
-  );
+  final modelLookup = _buildChatModelLookup(models);
   final bubbleAdjacency = _buildChatBubbleAdjacency(messages);
   final rows = <_ChatRowLayoutMetadata>[];
   final indexByMessageId = <String, int>{};
@@ -5242,14 +4738,12 @@ _ChatListStableLayoutMetadata _buildChatListStableLayoutMetadata({
   for (var index = 0; index < messages.length; index++) {
     final message = messages[index];
     final isUser = message.role == 'user';
-    final modelPresentation = !isUser && hermesBot != null
-        ? (displayName: hermesBot.title, matchedModel: null)
-        : _resolveChatModelPresentation(
-            rawModel: message.model,
-            fallbackModelName: _messageModelNameFallback(message),
-            models: models,
-            modelLookup: modelLookup,
-          );
+    final modelPresentation = _resolveChatModelPresentation(
+      rawModel: message.model,
+      fallbackModelName: _messageModelNameFallback(message),
+      models: models,
+      modelLookup: modelLookup,
+    );
     presentations.add(modelPresentation);
     groupingRows.add((
       isUser: isUser,
@@ -5282,15 +4776,12 @@ _ChatListStableLayoutMetadata _buildChatListStableLayoutMetadata({
         models: models,
         modelLookup: modelLookup,
       );
-      versionModelNames.add(
-        hermesBot?.title ?? versionPresentation.displayName,
-      );
+      versionModelNames.add(versionPresentation.displayName);
       versionModelIconUrls.add(
-        hermesBot?.avatar ??
-            resolveModelIconUrlForModel(
-              apiService,
-              versionPresentation.matchedModel,
-            ),
+        resolveModelIconUrlForModel(
+          apiService,
+          versionPresentation.matchedModel,
+        ),
       );
     }
 
@@ -5305,12 +4796,10 @@ _ChatListStableLayoutMetadata _buildChatListStableLayoutMetadata({
       _ChatRowLayoutMetadata(
         messageId: message.id,
         displayModelName: modelPresentation.displayName,
-        modelIconUrl:
-            hermesBot?.avatar ??
-            resolveModelIconUrlForModel(
-              apiService,
-              modelPresentation.matchedModel,
-            ),
+        modelIconUrl: resolveModelIconUrlForModel(
+          apiService,
+          modelPresentation.matchedModel,
+        ),
         versionModelNames: List<String?>.unmodifiable(versionModelNames),
         versionModelIconUrls: List<String?>.unmodifiable(versionModelIconUrls),
         isArchivedVariant: isArchivedVariant,
@@ -5658,13 +5147,11 @@ List<ChatListLayoutRowSummary> debugResolveChatListStableLayoutCacheForTesting(
   Object cache,
   List<ChatMessage> messages, {
   required List<Model>? models,
-  required DirectModelRegistry directModelRegistry,
 }) {
   final metadata = (cache as _ChatListStableLayoutCache).resolve(
     messages: messages,
     models: models,
     apiService: null,
-    directModelRegistry: directModelRegistry,
   );
   return metadata.rows.map(_chatListLayoutRowSummary).toList(growable: false);
 }
@@ -5673,15 +5160,11 @@ List<ChatListLayoutRowSummary> debugResolveChatListStableLayoutCacheForTesting(
 List<ChatListLayoutRowSummary> debugBuildChatListLayoutSummaryForTesting(
   List<ChatMessage> messages, {
   List<Model>? models,
-  DirectModelRegistry? directModelRegistry,
-  HermesBotChatPresentation? hermesBot,
 }) {
   final metadata = _buildChatListStableLayoutMetadata(
     messages: messages,
     models: models,
     apiService: null,
-    directModelRegistry: directModelRegistry,
-    hermesBot: hermesBot,
   );
   return metadata.rows.map(_chatListLayoutRowSummary).toList(growable: false);
 }

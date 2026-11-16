@@ -24,7 +24,6 @@ import 'package:conduit_core/features/chat/providers/chat_providers.dart';
 import 'package:conduit_core/features/chat/services/chat_draft_queue.dart';
 import 'package:conduit_core/features/chat/providers/personal_valves_providers.dart';
 import 'package:conduit_core/features/integrations/providers/personal_connections_providers.dart';
-import 'package:conduit_core/features/terminal/providers/terminal_providers.dart';
 
 import '../services/clipboard_attachment_service.dart';
 import '../services/file_attachment_service.dart';
@@ -39,22 +38,6 @@ import '../../notes/providers/notes_providers.dart';
 import 'package:conduit_core/features/tools/providers/tools_providers.dart';
 
 import '../../prompts/providers/prompts_providers.dart';
-
-import 'package:conduit_core/features/hermes/controllers/hermes_busy_turn_controller.dart';
-
-import 'package:conduit_core/features/hermes/models/hermes_model.dart';
-import 'package:conduit_core/features/hermes/models/hermes_config.dart';
-import 'package:conduit_core/features/hermes/providers/hermes_providers.dart';
-import 'package:conduit_core/features/hermes/services/hermes_local_document_service.dart';
-import 'package:conduit_core/features/direct_connections/direct_connections.dart';
-import 'package:conduit_core/features/direct_connections/providers/direct_mcp_providers.dart';
-import 'package:conduit_core/features/direct_connections/controllers/direct_mcp_content_insertion.dart'
-    as core
-    show directMcpInsertionFitsComposer;
-import 'package:conduit_core/features/direct_connections/controllers/direct_mcp_content_insertion.dart'
-    show insertContentAtSelection;
-
-import '../../direct_connections/views/direct_mcp_content_sheet.dart';
 
 import 'package:conduit_core/features/workspace/models/workspace_resources.dart';
 
@@ -129,27 +112,13 @@ TextEditingValue composerTextValueAfterInsertion(
   String content,
 ) {
   final selection = current.selection;
-  final inserted = insertContentAtSelection(
-    current.text,
-    selectionStart: selection.isValid ? selection.start : null,
-    selectionEnd: selection.isValid ? selection.end : null,
-    content: content,
-  );
+  final start = selection.isValid ? selection.start : current.text.length;
+  final end = selection.isValid ? selection.end : current.text.length;
+  final text = current.text.replaceRange(start, end, content);
   return TextEditingValue(
-    text: inserted.text,
-    selection: TextSelection.collapsed(offset: inserted.caret),
+    text: text,
+    selection: TextSelection.collapsed(offset: start + content.length),
     composing: TextRange.empty,
-  );
-}
-
-@visibleForTesting
-bool directMcpInsertionFitsComposer(TextEditingValue current, String content) {
-  final selection = current.selection;
-  return core.directMcpInsertionFitsComposer(
-    current.text,
-    selectionStart: selection.isValid ? selection.start : null,
-    selectionEnd: selection.isValid ? selection.end : null,
-    content: content,
   );
 }
 
@@ -188,46 +157,6 @@ List<IOSSystemContextMenuItem> buildComposerSystemContextMenuItems({
   return items;
 }
 
-/// Whether the selected model may accept locally pasted/picked images.
-/// Reserved direct identities fail closed when their mutable registry binding
-/// has been removed or replaced.
-bool directModelAcceptsImageInput(Model? model, DirectModelRegistry registry) {
-  if (model == null || !hasReservedDirectIdentity(model)) return true;
-  return registry.resolve(model) != null && model.isMultimodal == true;
-}
-
-/// Restricts local file picking to what the selected transport can consume.
-///
-/// OpenWebUI performs server-backed document ingestion, while Hermes and
-/// Direct perform bounded local extraction. Direct also accepts image payloads
-/// when the selected model advertises multimodal input.
-List<String>? localFilePickerExtensionsForModel(
-  Model? selectedModel, {
-  bool desktopHermes = false,
-  bool hermesResponsesFiles = false,
-}) {
-  if (selectedModel == null) return null;
-  if (isHermesModel(selectedModel)) {
-    if (desktopHermes) return null;
-    final extensions = <String>{...kHermesLocalDocumentPickerExtensions};
-    if (hermesResponsesFiles) extensions.add('pdf');
-    return extensions.toList(growable: false)..sort();
-  }
-  if (hasReservedDirectIdentity(selectedModel)) {
-    final extensions = <String>{...kDirectLocalDocumentPickerExtensions};
-    if (selectedModel.capabilities?['pdf_input'] == true) {
-      extensions.add('pdf');
-    }
-    if (selectedModel.isMultimodal == true) {
-      extensions.addAll(
-        allSupportedImageFormats.map((extension) => extension.substring(1)),
-      );
-    }
-    return extensions.toList(growable: false)..sort();
-  }
-  return null;
-}
-
 /// Computes the height of the panel that replaces the visible IME.
 ///
 /// The chat's outer safe area becomes active when Android hides the IME. The
@@ -256,18 +185,6 @@ double fallbackAttachmentPanelHeight({
       .toDouble();
 }
 
-/// Shared visibility rule used by both compact and expanded '+' branches.
-bool shouldShowComposerOverflowButton({
-  required bool isHermesComposer,
-  required bool isDirectComposer,
-  required bool directSupportsImages,
-  bool directHasOverflowActions = false,
-  bool hermesHasLocalAttachmentActions = false,
-}) {
-  if (isHermesComposer) return hermesHasLocalAttachmentActions;
-  return !isDirectComposer || directSupportsImages || directHasOverflowActions;
-}
-
 /// Builds the actions rendered by the iOS keyboard attachment panel.
 ///
 /// Kept platform-independent so its model-specific restrictions and action
@@ -275,8 +192,6 @@ bool shouldShowComposerOverflowButton({
 List<IosKeyboardAttachmentActionConfig> buildIosKeyboardAttachmentActions({
   required AppLocalizations l10n,
   required ComposerOverflowAttachmentAvailability attachmentAvailability,
-  required bool hermesMode,
-  required bool directMode,
   required bool webSearchAvailable,
   required bool webSearchEnabled,
   required bool imageGenerationAvailable,
@@ -294,51 +209,22 @@ List<IosKeyboardAttachmentActionConfig> buildIosKeyboardAttachmentActions({
   final items = buildComposerOverflowItems(
     l10n: l10n,
     attachmentAvailability: attachmentAvailability,
-    // Web search is also a native Ollama Cloud capability. The availability
-    // provider has already resolved whether the active direct model can use it.
-    webSearchAvailable: !hermesMode && webSearchAvailable,
+    webSearchAvailable: webSearchAvailable,
     webSearchEnabled: webSearchEnabled,
-    imageGenerationAvailable: !hermesMode && imageGenerationAvailable,
+    imageGenerationAvailable: imageGenerationAvailable,
     imageGenerationEnabled: imageGenerationEnabled,
-    availableTools: hermesMode ? const <Tool>[] : availableTools,
+    availableTools: availableTools,
     selectedToolIds: selectedToolIds,
-    availableFilters: hermesMode || directMode
-        ? const <ToggleFilter>[]
-        : availableFilters,
+    availableFilters: availableFilters,
     selectedFilterIds: selectedFilterIds,
-    // Personal tool servers and terminals belong to the Open WebUI account.
-    connections: hermesMode || directMode
-        ? ComposerPersonalConnections.none
-        : connections,
-    // Personal valves are an Open WebUI server feature.
-    toolSettingsAvailable: !hermesMode && !directMode && toolSettingsAvailable,
-    // Comparing models is an Open WebUI server feature.
-    compareModelsAvailable:
-        !hermesMode && !directMode && compareModelsAvailable,
+    connections: connections,
+    toolSettingsAvailable: toolSettingsAvailable,
+    compareModelsAvailable: compareModelsAvailable,
     hasMessage: hasMessage,
     codeInterpreter: codeInterpreter,
   );
 
   return items
-      .where((item) {
-        if (hermesMode) {
-          return item.enabled &&
-              (item.id == ComposerOverflowActionIds.file ||
-                  item.id == ComposerOverflowActionIds.photo ||
-                  item.id == ComposerOverflowActionIds.camera);
-        }
-        if (!directMode) {
-          return item.id != ComposerOverflowActionIds.mcpContent;
-        }
-        return item.enabled &&
-            (item.section == ComposerOverflowSection.tools ||
-                item.id == ComposerOverflowActionIds.file ||
-                item.id == ComposerOverflowActionIds.photo ||
-                item.id == ComposerOverflowActionIds.camera ||
-                item.id == ComposerOverflowActionIds.mcpContent ||
-                item.id == ComposerOverflowActionIds.webSearch ||
-                item.id == ComposerOverflowActionIds.imageGeneration);
-      })
       .map(
         (item) => IosKeyboardAttachmentActionConfig(
           id: item.id,
@@ -641,7 +527,6 @@ class _ModernChatInputState extends ConsumerState<ModernChatInput>
   bool _fallbackPanelReplacedKeyboard = false;
   double _fallbackAttachmentPanelHeight = 300;
   bool _fallbackPanelWaitingForKeyboard = false;
-  bool _desktopQueueActionBusy = false;
 
   bool get _isRouteVisible =>
       !ThemedSheets.isCoveredBySheet(context) &&
@@ -928,31 +813,6 @@ class _ModernChatInputState extends ConsumerState<ModernChatInput>
     }
   }
 
-  Future<void> _sendDesktopBusyMessage({required bool steer}) async {
-    if (!widget.enabled || _isRecording || _desktopQueueActionBusy) return;
-    final text = _controller.toWireFormat().trim();
-    if (text.isEmpty) return;
-    setState(() => _desktopQueueActionBusy = true);
-    try {
-      final accepted = await ref
-          .read(hermesBusyTurnControllerProvider)
-          .submit(
-            action: steer
-                ? HermesBusyTurnAction.steer
-                : HermesBusyTurnAction.sendNext,
-            text: text,
-            localStreaming: ref.read(isChatStreamingProvider),
-          );
-      if (!mounted || !accepted) return;
-      if (_controller.toWireFormat().trim() != text) return;
-      _controller.clearMentions();
-      _controller.clear();
-      _focusNode.requestFocus();
-    } finally {
-      if (mounted) setState(() => _desktopQueueActionBusy = false);
-    }
-  }
-
   void _handleNativeKeyboardAttachmentEvent(IosKeyboardAttachmentEvent event) {
     if (!mounted || _isDeactivated) return;
 
@@ -985,9 +845,6 @@ class _ModernChatInputState extends ConsumerState<ModernChatInput>
         return;
       case ComposerOverflowActionIds.web:
         if (availability.web) widget.onWebAttachment?.call();
-        return;
-      case ComposerOverflowActionIds.mcpContent:
-        if (availability.mcpContent) unawaited(_openDirectMcpContent());
         return;
       case ComposerOverflowActionIds.toolSettings:
         _openToolSettings();
@@ -1397,33 +1254,6 @@ class _ModernChatInputState extends ConsumerState<ModernChatInput>
     }
   }
 
-  Future<void> _openDirectMcpContent() async {
-    if (!widget.enabled) return;
-    final selection = _controller.selection;
-    _dismissFallbackAttachmentPanel();
-    await _hideNativeKeyboardAttachmentPanel();
-    if (!mounted || _isDeactivated) return;
-    final content = await DirectMcpContentSheet.show(context);
-    if (!mounted ||
-        _isDeactivated ||
-        !widget.enabled ||
-        content == null ||
-        content.isEmpty) {
-      return;
-    }
-    final restored = _controller.value.copyWith(selection: selection);
-    if (!directMcpInsertionFitsComposer(restored, content)) {
-      AdaptiveSnackBar.show(
-        context,
-        message: AppLocalizations.of(context)!.directMcpContentComposerTooLarge,
-        type: AdaptiveSnackBarType.error,
-      );
-      return;
-    }
-    _controller.value = composerTextValueAfterInsertion(restored, content);
-    _ensureFocusedIfEnabled();
-  }
-
   _ComposerTypography _composerTypography(BuildContext context) {
     final direction = Directionality.of(context);
     final textScaler = MediaQuery.textScalerOf(context);
@@ -1650,39 +1480,19 @@ class _ModernChatInputState extends ConsumerState<ModernChatInput>
     if (!wasShowing && shouldShow) {
       // Trigger data fetch lazily when overlay first appears.
       if (_currentPromptCommand.startsWith('/')) {
-        if (_hermesCommandsActive) {
-          ref.read(hermesSkillPromptsProvider.future);
-        } else {
-          ref.read(promptsListProvider.future);
-        }
+        ref.read(promptsListProvider.future);
       } else if (_currentPromptCommand.startsWith('@')) {
         ref.read(modelsProvider.future);
       }
     }
   }
 
-  /// Whether the active model routes `/` commands to Hermes skills instead of
-  /// OpenWebUI prompts. Requires the server to advertise the skills capability
-  /// (optimistic default while capabilities load).
-  bool get _hermesCommandsActive {
-    final model = ref.read(selectedModelProvider);
-    if (model == null || !isHermesModel(model)) return false;
-    final caps = ref.read(hermesCapabilitiesProvider).asData?.value;
-    return caps?.skills ?? true;
-  }
+  /// The current base prompt list for the `/` overlay.
+  List<Prompt>? get _activePromptListValue =>
+      ref.read(promptsListProvider).value;
 
-  /// The current base prompt list for the `/` overlay, from the source matching
-  /// the active model (Hermes skills or OpenWebUI prompts).
-  List<Prompt>? get _activePromptListValue => _hermesCommandsActive
-      ? ref.read(hermesSkillPromptsProvider).value
-      : ref.read(promptsListProvider).value;
-
-  bool get _openWebUiSkillsAvailable {
-    if (!ref.read(openWebUiAccountAvailableProvider)) return false;
-    final model = ref.read(selectedModelProvider);
-    return model == null ||
-        (!isHermesModel(model) && !isLocallyMintedDirectModel(model));
-  }
+  bool get _openWebUiSkillsAvailable =>
+      ref.read(openWebUiAccountAvailableProvider);
 
   PromptCommandMatch? _resolvePromptCommand(
     String text,
@@ -1691,17 +1501,15 @@ class _ModernChatInputState extends ConsumerState<ModernChatInput>
   ) {
     if (!enabled) return null;
     if (!selection.isValid) return null;
-    final model = ref.read(selectedModelProvider);
     // The token rules are conduit_core's (composer_commands.dart). `$` needs
     // Open WebUI skills; `#` suggestions are Open WebUI knowledge and
-    // server-file resources, which a Hermes session cannot resolve, so the
-    // control is not offered there.
+    // server-file resources.
     final match = resolveComposerCommand(
       text,
       selectionStart: selection.start,
       selectionEnd: selection.end,
       allowSkills: _openWebUiSkillsAvailable,
-      allowContext: model == null || !isHermesModel(model),
+      allowContext: true,
     );
     if (match == null) return null;
     return PromptCommandMatch(
@@ -2281,10 +2089,7 @@ class _ModernChatInputState extends ConsumerState<ModernChatInput>
     if (_currentPromptCommand.startsWith('\$')) {
       return _openWebUiSkillsAvailable;
     }
-    final model = ref.read(selectedModelProvider);
-    return !(model != null &&
-        isHermesModel(model) &&
-        _currentPromptCommand.startsWith('#'));
+    return true;
   }
 
   bool get _canConfirmPromptSelection {
@@ -2534,16 +2339,6 @@ class _ModernChatInputState extends ConsumerState<ModernChatInput>
     final borderColor = context.conduitTheme.cardBorder.withValues(
       alpha: Theme.of(context).brightness == Brightness.dark ? 0.6 : 0.4,
     );
-    final selectedModel = ref.watch(selectedModelProvider);
-    final hermesCapabilities = ref
-        .watch(hermesCapabilitiesProvider)
-        .asData
-        ?.value;
-    final useHermesSkills =
-        selectedModel != null &&
-        isHermesModel(selectedModel) &&
-        (hermesCapabilities?.skills ?? true);
-
     if (_currentPromptCommand.startsWith('#')) {
       return _buildContextSuggestionOverlay(context, overlayColor, borderColor);
     }
@@ -2562,7 +2357,6 @@ class _ModernChatInputState extends ConsumerState<ModernChatInput>
       );
     }
     return PromptSuggestionOverlay(
-      useHermesSkills: useHermesSkills,
       filteredPrompts: _filterPrompts,
       selectionIndex: _promptSelectionIndex,
       onPromptSelected: _applyPrompt,
@@ -2791,59 +2585,23 @@ class _ModernChatInputState extends ConsumerState<ModernChatInput>
   bool get _selectedModelAcceptsImageInput {
     final model = ref.read(selectedModelProvider);
     if (model == null) return false;
-    if (isHermesModel(model)) {
-      // Hermes image input is opt-in. Older servers and capabilities still in
-      // flight must remain text-only rather than accepting an attachment the
-      // transport cannot faithfully deliver.
-      return ref.read(hermesCapabilitiesProvider).asData?.value.inputImages ==
-          true;
-    }
     return ref.read(visionCapableModelsProvider).contains(model.id);
   }
 
   ComposerOverflowAttachmentAvailability get _overflowAttachmentAvailability {
     final model = ref.read(selectedModelProvider);
-    final hermesMode = model != null && isHermesModel(model);
-    if (hermesMode) {
-      final inputImages =
-          ref.read(hermesCapabilitiesProvider).asData?.value.inputImages ==
-          true;
-      return ComposerOverflowAttachmentAvailability(
-        // Hermes documents are ingested locally and sent as text, so this is
-        // deliberately independent of the remote image-input capability.
-        file: widget.onFileAttachment != null,
-        serverFile: false,
-        photo: inputImages && widget.onImageAttachment != null,
-        camera: inputImages && widget.onCameraCapture != null,
-        web: false,
-      );
-    }
-
-    final directMode = model != null && hasReservedDirectIdentity(model);
     final imageInputAvailable =
         model != null &&
         ref.read(visionCapableModelsProvider).contains(model.id);
     final fileInputAvailable =
         model != null &&
         ref.read(fileUploadCapableModelsProvider).contains(model.id);
-    final mcpContentAvailable =
-        directMode &&
-        ref
-            .read(directMcpServersProvider)
-            .maybeWhen(
-              data: (servers) => servers.any((server) => server.enabled),
-              orElse: () => false,
-            );
     return ComposerOverflowAttachmentAvailability(
       file: fileInputAvailable && widget.onFileAttachment != null,
-      serverFile:
-          !directMode &&
-          fileInputAvailable &&
-          widget.onServerFileAttachment != null,
+      serverFile: fileInputAvailable && widget.onServerFileAttachment != null,
       photo: imageInputAvailable && widget.onImageAttachment != null,
       camera: imageInputAvailable && widget.onCameraCapture != null,
-      web: !directMode && widget.onWebAttachment != null,
-      mcpContent: mcpContentAvailable,
+      web: widget.onWebAttachment != null,
     );
   }
 
@@ -2867,17 +2625,9 @@ class _ModernChatInputState extends ConsumerState<ModernChatInput>
       return const <IosKeyboardAttachmentActionConfig>[];
     }
 
-    final selectedModel = ref.read(selectedModelProvider);
-    final hermesMode = selectedModel != null && isHermesModel(selectedModel);
-
-    final directMode =
-        selectedModel != null && hasReservedDirectIdentity(selectedModel);
-
     return buildIosKeyboardAttachmentActions(
       l10n: l10n,
       attachmentAvailability: _overflowAttachmentAvailability,
-      hermesMode: hermesMode,
-      directMode: directMode,
       webSearchAvailable: webSearchAvailable,
       webSearchEnabled: webSearchEnabled,
       imageGenerationAvailable: imageGenerationAvailable,
@@ -2896,35 +2646,17 @@ class _ModernChatInputState extends ConsumerState<ModernChatInput>
 
   /// Personal connections for the native panel; none for the model families
   /// that have no Open WebUI account behind them.
-  ComposerPersonalConnections _currentNativeConnections() {
-    final selectedModel = ref.read(selectedModelProvider);
-    if (selectedModel != null &&
-        (isHermesModel(selectedModel) ||
-            hasReservedDirectIdentity(selectedModel))) {
-      return ComposerPersonalConnections.none;
-    }
-    return readComposerPersonalConnections(ref.read);
-  }
+  ComposerPersonalConnections _currentNativeConnections() =>
+      readComposerPersonalConnections(ref.read);
 
   List<IosKeyboardAttachmentActionConfig>
   _currentNativeKeyboardAttachmentActions({
     required AppLocalizations l10n,
     required ComposerPersonalConnections connections,
   }) {
-    final selectedModel = ref.read(selectedModelProvider);
-    final directMode =
-        selectedModel != null && hasReservedDirectIdentity(selectedModel);
-    final directToolsAvailable =
-        directMode &&
-        directBindingSupportsLocalMcp(
-          ref.read(directModelRegistryProvider).resolve(selectedModel),
-        );
-    final tools = directMode
-        ? (directToolsAvailable
-              ? ref.read(directMcpToolsProvider)
-              : const AsyncData<List<Tool>>([]))
-        : ref.read(toolsListProvider);
-    final availableTools = tools.maybeWhen<List<Tool>>(
+    final availableTools = ref
+        .read(toolsListProvider)
+        .maybeWhen<List<Tool>>(
       data: (tools) => tools,
       orElse: () => const <Tool>[],
     );
@@ -2970,8 +2702,8 @@ class _ModernChatInputState extends ConsumerState<ModernChatInput>
       );
       if (actions.isEmpty) {
         // An empty configuration is intentionally ignored by the bridge. Hide
-        // an already-open panel when the newly selected model (for example,
-        // Hermes) supports no native attachment actions.
+        // an already-open panel when the account offers no native attachment
+        // actions.
         _nativeConnectionsOwner = null;
         unawaited(IosKeyboardAttachmentBridge.instance.hide());
         return;
@@ -3222,9 +2954,6 @@ class _ModernChatInputState extends ConsumerState<ModernChatInput>
     ref.listen<Model?>(selectedModelProvider, (previous, next) {
       _scheduleNativeKeyboardAttachmentSync();
     });
-    ref.listen(hermesCapabilitiesProvider, (previous, next) {
-      _scheduleNativeKeyboardAttachmentSync();
-    });
 
     // Use dedicated streaming provider to avoid rebuilding on every message change
     final localTurnIsGenerating = ref.watch(isChatStreamingProvider);
@@ -3265,45 +2994,13 @@ class _ModernChatInputState extends ConsumerState<ModernChatInput>
     final sendOnEnter = ref.watch(
       appSettingsProvider.select((s) => s.sendOnEnter),
     );
-    final selectedComposerModel = ref.watch(selectedModelProvider);
-    final isDirectComposer =
-        selectedComposerModel != null &&
-        hasReservedDirectIdentity(selectedComposerModel);
-    final directToolsAvailable =
-        isDirectComposer &&
-        directBindingSupportsLocalMcp(
-          ref.watch(directModelRegistryProvider).resolve(selectedComposerModel),
-        );
-    final toolsAsync = isDirectComposer
-        ? const AsyncData<List<Tool>>([])
-        : ref.watch(toolsListProvider);
-    final directMcpToolsAsync = directToolsAvailable
-        ? ref.watch(directMcpToolsProvider)
-        : const AsyncData<List<Tool>>([]);
-    if (isDirectComposer) {
-      ref.listen<AsyncValue<List<Tool>>>(directMcpToolsProvider, (
-        previous,
-        next,
-      ) {
-        _scheduleNativeKeyboardAttachmentSync();
-      });
-      ref.watch(directMcpServersProvider);
-    } else if (!kIsWeb &&
-        Platform.isIOS &&
-        !(selectedComposerModel != null &&
-            isHermesModel(selectedComposerModel))) {
-      // The native panel offers the account's personal tool servers and
-      // terminals, so it follows their settings, availability and owner.
+    if (!kIsWeb && Platform.isIOS) {
+      // The native panel offers the account's personal tool servers, so it
+      // follows their settings, availability and owner.
       ref.listen(personalConnectionsSessionProvider, (previous, next) {
         _scheduleNativeKeyboardAttachmentSync();
       });
       ref.listen(personalConnectionsProvider, (previous, next) {
-        _scheduleNativeKeyboardAttachmentSync();
-      });
-      ref.listen(terminalAvailableServersProvider, (previous, next) {
-        _scheduleNativeKeyboardAttachmentSync();
-      });
-      ref.listen<String?>(selectedTerminalIdProvider, (previous, next) {
         _scheduleNativeKeyboardAttachmentSync();
       });
     }
@@ -3323,58 +3020,18 @@ class _ModernChatInputState extends ConsumerState<ModernChatInput>
         (model) => model?.filters ?? const <ToggleFilter>[],
       ),
     );
-    // Hermes uses its own `/` skills and only exposes local attachment actions.
-    // Keep OpenWebUI quick pills hidden while allowing the attachment button to
-    // follow the server's explicit image-input capability.
-    final bool isHermesComposer = ref.watch(
-      selectedModelProvider.select((m) => m != null && isHermesModel(m)),
-    );
-    final bool isDesktopHermesComposer =
-        isHermesComposer &&
-        ref.watch(hermesConfigProvider.select((config) => config.mode)) ==
-            HermesBackendMode.desktopGateway;
-    final desktopTurnState = ref
-        .watch(hermesDesktopTurnStateProvider)
-        .asData
-        ?.value;
-    final isGenerating =
-        localTurnIsGenerating ||
-        (isDesktopHermesComposer &&
-            desktopTurnState == HermesDesktopTurnState.running);
-    final desktopTurnControlsSupported =
-        !isDesktopHermesComposer ||
-        desktopTurnState != HermesDesktopTurnState.unsupportedGateway;
-    // Watching the capabilities value makes a loading -> data transition
-    // rebuild the composer. Attachment access still fails closed below.
-    ref.watch(hermesCapabilitiesProvider);
-    final visionCapableModelIds = ref.watch(visionCapableModelsProvider);
+    final isGenerating = localTurnIsGenerating;
     ref.watch(fileUploadCapableModelsProvider);
     final attachmentAvailability = _overflowAttachmentAvailability;
-    final List<Tool> availableTools =
-        (isDirectComposer ? directMcpToolsAsync : toolsAsync)
-            .maybeWhen<List<Tool>>(
-              data: (tools) => tools,
-              orElse: () => const <Tool>[],
-            );
-    final directSupportsImages =
-        !isDirectComposer ||
-        (visionCapableModelIds.contains(selectedComposerModel.id) &&
-            (attachmentAvailability.photo || attachmentAvailability.camera));
-    final showOverflowButton = shouldShowComposerOverflowButton(
-      isHermesComposer: isHermesComposer,
-      isDirectComposer: isDirectComposer,
-      directSupportsImages: directSupportsImages,
-      directHasOverflowActions:
-          attachmentAvailability.file ||
-          attachmentAvailability.mcpContent ||
-          webSearchAvailable ||
-          imageGenAvailable ||
-          (isDirectComposer && availableTools.isNotEmpty),
-      hermesHasLocalAttachmentActions:
-          attachmentAvailability.file ||
-          attachmentAvailability.photo ||
-          attachmentAvailability.camera,
-    );
+    final List<Tool> availableTools = ref
+        .watch(toolsListProvider)
+        .maybeWhen<List<Tool>>(
+          data: (tools) => tools,
+          orElse: () => const <Tool>[],
+        );
+    // The overflow menu always carries something to open (tool settings,
+    // comparison, web search, attachments).
+    const showOverflowButton = true;
     final compactControls = _compactComposerControls(
       showOverflowButton: showOverflowButton,
       voiceAvailable: voiceAvailable,
@@ -3387,8 +3044,7 @@ class _ModernChatInputState extends ConsumerState<ModernChatInput>
         }
       });
     }
-    final nativeConnections =
-        !kIsWeb && Platform.isIOS && !isHermesComposer && !isDirectComposer
+    final nativeConnections = !kIsWeb && Platform.isIOS
         ? readComposerPersonalConnections(ref.watch)
         : ComposerPersonalConnections.none;
     _builtNativeConnectionsOwner = nativeConnections.owner;
@@ -3435,9 +3091,6 @@ class _ModernChatInputState extends ConsumerState<ModernChatInput>
     final List<Widget> quickPills = <Widget>[];
 
     for (final id in selectedQuickPills) {
-      if (isHermesComposer || isDirectComposer) {
-        break;
-      }
       final filterId = ComposerOverflowActionIds.filterIdFrom(id);
       if (id == 'web' && showWebPill && webSearchAvailable) {
         final String label = AppLocalizations.of(context)!.web;
@@ -3553,9 +3206,7 @@ class _ModernChatInputState extends ConsumerState<ModernChatInput>
     // A chosen code interpreter stays in view, and can be turned off here,
     // even when it can no longer run. Then it reads as inactive, with a
     // warning glyph, and a tap says why before offering to turn it off.
-    if (codeInterpreterOffer?.selected == true &&
-        !isHermesComposer &&
-        !isDirectComposer) {
+    if (codeInterpreterOffer?.selected == true) {
       final block = codeInterpreterOffer!.block;
       final blockReason = block == null
           ? null
@@ -3594,8 +3245,8 @@ class _ModernChatInputState extends ConsumerState<ModernChatInput>
     // text in one row can leave too little width for even the placeholder.
     // Use the existing two-tier layout so Dynamic Type remains uncapped and
     // every control keeps its full touch target.
-    // A message typed during a response can be queued, which needs room for the
-    // Queue action beside Stop, as Hermes's turn actions do.
+    // A message typed during a response can be queued, which needs room for
+    // the Queue action beside Stop.
     final bool showQueueAction =
         _hasText && isGenerating && ref.watch(chatDraftQueueOfferProvider);
     final bool showCompactComposer =
@@ -3603,8 +3254,7 @@ class _ModernChatInputState extends ConsumerState<ModernChatInput>
             _maxCompactComposerControlScale &&
         quickPills.isEmpty &&
         !_isMultiline &&
-        !showQueueAction &&
-        !(isDesktopHermesComposer && isGenerating && _hasText);
+        !showQueueAction;
     final bool showCreateDraftNoteAction =
         !showCompactComposer &&
         notesEnabled &&
@@ -3658,9 +3308,6 @@ class _ModernChatInputState extends ConsumerState<ModernChatInput>
                   sendOnEnter: sendOnEnter,
                   voiceAvailable: voiceAvailable,
                   isGenerating: isGenerating,
-                  desktopTurnRunning:
-                      isDesktopHermesComposer &&
-                      desktopTurnState == HermesDesktopTurnState.running,
                   allUploadsComplete: allUploadsComplete,
                   placeholderBase: placeholderBase,
                   placeholderFocused: placeholderFocused,
@@ -3722,36 +3369,6 @@ class _ModernChatInputState extends ConsumerState<ModernChatInput>
                 )
               else
                 const Spacer(),
-              if (isDesktopHermesComposer &&
-                  desktopTurnControlsSupported &&
-                  desktopTurnState == HermesDesktopTurnState.running &&
-                  _hasText) ...[
-                _buildPillButton(
-                  icon: Icons.turn_right_rounded,
-                  label: l10n.hermesTurnSteer,
-                  isActive: true,
-                  dense: true,
-                  onTap:
-                      widget.enabled &&
-                          !_isRecording &&
-                          !_desktopQueueActionBusy
-                      ? () => unawaited(_sendDesktopBusyMessage(steer: true))
-                      : null,
-                ),
-                const SizedBox(width: Spacing.xs),
-                _buildPillButton(
-                  icon: Icons.queue_rounded,
-                  label: l10n.hermesTurnSendNext,
-                  isActive: false,
-                  dense: true,
-                  onTap:
-                      widget.enabled &&
-                          !_isRecording &&
-                          !_desktopQueueActionBusy
-                      ? () => unawaited(_sendDesktopBusyMessage(steer: false))
-                      : null,
-                ),
-              ],
               if (showQueueAction) ...[
                 _buildPillButton(
                   icon: Platform.isIOS
@@ -3850,9 +3467,6 @@ class _ModernChatInputState extends ConsumerState<ModernChatInput>
                     sendOnEnter: sendOnEnter,
                     voiceAvailable: voiceAvailable,
                     isGenerating: isGenerating,
-                    desktopTurnRunning:
-                        isDesktopHermesComposer &&
-                        desktopTurnState == HermesDesktopTurnState.running,
                     allUploadsComplete: allUploadsComplete,
                     placeholderBase: placeholderBase,
                     placeholderFocused: placeholderFocused,
@@ -3947,7 +3561,6 @@ class _ModernChatInputState extends ConsumerState<ModernChatInput>
       compactControls: compactControls,
       child: _wrapWithFallbackAttachmentPanel(
         composer: composer,
-        localAttachmentsOnly: isHermesComposer,
         attachmentAvailability: attachmentAvailability,
       ),
     );
@@ -3983,12 +3596,10 @@ class _ModernChatInputState extends ConsumerState<ModernChatInput>
 
   Widget _wrapWithFallbackAttachmentPanel({
     required Widget composer,
-    required bool localAttachmentsOnly,
     required ComposerOverflowAttachmentAvailability attachmentAvailability,
   }) {
     final fallbackPanel = ComposerAttachmentKeyboard(
       height: _fallbackAttachmentPanelHeight,
-      localAttachmentsOnly: localAttachmentsOnly,
       onDismiss: _dismissFallbackAttachmentPanel,
       onFileAttachment: attachmentAvailability.file
           ? widget.onFileAttachment
@@ -4004,9 +3615,6 @@ class _ModernChatInputState extends ConsumerState<ModernChatInput>
           : null,
       onWebAttachment: attachmentAvailability.web
           ? widget.onWebAttachment
-          : null,
-      onMcpContent: attachmentAvailability.mcpContent
-          ? _openDirectMcpContent
           : null,
       onToolSettings: ref.watch(personalValvesCommandAvailableProvider)
           ? _openToolSettings
@@ -4093,7 +3701,6 @@ class _ModernChatInputState extends ConsumerState<ModernChatInput>
     required bool sendOnEnter,
     required bool voiceAvailable,
     required bool isGenerating,
-    required bool desktopTurnRunning,
     required bool allUploadsComplete,
     required Color placeholderBase,
     required Color placeholderFocused,
@@ -4150,11 +3757,7 @@ class _ModernChatInputState extends ConsumerState<ModernChatInput>
                   _confirmPromptSelection();
                   return null;
                 }
-                if (desktopTurnRunning) {
-                  unawaited(_sendDesktopBusyMessage(steer: false));
-                } else {
-                  _sendMessage();
-                }
+                _sendMessage();
                 return null;
               },
             ),

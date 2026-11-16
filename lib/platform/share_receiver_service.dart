@@ -15,8 +15,6 @@ import 'package:conduit_core/features/chat/providers/chat_providers.dart';
 
 import '../features/chat/services/file_attachment_service.dart';
 
-import 'package:conduit_core/features/direct_connections/direct_connections.dart';
-import 'package:conduit_core/features/hermes/models/hermes_model.dart';
 import 'package:conduit_core/providers/app_providers.dart';
 
 import '../core/services/media_upload_controller.dart';
@@ -1264,25 +1262,11 @@ Future<SharedPayloadProcessResult> _processPayload(
     // Prefer attaching files to the composer so user can add text before sending
     if (attachments.isNotEmpty) {
       final nativePayloadId = payload.id;
-      final selectedModel = ref.read(selectedModelProvider);
-      // Hermes/direct attachments are prepared into composer memory only, so
-      // the crash-safe durable receipt path cannot own them — the media
-      // controller rejects the import (NativeShareDurableOwnershipUnavailable)
-      // and the payload would otherwise retry forever without ever appearing.
-      // Route these models through the composer-first local path instead: the
-      // share becomes usable immediately and the native payload is
-      // acknowledged normally. A process death after the ack can lose the
-      // in-memory attachment, which matches the pre-receipt behavior.
-      final requiresLocalComposerOwnership =
-          selectedModel != null &&
-          (isHermesModel(selectedModel) ||
-              hasReservedDirectIdentity(selectedModel));
-      if (nativePayloadId == null || requiresLocalComposerOwnership) {
+      if (nativePayloadId == null) {
         // The legacy sharing-intent plugin has no durable exact-ID record to
         // dedupe across a process death. Keep its established composer-first
         // ownership policy; native Android/iOS imports always carry an ID and
-        // use the crash-safe path below (unless a local-only Hermes/direct
-        // model owns the composer, per above).
+        // use the crash-safe path below.
         ref.read(attachedFilesProvider.notifier).addFiles(attachments);
         await attachmentBatch!.commit();
         for (final prepared in attachmentBatch.prepared) {

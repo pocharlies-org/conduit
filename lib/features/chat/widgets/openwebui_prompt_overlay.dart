@@ -103,7 +103,7 @@ class _OpenWebUiPromptOverlayState extends State<OpenWebUiPromptOverlay> {
     final semanticsLabel =
         widget.prompt.kind == OpenWebUiComposerPromptKind.askUser
         ? widget.prompt.questions[_questionIndex].header
-        : l10n.hermesApprovalRequired;
+        : l10n.toolApprovalRequired;
     return ComposerPromptSurface(
       semanticsLabel: semanticsLabel,
       surfaceKey: const ValueKey('openwebui-prompt-overlay'),
@@ -307,7 +307,7 @@ class _OpenWebUiPromptOverlayState extends State<OpenWebUiPromptOverlay> {
     final theme = context.conduitTheme;
     final title = widget.prompt.title.isEmpty
         ? approval
-              ? l10n.hermesApprovalRequired
+              ? l10n.toolApprovalRequired
               : l10n.confirm
         : widget.prompt.title;
     return Column(
@@ -356,7 +356,7 @@ class _OpenWebUiPromptOverlayState extends State<OpenWebUiPromptOverlay> {
           runSpacing: Spacing.xs,
           children: [
             ConduitButton(
-              text: approval ? l10n.hermesApprovalDenyAction : l10n.cancel,
+              text: approval ? l10n.toolApprovalDenyAction : l10n.cancel,
               isCompact: true,
               isSecondary: true,
               onPressed: _busy || widget.onDecision == null
@@ -364,7 +364,7 @@ class _OpenWebUiPromptOverlayState extends State<OpenWebUiPromptOverlay> {
                   : () => _run(() => widget.onDecision!(false)),
             ),
             ConduitButton(
-              text: approval ? l10n.hermesApprovalApproveAction : l10n.confirm,
+              text: approval ? l10n.toolApprovalApproveAction : l10n.confirm,
               isCompact: true,
               isLoading: _busy,
               onPressed: _busy || widget.onDecision == null

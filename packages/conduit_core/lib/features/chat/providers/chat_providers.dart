@@ -136,7 +136,6 @@ import 'package:conduit_core/features/integrations/personal_connection_settings.
 import 'package:conduit_core/features/integrations/providers/personal_connections_providers.dart'
     show personalSelectionNoticeProvider;
 import 'package:conduit_core/utils/system_prompt.dart';
-import 'package:conduit_core/features/web_search/web_search.dart';
 
 import '../services/chat_transport_dispatch.dart';
 

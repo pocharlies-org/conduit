@@ -107,8 +107,7 @@ final modelToolsAutoSelectionProvider = Provider<void>((ref) {
       return ids
           .where(
             (id) =>
-                id.startsWith('direct_server:') ||
-                id.startsWith(kDirectMcpToolIdPrefix),
+                id.startsWith('direct_server:'),
           )
           .toList();
     }
@@ -172,7 +171,6 @@ final modelToolsAutoSelectionProvider = Provider<void>((ref) {
         'auto-apply-tools',
         scope: 'models/tools',
         data: {
-          'backend': _modelBackendForDiagnostics(model),
           'toolCount': validToolIds.length,
           'source': 'selection',
         },
@@ -218,59 +216,6 @@ final modelToolsAutoSelectionProvider = Provider<void>((ref) {
   });
 });
 
-// Auto-apply model-specific terminal defaults when model changes.
-final modelTerminalAutoSelectionProvider = Provider<void>((ref) {
-  ref.keepAlive();
-
-  String? extractModelTerminalId(Model? model) {
-    final info = model?.metadata?['info'];
-    if (info is! Map) {
-      return null;
-    }
-
-    final infoMeta = info['meta'];
-    if (infoMeta is! Map) {
-      return null;
-    }
-
-    final terminalId = infoMeta['terminalId']?.toString().trim();
-    if (terminalId == null || terminalId.isEmpty) {
-      return null;
-    }
-
-    return terminalId;
-  }
-
-  void applyTerminalSelection(Model? model) {
-    final terminalId = extractModelTerminalId(model);
-    if (terminalId == null) {
-      return;
-    }
-
-    if (ref.read(selectedTerminalIdProvider) == terminalId) {
-      return;
-    }
-
-    ref.read(selectedTerminalIdProvider.notifier).set(terminalId);
-    DebugLogger.log(
-      'auto-apply-terminal',
-      scope: 'models/terminal',
-      data: {
-        'backend': _modelBackendForDiagnostics(model),
-        'source': 'selection',
-      },
-    );
-  }
-
-  Future.microtask(
-    () => applyTerminalSelection(ref.read(selectedModelProvider)),
-  );
-
-  ref.listen<Model?>(selectedModelProvider, (previous, next) {
-    Future.microtask(() => applyTerminalSelection(next));
-  });
-});
-
 // Auto-clear invalid filter selections when model changes
 // Filters are model-specific, so we need to validate selections against new model
 final modelFiltersAutoSelectionProvider = Provider<void>((ref) {
@@ -297,7 +242,6 @@ final modelFiltersAutoSelectionProvider = Provider<void>((ref) {
         'filter-selection-validated',
         scope: 'models/filters',
         data: {
-          'backend': _modelBackendForDiagnostics(model),
           'previousCount': currentFilterIds.length,
           'validCount': validSelection.length,
           'source': 'selection',
@@ -323,7 +267,6 @@ final defaultModelAutoSelectionProvider = Provider<void>((ref) {
 
   // Initialize the model tools and filters auto-selection
   ref.watch(modelToolsAutoSelectionProvider);
-  ref.watch(modelTerminalAutoSelectionProvider);
   ref.watch(modelFiltersAutoSelectionProvider);
   ref.watch(modelsProvider);
   ref.watch(defaultModelProvider);
@@ -368,14 +311,7 @@ final defaultModelAutoSelectionProvider = Provider<void>((ref) {
           models = await ref.read(modelsProvider.future);
         }
         Model? selected;
-        try {
-          selected = ref
-              .read(directModelRegistryProvider)
-              .resolveOpenWebUiWireModel(models, desired);
-          selected ??= models.firstWhere((model) => model.id == desired);
-        } catch (_) {
-          selected = null;
-        }
+        selected = models.where((model) => model.id == desired).firstOrNull;
 
         final current = ref.read(selectedModelProvider);
         if (selected == null &&
@@ -393,7 +329,6 @@ final defaultModelAutoSelectionProvider = Provider<void>((ref) {
             'auto-apply',
             scope: 'models/default',
             data: {
-              'backend': _modelBackendForDiagnostics(selected),
               'source': 'preference',
             },
           );

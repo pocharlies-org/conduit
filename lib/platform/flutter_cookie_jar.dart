@@ -1,7 +1,6 @@
 import 'package:conduit_core/conduit_core.dart';
 
 import 'webview_cookie_helper.dart';
-import '../features/hermes/services/hermes_dashboard_cookie_store.dart';
 
 /// The Flutter app's [CookieJarPort].
 ///
@@ -24,7 +23,14 @@ class FlutterCookieJar implements CookieJarPort {
 
   @override
   Future<bool> clearForOrigin(String origin) =>
-      HermesDashboardCookieStore.clear(origin);
+      WebViewCookieHelper.runSerializedDataOperation(() async {
+        final identities =
+            await WebViewCookieHelper.cookieIdentitiesForOrigin(origin);
+        return WebViewCookieHelper.deleteCookieIdentitiesForOriginUnlocked(
+          origin,
+          identities,
+        );
+      });
 
   @override
   Future<bool> clearCookies() => WebViewCookieHelper.clearCookies();

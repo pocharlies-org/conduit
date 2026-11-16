@@ -53,7 +53,6 @@ import 'package:conduit_core/providers/host_ports.dart';
 import 'package:conduit_core/network/conduit_user_agent.dart';
 
 import 'core/persistence/hive_bootstrap.dart';
-import 'core/utils/model_logos.dart';
 
 import 'package:conduit_core/persistence/hive_prefs_migrator.dart';
 
@@ -69,7 +68,6 @@ import 'core/services/native_sheet_hydration_service.dart';
 import 'shared/services/flutter_ui_requests.dart';
 import 'shared/services/navigation_service.dart';
 import 'shared/services/raster_media_policy.dart';
-import 'core/services/native_symbol_image_service.dart';
 
 import 'package:conduit_core/services/openwebui_seed.dart';
 import 'package:conduit_core/services/readiness_gated_secure_storage.dart';
@@ -225,9 +223,6 @@ void main() {
   AudioPlaybackPort.hostFactory = JustAudioPlayback.new;
   BackgroundExecutionPort.hostDefault = const MobileBackgroundExecution();
   DisplayBoostPort.hostDefault = const IosDisplayBoost();
-  if (!kIsWeb && defaultTargetPlatform == TargetPlatform.iOS) {
-    NativeSymbolImageService.hostRenderer = renderNativeSymbolThroughChannel;
-  }
   LocationPort.hostDefault = const GeolocatorLocationPort();
   WakelockPort.hostDefault = const WakelockPlusPort();
   ShareStagingPort.hostDefault = IosShareStaging(
@@ -262,8 +257,6 @@ void main() {
       unawaited(_configureUserAgent());
 
       _registerBundledLicenses();
-      // Read by the synchronous avatar resolver; awaited before runApp.
-      final modelLogosLoaded = ModelLogos.load();
       FrameProfiler.instance.attachFrameTimings();
       AndroidImeInsetResync.instance.install();
 
@@ -485,7 +478,6 @@ void main() {
       );
       installConduitErrorWidgetBuilder();
 
-      await modelLogosLoaded;
       runApp(
         UncontrolledProviderScope(
           container: providerContainer,
