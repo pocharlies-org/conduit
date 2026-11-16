@@ -15,19 +15,6 @@ enum PlatformBackgroundStreamKind { chat, voice }
 
 enum PlatformNativePasteKind { text, images, unsupported }
 
-enum PlatformPccAvailability { available, unavailable, unsupported }
-
-enum PlatformAppleModel { onDevice, privateCloudCompute }
-
-enum PlatformPccQuotaStatus {
-  belowLimit,
-  approachingLimit,
-  limitReached,
-  unknown,
-}
-
-enum PlatformPccEventKind { content, usage, fallback, error, done }
-
 enum PlatformNativeSheetItemKind {
   navigation,
   textField,
@@ -361,7 +348,6 @@ class PlatformNativeSheetItem {
     required this.title,
     this.subtitle,
     required this.sfSymbol,
-    this.iconAsset,
     this.iconSize,
     this.showsDisclosure,
     required this.destructive,
@@ -395,7 +381,6 @@ class PlatformNativeSheetItem {
   String title;
   String? subtitle;
   String sfSymbol;
-  String? iconAsset;
   double? iconSize;
   bool? showsDisclosure;
   bool destructive;
@@ -786,134 +771,6 @@ class PlatformNativeSheetActionResult {
   Map<String, Object?> values;
 }
 
-class PlatformPccStatus {
-  PlatformPccStatus({
-    required this.availability,
-    required this.quotaStatus,
-    required this.quotaLimitReached,
-    required this.canIncreaseQuota,
-    this.message,
-    this.quotaResetAtMilliseconds,
-    this.contextSize,
-    this.supportsCurrentLocale,
-  });
-
-  PlatformPccAvailability availability;
-  PlatformPccQuotaStatus quotaStatus;
-  bool quotaLimitReached;
-  bool canIncreaseQuota;
-  String? message;
-  int? quotaResetAtMilliseconds;
-  int? contextSize;
-  bool? supportsCurrentLocale;
-}
-
-class PlatformPccImage {
-  PlatformPccImage({required this.mimeType, required this.bytes});
-
-  String mimeType;
-  Uint8List bytes;
-}
-
-class PlatformPccMessage {
-  PlatformPccMessage({
-    required this.role,
-    required this.content,
-    required this.images,
-  });
-
-  String role;
-  String content;
-  List<PlatformPccImage> images;
-}
-
-class PlatformPccToolDefinition {
-  PlatformPccToolDefinition({
-    required this.name,
-    required this.toolDescription,
-    required this.inputSchemaJson,
-  });
-
-  String name;
-  String toolDescription;
-  String inputSchemaJson;
-}
-
-class PlatformPccToolCall {
-  PlatformPccToolCall({
-    required this.runId,
-    required this.callId,
-    required this.name,
-    required this.argumentsJson,
-  });
-
-  String runId;
-  String callId;
-  String name;
-  String argumentsJson;
-}
-
-class PlatformPccToolResult {
-  PlatformPccToolResult({required this.content, required this.cancelled});
-
-  String content;
-  bool cancelled;
-}
-
-class PlatformPccCompletionRequest {
-  PlatformPccCompletionRequest({
-    required this.runId,
-    required this.model,
-    required this.messages,
-    required this.tools,
-    required this.allowOnDeviceFallback,
-    this.reasoningLevel,
-    this.temperature,
-    this.maximumResponseTokens,
-    this.topP,
-    this.topK,
-    this.seed,
-    this.greedySampling,
-    this.responseSchemaName,
-    this.responseSchemaJson,
-  });
-
-  String runId;
-  PlatformAppleModel model;
-  List<PlatformPccMessage> messages;
-  List<PlatformPccToolDefinition> tools;
-  bool allowOnDeviceFallback;
-  String? reasoningLevel;
-  double? temperature;
-  int? maximumResponseTokens;
-  double? topP;
-  int? topK;
-  int? seed;
-  bool? greedySampling;
-  String? responseSchemaName;
-  String? responseSchemaJson;
-}
-
-class PlatformPccStreamEvent {
-  PlatformPccStreamEvent({
-    required this.runId,
-    required this.kind,
-    this.content,
-    this.inputTokenCount,
-    this.outputTokenCount,
-    this.reasoningTokenCount,
-    this.totalTokenCount,
-  });
-
-  String runId;
-  PlatformPccEventKind kind;
-  String? content;
-  int? inputTokenCount;
-  int? outputTokenCount;
-  int? reasoningTokenCount;
-  int? totalTokenCount;
-}
-
 @HostApi()
 abstract class BackgroundStreamingHostApi {
   void startBackgroundExecution(PlatformBackgroundStartRequest request);
@@ -1073,24 +930,4 @@ abstract class NativeSheetFlutterApi {
     PlatformNativeSheetReasoningEffortChangedEvent event,
   );
   void commitEditProfile(PlatformNativeEditProfileCommittedEvent event);
-}
-
-@HostApi()
-abstract class PccHostApi {
-  @async
-  PlatformPccStatus getStatus(PlatformAppleModel model);
-
-  @async
-  bool showQuotaIncreaseSuggestion();
-
-  void start(PlatformPccCompletionRequest request);
-  void cancel(String runId);
-}
-
-@FlutterApi()
-abstract class PccFlutterApi {
-  void onEvent(PlatformPccStreamEvent event);
-
-  @async
-  PlatformPccToolResult onToolCall(PlatformPccToolCall call);
 }

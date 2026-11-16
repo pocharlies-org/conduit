@@ -8,12 +8,10 @@ import UserNotifications
 // and depend only on `ConduitBridgeHost`.
 
 @main
-@objc class AppDelegate: FlutterAppDelegate, FlutterImplicitEngineDelegate,
-  ConduitBridgeHostProvider {
+@objc class AppDelegate: FlutterAppDelegate, FlutterImplicitEngineDelegate {
   private var sharedFlutterEngine: FlutterEngine?
   private weak var sharedFlutterWindowScene: UIWindowScene?
   private var didConfigureSharedFlutterEngine = false
-  private var bridgeHost: FlutterConduitBridgeHost?
 
   override func application(
     _ application: UIApplication,
@@ -35,11 +33,6 @@ import UserNotifications
 
     GeneratedPluginRegistrant.register(with: engineBridge.pluginRegistry)
     attachBridges(messenger: engineBridge.applicationRegistrar.messenger())
-  }
-
-  func ensureBridgeHost() -> ConduitBridgeHost? {
-    guard ensureSharedFlutterEngine() != nil else { return nil }
-    return bridgeHost
   }
 
   @discardableResult
@@ -89,7 +82,6 @@ import UserNotifications
 
   private func attachBridges(messenger: FlutterBinaryMessenger) {
     let host = FlutterConduitBridgeHost(messenger: messenger)
-    bridgeHost = host
     ConduitBridgeRegistry.attachAll(to: host)
 
     // Flutter-only bridges: two swizzle Flutter's text input view and one
