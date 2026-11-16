@@ -26,8 +26,9 @@ final class OwuiOidcConfig {
 
   final String redirectUri;
 
-  /// The `openwebui-ios-exchange` audience scope is assigned by Keycloak to the
-  /// client, so the app does not ask for it.
+  /// No `groups`: the client does not have that scope assigned and asking for
+  /// it fails the whole request (`invalid_scope`). The `openwebui-ios-exchange`
+  /// audience is a scope too, assigned by Keycloak, so the app does not ask.
   final String scopes;
 
   static const live = OwuiOidcConfig(
@@ -35,7 +36,7 @@ final class OwuiOidcConfig {
     keycloakRealmUrl: 'https://auth-next.e-dani.com/realms/edani',
     clientId: 'openwebui-ios',
     redirectUri: 'com.morenoibanez.chat://auth/callback',
-    scopes: 'openid email profile groups',
+    scopes: 'openid email profile',
   );
 
   Uri authorizeUrl({required String challenge, required String state}) =>

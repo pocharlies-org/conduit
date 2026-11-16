@@ -42,7 +42,7 @@ void main() {
         'client_id': 'openwebui-ios',
         'redirect_uri': 'com.morenoibanez.chat://auth/callback',
         'response_type': 'code',
-        'scope': 'openid email profile groups',
+        'scope': 'openid email profile',
         'code_challenge': 'challenge',
         'code_challenge_method': 'S256',
         'state': 'state',
