@@ -1,7 +1,8 @@
 # Paridad de Conduit con Open WebUI
 
-Decisión de Dani (17-11-2026): paridad **nativa**, sin WebView. Una función del backend que la app no
-cubra es un hueco a cerrar, salvo lo que sea administración pura de servidor.
+Decisión de Dani (17-11-2026): paridad **nativa**, sin WebView, y medida contra la **superficie entera
+de la web** — imágenes, carpetas, conectores, ajustes, espacio de trabajo —, no contra una lista de
+endpoints. Lo único que se queda fuera es la administración del servidor.
 
 ## Qué hay al otro lado
 
@@ -12,6 +13,49 @@ cubra es un hueco a cerrar, salvo lo que sea administración pura de servidor.
 - Flags activos en el despliegue (`kubectl -n chat exec … env`): `ENABLE_API_KEYS`, `ENABLE_IMAGE_EDIT`,
   `ENABLE_IMAGE_GENERATION`, `ENABLE_PLUGINS`, `ENABLE_PYODIDE_FILE_PERSISTENCE`,
   `ENABLE_OAUTH_TOKEN_EXCHANGE`; apagados: `ENABLE_OLLAMA_API`, `ENABLE_WEBSOCKET_SUPPORT`.
+
+## La superficie de la web (lo que el usuario ve, no solo lo que el backend sirve)
+
+Dani (17-11): la paridad es con la **web entera** — imágenes, carpetas, conectores, ajustes, espacio de
+trabajo —, no con una lista de endpoints suelta. Esta es la superficie que hay que llevar a la app.
+
+Leído del fork vendored (`openwebui-src/`), que es la misma versión desplegada:
+
+| Zona | Qué tiene |
+|---|---|
+| Barra lateral | Nuevo chat; buscador global (`Ctrl+K`) por chats, mensajes y notas, con filtros por carpeta/canal y creado/compartido; menú fijo (Notas, Espacio de trabajo, Automatizaciones, Calendario), reordenable; historial de chats con no leído, preview al pasar, renombrar con doble clic, archivar/borrar con Shift, arrastrar a carpeta; «marcar todo leído»; importar chats soltando JSON; crear carpeta; crear canal (DM/grupo/canal); notas fijadas reordenables; modelos fijados; menú de usuario con perfil, estado (emoji + mensaje), ajustes, salir |
+| Carpetas | Crear, anidar, renombrar, mover carpetas y chats (arrastrar), marcar leída, exportar JSON, borrar con «borrar el contenido», y sección «compartidas» con chats de otros en solo lectura o escritura |
+| Chat · entrada | Adjuntar ficheros/captura/página web/Files/Notes/Knowledge/Chats/Drive/OneDrive; permisos de herramientas (acceso total o pedir aprobación); selector de modelo con fijar, comparar varios, descargar/eject, controles propios del modelo; integraciones (tools y skills, valves, OAuth de servidores MCP, web search, imagen, intérprete de código); variables y valves del chat; comandos `/` (temp, compact, fork, status, model, compare, create skill, prompts, knowledge…); menciones `@` (knowledge, ficheros, modelos, URLs, YouTube); dictado y modo llamada; popover de contexto/cola/tareas; panel Controls (valves, system prompt, parámetros avanzados), Files y Overview; Artifacts; multi-modelo con «Merge Responses» (MoA) |
+| Chat · mensajes | Ramas anterior/siguiente; editar, copiar, leer en voz alta (TTS), fork desde el mensaje, valorar con pulgar y comentario, continuar, regenerar, borrar; citas y fuentes; permitir/denegar tool calls; insertar en la nota cuando el chat viene de una nota |
+| Chat · menú | Compartir (clonar o permitir respuestas), descargar JSON/texto/PDF, copiar, mover a carpeta, archivar, borrar, etiquetas, fijar, clonar, ir arriba |
+| Notas | Lista con búsqueda, filtros creadas/compartidas, vista lista/cuadrícula, orden; crear e importar `.md`/`.txt`; editor markdown con autoguardado, título por IA y formato automático; adjuntar ficheros; grabar audio y transcribirlo; mejorar con IA; chat de la nota; compartir con permisos; fijar; descargar TXT/MD/PDF; borrar |
+| Canales | Mensajes con adjuntos, captura, voz, respuesta y menciones; reacciones; hilos; fijar mensajes; editar/borrar; miembros (añadir/quitar); editar y borrar canal; webhooks; tarjetas de apps embebidas; silenciar; chat cifrado extremo a extremo |
+| Automatizaciones | Lista con búsqueda, filtro activas/pausadas, última ejecución; crear/editar con schedule (una vez, horaria, diaria, semanal, mensual, propia), destino (chat nuevo, carpeta, canal) y modelo; activar/pausar; ejecutar ahora; clonar; importar/exportar; detalle con runs |
+| Calendario | Vista mes/semana/día; calendarios con nombre y color, mostrar/ocultar, borrar; eventos con todo el día, ubicación, recordatorio, repetición y descripción; borrar |
+| Espacio de trabajo · Modelos | Lista con búsqueda, filtro y orden; crear, importar/exportar JSON; editor con modelo base, system prompt, parámetros, controles, prompts sugeridos, knowledge/tools/skills, acceso, versiones, «Set as Production»; toggle; clonar; enlace |
+| Espacio de trabajo · Conocimiento | Colecciones con descripción y acceso; añadir carpeta, ficheros, directorio, sincronizar directorio, página web, texto; explorar y renombrar/mover/borrar ficheros; colecciones externas en solo lectura; borrar colección |
+| Espacio de trabajo · Prompts | Lista con etiquetas, crear, importar/exportar; copiar, toggle, editor con comando, contenido, acceso, versiones e historial, «Set as Production»; clonar |
+| Espacio de trabajo · Skills | Lista con búsqueda y orden; crear; importar ficheros, carpeta o URL; exportar ZIP/JSON; editor con contenido, ficheros, versiones; toggle; clonar |
+| Espacio de trabajo · Herramientas | Lista; crear; importar JSON; editor de código con versiones; Valves por herramienta; manifest de soporte; clonar |
+| Playground | Chat multirrol, completions e **imágenes** (generar y editar con imagen adjunta, descargar) |
+| Compartido y watch | `/s/{id}` público de solo lectura con clonar/forkear; `/watch?v=` redirige a YouTube en el chat |
+| Ajustes · General | Tema, idioma, system prompt, y parámetros avanzados (stream, compactación, function calling, reasoning tags, seed, stop, temperatura, reasoning effort, max tokens, top_k/p/min_p, penalties, mirostat, num_ctx, think, keep_alive, custom) |
+| Ajustes · Interfaz | Escala, tipografía, alto contraste, fondo, burbujas, usuario, widescreen, chat temporal por defecto, fade, markdown por rol, autogeneración de título/follow-ups/etiquetas, auto-copy, auto-scroll, colapsar código, preview al pasar, pestañas multi-modelo, PDF estilizado; ubicación; Enter vs Ctrl+Enter, rich text, compresión de imágenes |
+| Ajustes · Personalización | Memorias: activar, listar/buscar, añadir, editar, borrar, borrar todas |
+| Ajustes · Audio | Motor STT e idioma, auto-envío; motor TTS, voces, velocidad, auto-play |
+| Ajustes · Conexiones | Conexiones OpenAI-compatibles propias: añadir, editar, borrar |
+| Ajustes · Herramientas | Servidores OpenAPI de herramientas y terminales propios: añadir, editar, borrar, refrescar |
+| Ajustes · Controles de datos | Importar/exportar chats, compartidos, archivar todos, borrar todos, gestor de archivos (listar y borrar) |
+| Ajustes · Notificaciones | Permiso del navegador y sonido; webhooks: eventos y destinos, crear/editar/borrar, por defecto, test, activar |
+| Ajustes · Cuenta | Foto, nombre, bio, género, fecha de nacimiento, variables de usuario; contraseña; MFA (estado, reemplazar autenticador, códigos de recuperación); API key (ver, crear, borrar) |
+| Ajustes · Uso / Archivados / Atajos / Acerca de | Dashboard de uso; chats archivados (buscar, abrir, desarchivar, borrar, desarchivar todo); atajos reasignables; versión y novedades |
+| Administración | Panel `/admin` (usuarios, grupos, funciones, evaluaciones, analítica) y las pestañas admin del modal (general, autenticación, interfaz, conexiones, modelos, subagentes, integraciones, apps, documentos, audio, **imágenes**, web, ejecución de código, pipelines, analítica, evaluaciones, base de datos) — fuera del móvil salvo que Dani lo pida |
+
+Notas de la lectura del fork: `/home` está vacío en esta versión y enlaza a rutas que no existen; el
+Playground no tiene guard de rol en la UI (solo lo oculta el menú); no hay acción «guardar en memoria»
+por mensaje (la memoria se gestiona en Personalización y se inyecta); no hay UI de RSVP de eventos;
+MoA es el botón «Merge Responses» tras comparar modelos; «Avanzado» no es pestaña propia, vive dentro
+de General; MCP no tiene pantalla propia, aparece como servidor de herramientas en Integraciones.
 
 ## Inventario del backend (0.12.3)
 
@@ -54,76 +98,63 @@ Routers montados en `main.py` y qué es de móvil y qué de administración.
 | `main.py` | `/api/chat/completions`, `/api/message(s)`, count_tokens, embeddings, chat/completed, chat/actions, models, tasks (list/chat/stop), `/api/config`, `/api/version`, `/api/events`, `/ws` | móvil; `/api/events/webhooks` admin |
 | `openai` / `ollama` | gateways de proveedor: chat, modelos (descargar/cargar/descargar), config, catálogo | móvil el chat y el listado; el resto admin |
 
-## Lo que la app ya llama
+## Estado en la app, por área
 
-Inventario por grep de literales de ruta en `lib/` y `packages/`:
+Contrastado pantalla a pantalla con el código de la app (router `lib/core/router/app_router.dart`,
+`lib/features/**`, y llamadas reales desde la UI a la capa de servicio). La app cubre más de lo que
+parecía a primera vista: el hueco real es corto y está concentrado.
 
-| Área | Endpoints usados |
-|---|---|
-| Chats | `/api/v1/chats/…` (listar, crear, buscar, archivar, compartir, fork, importar), `/api/chat/completions`, `/api/tasks/chat/…`, `/api/tasks/stop/task` |
-| Carpetas | `/api/v1/folders/…`, `/api/v1/folders/shared` |
-| Conocimiento y ficheros | `/api/v1/knowledge/…`, `/api/v1/knowledge/kb…`, `/api/v1/knowledge/search`, `/api/v1/files/…`, `/api/v1/files/search` |
-| Notas | `/api/v1/notes/…`, `/api/v1/notes/search` |
-| Prompts / modelos / herramientas / funciones / skills | `/api/v1/prompts/…`, `/api/models`, `/api/v1/models/…`, `/api/v1/tools/…`, `/api/v1/functions/…`, `/api/v1/skills/…` |
-| Canales | `/api/v1/channels/…` |
-| Usuarios y grupos | `/api/v1/auths/…`, `/api/v1/users/…`, `/api/v1/groups/…`, `/api/v1/users/permissions` |
-| Memorias | `/api/v1/memories/…` |
-| Imágenes | `/api/v1/images/generations` |
-| Evaluaciones | `/api/v1/evaluations/feedback/…` |
-| Automatizaciones y calendario | `/api/v1/automations/…`, `/api/v1/calendars/events/…` |
-| Config | `/api/config`, `/api/v1/configs/suggestions` |
-
-## El hueco
-
-Primera pasada (grep de literales de ruta + lectura de las pantallas; se contrasta con el inventario del
-código de la app). El backend está casi entero cubierto a nivel de recurso: la app ya llama a chats,
-carpetas, ficheros, conocimiento, notas, prompts, tools, functions, skills, modelos, imágenes
-(generación), memorias, evaluaciones, tareas, canales, calendario, automatizaciones, notificaciones,
-grupos, usuarios, MFA, audio (voz y transcripción), retrieval (web/YouTube) y apps.
-
-Lo que falta, por valor de uso en el móvil:
-
-| # | Función | Endpoint | Estado |
-|---|---|---|---|
-| 1 | Editar una imagen generada | `POST /api/v1/images/edit` (`ENABLE_IMAGE_EDIT=true` en el despliegue) | sin UI: no hay ninguna referencia a edición de imagen |
-| 2 | Crear un chat a partir de una nota | `POST /api/v1/notes/{id}/chat`, `GET /api/v1/notes/{id}/chats` | hecho en T1; `GET …/chats` (listar los que ya tiene) sigue sin usar |
-| 3 | Estado de procesado de un fichero para RAG | `GET /api/v1/files/{id}/process/status` | sin llamada |
-| 4 | Importar/clonar una skill | `POST /api/v1/skills/import`, `/import/preview`, `/id/{id}/clone` | sin llamada |
-| 5 | Búsqueda global | `GET /api/v1/search` | sin llamada (solo la de chats) |
-| 6 | Memorias: reset y reindex | `POST /api/v1/memories/reset`, `/reindex` | sin llamada |
-| 7 | Tags de prompts | `GET /api/v1/prompts/tags` | sin llamada |
-| 8 | Valorar una respuesta | `POST /api/v1/evaluations/feedback` | servicio `MessageRating` sin quien lo llame; el footer del mensaje declara `onLike`/`onDislike` y no los pinta |
-| 9 | Etiquetas de chat | `/api/v1/chats/all/tags`, `/api/v1/chats/{id}/tags` | capa de servicio sí, ninguna pantalla |
-| 10 | Elegir el modelo de imagen | `GET /api/v1/images/models` | la capa lo pide y ninguna pantalla lo usa |
-| 11 | Borrar un fichero de la lista | `DELETE /api/v1/files/{id}` | solo lo usa la limpieza interna de la app |
-
-Fuera de alcance por ser administración de servidor (no se lleva al móvil salvo que Dani lo pida):
-`analytics`, `pipelines`, `scim`, `terminals`, `configs`, `functions` (autoría), gestión de usuarios y
-grupos, `utils` (`code/format`, `db/download`).
+| Área de la web | En la app | Qué falta |
+|---|---|---|
+| Barra lateral | Drawer con pestañas Chats/Notas/Canales, fijados, archivados, árbol de carpetas, píldora de usuario | **Buscador global** (`GET /api/v1/search`): la app solo busca chats. Previsualización al pasar (es de escritorio) |
+| Carpetas | Crear, renombrar, mover, borrar, anidar (subcarpetas en `/folder/:id`), mover un chat a carpeta, abrir compartidas, y ajustes de proyecto (prompt, conocimiento y modelos de la carpeta) | Marcar carpeta leída, exportar JSON, borrar con contenido |
+| Chat · entrada | Adjuntos (fichero, fotos, cámara, página web, YouTube, ficheros del servidor), dictado y modo voz, comandos `/ # @ $`, selector de modelo con fijar y esfuerzo, cola de borradores, válvulas personales, comparar dos modelos con fusionar | Panel Controls con pestañas y Artifacts |
+| Chat · mensajes | Ramas y paginador de versiones, editar, copiar, reintentar, continuar, bifurcar, escuchar/detener TTS, borrar, fuentes, ejecución de código, aprobar/denegar herramientas, uso de tokens | **Valorar** (pulgar y motivo): `MessageRating` existe y ninguna pantalla lo usa |
+| Chat · menú | Fijar, archivar, compartir con audiencia, exportar JSON/Markdown, importar, borrar, clonar | **Etiquetas de chat** (servicio completo, sin UI) |
+| Notas | Lista con búsqueda y fijadas, editor, título y mejora por IA, adjuntos y audio, chat de la nota, compartir, fijar, borrar, guardar como propia | Importar `.md`/`.txt`, descargar TXT/MD/PDF, insertar una respuesta en la nota |
+| Canales | Lista, canal, hilos, miembros (añadir/quitar/silenciar), reacciones, fijar, editar y borrar mensaje, crear y editar canal | Webhooks, chat cifrado, selector completo de reacciones |
+| Automatizaciones | Lista con filtros, editor con schedule y destino, detalle con runs, activar/pausar, ejecutar ahora | Importar/exportar y clonar |
+| Calendario | Agenda, calendarios con color y por defecto, eventos con repetición y asistentes, **RSVP** (la web no lo tiene) | Nada claro; recordatorios por confirmar |
+| Espacio de trabajo | Modelos, Conocimiento, Prompts, Skills y Herramientas con editor completo: importar/exportar, clonar, versiones e historial, válvulas, accesos, subir ficheros y carpetas al conocimiento | **Etiquetas de prompts** como filtro (`GET /api/v1/prompts/tags`), sincronizar directorio (`/knowledge/{id}/sync/*`), importar skills por carpeta o URL, exportar skills en ZIP |
+| Imágenes | Generación desde el compositor (marca en `/api/chat/completions`); modelo de imagen por defecto en Personalización | **Editar una imagen** (`POST /api/v1/images/edit`, `ENABLE_IMAGE_EDIT=true`), galería de generaciones, `generateImage` sin usar |
+| Ajustes · General / Interfaz / Personalización / Audio / Datos / Notificaciones / Cuenta / Acerca de | Todas con pantalla; Notificaciones incluye destinos (webhooks) con test y por defecto; Controles de datos incluye exportar, importar, archivar todo y borrar todo | **Variables de usuario**, **atajos** reasignables, dashboard de **uso** (`GET /api/v1/users/usage`), **API key**, **MFA** |
+| Conexiones e integraciones | Conexiones personales: servidores de herramientas (MCP) y terminales, con añadir/editar/activar/probar/borrar y API key propia | Paridad fina por tipo de conector (OAuth de servidores MCP) |
+| Ficheros | Se suben, se adjuntan y hay selector de ficheros del servidor | **Gestor** con borrado desde la app, **estado de procesado para RAG** |
+| Memorias | Listar, añadir, editar, borrar y limpiar en Personalización | Borrar todas y reindexar (`/memories/reset`, `/reindex`) |
+| Compartido | Chat compartido de solo lectura (`/api/v1/chats/shared/{id}`) | Abrir un enlace público `/s/{id}` del servidor |
+| Playground / Watch | No existen | Playground es de administración; Watch es un atajo de escritorio |
+| Administración | No existe | Fuera del móvil salvo que Dani lo pida |
 
 ## Tandas
 
 Una PR por tanda; una tanda está hecha cuando su recorrido se puede usar en la app, no cuando la
 llamada existe. Orden por valor de uso en el móvil, no por tamaño del endpoint.
 
-| Tanda | Qué | Endpoints | Estado |
+| Tanda | Qué | Dónde duele | Estado |
 |---|---|---|---|
 | T1 | Abrir el chat oculto de una nota | `POST /api/v1/notes/{id}/chat` | OWU-134, PR #20 |
-| T2 | Valorar una respuesta (pulgar y motivo) | `POST /api/v1/evaluations/feedback`, `DELETE …/{id}` | pendiente |
-| T3 | Etiquetas de chat: ver, poner y filtrar la lista | `/api/v1/chats/all/tags`, `/api/v1/chats/{id}/tags` | pendiente |
-| T4 | Ficheros: estado de procesado y borrar | `GET /api/v1/files/{id}/process/status`, `DELETE /api/v1/files/{id}` | pendiente |
-| T5 | Skills: importar, clonar e historial | `/api/v1/skills/import`, `/import/preview`, `/id/{id}/clone`, `/id/{id}/history` | pendiente |
-| T6 | Prompts: etiquetas como filtro | `GET /api/v1/prompts/tags` | pendiente |
-| T7 | Memorias: borrar todo y reindexar | `POST /api/v1/memories/reset`, `/reindex` | pendiente |
-| T8 | Búsqueda global desde la barra | `GET /api/v1/search` | pendiente |
-| T9 | Imágenes: editar una generada y elegir modelo | `POST /api/v1/images/edit`, `GET /api/v1/images/models` | pendiente |
+| T2 | **Imágenes**: editar una generada (prompt + imagen), galería de generaciones y modelo de imagen elegible | `POST /api/v1/images/edit`, `GET /api/v1/images/generations`, `GET /api/v1/images/models` | pendiente |
+| T3 | **Carpetas**: marcar leída, exportar JSON y borrar con contenido | `POST /folders/{id}/read`, `GET /chats/folder/{id}`, `DELETE /folders/{id}?delete_contents=` | pendiente |
+| T4 | **Conectores**: paridad fina de servidores de herramientas y terminales, incluido OAuth de MCP y prueba de conexión | `GET/POST /api/v1/tools/*`, `GET /api/v1/terminals`, OAuth del tool server | pendiente |
+| T5 | **Valorar respuestas** (pulgar y motivo) y **etiquetas de chat** (poner, quitar, filtrar la lista por etiqueta) | `POST /api/v1/evaluations/feedback`, `/api/v1/chats/{id}/tags`, `GET /api/v1/chats/all/tags` | pendiente |
+| T6 | **Buscador global** con tipos (chats, mensajes, notas) y filtros | `GET /api/v1/search` | pendiente |
+| T7 | **Ajustes que faltan**: variables de usuario, atajos, uso, API key y MFA | `users/user/variables`, `users/user/settings/update` (`keybindings`), `GET /users/usage`, `/auths/api_key`, `/auths/mfa/*` | pendiente |
+| T8 | **Ficheros**: gestor con borrado y estado de procesado para RAG | `GET /files/`, `DELETE /files/{id}`, `GET /files/{id}/process/status` | pendiente |
+| T9 | **Espacio de trabajo fino**: etiquetas de prompts como filtro, sincronizar directorio, importar skills por carpeta o URL, exportar ZIP | `GET /prompts/tags`, `/knowledge/{id}/sync/*`, `/skills/import`, `/skills/export` | pendiente |
+| T10 | **Notas**: importar `.md`/`.txt`, descargar TXT/MD/PDF e insertar una respuesta en la nota | `POST /notes/create` (por fichero), `GET /notes/{id}/chats` | pendiente |
+| T11 | **Canales**: webhooks, chat cifrado y selector completo de reacciones | `/channels/{id}/webhooks*`, `/channels/{id}/encrypted` | pendiente |
+| T12 | **Automatizaciones**: importar, exportar y clonar | `POST /automations/create`, `GET /automations/{id}` | pendiente |
+| T13 | **Memorias**: borrar todas y reindexar | `POST /memories/reset`, `/reindex` | pendiente |
+| T14 | **Compartido**: abrir un enlace público `/s/{id}` del servidor | `GET /chats/share/{share_id}` | pendiente |
+| T15 | **Controls y Artifacts** del chat | — (local + settings) | pendiente |
 
 Cada tanda lleva su prueba: el recorrido en la app real cuando haya dispositivo (`mac-casa` hoy no
 tiene runtime de simulador utilizable) y, mientras no lo haya, widget test del menú o pantalla más
 test del método de API.
 
-Lo de administración (`analytics`, `pipelines`, `scim`, `terminals`, `configs`, `functions`, usuarios y
-grupos, `utils`) no entra en ninguna tanda salvo que Dani lo pida.
+Lo de administración (`analytics`, `pipelines`, `scim`, `configs`, `functions`, usuarios y grupos,
+`utils`) no entra en ninguna tanda salvo que Dani lo pida. Los terminales y los servidores de
+herramientas **no** son administración: son conectores de usuario y van en la T4.
 
 ### Cómo se comprueba
 
