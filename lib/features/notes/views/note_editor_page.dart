@@ -27,7 +27,12 @@ import 'package:conduit_core/models/note.dart';
 
 import 'package:conduit_core/providers/app_providers.dart';
 
+import 'package:conduit_core/services/conversation_parsing.dart';
+
 import '../../../core/services/ios_native_dropdown_bridge.dart';
+import '../../../shared/services/navigation_service.dart';
+import '../../../shared/utils/ui_utils.dart';
+import '../../navigation/providers/conversation_selection_provider.dart';
 
 import 'package:conduit_core/sync/sync_engine.dart';
 
@@ -1358,6 +1363,18 @@ class _NoteEditorPageState extends ConsumerState<NoteEditorPage> {
             materialIcon: Icons.auto_awesome,
           ),
         ),
+      // OWU-134: the note's own chat, as Open WebUI's web client opens it
+      // (`POST /api/v1/notes/{id}/chat`). A note that is still local has no
+      // server id to open one from.
+      if (_note != null)
+        AdaptivePopupMenuItem<String>(
+          value: 'chat',
+          label: l10n.noteOpenChat,
+          icon: conduitAdaptivePopupMenuIcon(
+            iosSymbol: 'bubble.left.and.text.bubble.right',
+            materialIcon: Icons.chat_bubble_outline,
+          ),
+        ),
       AdaptivePopupMenuItem<String>(
         value: 'copy',
         label: l10n.copy,
@@ -1427,10 +1444,60 @@ class _NoteEditorPageState extends ConsumerState<NoteEditorPage> {
         ConduitHaptics.selectionClick();
         unawaited(_shareNote());
         return;
+      case 'chat':
+        ConduitHaptics.selectionClick();
+        unawaited(_openNoteChat());
+        return;
       case 'delete':
         ConduitHaptics.mediumImpact();
         _deleteNote();
         return;
+    }
+  }
+
+  /// The note's own chat: Open WebUI keeps one hidden conversation per note,
+  /// created the first time this is asked for (`POST /api/v1/notes/{id}/chat`).
+  Future<void> _openNoteChat() async {
+    final originRoute = NavigationService.currentRoute;
+    final originRevision = NavigationService.currentRouteRevision;
+    try {
+      final api = ref.read(apiServiceProvider);
+      if (api == null) return;
+      final raw = await api.createNoteChat(widget.noteId);
+      if (!mounted) return;
+      final result = await ref
+          .read(conversationSelectionProvider.notifier)
+          .select(parseFullConversationModel(raw));
+      if (!mounted ||
+          NavigationService.currentRoute != originRoute ||
+          NavigationService.currentRouteRevision != originRevision) {
+        return;
+      }
+      switch (result.disposition) {
+        case ConversationSelectionDisposition.committed:
+          context.go(Routes.chat);
+        case ConversationSelectionDisposition.canceled:
+          return;
+        case ConversationSelectionDisposition.failed:
+          UiUtils.showMessage(
+            context,
+            AppLocalizations.of(context)!.noteOpenChatFailed,
+            isError: true,
+          );
+      }
+    } catch (error, stackTrace) {
+      DebugLogger.error(
+        'note-chat-open-failed',
+        scope: 'notes/editor',
+        error: error,
+        stackTrace: stackTrace,
+      );
+      if (!mounted) return;
+      UiUtils.showMessage(
+        context,
+        AppLocalizations.of(context)!.noteOpenChatFailed,
+        isError: true,
+      );
     }
   }
 

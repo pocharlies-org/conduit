@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:conduit/features/navigation/providers/conversation_selection_provider.dart';
 import 'package:conduit/features/notes/views/note_editor_page.dart';
 import 'package:conduit/features/workspace/models/workspace_capabilities.dart';
 import 'package:conduit/features/workspace/providers/workspace_capabilities_provider.dart';
@@ -17,6 +18,7 @@ import 'package:conduit_core/features/notes/providers/notes_providers.dart';
 import 'package:conduit_core/features/notes/utils/note_persistence.dart';
 import 'package:conduit_core/features/sharing/providers/principal_lookup.dart';
 import 'package:conduit_core/features/workspace/models/workspace_common.dart';
+import 'package:conduit_core/models/conversation.dart';
 import 'package:conduit_core/models/server_config.dart';
 import 'package:conduit_core/models/user.dart';
 import 'package:conduit_core/providers/app_providers.dart';
@@ -74,6 +76,16 @@ class _QuietSyncEngine extends SyncEngine {
   Future<void> reconcileNow() async {}
 }
 
+/// Stands in for the router's selection: records nothing, commits nothing.
+class _NoopSelection extends ConversationSelection {
+  @override
+  ConversationSelectionState build() => const ConversationSelectionState();
+
+  @override
+  Future<ConversationSelectionResult> select(Conversation summary) async =>
+      const ConversationSelectionResult.canceled();
+}
+
 class _DetailApi extends ApiService {
   _DetailApi({this.detail, this.detailError})
     : super(
@@ -89,6 +101,21 @@ class _DetailApi extends ApiService {
   Object? detailError;
   int updates = 0;
   final accessReads = <String>[];
+  final noteChats = <String>[];
+
+  @override
+  Future<Map<String, dynamic>> createNoteChat(String id) async {
+    noteChats.add(id);
+    return <String, dynamic>{
+      'id': 'chat-1',
+      'title': 'Chat',
+      'chat': <String, dynamic>{
+        'title': 'Chat',
+        'models': <String>[''],
+        'messages': <Map<String, dynamic>>[],
+      },
+    };
+  }
 
   /// While set, a detail read stays in flight until the test completes it.
   Completer<Map<String, dynamic>>? heldDetail;
@@ -192,6 +219,7 @@ void main() {
     WidgetTester tester,
     _DetailApi api, {
     Map<String, String> userNames = const {},
+    bool stubSelection = false,
   }) async {
     final container = ProviderContainer(
       // A provider that errors would otherwise schedule a retry timer.
@@ -210,6 +238,11 @@ void main() {
           (ref) async => WorkspaceCapabilities.all,
         ),
         syncEngineProvider.overrideWith(_QuietSyncEngine.new),
+        // Opening the note chat commits a selection the router then shows;
+        // the editor is mounted outside a router, so the stub stops at the
+        // selection and the test asserts the request that precedes it.
+        if (stubSelection)
+          conversationSelectionProvider.overrideWith(_NoopSelection.new),
         // People are named from a fixed list, never the network.
         workspacePrincipalLookupProvider.overrideWithValue(
           WorkspacePrincipalLookup(
@@ -543,12 +576,12 @@ void main() {
     );
   });
 
-  group('note Share menu', () {
-    Future<void> openOverflow(WidgetTester tester) async {
-      await tester.tap(find.byIcon(Icons.more_vert_rounded));
-      await tester.pumpAndSettle();
-    }
+  Future<void> openOverflow(WidgetTester tester) async {
+    await tester.tap(find.byIcon(Icons.more_vert_rounded));
+    await tester.pumpAndSettle();
+  }
 
+  group('note Share menu', () {
     testWidgets('is offered with Advanced off and opens the access sheet', (
       tester,
     ) async {
@@ -574,6 +607,18 @@ void main() {
       expect(find.text(l10n(tester).noteShare), findsNothing);
       expect(find.text(l10n(tester).delete), findsNothing);
     });
+  });
+
+  testWidgets('the overflow asks the server for the note chat', (tester) async {
+    final api = _DetailApi(detail: _noteJson(writeAccess: true));
+    await storeLocally(_noteJson(writeAccess: true));
+    await pumpEditor(tester, api, stubSelection: true);
+
+    await openOverflow(tester);
+    await tester.tap(find.text(l10n(tester).noteOpenChat));
+    await tester.pumpAndSettle();
+
+    expect(api.noteChats, ['note-1']);
   });
 }
 

@@ -5413,6 +5413,14 @@
   "@noteShare": {
     "description": "Menu item in the note editor and notes list that opens the access sheet for a note."
   },
+  "noteOpenChat": "Open note chat",
+  "@noteOpenChat": {
+    "description": "Menu item in the note editor that opens the hidden chat Open WebUI keeps for this note."
+  },
+  "noteOpenChatFailed": "Couldn't open the note chat",
+  "@noteOpenChatFailed": {
+    "description": "Shown when the server refuses to open the hidden chat of a note."
+  },
   "folderShareSettings": "Share folder",
   "@folderShareSettings": {
     "description": "Menu item on a folder page that opens the access sheet for the folder."

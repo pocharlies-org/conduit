@@ -113,6 +113,20 @@ mixin _NotesApi on _ApiServiceBase {
     return response.data as Map<String, dynamic>;
   }
 
+  /// POST `/api/v1/notes/{id}/chat` — the hidden chat this note talks in,
+  /// created on first use and reused afterwards (vendored
+  /// `create_note_chat_by_id`). Returns the full `ChatResponse` map, which
+  /// [parseFullConversationModel] turns into the app's conversation.
+  Future<Map<String, dynamic>> createNoteChat(String id) async {
+    _traceApi('Opening the chat of note: $id');
+    final response = await _dio.post('/api/v1/notes/$id/chat');
+    final data = response.data;
+    if (data is! Map) {
+      throw FormatException('createNoteChat $id: expected a chat object');
+    }
+    return Map<String, dynamic>.from(data);
+  }
+
   /// Update an existing note
   Future<Map<String, dynamic>> updateNote(
     String id, {
