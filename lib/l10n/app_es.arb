@@ -3660,5 +3660,18 @@
   "accountsSwitchStopsReply": "Cambiar de cuenta la detendrá.",
   "accountsSignOutStopsReply": "Cerrar sesión la detendrá.",
   "accountsSwitchAnyway": "Cambiar de todos modos",
-  "accountsSignOutAnyway": "Cerrar sesión de todos modos"
+  "accountsSignOutAnyway": "Cerrar sesión de todos modos",
+  "imagesPlaygroundTitle": "Imágenes",
+  "imagesPlaygroundHint": "Describe una imagen para crearla, o añade una foto y describe el cambio.",
+  "imagesPlaygroundUnavailable": "Este servidor no tiene activada la generación de imágenes.",
+  "imagesPlaygroundPrompt": "Describe la imagen...",
+  "imagesPlaygroundEditPrompt": "Describe la edición...",
+  "imagesPlaygroundAddImage": "Añadir imagen",
+  "imagesPlaygroundRemoveSource": "Quitar imagen",
+  "imagesPlaygroundRun": "Ejecutar",
+  "imagesPlaygroundRunning": "Ejecutando...",
+  "imagesPlaygroundEmpty": "Las imágenes generadas aparecerán aquí.",
+  "imagesPlaygroundFailed": "La petición de imagen ha fallado.",
+  "imagesPlaygroundPickFailed": "No se pudo leer la foto.",
+  "imagesPlaygroundPromptRequired": "Escribe un prompt."
 }

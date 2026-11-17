@@ -2065,6 +2065,82 @@ void main() {
       final body = adapter.lastRequest!.data as Map<String, dynamic>;
       check(body.keys.toList()).deepEquals(['prompt']);
     });
+
+    test('returns the stored image files', () async {
+      final adapter = _FakeAdapter.json([
+        {'id': 'file-1', 'url': '/api/v1/files/file-1/content'},
+      ]);
+      final api = _buildApiServiceForTest(adapter);
+
+      final images = await api.generateImage(prompt: 'a cat');
+
+      check(images.single['id'] as String).equals('file-1');
+    });
+  });
+
+  group('editImage', () {
+    test('sends one image as a string and the prompt to /images/edit', () async {
+      final adapter = _FakeAdapter.json([
+        {'id': 'file-2', 'url': '/api/v1/files/file-2/content'},
+      ]);
+      final api = _buildApiServiceForTest(adapter);
+
+      final images = await api.editImage(
+        images: ['data:image/png;base64,AAAA'],
+        prompt: 'make it night',
+      );
+
+      final request = adapter.lastRequest!;
+      check(request.path).equals('/api/v1/images/edit');
+      final body = request.data as Map<String, dynamic>;
+      check(body['image'] as String).equals('data:image/png;base64,AAAA');
+      check(body['prompt'] as String).equals('make it night');
+      check(body.keys.toList()).deepEquals(['image', 'prompt']);
+      check(images.single['id'] as String).equals('file-2');
+    });
+
+    test('sends several images as a list', () async {
+      final adapter = _FakeAdapter.json([
+        {'id': 'file-3'},
+      ]);
+      final api = _buildApiServiceForTest(adapter);
+
+      await api.editImage(
+        images: ['https://example.com/a.png', 'https://example.com/b.png'],
+        prompt: 'blend them',
+      );
+
+      final body = adapter.lastRequest!.data as Map<String, dynamic>;
+      check(body['image'] as List).deepEquals([
+        'https://example.com/a.png',
+        'https://example.com/b.png',
+      ]);
+    });
+
+    test('surfaces the server refusal instead of another request', () async {
+      final adapter = _FakeAdapter.json(
+        {'detail': 'Access prohibited'},
+        statusCode: 403,
+      );
+      final api = _buildApiServiceForTest(adapter);
+
+      await expectLater(
+        api.editImage(images: ['data:image/png;base64,AAAA'], prompt: 'x'),
+        throwsA(isA<DioException>()),
+      );
+      check(adapter.lastRequest!.path).equals('/api/v1/images/edit');
+    });
+
+    test('rejects an empty image list before any request', () async {
+      final adapter = _FakeAdapter.json([]);
+      final api = _buildApiServiceForTest(adapter);
+
+      expect(
+        () => api.editImage(images: const [], prompt: 'x'),
+        throwsArgumentError,
+      );
+      check(adapter.lastRequest).isNull();
+    });
   });
 
   group('updateUserInfo', () {

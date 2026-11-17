@@ -27,6 +27,7 @@ class Routes {
   static const String scheduledTaskDetail = '/profile/scheduled-tasks/:id';
   static const String scheduledTaskEdit = '/profile/scheduled-tasks/:id/edit';
   static const String calendar = '/profile/calendar';
+  static const String images = '/profile/images';
   static const String about = '/profile/about';
   static const String notes = '/notes';
   static const String noteEditor = '/notes/:id';
@@ -59,6 +60,7 @@ class RouteNames {
   static const String scheduledTaskDetail = 'scheduled-task-detail';
   static const String scheduledTaskEdit = 'scheduled-task-edit';
   static const String calendar = 'calendar';
+  static const String images = 'images';
   static const String personalConnectionEditor = 'personal-connection-editor';
   static const String about = 'about';
   static const String notes = 'notes';

@@ -7515,5 +7515,57 @@
   "accountsSignOutAnyway": "Sign out anyway",
   "@accountsSignOutAnyway": {
     "description": "Confirms signing out of the current account even though it stops the reply that is still streaming."
+  },
+  "imagesPlaygroundTitle": "Images",
+  "@imagesPlaygroundTitle": {
+    "description": "Title of the Images playground, which creates and edits images like Open WebUI's."
+  },
+  "imagesPlaygroundHint": "Describe an image to create it, or add a photo and describe the change.",
+  "@imagesPlaygroundHint": {
+    "description": "Explains what the Images playground does, above the prompt."
+  },
+  "imagesPlaygroundUnavailable": "This server does not have image generation enabled.",
+  "@imagesPlaygroundUnavailable": {
+    "description": "Shown when the account or server does not allow image generation."
+  },
+  "imagesPlaygroundPrompt": "Describe the image...",
+  "@imagesPlaygroundPrompt": {
+    "description": "Placeholder of the prompt when creating an image."
+  },
+  "imagesPlaygroundEditPrompt": "Describe the edit...",
+  "@imagesPlaygroundEditPrompt": {
+    "description": "Placeholder of the prompt when source images are attached."
+  },
+  "imagesPlaygroundAddImage": "Add image",
+  "@imagesPlaygroundAddImage": {
+    "description": "Opens the photo picker to attach source images for an edit."
+  },
+  "imagesPlaygroundRemoveSource": "Remove image",
+  "@imagesPlaygroundRemoveSource": {
+    "description": "Removes one attached source image before the edit runs."
+  },
+  "imagesPlaygroundRun": "Run",
+  "@imagesPlaygroundRun": {
+    "description": "Sends the prompt to create or edit the image."
+  },
+  "imagesPlaygroundRunning": "Running...",
+  "@imagesPlaygroundRunning": {
+    "description": "Shown while the image request is in flight."
+  },
+  "imagesPlaygroundEmpty": "Generated images will appear here.",
+  "@imagesPlaygroundEmpty": {
+    "description": "Empty state of the results grid."
+  },
+  "imagesPlaygroundFailed": "The image request failed.",
+  "@imagesPlaygroundFailed": {
+    "description": "Error shown when creating or editing an image fails without a server message."
+  },
+  "imagesPlaygroundPickFailed": "The photo could not be read.",
+  "@imagesPlaygroundPickFailed": {
+    "description": "Error shown when the picked photo cannot be opened."
+  },
+  "imagesPlaygroundPromptRequired": "Enter a prompt.",
+  "@imagesPlaygroundPromptRequired": {
+    "description": "Error shown when running the playground with an empty prompt."
   }
 }
