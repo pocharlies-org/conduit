@@ -15,7 +15,7 @@ Lo que se compara y por qué, en `docs/paridad-openwebui.md` (superficie entera 
 | Pendiente | T3 a T15 de este documento: 13 PRs |
 | CI | **No corre en el fork** (`ci.yml` está guardado a `cogwheel0/conduit`): la PR enseña «no checks reported» y se fusiona con la evidencia de la sesión |
 | Compilar y probar | Solo en `mac-casa` (`ssh mbpro`), `export PATH="$HOME/flutter/bin:$PATH"`, Flutter 3.47.7 |
-| Validar en dispositivo | **Hoy no se puede**: no hay runtime de simulador iOS moderno (solo 17.5, y `conduit` necesita ≥26) ni AVD Android en `mac-casa` |
+| Validar en dispositivo | En el **iPhone de Dani** (`iPhone Charlies`, iPhone 16 Pro Max, UDID `00008140-000429142813C01C`): `flutter run -d 00008140-…` desde `mac-casa` para instalarlo, y el MCP `iphone` (mobile-mcp + WDA, LaunchAgent `com.e-dani.iphone-mcp`) para tocarlo. **Hoy el teléfono sale `unavailable`** en `devicectl list devices`: tiene que estar emparejado con `mac-casa` y despierto (cable, o la misma LAN con modo desarrollador inalámbrico). El simulador no sirve: el único runtime instalado es iOS 17.5 y `conduit` necesita ≥26 |
 | Tronco en rojo | `test/core/auth/api_auth_interceptor_test.dart` — 2 pruebas de «session renewal» fallan en `main` desde antes de la T2 |
 | Textos | Toda clave nueva va en **los trece** `lib/l10n/app_*.arb`; `polish_localization_test` compara `app_en` con `app_pl` y pone el tronco en rojo si falta una (pasó en T1) |
 
@@ -45,11 +45,14 @@ prueba en `mac-casa` sobre la misma rama publicada: commit, `git push`, `git pul
 1. `flutter analyze` sin nada.
 2. Pruebas de lo tocado en verde **y** la suite completa: solo pueden quedar en rojo las dos de
    `api_auth_interceptor_test` (ver S0), ninguna más.
-3. Cada criterio de la historia probado y escrito en la PR con lo que lo demuestra (orden, salida o prueba).
-4. Barrido de código muerto: un `Agent(subagent_type: "harness:barrido-codigo-muerto")` con el worktree y el
+3. La build instalada **en el iPhone** y el recorrido de los criterios hecho en el teléfono con el MCP
+   `iphone`, con su captura en la PR. Si el teléfono no está disponible, la sesión **no fusiona**: para y lo
+   dice.
+4. Cada criterio de la historia probado y escrito en la PR con lo que lo demuestra (orden, salida o prueba).
+5. Barrido de código muerto: un `Agent(subagent_type: "harness:barrido-codigo-muerto")` con el worktree y el
    tronco, que borra lo que el cambio dejó muerto y empuja a la rama de la PR.
-5. `docs/paridad-openwebui.md` actualizado en la misma PR: la fila de su área y la de su tanda.
-6. Fusionar en squash con `gh pr merge <n> -R pocharlies-org/conduit --squash` y borrar el worktree por su
+6. `docs/paridad-openwebui.md` actualizado en la misma PR: la fila de su área y la de su tanda.
+7. Fusionar en squash con `gh pr merge <n> -R pocharlies-org/conduit --squash` y borrar el worktree por su
    ruta exacta.
 
 **Lo que no se toca**
@@ -61,9 +64,13 @@ prueba en `mac-casa` sobre la misma rama publicada: commit, `git push`, `git pul
 
 **Lo que no se afirma**
 
-Sin dispositivo no se puede decir «funciona» de nada que se vea. Se dice «compila, analiza y prueba» y se
-deja en la PR una sección **Lo que no está validado** con lo que falta. Un criterio visual se valida contra
-la captura de la web y con `flutter test` (widget), no a ojo.
+**Validar como lo usa un usuario: en el iPhone, no en pruebas**
+
+Conduit es una app de iPhone: se valida en el iPhone de Dani, no en un emulador ni a ojo en pruebas. Cada
+tanda instala su build en el teléfono (`flutter run -d 00008140-000429142813C01C` desde `mac-casa`), la sesión
+la maneja con el MCP `iphone` (mobile-mcp + WDA), hace el recorrido de los criterios y deja la captura de
+cada uno en la PR. Si el teléfono no está disponible, no se sustituye por «pasa las pruebas»: la PR se queda
+abierta con **deployed, NOT validated: iPhone unavailable**, la sesión para con `PARA DANI:` y no fusiona.
 
 ## 2. Historias, en orden de uso
 
@@ -328,14 +335,17 @@ T5 toca el chat y va sola.
 Para lanzar todo de golpe, una sesión por tanda de la ola 1 y las demás al cerrar la anterior: no catorce a
 la vez.
 
-## 5. Decisiones que esperan a Dani
+## 5. Lo que hay que tener listo, y lo que espera a Dani
 
-1. **Validación en dispositivo.** Hoy ninguna tanda se puede ver funcionar. Opciones, en orden de coste:
-   (a) montar un AVD Android en `mac-casa` con la imagen del SDK (una vez, ~1 h) y validar ahí cada tanda;
-   (b) seguir con pruebas y dejar una tanda final de validación manual en su iPhone; (c) no validar. La (a)
-   es la que convierte «compila y pasa pruebas» en «funciona».
-2. **T15 y el WebView.** ¿Entra un WebView para Artifacts, o se queda en SVG/imagen?
-3. **MFA (T7b).** ¿Se hace con una cuenta de prueba en el servidor, o se deja fuera hasta que haya una?
+1. **El iPhone, conectado.** No es una decisión: es el requisito de toda validación. `iPhone Charlies` tiene
+   que estar emparejado con `mac-casa` y disponible (`xcrun devicectl list devices` deja de decir
+   `unavailable`), con el modo desarrollador activo si va por Wi-Fi. Si la sesión no lo ve, no inventa: para
+   la tanda y lo dice.
+2. **Firma.** `flutter run -d` compila en modo desarrollo con el equipo `Q3AVWT9CS8`; si el perfil de
+   desarrollo no cubre el teléfono, se le añade su UDID en el portal (esto sí necesita el Apple Developer
+   de Dani o su clave de App Store Connect que ya usan `asc.sh` y `testflight.sh`).
+3. **T15 y el WebView.** ¿Entra un WebView para Artifacts, o se queda en SVG/imagen?
+4. **MFA (T7b).** ¿Se hace con una cuenta de prueba en el servidor, o se deja fuera hasta que haya una?
 
 Lo demás no se pregunta: el orden de la sección 3, el reparto en olas, la rama y el método de fusión son
 los del plan y de las reglas.
