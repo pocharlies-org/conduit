@@ -4867,5 +4867,7 @@
   "imagesPlaygroundEmpty": "生成された画像はここに表示されます。",
   "imagesPlaygroundFailed": "画像リクエストに失敗しました。",
   "imagesPlaygroundPickFailed": "写真を読み込めませんでした。",
-  "imagesPlaygroundPromptRequired": "プロンプトを入力してください。"
+  "imagesPlaygroundPromptRequired": "プロンプトを入力してください。",
+  "noteOpenChat": "ノートのチャットを開く",
+  "noteOpenChatFailed": "ノートのチャットを開けませんでした"
 }

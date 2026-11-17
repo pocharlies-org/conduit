@@ -3671,5 +3671,7 @@
   "imagesPlaygroundEmpty": "生成的图片将显示在这里。",
   "imagesPlaygroundFailed": "图片请求失败。",
   "imagesPlaygroundPickFailed": "无法读取照片。",
-  "imagesPlaygroundPromptRequired": "请输入提示词。"
+  "imagesPlaygroundPromptRequired": "请输入提示词。",
+  "noteOpenChat": "打开笔记聊天",
+  "noteOpenChatFailed": "无法打开笔记聊天"
 }

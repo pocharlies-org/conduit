@@ -6005,5 +6005,7 @@
   "imagesPlaygroundEmpty": "Wygenerowane obrazy pojawią się tutaj.",
   "imagesPlaygroundFailed": "Żądanie obrazu nie powiodło się.",
   "imagesPlaygroundPickFailed": "Nie udało się odczytać zdjęcia.",
-  "imagesPlaygroundPromptRequired": "Wpisz prompt."
+  "imagesPlaygroundPromptRequired": "Wpisz prompt.",
+  "noteOpenChat": "Otwórz czat notatki",
+  "noteOpenChatFailed": "Nie udało się otworzyć czatu notatki"
 }

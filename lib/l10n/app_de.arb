@@ -3671,5 +3671,7 @@
   "imagesPlaygroundEmpty": "Generierte Bilder erscheinen hier.",
   "imagesPlaygroundFailed": "Die Bildanfrage ist fehlgeschlagen.",
   "imagesPlaygroundPickFailed": "Das Foto konnte nicht gelesen werden.",
-  "imagesPlaygroundPromptRequired": "Gib einen Prompt ein."
+  "imagesPlaygroundPromptRequired": "Gib einen Prompt ein.",
+  "noteOpenChat": "Notiz-Chat öffnen",
+  "noteOpenChatFailed": "Der Notiz-Chat konnte nicht geöffnet werden"
 }

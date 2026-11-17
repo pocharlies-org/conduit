@@ -3671,5 +3671,7 @@
   "imagesPlaygroundEmpty": "Gegenereerde afbeeldingen verschijnen hier.",
   "imagesPlaygroundFailed": "De afbeeldingsaanvraag is mislukt.",
   "imagesPlaygroundPickFailed": "De foto kon niet worden gelezen.",
-  "imagesPlaygroundPromptRequired": "Voer een prompt in."
+  "imagesPlaygroundPromptRequired": "Voer een prompt in.",
+  "noteOpenChat": "Notitiechat openen",
+  "noteOpenChatFailed": "De notitiechat kon niet worden geopend"
 }

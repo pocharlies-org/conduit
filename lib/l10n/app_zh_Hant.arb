@@ -3671,5 +3671,7 @@
   "imagesPlaygroundEmpty": "生成的圖片將顯示在這裡。",
   "imagesPlaygroundFailed": "圖片請求失敗。",
   "imagesPlaygroundPickFailed": "無法讀取照片。",
-  "imagesPlaygroundPromptRequired": "請輸入提示詞。"
+  "imagesPlaygroundPromptRequired": "請輸入提示詞。",
+  "noteOpenChat": "開啟筆記聊天",
+  "noteOpenChatFailed": "無法開啟筆記聊天"
 }

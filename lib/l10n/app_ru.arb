@@ -3671,5 +3671,7 @@
   "imagesPlaygroundEmpty": "Сгенерированные изображения появятся здесь.",
   "imagesPlaygroundFailed": "Запрос изображения не удался.",
   "imagesPlaygroundPickFailed": "Не удалось прочитать фото.",
-  "imagesPlaygroundPromptRequired": "Введите промпт."
+  "imagesPlaygroundPromptRequired": "Введите промпт.",
+  "noteOpenChat": "Открыть чат заметки",
+  "noteOpenChatFailed": "Не удалось открыть чат заметки"
 }

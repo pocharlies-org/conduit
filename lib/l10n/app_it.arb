@@ -3671,5 +3671,7 @@
   "imagesPlaygroundEmpty": "Le immagini generate appariranno qui.",
   "imagesPlaygroundFailed": "La richiesta dell'immagine non è riuscita.",
   "imagesPlaygroundPickFailed": "Non è stato possibile leggere la foto.",
-  "imagesPlaygroundPromptRequired": "Inserisci un prompt."
+  "imagesPlaygroundPromptRequired": "Inserisci un prompt.",
+  "noteOpenChat": "Apri chat della nota",
+  "noteOpenChatFailed": "Impossibile aprire il chat della nota"
 }

@@ -5116,5 +5116,7 @@
   "imagesPlaygroundEmpty": "Vygenerované obrázky sa zobrazia tu.",
   "imagesPlaygroundFailed": "Požiadavka na obrázok zlyhala.",
   "imagesPlaygroundPickFailed": "Fotografiu sa nepodarilo prečítať.",
-  "imagesPlaygroundPromptRequired": "Zadajte prompt."
+  "imagesPlaygroundPromptRequired": "Zadajte prompt.",
+  "noteOpenChat": "Otvoriť chat poznámky",
+  "noteOpenChatFailed": "Chat poznámky sa nepodarilo otvoriť"
 }
