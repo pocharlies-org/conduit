@@ -2936,6 +2936,8 @@
   "noteSessionChangedNotice": "La cuenta con la sesión iniciada ha cambiado, así que esta nota no se guardó.",
   "noteNoAccess": "Ya no tienes acceso a esta nota.",
   "noteShare": "Compartir nota",
+  "noteOpenChat": "Abrir chat de la nota",
+  "noteOpenChatFailed": "No se pudo abrir el chat de la nota",
   "folderShareSettings": "Compartir carpeta",
   "chatShareAudience": "Quién tiene acceso",
   "chatShareAudienceDescription": "Elige quién puede abrir este chat",
