@@ -122,7 +122,7 @@ parecía a primera vista: el hueco real es corto y está concentrado.
 | Ficheros | Se suben, se adjuntan y hay selector de ficheros del servidor | **Gestor** con borrado desde la app, **estado de procesado para RAG** |
 | Memorias | Listar, añadir, editar, borrar y limpiar en Personalización | Borrar todas y reindexar (`/memories/reset`, `/reindex`) |
 | Compartido | Chat compartido de solo lectura (`/api/v1/chats/shared/{id}`) | Abrir un enlace público `/s/{id}` del servidor |
-| Playground / Watch | No existen | Playground es de administración; Watch es un atajo de escritorio |
+| Playground / Watch | Solo el playground de imágenes (fila Imágenes); el de chat y completions y Watch no existen | El resto del Playground es de administración; Watch es un atajo de escritorio |
 | Administración | No existe | Fuera del móvil salvo que Dani lo pida |
 
 ## Tandas
