@@ -188,7 +188,7 @@ class _ImagePlaygroundState extends ConsumerState<_ImagePlayground> {
         Text(
           l10n.imagesPlaygroundHint,
           style: AppTypography.bodySmallStyle.copyWith(
-            color: tokens.textSecondary,
+            color: tokens.neutralTone80,
           ),
         ),
         const SizedBox(height: Spacing.md),
@@ -267,7 +267,7 @@ class _ImagePlaygroundState extends ConsumerState<_ImagePlayground> {
               l10n.imagesPlaygroundEmpty,
               textAlign: TextAlign.center,
               style: AppTypography.bodyMediumStyle.copyWith(
-                color: tokens.textSecondary,
+                color: tokens.neutralTone80,
               ),
             ),
           )
