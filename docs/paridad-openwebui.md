@@ -116,13 +116,13 @@ parecía a primera vista: el hueco real es corto y está concentrado.
 | Automatizaciones | Lista con filtros, editor con schedule y destino, detalle con runs, activar/pausar, ejecutar ahora | Importar/exportar y clonar |
 | Calendario | Agenda, calendarios con color y por defecto, eventos con repetición y asistentes, **RSVP** (la web no lo tiene) | Nada claro; recordatorios por confirmar |
 | Espacio de trabajo | Modelos, Conocimiento, Prompts, Skills y Herramientas con editor completo: importar/exportar, clonar, versiones e historial, válvulas, accesos, subir ficheros y carpetas al conocimiento | **Etiquetas de prompts** como filtro (`GET /api/v1/prompts/tags`), sincronizar directorio (`/knowledge/{id}/sync/*`), importar skills por carpeta o URL, exportar skills en ZIP |
-| Imágenes | Generación desde el compositor (marca en `/api/chat/completions`); modelo de imagen por defecto en Personalización | **Editar una imagen** (`POST /api/v1/images/edit`, `ENABLE_IMAGE_EDIT=true`), galería de generaciones, `generateImage` sin usar |
+| Imágenes | Generación desde el compositor (marca en `/api/chat/completions`); modelo de imagen por defecto en Personalización; **Playground de imágenes**: crear desde un prompt o adjuntar fotos y editar, con los resultados en rejilla hasta compartirlos | Nada que la web tenga: su galería vive en memoria y solo la sirve a administradores, igual que en la app |
 | Ajustes · General / Interfaz / Personalización / Audio / Datos / Notificaciones / Cuenta / Acerca de | Todas con pantalla; Notificaciones incluye destinos (webhooks) con test y por defecto; Controles de datos incluye exportar, importar, archivar todo y borrar todo | **Variables de usuario**, **atajos** reasignables, dashboard de **uso** (`GET /api/v1/users/usage`), **API key**, **MFA** |
 | Conexiones e integraciones | Conexiones personales: servidores de herramientas (MCP) y terminales, con añadir/editar/activar/probar/borrar y API key propia | Paridad fina por tipo de conector (OAuth de servidores MCP) |
 | Ficheros | Se suben, se adjuntan y hay selector de ficheros del servidor | **Gestor** con borrado desde la app, **estado de procesado para RAG** |
 | Memorias | Listar, añadir, editar, borrar y limpiar en Personalización | Borrar todas y reindexar (`/memories/reset`, `/reindex`) |
 | Compartido | Chat compartido de solo lectura (`/api/v1/chats/shared/{id}`) | Abrir un enlace público `/s/{id}` del servidor |
-| Playground / Watch | No existen | Playground es de administración; Watch es un atajo de escritorio |
+| Playground / Watch | Solo el playground de imágenes (fila Imágenes); el de chat y completions y Watch no existen | El resto del Playground es de administración; Watch es un atajo de escritorio |
 | Administración | No existe | Fuera del móvil salvo que Dani lo pida |
 
 ## Tandas
@@ -133,7 +133,7 @@ llamada existe. Orden por valor de uso en el móvil, no por tamaño del endpoint
 | Tanda | Qué | Dónde duele | Estado |
 |---|---|---|---|
 | T1 | Abrir el chat oculto de una nota | `POST /api/v1/notes/{id}/chat` | OWU-134, PR #20 |
-| T2 | **Imágenes**: editar una generada (prompt + imagen), galería de generaciones y modelo de imagen elegible | `POST /api/v1/images/edit`, `GET /api/v1/images/generations`, `GET /api/v1/images/models` | pendiente |
+| T2 | **Imágenes**: el playground de la web (crear desde un prompt o editar con fotos adjuntas, resultados en rejilla, compartir), sin inventar una galería que el servidor no tiene | `POST /api/v1/images/generations`, `POST /api/v1/images/edit` | OWU-134, PR #22 |
 | T3 | **Carpetas**: marcar leída, exportar JSON y borrar con contenido | `POST /folders/{id}/read`, `GET /chats/folder/{id}`, `DELETE /folders/{id}?delete_contents=` | pendiente |
 | T4 | **Conectores**: paridad fina de servidores de herramientas y terminales, incluido OAuth de MCP y prueba de conexión | `GET/POST /api/v1/tools/*`, `GET /api/v1/terminals`, OAuth del tool server | pendiente |
 | T5 | **Valorar respuestas** (pulgar y motivo) y **etiquetas de chat** (poner, quitar, filtrar la lista por etiqueta) | `POST /api/v1/evaluations/feedback`, `/api/v1/chats/{id}/tags`, `GET /api/v1/chats/all/tags` | pendiente |

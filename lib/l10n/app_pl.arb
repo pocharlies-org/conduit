@@ -5992,5 +5992,20 @@
         "example": "gpt-realtime-2.1-mini"
       }
     }
-  }
+  },
+  "imagesPlaygroundTitle": "Obrazy",
+  "imagesPlaygroundHint": "Opisz obraz, aby go utworzyć, albo dodaj zdjęcie i opisz zmianę.",
+  "imagesPlaygroundUnavailable": "Tworzenie i edycja obrazów nie są dostępne dla tego konta.",
+  "imagesPlaygroundPrompt": "Opisz obraz...",
+  "imagesPlaygroundEditPrompt": "Opisz edycję...",
+  "imagesPlaygroundAddImage": "Dodaj obraz",
+  "imagesPlaygroundRemoveSource": "Usuń obraz",
+  "imagesPlaygroundRun": "Uruchom",
+  "imagesPlaygroundRunning": "Uruchamianie...",
+  "imagesPlaygroundEmpty": "Wygenerowane obrazy pojawią się tutaj.",
+  "imagesPlaygroundFailed": "Żądanie obrazu nie powiodło się.",
+  "imagesPlaygroundPickFailed": "Nie udało się odczytać zdjęcia.",
+  "imagesPlaygroundPromptRequired": "Wpisz prompt.",
+  "noteOpenChat": "Otwórz czat notatki",
+  "noteOpenChatFailed": "Nie udało się otworzyć czatu notatki"
 }

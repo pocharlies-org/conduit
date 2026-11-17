@@ -4854,5 +4854,20 @@
   "accountsSwitchStopsReply": "アカウントを切り替えると停止します。",
   "accountsSignOutStopsReply": "サインアウトすると停止します。",
   "accountsSwitchAnyway": "それでも切り替える",
-  "accountsSignOutAnyway": "それでもサインアウト"
+  "accountsSignOutAnyway": "それでもサインアウト",
+  "imagesPlaygroundTitle": "画像",
+  "imagesPlaygroundHint": "画像を説明して作成するか、写真を追加して変更を説明します。",
+  "imagesPlaygroundUnavailable": "このアカウントでは画像の作成と編集を利用できません。",
+  "imagesPlaygroundPrompt": "画像を説明...",
+  "imagesPlaygroundEditPrompt": "編集内容を説明...",
+  "imagesPlaygroundAddImage": "画像を追加",
+  "imagesPlaygroundRemoveSource": "画像を削除",
+  "imagesPlaygroundRun": "実行",
+  "imagesPlaygroundRunning": "実行中...",
+  "imagesPlaygroundEmpty": "生成された画像はここに表示されます。",
+  "imagesPlaygroundFailed": "画像リクエストに失敗しました。",
+  "imagesPlaygroundPickFailed": "写真を読み込めませんでした。",
+  "imagesPlaygroundPromptRequired": "プロンプトを入力してください。",
+  "noteOpenChat": "ノートのチャットを開く",
+  "noteOpenChatFailed": "ノートのチャットを開けませんでした"
 }

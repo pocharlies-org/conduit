@@ -39,6 +39,7 @@ import '../../features/automations/views/scheduled_task_detail_page.dart';
 import '../../features/automations/views/scheduled_task_editor_page.dart';
 import '../../features/automations/views/scheduled_tasks_page.dart';
 import '../../features/calendar/views/calendar_page.dart';
+import '../../features/images/views/image_playground_page.dart';
 import '../../features/profile/views/chat_data_controls_page.dart';
 
 import 'package:conduit_core/features/integrations/personal_connection_settings.dart';
@@ -323,6 +324,14 @@ final goRouterProvider = Provider<GoRouter>((ref) {
       name: RouteNames.calendar,
       pageBuilder: (context, state) =>
           _buildPlatformPage(state: state, child: const CalendarPage()),
+    ),
+    GoRoute(
+      path: Routes.images,
+      name: RouteNames.images,
+      pageBuilder: (context, state) => _buildPlatformPage(
+        state: state,
+        child: const ImagePlaygroundPage(),
+      ),
     ),
     GoRoute(
       path: Routes.about,

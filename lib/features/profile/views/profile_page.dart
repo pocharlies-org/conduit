@@ -305,6 +305,8 @@ class ProfilePage extends ConsumerWidget {
     final canManageWorkspace = canManageAnyWorkspaceSection(ref);
     // The calendar is there whenever the server and account allow it.
     final showCalendar = ref.watch(calendarAvailableProvider);
+    // The Images playground is the server's admin page, as in the web UI.
+    final showImages = ref.watch(imagesPlaygroundAvailableProvider);
     // Personal connections need the Advanced disclosure and the server's own
     // rule for who may keep them; either one missing hides the entry.
     final showPersonalConnections = ref.watch(
@@ -406,6 +408,17 @@ class ProfilePage extends ConsumerWidget {
           ),
           title: l10n.calendarTitle,
           onTap: () => context.pushNamed(RouteNames.calendar),
+        ),
+      if (showImages)
+        _buildAccountOption(
+          context,
+          key: const Key('images-entry'),
+          icon: UiUtils.platformIcon(
+            ios: CupertinoIcons.photo,
+            android: Icons.image_outlined,
+          ),
+          title: l10n.imagesPlaygroundTitle,
+          onTap: () => context.pushNamed(RouteNames.images),
         ),
       if (canManageWorkspace)
         _buildAccountOption(

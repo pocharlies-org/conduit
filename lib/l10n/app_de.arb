@@ -3658,5 +3658,20 @@
   "accountsSwitchStopsReply": "Ein Kontowechsel bricht sie ab.",
   "accountsSignOutStopsReply": "Das Abmelden bricht sie ab.",
   "accountsSwitchAnyway": "Trotzdem wechseln",
-  "accountsSignOutAnyway": "Trotzdem abmelden"
+  "accountsSignOutAnyway": "Trotzdem abmelden",
+  "imagesPlaygroundTitle": "Bilder",
+  "imagesPlaygroundHint": "Beschreibe ein Bild, um es zu erstellen, oder füge ein Foto hinzu und beschreibe die Änderung.",
+  "imagesPlaygroundUnavailable": "Das Erstellen und Bearbeiten von Bildern ist für dieses Konto nicht verfügbar.",
+  "imagesPlaygroundPrompt": "Beschreibe das Bild...",
+  "imagesPlaygroundEditPrompt": "Beschreibe die Bearbeitung...",
+  "imagesPlaygroundAddImage": "Bild hinzufügen",
+  "imagesPlaygroundRemoveSource": "Bild entfernen",
+  "imagesPlaygroundRun": "Ausführen",
+  "imagesPlaygroundRunning": "Wird ausgeführt...",
+  "imagesPlaygroundEmpty": "Generierte Bilder erscheinen hier.",
+  "imagesPlaygroundFailed": "Die Bildanfrage ist fehlgeschlagen.",
+  "imagesPlaygroundPickFailed": "Das Foto konnte nicht gelesen werden.",
+  "imagesPlaygroundPromptRequired": "Gib einen Prompt ein.",
+  "noteOpenChat": "Notiz-Chat öffnen",
+  "noteOpenChatFailed": "Der Notiz-Chat konnte nicht geöffnet werden"
 }

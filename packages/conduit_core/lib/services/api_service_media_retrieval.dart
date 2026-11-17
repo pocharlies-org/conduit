@@ -121,40 +121,80 @@ mixin _MediaRetrievalApi on _ApiServiceBase {
     return [];
   }
 
-  Future<dynamic> generateImage({
+  /// Creates images from [prompt] and returns the files the server stored,
+  /// each with its `id`, `url` and `content_type`.
+  Future<List<Map<String, dynamic>>> generateImage({
     required String prompt,
     String? model,
     String? size,
     int? n,
     int? steps,
     String? negativePrompt,
-  }) async {
+  }) {
     final promptPreview = prompt.length > 50 ? prompt.substring(0, 50) : prompt;
     _traceApi('Generating image with prompt: $promptPreview...');
-    try {
-      final data = <String, dynamic>{'prompt': prompt};
-      if (model != null) data['model'] = model;
-      if (size != null) data['size'] = size;
-      if (n != null) data['n'] = n;
-      if (steps != null) data['steps'] = steps;
-      if (negativePrompt != null) {
-        data['negative_prompt'] = negativePrompt;
-      }
+    return _postImages('/api/v1/images/generations', {
+      'prompt': prompt,
+      'model': ?model,
+      'size': ?size,
+      'n': ?n,
+      'steps': ?steps,
+      'negative_prompt': ?negativePrompt,
+    }, debugLabel: 'parse_image_generation');
+  }
 
-      final response = await _dio.post(
-        '/api/v1/images/generations',
-        data: data,
-      );
-      return response.data;
+  /// Edits [images] (data URLs or URLs) following [prompt], the way Open
+  /// WebUI's Images playground does. Returns the files the server stored.
+  Future<List<Map<String, dynamic>>> editImage({
+    required List<String> images,
+    required String prompt,
+    String? model,
+    String? size,
+    int? n,
+    String? negativePrompt,
+  }) {
+    if (images.isEmpty) {
+      throw ArgumentError('images cannot be empty for an edit');
+    }
+    _traceApi('Editing ${images.length} image(s)');
+    return _postImages('/api/v1/images/edit', {
+      'image': images.length == 1 ? images.first : images,
+      'prompt': prompt,
+      'model': ?model,
+      'size': ?size,
+      'n': ?n,
+      'negative_prompt': ?negativePrompt,
+    }, debugLabel: 'parse_image_edit');
+  }
+
+  /// Posts an image request and normalizes the answer to a list of images.
+  ///
+  /// A failed request is surfaced (403 when the server has image generation
+  /// off), never retried against another endpoint.
+  Future<List<Map<String, dynamic>>> _postImages(
+    String path,
+    Map<String, dynamic> body, {
+    required String debugLabel,
+  }) async {
+    try {
+      final response = await _dio.post(path, data: body);
+      final payload = response.data;
+      // The server answers with the file maps; older builds wrapped them.
+      final raw = payload is List
+          ? payload
+          : (payload is Map ? payload['images'] : null);
+      if (raw is! List) {
+        throw FormatException('$debugLabel: expected a list of images');
+      }
+      return await _normalizeList(raw, debugLabel: debugLabel);
     } on DioException catch (e) {
-      _traceApi('images/generations failed: ${e.response?.statusCode}');
+      _traceApi('$path failed: ${e.response?.statusCode}');
       DebugLogger.error(
-        'images-generate-failed',
+        'images-request-failed',
         scope: 'api/images',
         error: e,
-        data: {'status': e.response?.statusCode},
+        data: {'path': path, 'status': e.response?.statusCode},
       );
-      // Do not attempt singular fallback here - surface the original error
       rethrow;
     }
   }

@@ -5103,5 +5103,20 @@
   "accountsSwitchStopsReply": "Přepnutí účtu ji zastaví.",
   "accountsSignOutStopsReply": "Odhlášení ji zastaví.",
   "accountsSwitchAnyway": "Přesto přepnout",
-  "accountsSignOutAnyway": "Přesto se odhlásit"
+  "accountsSignOutAnyway": "Přesto se odhlásit",
+  "imagesPlaygroundTitle": "Obrázky",
+  "imagesPlaygroundHint": "Popište obrázek, abyste ho vytvořili, nebo přidejte fotografii a popište změnu.",
+  "imagesPlaygroundUnavailable": "Vytváření a úpravy obrázků nejsou pro tento účet dostupné.",
+  "imagesPlaygroundPrompt": "Popište obrázek...",
+  "imagesPlaygroundEditPrompt": "Popište úpravu...",
+  "imagesPlaygroundAddImage": "Přidat obrázek",
+  "imagesPlaygroundRemoveSource": "Odebrat obrázek",
+  "imagesPlaygroundRun": "Spustit",
+  "imagesPlaygroundRunning": "Spouští se...",
+  "imagesPlaygroundEmpty": "Vygenerované obrázky se zobrazí zde.",
+  "imagesPlaygroundFailed": "Požadavek na obrázek selhal.",
+  "imagesPlaygroundPickFailed": "Fotografii se nepodařilo načíst.",
+  "imagesPlaygroundPromptRequired": "Zadejte prompt.",
+  "noteOpenChat": "Otevřít chat poznámky",
+  "noteOpenChatFailed": "Chat poznámky se nepodařilo otevřít"
 }
