@@ -186,7 +186,7 @@ mixin _MediaRetrievalApi on _ApiServiceBase {
       if (raw is! List) {
         throw FormatException('$debugLabel: expected a list of images');
       }
-      return _normalizeList(raw, debugLabel: debugLabel);
+      return await _normalizeList(raw, debugLabel: debugLabel);
     } on DioException catch (e) {
       _traceApi('$path failed: ${e.response?.statusCode}');
       DebugLogger.error(

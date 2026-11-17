@@ -179,7 +179,7 @@ class _ImagePlaygroundState extends ConsumerState<_ImagePlayground> {
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
-    final tokens = context.conduitTheme;
+    final tokens = context.colorTokens;
     final editing = _sources.isNotEmpty;
 
     return UtilityPageScaffold.settings(

@@ -108,6 +108,15 @@ class _QueuedFakeAdapter implements HttpClientAdapter {
   void close({bool force = false}) {}
 }
 
+/// A fake adapter answering with a JSON array, which [_FakeAdapter.json]
+/// cannot express because it only takes a map body.
+_FakeAdapter _jsonListAdapter(List<Object?> body) => _FakeAdapter.raw(
+  bytes: utf8.encode(jsonEncode(body)),
+  headers: {
+    'content-type': ['application/json'],
+  },
+);
+
 /// Runs [beforeEach] as each request reaches the server, before it answers, so
 /// a test can change the session while a request is in flight.
 class _HookedAdapter implements HttpClientAdapter {
@@ -2067,7 +2076,7 @@ void main() {
     });
 
     test('returns the stored image files', () async {
-      final adapter = _FakeAdapter.json([
+      final adapter = _jsonListAdapter([
         {'id': 'file-1', 'url': '/api/v1/files/file-1/content'},
       ]);
       final api = _buildApiServiceForTest(adapter);
@@ -2080,7 +2089,7 @@ void main() {
 
   group('editImage', () {
     test('sends one image as a string and the prompt to /images/edit', () async {
-      final adapter = _FakeAdapter.json([
+      final adapter = _jsonListAdapter([
         {'id': 'file-2', 'url': '/api/v1/files/file-2/content'},
       ]);
       final api = _buildApiServiceForTest(adapter);
@@ -2100,7 +2109,7 @@ void main() {
     });
 
     test('sends several images as a list', () async {
-      final adapter = _FakeAdapter.json([
+      final adapter = _jsonListAdapter([
         {'id': 'file-3'},
       ]);
       final api = _buildApiServiceForTest(adapter);
@@ -2132,7 +2141,7 @@ void main() {
     });
 
     test('rejects an empty image list before any request', () async {
-      final adapter = _FakeAdapter.json([]);
+      final adapter = _jsonListAdapter(const []);
       final api = _buildApiServiceForTest(adapter);
 
       expect(
