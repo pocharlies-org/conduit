@@ -3658,5 +3658,18 @@
   "accountsSwitchStopsReply": "Als je van account wisselt, wordt het gestopt.",
   "accountsSignOutStopsReply": "Als je uitlogt, wordt het gestopt.",
   "accountsSwitchAnyway": "Toch wisselen",
-  "accountsSignOutAnyway": "Toch uitloggen"
+  "accountsSignOutAnyway": "Toch uitloggen",
+  "imagesPlaygroundTitle": "Afbeeldingen",
+  "imagesPlaygroundHint": "Beschrijf een afbeelding om die te maken, of voeg een foto toe en beschrijf de wijziging.",
+  "imagesPlaygroundUnavailable": "Afbeeldingen maken en bewerken is niet beschikbaar voor dit account.",
+  "imagesPlaygroundPrompt": "Beschrijf de afbeelding...",
+  "imagesPlaygroundEditPrompt": "Beschrijf de bewerking...",
+  "imagesPlaygroundAddImage": "Afbeelding toevoegen",
+  "imagesPlaygroundRemoveSource": "Afbeelding verwijderen",
+  "imagesPlaygroundRun": "Uitvoeren",
+  "imagesPlaygroundRunning": "Bezig...",
+  "imagesPlaygroundEmpty": "Gegenereerde afbeeldingen verschijnen hier.",
+  "imagesPlaygroundFailed": "De afbeeldingsaanvraag is mislukt.",
+  "imagesPlaygroundPickFailed": "De foto kon niet worden gelezen.",
+  "imagesPlaygroundPromptRequired": "Voer een prompt in."
 }

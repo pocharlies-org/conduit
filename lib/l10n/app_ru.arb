@@ -3658,5 +3658,18 @@
   "accountsSwitchStopsReply": "Переключение аккаунта остановит его.",
   "accountsSignOutStopsReply": "Выход остановит его.",
   "accountsSwitchAnyway": "Всё равно переключиться",
-  "accountsSignOutAnyway": "Всё равно выйти"
+  "accountsSignOutAnyway": "Всё равно выйти",
+  "imagesPlaygroundTitle": "Изображения",
+  "imagesPlaygroundHint": "Опишите изображение, чтобы создать его, или добавьте фото и опишите изменение.",
+  "imagesPlaygroundUnavailable": "Создание и редактирование изображений недоступны для этой учётной записи.",
+  "imagesPlaygroundPrompt": "Опишите изображение...",
+  "imagesPlaygroundEditPrompt": "Опишите изменение...",
+  "imagesPlaygroundAddImage": "Добавить изображение",
+  "imagesPlaygroundRemoveSource": "Удалить изображение",
+  "imagesPlaygroundRun": "Запустить",
+  "imagesPlaygroundRunning": "Выполняется...",
+  "imagesPlaygroundEmpty": "Сгенерированные изображения появятся здесь.",
+  "imagesPlaygroundFailed": "Запрос изображения не удался.",
+  "imagesPlaygroundPickFailed": "Не удалось прочитать фото.",
+  "imagesPlaygroundPromptRequired": "Введите промпт."
 }

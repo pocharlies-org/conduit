@@ -5103,5 +5103,18 @@
   "accountsSwitchStopsReply": "Prepnutie účtu ju zastaví.",
   "accountsSignOutStopsReply": "Odhlásenie ju zastaví.",
   "accountsSwitchAnyway": "Napriek tomu prepnúť",
-  "accountsSignOutAnyway": "Napriek tomu sa odhlásiť"
+  "accountsSignOutAnyway": "Napriek tomu sa odhlásiť",
+  "imagesPlaygroundTitle": "Obrázky",
+  "imagesPlaygroundHint": "Opíšte obrázok, aby sa vytvoril, alebo pridajte fotografiu a opíšte zmenu.",
+  "imagesPlaygroundUnavailable": "Vytváranie a úprava obrázkov nie sú pre tento účet dostupné.",
+  "imagesPlaygroundPrompt": "Opíšte obrázok...",
+  "imagesPlaygroundEditPrompt": "Opíšte úpravu...",
+  "imagesPlaygroundAddImage": "Pridať obrázok",
+  "imagesPlaygroundRemoveSource": "Odstrániť obrázok",
+  "imagesPlaygroundRun": "Spustiť",
+  "imagesPlaygroundRunning": "Spúšťa sa...",
+  "imagesPlaygroundEmpty": "Vygenerované obrázky sa zobrazia tu.",
+  "imagesPlaygroundFailed": "Požiadavka na obrázok zlyhala.",
+  "imagesPlaygroundPickFailed": "Fotografiu sa nepodarilo prečítať.",
+  "imagesPlaygroundPromptRequired": "Zadajte prompt."
 }

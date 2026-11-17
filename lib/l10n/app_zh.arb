@@ -3658,5 +3658,18 @@
   "accountsSwitchStopsReply": "切换账户会停止该回复。",
   "accountsSignOutStopsReply": "退出登录会停止该回复。",
   "accountsSwitchAnyway": "仍然切换",
-  "accountsSignOutAnyway": "仍然退出登录"
+  "accountsSignOutAnyway": "仍然退出登录",
+  "imagesPlaygroundTitle": "图片",
+  "imagesPlaygroundHint": "描述一张图片来生成它，或添加照片并描述修改。",
+  "imagesPlaygroundUnavailable": "此账户无法创建和编辑图片。",
+  "imagesPlaygroundPrompt": "描述图片...",
+  "imagesPlaygroundEditPrompt": "描述修改...",
+  "imagesPlaygroundAddImage": "添加图片",
+  "imagesPlaygroundRemoveSource": "移除图片",
+  "imagesPlaygroundRun": "运行",
+  "imagesPlaygroundRunning": "运行中...",
+  "imagesPlaygroundEmpty": "生成的图片将显示在这里。",
+  "imagesPlaygroundFailed": "图片请求失败。",
+  "imagesPlaygroundPickFailed": "无法读取照片。",
+  "imagesPlaygroundPromptRequired": "请输入提示词。"
 }

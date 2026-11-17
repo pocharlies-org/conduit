@@ -3658,5 +3658,18 @@
   "accountsSwitchStopsReply": "Se cambi account, verrà interrotta.",
   "accountsSignOutStopsReply": "Se esci, verrà interrotta.",
   "accountsSwitchAnyway": "Cambia comunque",
-  "accountsSignOutAnyway": "Esci comunque"
+  "accountsSignOutAnyway": "Esci comunque",
+  "imagesPlaygroundTitle": "Immagini",
+  "imagesPlaygroundHint": "Descrivi un'immagine per crearla, oppure aggiungi una foto e descrivi la modifica.",
+  "imagesPlaygroundUnavailable": "La creazione e la modifica di immagini non sono disponibili per questo account.",
+  "imagesPlaygroundPrompt": "Descrivi l'immagine...",
+  "imagesPlaygroundEditPrompt": "Descrivi la modifica...",
+  "imagesPlaygroundAddImage": "Aggiungi immagine",
+  "imagesPlaygroundRemoveSource": "Rimuovi immagine",
+  "imagesPlaygroundRun": "Esegui",
+  "imagesPlaygroundRunning": "Esecuzione...",
+  "imagesPlaygroundEmpty": "Le immagini generate appariranno qui.",
+  "imagesPlaygroundFailed": "La richiesta dell'immagine non è riuscita.",
+  "imagesPlaygroundPickFailed": "Non è stato possibile leggere la foto.",
+  "imagesPlaygroundPromptRequired": "Inserisci un prompt."
 }

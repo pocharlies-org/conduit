@@ -3658,5 +3658,18 @@
   "accountsSwitchStopsReply": "切換帳戶會停止該回覆。",
   "accountsSignOutStopsReply": "登出會停止該回覆。",
   "accountsSwitchAnyway": "仍要切換",
-  "accountsSignOutAnyway": "仍要登出"
+  "accountsSignOutAnyway": "仍要登出",
+  "imagesPlaygroundTitle": "圖片",
+  "imagesPlaygroundHint": "描述一張圖片來生成它，或新增照片並描述修改。",
+  "imagesPlaygroundUnavailable": "此帳戶無法建立和編輯圖片。",
+  "imagesPlaygroundPrompt": "描述圖片...",
+  "imagesPlaygroundEditPrompt": "描述修改...",
+  "imagesPlaygroundAddImage": "新增圖片",
+  "imagesPlaygroundRemoveSource": "移除圖片",
+  "imagesPlaygroundRun": "執行",
+  "imagesPlaygroundRunning": "執行中...",
+  "imagesPlaygroundEmpty": "生成的圖片將顯示在這裡。",
+  "imagesPlaygroundFailed": "圖片請求失敗。",
+  "imagesPlaygroundPickFailed": "無法讀取照片。",
+  "imagesPlaygroundPromptRequired": "請輸入提示詞。"
 }

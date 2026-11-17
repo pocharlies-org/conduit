@@ -7524,7 +7524,7 @@
   "@imagesPlaygroundHint": {
     "description": "Explains what the Images playground does, above the prompt."
   },
-  "imagesPlaygroundUnavailable": "The Images playground is not available for this account.",
+  "imagesPlaygroundUnavailable": "Creating and editing images is not available for this account.",
   "@imagesPlaygroundUnavailable": {
     "description": "Shown when the account is not an admin or the server has image generation off."
   },
