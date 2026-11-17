@@ -15,16 +15,17 @@ import 'package:image_picker/image_picker.dart';
 import 'package:material_ui/material_ui.dart';
 import 'package:share_plus/share_plus.dart';
 
-/// Open WebUI's Images playground: create an image from a prompt, or pick
-/// source images and describe the change. Results stay in the page until the
-/// user shares them, which is how the web keeps its own in-memory grid.
+/// Open WebUI's Images playground — an admin page in the web UI: create an
+/// image from a prompt, or pick source images and describe the change. Results
+/// stay in the page until the user shares them, as the web keeps its own grid
+/// in memory too.
 class ImagePlaygroundPage extends ConsumerWidget {
   const ImagePlaygroundPage({super.key});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final l10n = AppLocalizations.of(context)!;
-    if (!ref.watch(imageGenerationAvailableProvider)) {
+    if (!ref.watch(imagesPlaygroundAvailableProvider)) {
       return UtilityPageScaffold.settings(
         key: const Key('image-playground-unavailable'),
         title: l10n.imagesPlaygroundTitle,

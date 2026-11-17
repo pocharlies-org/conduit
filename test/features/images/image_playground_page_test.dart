@@ -84,7 +84,7 @@ Future<void> _pump(
   final container = ProviderContainer(
     overrides: [
       apiServiceProvider.overrideWithValue(api),
-      imageGenerationAvailableProvider.overrideWithValue(available),
+      imagesPlaygroundAvailableProvider.overrideWithValue(available),
     ],
   );
   addTearDown(container.dispose);

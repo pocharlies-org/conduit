@@ -305,8 +305,8 @@ class ProfilePage extends ConsumerWidget {
     final canManageWorkspace = canManageAnyWorkspaceSection(ref);
     // The calendar is there whenever the server and account allow it.
     final showCalendar = ref.watch(calendarAvailableProvider);
-    // The Images playground needs the server's image generation switch.
-    final showImages = ref.watch(imageGenerationAvailableProvider);
+    // The Images playground is the server's admin page, as in the web UI.
+    final showImages = ref.watch(imagesPlaygroundAvailableProvider);
     // Personal connections need the Advanced disclosure and the server's own
     // rule for who may keep them; either one missing hides the entry.
     final showPersonalConnections = ref.watch(

@@ -7524,9 +7524,9 @@
   "@imagesPlaygroundHint": {
     "description": "Explains what the Images playground does, above the prompt."
   },
-  "imagesPlaygroundUnavailable": "This server does not have image generation enabled.",
+  "imagesPlaygroundUnavailable": "The Images playground is not available for this account.",
   "@imagesPlaygroundUnavailable": {
-    "description": "Shown when the account or server does not allow image generation."
+    "description": "Shown when the account is not an admin or the server has image generation off."
   },
   "imagesPlaygroundPrompt": "Describe the image...",
   "@imagesPlaygroundPrompt": {

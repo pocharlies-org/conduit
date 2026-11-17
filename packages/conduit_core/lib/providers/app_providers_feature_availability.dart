@@ -227,6 +227,14 @@ final imageGenerationAvailableProvider = Provider<bool>((ref) {
   );
 });
 
+/// The Images playground, which Open WebUI's own page serves only to admins:
+/// everyone else is sent home. The app applies the same rule on top of the
+/// server's image generation switch.
+final imagesPlaygroundAvailableProvider = Provider<bool>((ref) {
+  return ref.watch(imageGenerationAvailableProvider) &&
+      ref.watch(currentUserProvider2)?.role == 'admin';
+});
+
 final webSearchAvailableProvider = Provider<bool>((ref) {
   final selectedModel = ref.watch(selectedModelProvider);
   if (!_modelSupportsFeature(selectedModel, 'web_search')) {

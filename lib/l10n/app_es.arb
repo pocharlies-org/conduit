@@ -3663,7 +3663,7 @@
   "accountsSignOutAnyway": "Cerrar sesión de todos modos",
   "imagesPlaygroundTitle": "Imágenes",
   "imagesPlaygroundHint": "Describe una imagen para crearla, o añade una foto y describe el cambio.",
-  "imagesPlaygroundUnavailable": "Este servidor no tiene activada la generación de imágenes.",
+  "imagesPlaygroundUnavailable": "El playground de imágenes no está disponible para esta cuenta.",
   "imagesPlaygroundPrompt": "Describe la imagen...",
   "imagesPlaygroundEditPrompt": "Describe la edición...",
   "imagesPlaygroundAddImage": "Añadir imagen",
