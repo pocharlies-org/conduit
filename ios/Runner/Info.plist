@@ -67,6 +67,16 @@
 				<string>$(APP_URL_SCHEME)</string>
 			</array>
 		</dict>
+		<dict>
+			<key>CFBundleTypeRole</key>
+			<string>Editor</string>
+			<key>CFBundleURLName</key>
+			<string>com.morenoibanez.chat.auth</string>
+			<key>CFBundleURLSchemes</key>
+			<array>
+				<string>com.morenoibanez.chat</string>
+			</array>
+		</dict>
 	</array>
 	<key>CFBundleVersion</key>
 	<string>$(FLUTTER_BUILD_NUMBER)</string>
