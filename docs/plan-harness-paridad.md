@@ -15,7 +15,7 @@ Lo que se compara y por qué, en `docs/paridad-openwebui.md` (superficie entera 
 | Pendiente | T3 a T15 de este documento: 13 PRs |
 | CI | **No corre en el fork** (`ci.yml` está guardado a `cogwheel0/conduit`): la PR enseña «no checks reported» y se fusiona con la evidencia de la sesión |
 | Compilar y probar | Solo en `mac-casa` (`ssh mbpro`), `export PATH="$HOME/flutter/bin:$PATH"`, Flutter 3.47.7 |
-| Validar en dispositivo | En el **iPhone de Dani** (`iPhone Charlies`, iPhone 16 Pro Max, UDID `00008140-000429142813C01C`): `flutter run -d 00008140-…` desde `mac-casa` para instalarlo, y el MCP `iphone` (mobile-mcp + WDA, LaunchAgent `com.e-dani.iphone-mcp`) para tocarlo. **Hoy el teléfono sale `unavailable`** en `devicectl list devices`: tiene que estar emparejado con `mac-casa` y despierto (cable, o la misma LAN con modo desarrollador inalámbrico). El simulador no sirve: el único runtime instalado es iOS 17.5 y `conduit` necesita ≥26 |
+| Validar en dispositivo | En el **iPhone de Dani** (`iPhone Charlies`, iPhone 16 Pro Max, UDID `00008140-000429142813C01C`): `flutter run -d 00008140-…` desde `mac-casa` para instalarlo, y el MCP `iphone` (mobile-mcp + WDA, LaunchAgent `com.e-dani.iphone-mcp`) para tocarlo. **El 18-11, 08:02 CET, sigue `unavailable`** en `devicectl list devices`: tiene que estar emparejado con `mac-casa` y despierto (cable, o la misma LAN con modo desarrollador inalámbrico). El simulador no sirve: el único runtime instalado es iOS 17.5 y `conduit` necesita ≥26 |
 | Tronco en rojo | `test/core/auth/api_auth_interceptor_test.dart` — 2 pruebas de «session renewal» fallan en `main` desde antes de la T2 |
 | Textos | Toda clave nueva va en **los trece** `lib/l10n/app_*.arb`; `polish_localization_test` compara `app_en` con `app_pl` y pone el tronco en rojo si falta una (pasó en T1) |
 
@@ -79,6 +79,11 @@ puede, no es un fallo de la app y no se anota como tal.
 
 Esto se hace una vez, antes de lanzar S0, T3, T5 y T6, y se repite al principio de cada tanda si el teléfono
 se ha ido.
+
+**Estado el 18-11-2026, 08:02 CET**: la ola 1 está creada (`OWU-139`–`OWU-142`) pero **retenida**. Desde
+`mac-casa`, `xcrun devicectl list devices` sigue dando `unavailable` para `iPhone Charlies`
+(`00008140-000429142813C01C`), igual que el 17-11. Ninguna sesión de la ola 1 puede empezar el recorrido en el
+teléfono hasta que salga `available`; `OWU-139` no lo necesita (es de pruebas) y puede ir sola.
 
 **a) Que `mac-casa` lo vea**
 
