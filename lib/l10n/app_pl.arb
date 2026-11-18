@@ -882,6 +882,14 @@
   "failedToExportFolder": "Nie udało się wyeksportować folderu",
   "folderExportEmpty": "Ten folder nie ma czatów do wyeksportowania",
   "deleteFolderWithChatsMessage": "{count, plural, one{Ten folder i jego {count} czat zostaną usunięte.} few{Ten folder i jego {count} czaty zostaną usunięte.} many{Ten folder i jego {count} czatów zostanie usuniętych.} other{Ten folder i jego {count} czatu zostanie usuniętych.}}",
+  "@deleteFolderWithChatsMessage": {
+    "description": "Warning that deleting a folder also deletes the chats inside it.",
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
   "@failedToDeleteFolder": {
     "description": "Error notice when deleting a folder fails."
   },
