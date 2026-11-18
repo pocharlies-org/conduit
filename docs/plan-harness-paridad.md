@@ -374,6 +374,22 @@ Dos sesiones como máximo a la vez: `mac-casa` compila y prueba en serie, y dos 
 mismo `build_runner` dan falsos rojos. Ola 1 admite dos en paralelo (T3 + T6) porque no comparten ficheros;
 T5 toca el chat y va sola.
 
+### 3.5 Tickets creados (18-11-2026)
+
+Todas son `Task` en `OWU`, con `compania, en-vivo`, asignadas a Dani, In Progress y enlazadas con
+`Relates OWU-134`.
+
+| Clave | Tanda | Título | Brief de la sesión (cuatro líneas) |
+|---|---|---|---|
+| `OWU-139` | S0 | Devolver el tronco a verde: las dos pruebas de `api_auth_interceptor_test` | Deja en verde `test/core/auth/api_auth_interceptor_test.dart` en `main`. No toques la paridad ni nada más: lo que aparezca fuera es otra historia. Éxito = esa prueba y la suite completa sin fallos, con la causa escrita en la PR. Cuando termines, informa y para. |
+| `OWU-140` | T3 | Carpetas: marcar leída, exportar a JSON y borrar con su contenido | Lleva a la app lo que la web hace con una carpeta: marcar leída, exportar a JSON y borrar con su contenido. No toques ninguna otra tanda. Éxito = los tres criterios recorridos en el iPhone con captura en la PR. Cuando termines, informa y para. |
+| `OWU-141` | T5 | Valorar una respuesta y etiquetas de chat con su filtro | Añade valorar una respuesta y las etiquetas de chat con su filtro, como en la web. No toques el buscador ni las carpetas. Éxito = los tres criterios recorridos en el iPhone con captura en la PR. Cuando termines, informa y para. |
+| `OWU-142` | T6 | Buscador global: chats, mensajes, notas y canales | Añade el buscador global sobre `/api/v1/search`, agrupado y con filtros. No toques ninguna otra tanda. Éxito = los tres criterios recorridos en el iPhone con captura en la PR. Cuando termines, informa y para. |
+
+**Sin ticket todavía** (se abren al entrar en su ola, no antes): **T4**, **T7a**, **T7b**, **T8**, **T9**,
+**T10**, **T11**, **T12**, **T13**, **T14** y **T15**. Son las once restantes; su ficha está en la sección 2
+y no hace falta nada más para crearlas.
+
 ## 4. Cómo se lanza, paso a paso
 
 1. **Crear la historia** de la tanda en Jira, proyecto `OWU`, tipo `Task`:
