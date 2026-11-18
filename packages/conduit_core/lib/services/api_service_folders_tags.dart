@@ -174,11 +174,6 @@ mixin _FoldersTagsApi on _ApiServiceBase {
     );
   }
 
-  Future<void> deleteFolder(String id) async {
-    _traceApi('Deleting folder: $id');
-    await _dio.delete('/api/v1/folders/$id');
-  }
-
   /// POST `/api/v1/folders/{id}/read` — marks every chat in the folder's
   /// subtree read for this account (`routers/folders.py:mark_folder_chats_read_by_id`).
   /// Answers with `{folder_id, folder_ids, updated_count, folder_unread_counts}`,
