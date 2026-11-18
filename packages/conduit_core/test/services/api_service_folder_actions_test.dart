@@ -27,7 +27,8 @@ void main() {
 
     check(adapter.requests).deepEquals(['POST /api/v1/folders/f1/read']);
     check(body?['updated_count']).equals(3);
-    check((body?['folder_ids'] as List?)?.cast<String>()).deepEquals(['f1', 'f2']);
+    final folderIds = (body!['folder_ids'] as List).cast<String>();
+    check(folderIds).deepEquals(['f1', 'f2']);
   });
 
   test('markFolderRead answers null when the body is not a map', () async {
