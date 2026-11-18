@@ -6,7 +6,7 @@ import 'package:conduit/shared/widgets/conduit_components.dart';
 import 'package:conduit/shared/widgets/sheet_handle.dart';
 import 'package:conduit/shared/widgets/themed_dialogs.dart';
 import 'package:conduit/shared/widgets/themed_sheets.dart';
-import 'package:cupertino_ui/cupertino_ui.dart';
+import 'package:conduit/shared/widgets/platform_ui/vocabulary.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../providers/sidebar_tag_providers.dart';
