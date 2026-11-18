@@ -106,7 +106,7 @@ parecía a primera vista: el hueco real es corto y está concentrado.
 
 | Área de la web | En la app | Qué falta |
 |---|---|---|
-| Barra lateral | Drawer con pestañas Chats/Notas/Canales, fijados, archivados, árbol de carpetas, píldora de usuario | **Buscador global** (`GET /api/v1/search`): la app solo busca chats. Previsualización al pasar (es de escritorio) |
+| Barra lateral | Drawer con pestañas Chats/Notas/Canales, fijados, archivados, árbol de carpetas, píldora de usuario y **buscador global** (`GET /api/v1/search`: chats, mensajes de canal y notas agrupados por tipo, con filtro de tipo) | Previsualización al pasar (es de escritorio) |
 | Carpetas | Crear, renombrar, mover, marcar leída, exportar JSON, borrar con su contenido, anidar (subcarpetas en `/folder/:id`), mover un chat a carpeta, abrir compartidas, y ajustes de proyecto (prompt, conocimiento y modelos de la carpeta) | — |
 | Chat · entrada | Adjuntos (fichero, fotos, cámara, página web, YouTube, ficheros del servidor), dictado y modo voz, comandos `/ # @ $`, selector de modelo con fijar y esfuerzo, cola de borradores, válvulas personales, comparar dos modelos con fusionar | Panel Controls con pestañas y Artifacts |
 | Chat · mensajes | Ramas y paginador de versiones, editar, copiar, reintentar, continuar, bifurcar, escuchar/detener TTS, borrar, fuentes, ejecución de código, aprobar/denegar herramientas, uso de tokens, **valorar** con pulgar y motivo (`annotation` + evaluación, como `RateComment.svelte`) | — |
@@ -137,7 +137,7 @@ llamada existe. Orden por valor de uso en el móvil, no por tamaño del endpoint
 | T3 | **Carpetas**: marcar leída, exportar JSON y borrar con contenido | `POST /folders/{id}/read`, `GET /chats/folder/{id}`, `DELETE /folders/{id}?delete_contents=` | OWU-140 |
 | T4 | **Conectores**: paridad fina de servidores de herramientas y terminales, incluido OAuth de MCP y prueba de conexión | `GET/POST /api/v1/tools/*`, `GET /api/v1/terminals`, OAuth del tool server | pendiente |
 | T5 | **Valorar respuestas** (pulgar y motivo) y **etiquetas de chat** (poner, quitar, filtrar la lista por etiqueta) | `POST /api/v1/evaluations/feedback`, `/api/v1/chats/{id}/tags`, `GET /api/v1/chats/all/tags` | `OWU-141` |
-| T6 | **Buscador global** con tipos (chats, mensajes, notas) y filtros | `GET /api/v1/search` | pendiente |
+| T6 | **Buscador global** con tipos (chats, mensajes, notas) y filtros | `GET /api/v1/search` | `OWU-142` |
 | T7 | **Ajustes que faltan**: variables de usuario, atajos, uso, API key y MFA | `users/user/variables`, `users/user/settings/update` (`keybindings`), `GET /users/usage`, `/auths/api_key`, `/auths/mfa/*` | pendiente |
 | T8 | **Ficheros**: gestor con borrado y estado de procesado para RAG | `GET /files/`, `DELETE /files/{id}`, `GET /files/{id}/process/status` | pendiente |
 | T9 | **Espacio de trabajo fino**: etiquetas de prompts como filtro, sincronizar directorio, importar skills por carpeta o URL, exportar ZIP | `GET /prompts/tags`, `/knowledge/{id}/sync/*`, `/skills/import`, `/skills/export` | pendiente |
