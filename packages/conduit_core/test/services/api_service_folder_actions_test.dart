@@ -42,7 +42,11 @@ void main() {
   test('getFolderChats reads the folder chats route, id encoded', () async {
     final adapter = _RecordingAdapter({
       'GET /api/v1/chats/folder/f%201': [
-        {'id': 'c1', 'title': 'One', 'chat': {'messages': []}},
+        {
+          'id': 'c1',
+          'title': 'One',
+          'chat': {'messages': []},
+        },
         {'id': 'c2', 'title': 'Two'},
       ],
     });
@@ -75,7 +79,11 @@ class _RecordingAdapter implements HttpClientAdapter {
     if (body == null) {
       return ResponseBody.fromString('{}', 404, headers: _jsonHeaders);
     }
-    return ResponseBody.fromString(jsonEncode(body), 200, headers: _jsonHeaders);
+    return ResponseBody.fromString(
+      jsonEncode(body),
+      200,
+      headers: _jsonHeaders,
+    );
   }
 
   static const _jsonHeaders = {
