@@ -38,7 +38,9 @@ void main() {
     final tags = await api.addChatTag('c1', 'work');
 
     check(adapter.requests).deepEquals(['POST /api/v1/chats/c1/tags']);
-    check(adapter.bodies.single).deepEquals({'name': 'work'});
+    check(adapter.bodies.single as Map<String, dynamic>).deepEquals({
+      'name': 'work',
+    });
     check(tags.map((t) => t['name'])).deepEquals(['work']);
   });
 
@@ -51,7 +53,9 @@ void main() {
     final tags = await api.removeChatTag('c1', 'work');
 
     check(adapter.requests).deepEquals(['DELETE /api/v1/chats/c1/tags']);
-    check(adapter.bodies.single).deepEquals({'name': 'work'});
+    check(adapter.bodies.single as Map<String, dynamic>).deepEquals({
+      'name': 'work',
+    });
     check(tags).isEmpty();
   });
 
@@ -65,7 +69,7 @@ void main() {
 
     final chats = await api.getChatsByTag('work', limit: 20);
 
-    check(adapter.bodies.single).deepEquals({
+    check(adapter.bodies.single as Map<String, dynamic>).deepEquals({
       'name': 'work',
       'skip': 0,
       'limit': 20,
