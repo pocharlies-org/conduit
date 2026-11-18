@@ -3135,6 +3135,16 @@
     }
   },
   "rateLimitRetrySoon": "Pred ďalším pokusom chvíľu počkajte.",
+  "rateResponseUp": "Ohodnotiť odpoveď kladne",
+  "rateResponseDown": "Ohodnotiť odpoveď záporne",
+  "rateCommentsTitle": "Ohodnotiť odpoveď",
+  "rateCommentHint": "Pridať komentár (voliteľné)",
+  "failedToRateResponse": "Hodnotenie sa nepodarilo uložiť",
+  "chatTagsTitle": "Štítky",
+  "chatTagsEmpty": "Tento chat nemá žiadne štítky",
+  "chatTagHint": "Nový štítok",
+  "chatTagSuggestions": "Tvoje štítky",
+  "failedToSaveChatTags": "Štítky sa nepodarilo uložiť",
   "@rateLimitRetrySoon": {
     "description": "Advice shown when a rate limit response does not include an exact retry delay."
   },

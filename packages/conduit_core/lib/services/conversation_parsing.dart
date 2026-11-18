@@ -607,6 +607,10 @@ Map<String, dynamic>? _extractOpenWebUiMessageMetadata(
   if (annotation is Map && annotation['rating'] is num) {
     metadata[kMessageRatingMetadataKey] = (annotation['rating'] as num).toInt();
   }
+  final comment = annotation is Map ? annotation['comment'] : null;
+  if (comment is String && comment.trim().isNotEmpty) {
+    metadata[kMessageRatingCommentMetadataKey] = comment.trim();
+  }
   final feedbackId = historyMsg?['feedbackId'] ?? msgData['feedbackId'];
   if (feedbackId is String && feedbackId.isNotEmpty) {
     metadata[kMessageFeedbackIdMetadataKey] = feedbackId;
@@ -661,6 +665,7 @@ Map<String, dynamic>? _extractMergedResponse(
 
 /// Where a message's rating lives in its metadata: 1, -1, or absent.
 const String kMessageRatingMetadataKey = 'rating';
+const String kMessageRatingCommentMetadataKey = 'ratingComment';
 
 /// The Open WebUI evaluation record a message's rating was filed under.
 const String kMessageFeedbackIdMetadataKey = 'feedbackId';

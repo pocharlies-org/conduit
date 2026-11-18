@@ -1467,6 +1467,16 @@
     }
   },
   "rateLimitRetrySoon": "잠시 후 다시 시도하세요.",
+  "rateResponseUp": "이 응답 좋게 평가",
+  "rateResponseDown": "이 응답 나쁘게 평가",
+  "rateCommentsTitle": "이 응답 평가",
+  "rateCommentHint": "댓글 추가(선택)",
+  "failedToRateResponse": "평가를 저장하지 못했습니다",
+  "chatTagsTitle": "태그",
+  "chatTagsEmpty": "이 채팅에는 태그가 없습니다",
+  "chatTagHint": "새 태그",
+  "chatTagSuggestions": "내 태그",
+  "failedToSaveChatTags": "태그를 저장하지 못했습니다",
   "@rateLimitRetrySoon": {
     "description": "Advice shown when a rate limit response does not include an exact retry delay."
   },

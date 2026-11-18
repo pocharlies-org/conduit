@@ -1682,6 +1682,16 @@
     }
   },
   "rateLimitRetrySoon": "Attendi un momento prima di riprovare.",
+  "rateResponseUp": "Valuta positivamente questa risposta",
+  "rateResponseDown": "Valuta negativamente questa risposta",
+  "rateCommentsTitle": "Valuta questa risposta",
+  "rateCommentHint": "Aggiungi un commento (facoltativo)",
+  "failedToRateResponse": "Impossibile salvare la valutazione",
+  "chatTagsTitle": "Etichette",
+  "chatTagsEmpty": "Questa chat non ha etichette",
+  "chatTagHint": "Nuova etichetta",
+  "chatTagSuggestions": "Le tue etichette",
+  "failedToSaveChatTags": "Impossibile salvare le etichette",
   "@rateLimitRetrySoon": {
     "description": "Advice shown when a rate limit response does not include an exact retry delay."
   },

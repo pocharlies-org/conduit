@@ -3375,6 +3375,16 @@
     }
   },
   "rateLimitRetrySoon": "Odczekaj chwilę przed ponowną próbą.",
+  "rateResponseUp": "Oceń tę odpowiedź pozytywnie",
+  "rateResponseDown": "Oceń tę odpowiedź negatywnie",
+  "rateCommentsTitle": "Oceń tę odpowiedź",
+  "rateCommentHint": "Dodaj komentarz (opcjonalnie)",
+  "failedToRateResponse": "Nie udało się zapisać oceny",
+  "chatTagsTitle": "Tagi",
+  "chatTagsEmpty": "Ten czat nie ma tagów",
+  "chatTagHint": "Nowy tag",
+  "chatTagSuggestions": "Twoje tagi",
+  "failedToSaveChatTags": "Nie udało się zapisać tagów",
   "@rateLimitRetrySoon": {
     "description": "Advice shown when a rate limit response does not include an exact retry delay."
   },

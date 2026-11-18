@@ -2886,6 +2886,16 @@
     }
   },
   "rateLimitRetrySoon": "しばらく待ってからもう一度お試しください。",
+  "rateResponseUp": "この回答を高く評価",
+  "rateResponseDown": "この回答を低く評価",
+  "rateCommentsTitle": "この回答を評価",
+  "rateCommentHint": "コメントを追加（任意）",
+  "failedToRateResponse": "評価を保存できませんでした",
+  "chatTagsTitle": "タグ",
+  "chatTagsEmpty": "このチャットにはタグがありません",
+  "chatTagHint": "新しいタグ",
+  "chatTagSuggestions": "あなたのタグ",
+  "failedToSaveChatTags": "タグを保存できませんでした",
   "@rateLimitRetrySoon": {
     "description": "Advice shown when a rate limit response does not include an exact retry delay."
   },

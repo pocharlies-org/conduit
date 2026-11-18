@@ -1682,6 +1682,16 @@
     }
   },
   "rateLimitRetrySoon": "Wacht even voordat je het opnieuw probeert.",
+  "rateResponseUp": "Dit antwoord positief beoordelen",
+  "rateResponseDown": "Dit antwoord negatief beoordelen",
+  "rateCommentsTitle": "Dit antwoord beoordelen",
+  "rateCommentHint": "Opmerking toevoegen (optioneel)",
+  "failedToRateResponse": "Beoordeling kon niet worden opgeslagen",
+  "chatTagsTitle": "Labels",
+  "chatTagsEmpty": "Deze chat heeft geen labels",
+  "chatTagHint": "Nieuw label",
+  "chatTagSuggestions": "Jouw labels",
+  "failedToSaveChatTags": "Labels konden niet worden opgeslagen",
   "@rateLimitRetrySoon": {
     "description": "Advice shown when a rate limit response does not include an exact retry delay."
   },

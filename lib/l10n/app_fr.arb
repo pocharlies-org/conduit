@@ -1682,6 +1682,16 @@
     }
   },
   "rateLimitRetrySoon": "Veuillez patienter un instant avant de réessayer.",
+  "rateResponseUp": "Noter cette réponse positivement",
+  "rateResponseDown": "Noter cette réponse négativement",
+  "rateCommentsTitle": "Noter cette réponse",
+  "rateCommentHint": "Ajouter un commentaire (facultatif)",
+  "failedToRateResponse": "Impossible d’enregistrer votre note",
+  "chatTagsTitle": "Étiquettes",
+  "chatTagsEmpty": "Cette discussion n’a aucune étiquette",
+  "chatTagHint": "Nouvelle étiquette",
+  "chatTagSuggestions": "Vos étiquettes",
+  "failedToSaveChatTags": "Impossible d’enregistrer les étiquettes",
   "@rateLimitRetrySoon": {
     "description": "Advice shown when a rate limit response does not include an exact retry delay."
   },

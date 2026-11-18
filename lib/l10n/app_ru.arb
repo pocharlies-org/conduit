@@ -1682,6 +1682,16 @@
     }
   },
   "rateLimitRetrySoon": "Подождите немного перед повторной попыткой.",
+  "rateResponseUp": "Оценить ответ положительно",
+  "rateResponseDown": "Оценить ответ отрицательно",
+  "rateCommentsTitle": "Оценить ответ",
+  "rateCommentHint": "Добавить комментарий (необязательно)",
+  "failedToRateResponse": "Не удалось сохранить оценку",
+  "chatTagsTitle": "Теги",
+  "chatTagsEmpty": "У этого чата нет тегов",
+  "chatTagHint": "Новый тег",
+  "chatTagSuggestions": "Ваши теги",
+  "failedToSaveChatTags": "Не удалось сохранить теги",
   "@rateLimitRetrySoon": {
     "description": "Advice shown when a rate limit response does not include an exact retry delay."
   },

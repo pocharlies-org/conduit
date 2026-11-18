@@ -16,10 +16,15 @@ class MessageRating {
   final ApiService _api;
 
   /// Rates [messageId] in [chatId]: 1 for up, -1 for down.
+  ///
+  /// [comment] is the free-text note Open WebUI's rate comment keeps in the
+  /// annotation (`RateComment.svelte`): passing it replaces the stored one,
+  /// passing null leaves it as it is.
   Future<void> rate({
     required String chatId,
     required String messageId,
     required int rating,
+    String? comment,
   }) async {
     if (rating != 1 && rating != -1) {
       throw ArgumentError.value(rating, 'rating', 'must be 1 or -1');
@@ -41,6 +46,10 @@ class MessageRating {
       if (previous['rating'] != rating) ...<String, dynamic>{
         'reason': null,
         'details': null,
+        'comment': null,
+      },
+      if (comment != null) ...<String, dynamic>{
+        'comment': comment.trim().isEmpty ? null : comment.trim(),
       },
     };
 

@@ -52,7 +52,13 @@ import 'package:conduit_core/features/chat/providers/chat_providers.dart'
         streamingContentProvider,
         chatMessagesProvider;
 import 'package:conduit_core/providers/app_providers.dart'
-    show activeConversationProvider;
+    show activeConversationProvider, apiServiceProvider;
+import 'package:conduit_core/services/conversation_parsing.dart'
+    show
+        kMessageRatingCommentMetadataKey,
+        kMessageRatingMetadataKey;
+import 'package:conduit_core/services/message_rating.dart';
+import '../../../shared/widgets/themed_dialogs.dart';
 
 import '../../../shared/utils/external_link_launcher.dart';
 
@@ -201,6 +207,11 @@ class _AssistantMessageWidgetState extends ConsumerState<AssistantMessageWidget>
   bool _isRouteVisible = true;
   String? _visibleFollowUpScopeId;
   List<String> _visibleFollowUps = const <String>[];
+
+  /// The thumb and note just saved, so the row shows them without waiting
+  /// for a reload; both also live in the message's metadata afterwards.
+  int? _tappedRating;
+  String? _tappedComment;
   late final void Function(String url, String title) _markdownLinkTapCallback;
   late final Widget Function(Uri uri, String? title, String? alt)
   _markdownImageBuilder;
@@ -2403,6 +2414,13 @@ class _AssistantMessageWidgetState extends ConsumerState<AssistantMessageWidget>
         ? CupertinoIcons.stop_fill
         : Icons.stop;
 
+    final rating = _currentRating;
+    final canRate =
+        !widget.readOnly &&
+        !isErrorMessage &&
+        _messageId.isNotEmpty &&
+        ref.watch(activeConversationProvider.select((c) => c?.id)) != null;
+
     final actions = <_AssistantFooterAction>[
       _AssistantFooterAction(
         id: 'copy',
@@ -2413,6 +2431,34 @@ class _AssistantMessageWidgetState extends ConsumerState<AssistantMessageWidget>
         onTap: _responseCompleted ? widget.onCopy : null,
         sfSymbol: 'doc.on.doc',
       ),
+      if (canRate)
+        _AssistantFooterAction(
+          id: 'rate-up',
+          icon: rating == 1
+              ? (Platform.isIOS
+                    ? CupertinoIcons.hand_thumbsup_fill
+                    : Icons.thumb_up)
+              : (Platform.isIOS
+                    ? CupertinoIcons.hand_thumbsup
+                    : Icons.thumb_up_outlined),
+          label: l10n.rateResponseUp,
+          onTap: _responseCompleted ? () => unawaited(_rateMessage(1)) : null,
+          sfSymbol: 'hand.thumbsup',
+        ),
+      if (canRate)
+        _AssistantFooterAction(
+          id: 'rate-down',
+          icon: rating == -1
+              ? (Platform.isIOS
+                    ? CupertinoIcons.hand_thumbsdown_fill
+                    : Icons.thumb_down)
+              : (Platform.isIOS
+                    ? CupertinoIcons.hand_thumbsdown
+                    : Icons.thumb_down_outlined),
+          label: l10n.rateResponseDown,
+          onTap: _responseCompleted ? () => unawaited(_rateMessage(-1)) : null,
+          sfSymbol: 'hand.thumbsdown',
+        ),
       if (shouldShowTtsButton)
         _AssistantFooterAction(
           id: 'tts',
@@ -2492,6 +2538,85 @@ class _AssistantMessageWidgetState extends ConsumerState<AssistantMessageWidget>
     VoidCallback? onTap,
   }) {
     return ChatActionButton(icon: icon, label: label, onTap: onTap);
+  }
+
+  /// The thumb this message shows: the one just tapped, else the one the
+  /// server's annotation gave it when the chat was read back.
+  int? get _currentRating {
+    final tapped = _tappedRating;
+    if (tapped != null) return tapped;
+    final stored = widget.message.metadata?[kMessageRatingMetadataKey];
+    return stored is num ? stored.toInt() : null;
+  }
+
+  String? get _currentRatingComment {
+    final tapped = _tappedComment;
+    if (tapped != null) return tapped;
+    final comment = widget.message.metadata?[kMessageRatingCommentMetadataKey];
+    return comment is String && comment.trim().isNotEmpty ? comment : null;
+  }
+
+  /// Rates this answer and, as the web does, then offers the free-text note
+  /// its rate comment keeps in the annotation.
+  Future<void> _rateMessage(int rating) async {
+    final l10n = AppLocalizations.of(context)!;
+    final chatId = ref.read(activeConversationProvider)?.id;
+    final api = ref.read(apiServiceProvider);
+    if (chatId == null || api == null || _messageId.isEmpty) return;
+    final ratings = MessageRating(api);
+    try {
+      await ratings.rate(
+        chatId: chatId,
+        messageId: _messageId,
+        rating: rating,
+      );
+    } catch (error, stackTrace) {
+      DebugLogger.error(
+        'rate-message-failed',
+        scope: 'chat/rating',
+        error: error,
+        stackTrace: stackTrace,
+      );
+      if (mounted) await _showRatingError(l10n.failedToRateResponse);
+      return;
+    }
+    if (!mounted) return;
+    setState(() => _tappedRating = rating);
+
+    final comment = await ThemedDialogs.promptTextInput(
+      context,
+      title: l10n.rateCommentsTitle,
+      hintText: l10n.rateCommentHint,
+      initialValue: _currentRatingComment ?? '',
+      maxLength: 500,
+    );
+    if (comment == null || !mounted) return;
+    try {
+      await ratings.rate(
+        chatId: chatId,
+        messageId: _messageId,
+        rating: rating,
+        comment: comment,
+      );
+      if (mounted) setState(() => _tappedComment = comment);
+    } catch (error, stackTrace) {
+      DebugLogger.error(
+        'rate-comment-failed',
+        scope: 'chat/rating',
+        error: error,
+        stackTrace: stackTrace,
+      );
+      if (mounted) await _showRatingError(l10n.failedToRateResponse);
+    }
+  }
+
+  Future<void> _showRatingError(String message) async {
+    await ThemedDialogs.confirm(
+      context,
+      title: AppLocalizations.of(context)!.error,
+      message: message,
+      confirmText: AppLocalizations.of(context)!.ok,
+    );
   }
 
   /// `‹ 2/3 ›`: steps through this response's regenerations in place.
