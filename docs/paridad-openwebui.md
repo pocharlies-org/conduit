@@ -107,7 +107,7 @@ parecía a primera vista: el hueco real es corto y está concentrado.
 | Área de la web | En la app | Qué falta |
 |---|---|---|
 | Barra lateral | Drawer con pestañas Chats/Notas/Canales, fijados, archivados, árbol de carpetas, píldora de usuario | **Buscador global** (`GET /api/v1/search`): la app solo busca chats. Previsualización al pasar (es de escritorio) |
-| Carpetas | Crear, renombrar, mover, borrar, anidar (subcarpetas en `/folder/:id`), mover un chat a carpeta, abrir compartidas, y ajustes de proyecto (prompt, conocimiento y modelos de la carpeta) | Marcar carpeta leída, exportar JSON, borrar con contenido |
+| Carpetas | Crear, renombrar, mover, marcar leída, exportar JSON, borrar con su contenido, anidar (subcarpetas en `/folder/:id`), mover un chat a carpeta, abrir compartidas, y ajustes de proyecto (prompt, conocimiento y modelos de la carpeta) | — |
 | Chat · entrada | Adjuntos (fichero, fotos, cámara, página web, YouTube, ficheros del servidor), dictado y modo voz, comandos `/ # @ $`, selector de modelo con fijar y esfuerzo, cola de borradores, válvulas personales, comparar dos modelos con fusionar | Panel Controls con pestañas y Artifacts |
 | Chat · mensajes | Ramas y paginador de versiones, editar, copiar, reintentar, continuar, bifurcar, escuchar/detener TTS, borrar, fuentes, ejecución de código, aprobar/denegar herramientas, uso de tokens | **Valorar** (pulgar y motivo): `MessageRating` existe y ninguna pantalla lo usa |
 | Chat · menú | Fijar, archivar, compartir con audiencia, exportar JSON/Markdown, importar, borrar, clonar | **Etiquetas de chat** (servicio completo, sin UI) |
@@ -134,7 +134,7 @@ llamada existe. Orden por valor de uso en el móvil, no por tamaño del endpoint
 |---|---|---|---|
 | T1 | Abrir el chat oculto de una nota | `POST /api/v1/notes/{id}/chat` | OWU-134, PR #20 |
 | T2 | **Imágenes**: el playground de la web (crear desde un prompt o editar con fotos adjuntas, resultados en rejilla, compartir), sin inventar una galería que el servidor no tiene | `POST /api/v1/images/generations`, `POST /api/v1/images/edit` | OWU-134, PR #22 |
-| T3 | **Carpetas**: marcar leída, exportar JSON y borrar con contenido | `POST /folders/{id}/read`, `GET /chats/folder/{id}`, `DELETE /folders/{id}?delete_contents=` | pendiente |
+| T3 | **Carpetas**: marcar leída, exportar JSON y borrar con contenido | `POST /folders/{id}/read`, `GET /chats/folder/{id}`, `DELETE /folders/{id}?delete_contents=` | OWU-140 |
 | T4 | **Conectores**: paridad fina de servidores de herramientas y terminales, incluido OAuth de MCP y prueba de conexión | `GET/POST /api/v1/tools/*`, `GET /api/v1/terminals`, OAuth del tool server | pendiente |
 | T5 | **Valorar respuestas** (pulgar y motivo) y **etiquetas de chat** (poner, quitar, filtrar la lista por etiqueta) | `POST /api/v1/evaluations/feedback`, `/api/v1/chats/{id}/tags`, `GET /api/v1/chats/all/tags` | pendiente |
 | T6 | **Buscador global** con tipos (chats, mensajes, notas) y filtros | `GET /api/v1/search` | pendiente |
