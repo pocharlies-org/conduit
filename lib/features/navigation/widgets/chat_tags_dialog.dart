@@ -145,7 +145,7 @@ class _ChatTagsDialogState extends ConsumerState<_ChatTagsDialog> {
                 hintText: l10n.chatTagHint,
                 suffixIcon: IconButton(
                   icon: const Icon(Icons.add),
-                  tooltip: l10n.add,
+                  tooltip: l10n.save,
                   onPressed: _busy ? null : () => _add(_controller.text),
                 ),
               ),
@@ -177,7 +177,7 @@ class _ChatTagsDialogState extends ConsumerState<_ChatTagsDialog> {
       actions: [
         TextButton(
           onPressed: () => Navigator.of(context).maybePop(),
-          child: Text(l10n.done),
+          child: Text(l10n.close),
         ),
       ],
     );
