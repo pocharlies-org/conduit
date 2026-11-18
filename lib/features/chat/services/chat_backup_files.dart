@@ -80,6 +80,16 @@ String chatExportFileName(String title, DateTime now, String extension) {
   );
 }
 
+/// The file a folder exports to: `folder-<name>-export-<stamp>.json`, as the
+/// web's folder menu names it.
+String folderExportFileName(String name, DateTime now) {
+  final stem = name.trim().isEmpty ? 'folder' : name.trim();
+  return WorkspaceExportFiles.withExtension(
+    'folder-$stem-export-${now.millisecondsSinceEpoch}',
+    'json',
+  );
+}
+
 final chatBackupFilesProvider = Provider<ChatBackupFiles>(
   (ref) => PlatformChatBackupFiles(),
 );

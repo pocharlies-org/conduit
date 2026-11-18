@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:convert' show JsonEncoder;
 import 'dart:io' show Platform;
 
 import 'package:conduit/shared/widgets/platform_ui/platform_ui.dart';
@@ -26,6 +27,7 @@ import 'package:conduit/l10n/app_localizations.dart';
 import '../../../shared/utils/conversation_context_menu.dart';
 import '../../../shared/widgets/sidebar_layout_contract.dart';
 import '../../../shared/widgets/themed_sheets.dart';
+import '../../chat/services/chat_backup_files.dart';
 
 import 'package:conduit_core/models/conversation.dart';
 import 'package:conduit_core/models/folder.dart';
@@ -51,6 +53,25 @@ IconData sidebarSectionDisclosureIcon(bool isExpanded) {
         : CupertinoIcons.chevron_right;
   }
   return isExpanded ? Icons.expand_more : Icons.chevron_right_rounded;
+}
+
+/// [folderId] and every folder below it, however deep — what the server counts
+/// as the folder's contents for read-marking, export and delete.
+Set<String> folderSubtreeIds(List<Folder> folders, String folderId) {
+  final subtree = <String>{folderId};
+  var grew = true;
+  while (grew) {
+    grew = false;
+    for (final candidate in folders) {
+      final parentId = candidate.parentId;
+      if (parentId == null || subtree.contains(candidate.id)) continue;
+      if (subtree.contains(parentId)) {
+        subtree.add(candidate.id);
+        grew = true;
+      }
+    }
+  }
+  return subtree;
 }
 
 /// Defines the section types that can be collapsed in the chats drawer
@@ -1498,16 +1519,110 @@ class _ChatsDrawerState extends ConsumerState<ChatsDrawer>
           },
         ),
       ConduitContextMenuAction(
+        cupertinoIcon: CupertinoIcons.checkmark_circle,
+        materialIcon: Icons.done_all_rounded,
+        label: l10n.folderMarkRead,
+        onBeforeClose: () => ConduitHaptics.selectionClick(),
+        onSelected: () async {
+          await _markFolderRead(folder, folders);
+        },
+      ),
+      ConduitContextMenuAction(
+        cupertinoIcon: CupertinoIcons.arrow_down_doc,
+        materialIcon: Icons.download_rounded,
+        label: l10n.folderExport,
+        onBeforeClose: () => ConduitHaptics.selectionClick(),
+        onSelected: () async {
+          await _exportFolder(folder);
+        },
+      ),
+      ConduitContextMenuAction(
         cupertinoIcon: CupertinoIcons.delete,
         materialIcon: Icons.delete_rounded,
         label: l10n.delete,
         destructive: true,
         onBeforeClose: () => ConduitHaptics.mediumImpact(),
         onSelected: () async {
-          await _confirmAndDeleteFolder(context, folder);
+          await _confirmAndDeleteFolder(context, folder, folders);
         },
       ),
     ];
+  }
+
+  /// Every conversation the server counts as inside [folderId]: the folder's
+  /// own chats plus those of its subfolders.
+  List<Conversation> _folderSubtreeConversations(
+    List<Folder> folders,
+    String folderId,
+  ) {
+    final subtree = folderSubtreeIds(folders, folderId);
+    final conversations = ref.read(conversationsProvider).valueOrNull;
+    if (conversations == null) return const <Conversation>[];
+    return conversations
+        .where((conversation) => subtree.contains(conversation.folderId))
+        .toList(growable: false);
+  }
+
+  Future<void> _markFolderRead(Folder folder, List<Folder> folders) async {
+    final l10n = AppLocalizations.of(context)!;
+    try {
+      final api = ref.read(apiServiceProvider);
+      if (api == null) throw Exception('No API service');
+      await api.markFolderRead(folder.id);
+      if (!mounted) return;
+      ConduitHaptics.selectionClick();
+      final readAt = DateTime.now();
+      for (final conversation in _folderSubtreeConversations(
+        folders,
+        folder.id,
+      )) {
+        markConversationRead(
+          ref,
+          conversationScopedId(conversation),
+          readAt: readAt,
+        );
+      }
+    } catch (e, stackTrace) {
+      if (!mounted) return;
+      DebugLogger.error(
+        'mark-folder-read-failed',
+        scope: 'drawer',
+        error: e,
+        stackTrace: stackTrace,
+      );
+      await _showDrawerError(l10n.failedToMarkFolderRead);
+    }
+  }
+
+  /// Writes the folder's chats as the JSON the web exports.
+  Future<void> _exportFolder(Folder folder) async {
+    final l10n = AppLocalizations.of(context)!;
+    try {
+      final api = ref.read(apiServiceProvider);
+      if (api == null) throw Exception('No API service');
+      final chats = await api.getFolderChats(folder.id);
+      if (!mounted) return;
+      if (chats.isEmpty) {
+        await _showDrawerError(l10n.folderExportEmpty);
+        return;
+      }
+      await ref
+          .read(chatBackupFilesProvider)
+          .deliverText(
+            folderExportFileName(folder.name, DateTime.now()),
+            const JsonEncoder.withIndent('  ').convert(chats),
+            mimeType: 'application/json',
+          );
+    } catch (e, stackTrace) {
+      if (!mounted) return;
+      DebugLogger.error(
+        'export-folder-failed',
+        scope: 'drawer',
+        error: e,
+        stackTrace: stackTrace,
+      );
+      await _showDrawerError(l10n.failedToExportFolder);
+    }
   }
 
   List<FolderTreeListEntry> _folderMoveTargetEntries(
@@ -1751,12 +1866,16 @@ class _ChatsDrawerState extends ConsumerState<ChatsDrawer>
   Future<void> _confirmAndDeleteFolder(
     BuildContext context,
     Folder folder,
+    List<Folder> folders,
   ) async {
     final l10n = AppLocalizations.of(context)!;
+    final chatCount = _folderSubtreeConversations(folders, folder.id).length;
     final confirmed = await ThemedDialogs.confirm(
       context,
       title: l10n.deleteFolderTitle,
-      message: l10n.deleteFolderMessage,
+      message: chatCount == 0
+          ? l10n.deleteFolderMessage
+          : l10n.deleteFolderWithChatsMessage(chatCount),
       confirmText: l10n.delete,
       isDestructive: true,
     );
@@ -1767,7 +1886,8 @@ class _ChatsDrawerState extends ConsumerState<ChatsDrawer>
     try {
       final api = ref.read(apiServiceProvider);
       if (api == null) throw Exception('No API service');
-      await api.deleteFolder(folder.id);
+      // Explicit: the server also deletes the chats inside the folder.
+      await api.deleteFolderRaw(folder.id, deleteContents: true);
       ConduitHaptics.mediumImpact();
       ref.read(foldersProvider.notifier).removeFolderFromRemote(folder.id);
       refreshConversationsCache(ref, includeFolders: true);
