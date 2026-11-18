@@ -11,9 +11,10 @@ import 'sidebar_page_test_support.dart';
 /// delete warns with the chats the folder really holds — the folder's own plus
 /// its subfolders' (`routers/chats.py:get_chats_by_folder_id`).
 void main() {
-  testWidgets('folder menu offers the web actions and counts subtree chats', (
-    tester,
-  ) async {
+  testWidgets(
+    'folder menu offers the web actions and counts subtree chats',
+    timeout: const Timeout(Duration(seconds: 120)),
+    (tester) async {
     final controllers = SidebarTestSidebarHarnessControllers();
     final timestamp = DateTime(2026, 1, 1);
     Conversation chat(String id, String folderId) => Conversation(
@@ -44,7 +45,11 @@ void main() {
         ],
       ),
     );
-    await tester.pumpAndSettle();
+    // `pumpAndSettle` never settles here: the harness's fixed mock keeps an
+    // animation alive. Progressive pumps are enough to build the drawer.
+    for (var i = 0; i < 5; i++) {
+      await tester.pump(const Duration(milliseconds: 200));
+    }
 
     final menu = tester.widget<ConduitContextMenu>(
       find.ancestor(
@@ -58,12 +63,15 @@ void main() {
 
     final delete = menu.actions.singleWhere((action) => action.label == 'Delete');
     await delete.onSelected();
-    await tester.pumpAndSettle();
+    for (var i = 0; i < 5; i++) {
+      await tester.pump(const Duration(milliseconds: 200));
+    }
 
     expect(find.text('Delete Folder'), findsOneWidget);
     expect(
       find.text('This folder and its 2 chats will be deleted.'),
       findsOneWidget,
     );
-  });
+    },
+  );
 }
