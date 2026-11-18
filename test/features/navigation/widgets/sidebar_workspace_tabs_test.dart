@@ -24,6 +24,7 @@ import 'package:conduit/l10n/app_localizations.dart';
 import 'package:conduit/l10n/conduit_localizations.dart';
 import 'package:conduit/shared/theme/theme_extensions.dart';
 import 'package:conduit/shared/utils/conversation_context_menu.dart';
+import 'package:conduit/shared/utils/ui_utils.dart';
 import 'package:conduit/shared/widgets/adaptive_toolbar_components.dart';
 import 'package:material_ui/material_ui.dart';
 import 'package:flutter/services.dart';
@@ -872,7 +873,9 @@ void main() {
     expect(find.text('Alpha Chat'), findsNothing);
     expect(find.text('Beta Chat'), findsNothing);
 
-    await tester.tap(find.byType(ConduitAdaptiveAppBarIconButton));
+    await tester.tap(
+      find.widgetWithIcon(ConduitAdaptiveAppBarIconButton, UiUtils.closeIcon),
+    );
     await tester.pumpAndSettle();
 
     expect(find.text('Alpha Chat'), findsOneWidget);
