@@ -62,15 +62,81 @@ prueba en `mac-casa` sobre la misma rama publicada: commit, `git push`, `git pul
 - La administración del servidor (`/admin`), el Playground de chat/completions y `/watch`: fuera de alcance.
 - Un test que falla porque el comportamiento cambió se arregla; uno que se salta, no.
 
-**Lo que no se afirma**
+**Validar como lo usa un usuario: solo en el iPhone**
 
-**Validar como lo usa un usuario: en el iPhone, no en pruebas**
+Conduit es una app de iPhone: el único dispositivo de validación es el iPhone de Dani. No hay emulador ni
+prueba que lo sustituya. Cada tanda instala su build en el teléfono, la sesión la maneja con el MCP `iphone`
+(mobile-mcp + WDA), recorre los criterios y deja la captura de cada uno en la PR. Si el teléfono no está
+disponible, la PR se queda abierta con **deployed, NOT validated: iPhone unavailable**, la sesión para con
+`PARA DANI:` y no fusiona.
 
-Conduit es una app de iPhone: se valida en el iPhone de Dani, no en un emulador ni a ojo en pruebas. Cada
-tanda instala su build en el teléfono (`flutter run -d 00008140-000429142813C01C` desde `mac-casa`), la sesión
-la maneja con el MCP `iphone` (mobile-mcp + WDA), hace el recorrido de los criterios y deja la captura de
-cada uno en la PR. Si el teléfono no está disponible, no se sustituye por «pasa las pruebas»: la PR se queda
-abierta con **deployed, NOT validated: iPhone unavailable**, la sesión para con `PARA DANI:` y no fusiona.
+**Un iPhone bloqueado no sirve.** Con la pantalla bloqueada el sistema no deja arrancar la app, WDA no
+responde y las herramientas del MCP devuelven error de conexión. Antes de empezar el recorrido, la sesión
+desbloquea el teléfono (contraseña de Dani, que no se escribe en ningún sitio) y lo deja despierto; si no
+puede, no es un fallo de la app y no se anota como tal.
+
+## 1.5 Antes de la ola 1: el teléfono listo
+
+Esto se hace una vez, antes de lanzar S0, T3, T5 y T6, y se repite al principio de cada tanda si el teléfono
+se ha ido.
+
+**a) Que `mac-casa` lo vea**
+
+```bash
+ssh mbpro 'xcrun devicectl list devices | grep 00008140-000429142813C01C'
+# tiene que decir `available`, no `unavailable`
+```
+
+Si dice `unavailable`: cable al Mac, teléfono desbloqueado y «Confiar en este ordenador», o la misma red
+Wi-Fi con modo desarrollador inalámbrico activo (Ajustes → Privacidad y seguridad → Modo desarrollador).
+
+**b) Que el perfil cubra el UDID** (comprobado el 18-11: ya lo cubre)
+
+```bash
+ssh mbpro 'for f in ~/Library/Developer/Xcode/UserData/Provisioning\ Profiles/*; do
+  security cms -D -i "$f" 2>/dev/null | grep -q 00008140-000429142813C01C && \
+  security cms -D -i "$f" | plutil -extract Name raw -; done'
+```
+
+Deben salir, entre otros, `iOS Team Provisioning Profile: com.e-dani.plaud-direct` y el comodín
+`Q3AVWT9CS8.*`, ambos del equipo `Q3AVWT9CS8`, que es el del proyecto
+(`ios/Runner.xcodeproj/project.pbxproj`, bundle de desarrollo `com.morenoibanez.chat.debug`). Si algún día no
+sale ninguno, se añade el UDID en el portal de Apple con la cuenta del equipo (o con la clave de App Store
+Connect que ya usan `asc.sh` y `testflight.sh`).
+
+**c) Compilar, instalar y arrancar** (en `mac-casa`, sobre el worktree de la tanda)
+
+```bash
+export PATH="$HOME/flutter/bin:$PATH"
+cd ~/proyectos/chat/conduit/.claude/worktrees/<KEY>-<tema>
+flutter pub get && flutter gen-l10n
+flutter build ios --debug --device-id 00008140-000429142813C01C
+xcrun devicectl device install app --device 00008140-000429142813C01C \
+  build/ios/iphoneos/Runner.app
+xcrun devicectl device process launch --device 00008140-000429142813C01C \
+  com.morenoibanez.chat.debug
+```
+
+`flutter run -d 00008140-000429142813C01C` sirve para depurar a mano, pero se queda colgado en primer plano:
+para una sesión, las tres órdenes de arriba son el camino.
+
+**d) Manejarlo con el MCP `iphone`** (mobile-mcp, `http://127.0.0.1:8814/mcp` en `mac-casa`, LaunchAgent
+`com.e-dani.iphone-mcp`)
+
+```text
+mobile_list_available_devices              # el UDID tiene que estar y no decir unavailable
+mobile_list_apps                           # com.morenoibanez.chat.debug instalada
+mobile_launch_app  packageName=com.morenoibanez.chat.debug
+mobile_take_screenshot                     # la captura que va a la PR
+mobile_list_elements_on_screen             # qué hay en pantalla, sin adivinar coordenadas
+mobile_click_on_screen_at_coordinates      # tocar
+mobile_type_keys                           # escribir
+mobile_press_button  BUTTON=HOME           # desbloquear / salir
+mobile_get_device_logs  / mobile_list_crashes
+```
+
+La app no arranca ni WDA responde con el teléfono bloqueado: primero se desbloquea. Cada criterio se recorre
+así y su captura se adjunta a la PR.
 
 ## 2. Historias, en orden de uso
 
@@ -335,17 +401,10 @@ T5 toca el chat y va sola.
 Para lanzar todo de golpe, una sesión por tanda de la ola 1 y las demás al cerrar la anterior: no catorce a
 la vez.
 
-## 5. Lo que hay que tener listo, y lo que espera a Dani
+## 5. Lo que espera a Dani
 
-1. **El iPhone, conectado.** No es una decisión: es el requisito de toda validación. `iPhone Charlies` tiene
-   que estar emparejado con `mac-casa` y disponible (`xcrun devicectl list devices` deja de decir
-   `unavailable`), con el modo desarrollador activo si va por Wi-Fi. Si la sesión no lo ve, no inventa: para
-   la tanda y lo dice.
-2. **Firma.** `flutter run -d` compila en modo desarrollo con el equipo `Q3AVWT9CS8`; si el perfil de
-   desarrollo no cubre el teléfono, se le añade su UDID en el portal (esto sí necesita el Apple Developer
-   de Dani o su clave de App Store Connect que ya usan `asc.sh` y `testflight.sh`).
-3. **T15 y el WebView.** ¿Entra un WebView para Artifacts, o se queda en SVG/imagen?
-4. **MFA (T7b).** ¿Se hace con una cuenta de prueba en el servidor, o se deja fuera hasta que haya una?
+1. **T15 y el WebView.** ¿Entra un WebView para Artifacts, o se queda en SVG/imagen?
+2. **MFA (T7b).** ¿Se hace con una cuenta de prueba en el servidor, o se deja fuera hasta que haya una?
 
 Lo demás no se pregunta: el orden de la sección 3, el reparto en olas, la rama y el método de fusión son
 los del plan y de las reglas.
