@@ -1,7 +1,6 @@
 import 'dart:async';
 
 import 'package:conduit_core/models/workspace_search.dart';
-import 'package:conduit_core/navigation/routes.dart';
 import 'package:conduit_core/providers/app_providers.dart';
 import 'package:conduit/l10n/app_localizations.dart';
 import 'package:conduit/shared/services/navigation_service.dart';
@@ -9,7 +8,6 @@ import 'package:conduit/shared/theme/theme_extensions.dart';
 import 'package:conduit/shared/widgets/conduit_components.dart';
 import 'package:conduit/shared/widgets/platform_ui/platform_ui.dart';
 import 'package:conduit/shared/widgets/platform_ui/vocabulary.dart';
-import 'package:conduit/shared/widgets/utility_components.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 

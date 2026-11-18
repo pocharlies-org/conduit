@@ -8,8 +8,6 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import 'package:conduit_core/sync/sync_engine.dart';
 
-import 'package:conduit_core/navigation/routes.dart';
-
 import '../../../core/services/haptic_service.dart';
 import '../../../shared/services/navigation_service.dart';
 import '../../../shared/theme/theme_extensions.dart';

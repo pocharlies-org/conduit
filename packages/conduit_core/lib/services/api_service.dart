@@ -35,6 +35,7 @@ import 'package:conduit_core/models/server_config.dart';
 import 'package:conduit_core/models/server_memory.dart';
 import 'package:conduit_core/models/server_user_settings.dart';
 import 'package:conduit_core/models/user.dart';
+import 'package:conduit_core/models/workspace_search.dart';
 
 import 'package:conduit_core/features/automations/models/automation.dart';
 import 'package:conduit_core/features/calendar/models/calendar_models.dart';
