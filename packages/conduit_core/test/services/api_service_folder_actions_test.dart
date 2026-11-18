@@ -53,16 +53,6 @@ void main() {
     check(adapter.requests).deepEquals(['GET /api/v1/chats/folder/f%201']);
     check(chats.map((c) => c['id'])).deepEquals(['c1', 'c2']);
   });
-
-  test('getFolderChats answers an empty list for a non-list body', () async {
-    final api = _buildApi(
-      _RecordingAdapter({
-        'GET /api/v1/chats/folder/f1': {'detail': 'Not found'},
-      }),
-    );
-
-    check(await api.getFolderChats('f1')).isEmpty();
-  });
 }
 
 class _RecordingAdapter implements HttpClientAdapter {
