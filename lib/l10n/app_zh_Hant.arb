@@ -1682,6 +1682,16 @@
     }
   },
   "rateLimitRetrySoon": "請稍等片刻後再試。",
+  "rateResponseUp": "好評此回覆",
+  "rateResponseDown": "負評此回覆",
+  "rateCommentsTitle": "評價此回覆",
+  "rateCommentHint": "新增評論（選填）",
+  "failedToRateResponse": "無法儲存你的評價",
+  "chatTagsTitle": "標籤",
+  "chatTagsEmpty": "此對話沒有標籤",
+  "chatTagHint": "新標籤",
+  "chatTagSuggestions": "你的標籤",
+  "failedToSaveChatTags": "無法儲存標籤",
   "@rateLimitRetrySoon": {
     "description": "Advice shown when a rate limit response does not include an exact retry delay."
   },

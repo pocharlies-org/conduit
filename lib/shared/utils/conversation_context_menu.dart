@@ -18,6 +18,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:conduit_core/features/chat/providers/chat_providers.dart'
     as chat;
 import 'package:conduit/features/chat/widgets/chat_share_sheet.dart';
+import 'package:conduit/features/navigation/widgets/chat_tags_dialog.dart';
 import 'package:conduit/features/navigation/widgets/folder_tree_guides.dart';
 
 /// Defines an action for use in Conduit context menus.
@@ -284,6 +285,16 @@ List<ConduitContextMenuAction> buildConversationActionsWithFolders({
     await showChatShareSheet(context: context, conversation: conversation);
   }
 
+  Future<void> editTags() async {
+    final chatId = conversation.id as String? ?? '';
+    if (chatId.isEmpty || !context.mounted) return;
+    await showChatTagsDialog(
+      context,
+      chatId: chatId,
+      tags: List<String>.from(conversation.tags as List? ?? const []),
+    );
+  }
+
   Future<void> moveConversation() async {
     await _moveConversation(
       context,
@@ -334,6 +345,15 @@ List<ConduitContextMenuAction> buildConversationActionsWithFolders({
       onBeforeClose: () => ConduitHaptics.selectionClick(),
       onSelected: rename,
     ),
+    if (!isOnDevice)
+      ConduitContextMenuAction(
+        cupertinoIcon: CupertinoIcons.tag,
+        sfSymbol: 'tag',
+        materialIcon: Icons.sell_outlined,
+        label: l10n.chatTagsTitle,
+        onBeforeClose: () => ConduitHaptics.selectionClick(),
+        onSelected: editTags,
+      ),
     if (canMove)
       ConduitContextMenuAction(
         cupertinoIcon: CupertinoIcons.folder,

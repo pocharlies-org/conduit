@@ -41,6 +41,7 @@ import 'package:conduit_core/features/navigation/providers/drawer_section_notifi
 import 'folder_icon.dart';
 import '../providers/conversation_selection_provider.dart';
 import '../providers/sidebar_search_providers.dart';
+import '../providers/sidebar_tag_providers.dart';
 import '../providers/sidebar_tab_scroll_registry.dart';
 
 import 'package:conduit_core/features/navigation/models/sidebar_navigation_model.dart';
@@ -768,7 +769,13 @@ class _ChatsDrawerState extends ConsumerState<ChatsDrawer>
         // pull-to-refresh style invalidations.)
         skipLoadingOnReload: true,
         data: (items) {
-          final list = items;
+          // The list narrows to one tag; removing the filter brings it back.
+          final tagFilter = ref.watch(chatTagFilterProvider);
+          final list = tagFilter == null
+              ? items
+              : items
+                    .where((conversation) => conversation.tags.contains(tagFilter))
+                    .toList();
           final conversationsNotifier = ref.read(
             conversationsProvider.notifier,
           );
@@ -861,7 +868,14 @@ class _ChatsDrawerState extends ConsumerState<ChatsDrawer>
                     expandedFolders: expandedFolders,
                   ));
 
+          final allTags = ref
+              .watch(chatTagNamesProvider)
+              .maybeWhen(data: (names) => names, orElse: () => const <String>[]);
           final slivers = <Widget>[
+            if (allTags.isNotEmpty)
+              SliverToBoxAdapter(
+                child: _buildTagFilterRow(allTags, tagFilter),
+              ),
             if (pinned.isNotEmpty) ...[
               SliverPadding(
                 padding: const EdgeInsets.symmetric(horizontal: Spacing.md),
@@ -1547,6 +1561,39 @@ class _ChatsDrawerState extends ConsumerState<ChatsDrawer>
         },
       ),
     ];
+  }
+
+  /// The sidebar's tag chips: one per tag, the chosen one selected; tapping
+  /// it again clears the filter.
+  Widget _buildTagFilterRow(List<String> tags, String? selected) {
+    final theme = context.conduitTheme;
+    return SingleChildScrollView(
+      scrollDirection: Axis.horizontal,
+      padding: const EdgeInsets.symmetric(
+        horizontal: Spacing.md,
+        vertical: Spacing.xs,
+      ),
+      child: Row(
+        children: [
+          for (final tag in tags)
+            Padding(
+              padding: const EdgeInsets.only(right: Spacing.xs),
+              child: FilterChip(
+                label: Text(tag),
+                selected: selected == tag,
+                labelStyle: AppTypography.labelSmallStyle.copyWith(
+                  color: selected == tag
+                      ? theme.textPrimary
+                      : theme.textSecondary,
+                ),
+                onSelected: (on) => ref
+                    .read(chatTagFilterProvider.notifier)
+                    .set(on ? tag : null),
+              ),
+            ),
+        ],
+      ),
+    );
   }
 
   /// Every conversation the server counts as inside [folderId]: the folder's

@@ -3560,6 +3560,46 @@
     }
   },
   "rateLimitRetrySoon": "Please wait a moment before trying again.",
+  "rateResponseUp": "Rate this response up",
+  "@rateResponseUp": {
+    "description": "Thumb-up action on an answer; also files a positive evaluation."
+  },
+  "rateResponseDown": "Rate this response down",
+  "@rateResponseDown": {
+    "description": "Thumb-down action on an answer; also files a negative evaluation."
+  },
+  "rateCommentsTitle": "Rate this response",
+  "@rateCommentsTitle": {
+    "description": "Title of the note dialog shown after rating an answer."
+  },
+  "rateCommentHint": "Add a comment (optional)",
+  "@rateCommentHint": {
+    "description": "Placeholder of the note field shown after rating an answer."
+  },
+  "failedToRateResponse": "Could not save your rating",
+  "@failedToRateResponse": {
+    "description": "Error notice when saving a rating fails."
+  },
+  "chatTagsTitle": "Tags",
+  "@chatTagsTitle": {
+    "description": "Title of the dialog that edits a chat's tags, and the menu action that opens it."
+  },
+  "chatTagsEmpty": "This chat has no tags",
+  "@chatTagsEmpty": {
+    "description": "Shown when the chat has no tags yet."
+  },
+  "chatTagHint": "New tag",
+  "@chatTagHint": {
+    "description": "Placeholder of the field that adds a new tag."
+  },
+  "chatTagSuggestions": "Your tags",
+  "@chatTagSuggestions": {
+    "description": "Heading above the tags the account can add."
+  },
+  "failedToSaveChatTags": "Could not save the tags",
+  "@failedToSaveChatTags": {
+    "description": "Error notice when adding or removing a tag fails."
+  },
   "@rateLimitRetrySoon": {
     "description": "Advice shown when a rate limit response does not include an exact retry delay."
   },
