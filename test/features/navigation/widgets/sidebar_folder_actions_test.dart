@@ -2,6 +2,7 @@ import 'package:conduit/features/navigation/widgets/chats_drawer.dart';
 import 'package:conduit_core/models/conversation.dart';
 import 'package:conduit_core/models/folder.dart';
 import 'package:conduit/shared/utils/conversation_context_menu.dart';
+import 'package:flutter/widgets.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 import 'sidebar_page_test_support.dart';
