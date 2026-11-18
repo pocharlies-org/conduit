@@ -49,7 +49,12 @@ abstract final class ConduitUserAgent {
 
   /// Replaces any case variant in a mutable request-header map.
   static void applyTo(Map<String, dynamic> headers) {
-    headers.removeWhere((name, _) => isHeaderName(name));
+    // Key by key: `removeWhere` corrupts dio's case-insensitive header map.
+    for (final name in headers.keys.toList()) {
+      if (isHeaderName(name)) {
+        headers.remove(name);
+      }
+    }
     headers[headerName] = value;
   }
 
