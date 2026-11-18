@@ -181,8 +181,8 @@ Orden por valor en el móvil. La columna «PR» es una estimación de tamaño, n
 - **Llamadas**: `POST /api/v1/evaluations/feedback` (`evaluations.py:425`), `GET/POST/DELETE
   /api/v1/chats/{id}/tags` (`chats.py:2288/2308/2349`), `GET /api/v1/chats/all/tags` (`:1098`),
   `POST /api/v1/chats/tags` (`:1337`) para filtrar.
-- **App**: `MessageRating` ya existe y **ninguna pantalla lo usa**
-  (`packages/conduit_core/lib/services/message_rating.dart`); las acciones del mensaje viven en
+- **App**: `MessageRating` (`packages/conduit_core/lib/services/message_rating.dart`) lo usa la fila de
+  acciones del mensaje; las acciones del mensaje viven en
   `lib/features/chat/widgets/`; el menú del chat y la lista, en `lib/features/navigation/`.
 - **Criterios**:
   - [ ] Valorar con pulgar y comentario persiste y se ve al reabrir el chat → prueba del servicio +
