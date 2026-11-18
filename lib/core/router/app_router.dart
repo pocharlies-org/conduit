@@ -33,6 +33,7 @@ import '../../features/notifications/views/notification_settings_page.dart';
 import '../../features/workspace/views/workspace_page.dart';
 import '../../features/workspace/workspace_navigation.dart';
 
+import '../../features/navigation/views/global_search_page.dart';
 import '../../features/integrations/views/personal_connection_editor_page.dart';
 import '../../features/integrations/views/personal_connections_page.dart';
 import '../../features/automations/views/scheduled_task_detail_page.dart';
@@ -145,6 +146,12 @@ final goRouterProvider = Provider<GoRouter>((ref) {
               child: NoteEditorPage(key: ValueKey(noteId), noteId: noteId),
             );
           },
+        ),
+        GoRoute(
+          path: Routes.search,
+          name: RouteNames.search,
+          pageBuilder: (context, state) =>
+              _buildNoTransitionPage(state: state, child: const GlobalSearchPage()),
         ),
         GoRoute(
           path: Routes.channel,

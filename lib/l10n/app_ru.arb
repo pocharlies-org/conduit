@@ -3689,5 +3689,16 @@
   "imagesPlaygroundPickFailed": "Не удалось прочитать фото.",
   "imagesPlaygroundPromptRequired": "Введите промпт.",
   "noteOpenChat": "Открыть чат заметки",
-  "noteOpenChatFailed": "Не удалось открыть чат заметки"
+  "noteOpenChatFailed": "Не удалось открыть чат заметки",
+  "searchEverything": "Искать везде",
+  "searchEverythingHint": "Искать в чатах, сообщениях и заметках",
+  "searchFilterAll": "Все",
+  "searchKindChats": "Чаты",
+  "searchKindMessages": "Сообщения",
+  "searchKindNotes": "Заметки",
+  "searchNoResults": "Нет результатов",
+  "searchSharedSnapshot": "Это общий снимок",
+  "searchUntitled": "Без названия",
+  "searchFailedTitle": "Не удалось выполнить поиск",
+  "searchFailedMessage": "Проверьте соединение и повторите попытку."
 }

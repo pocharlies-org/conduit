@@ -103,6 +103,7 @@ part 'api_service_knowledge_bases.dart';
 part 'api_service_media_retrieval.dart';
 part 'api_service_models.dart';
 part 'api_service_notes.dart';
+part 'api_service_search.dart';
 part 'api_service_notification_targets.dart';
 part 'api_service_prompts_skills.dart';
 part 'api_service_resource_grants.dart';
@@ -345,6 +346,7 @@ class ApiService extends _ApiServiceBase
         _ToolsFunctionsApi,
         _ChannelsApi,
         _NotesApi,
+        _WorkspaceSearchApi,
         _NotificationTargetsApi,
         _AutomationsApi,
         _CalendarApi,

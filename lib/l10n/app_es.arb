@@ -3689,5 +3689,16 @@
   "imagesPlaygroundEmpty": "Las imágenes generadas aparecerán aquí.",
   "imagesPlaygroundFailed": "La petición de imagen ha fallado.",
   "imagesPlaygroundPickFailed": "No se pudo leer la foto.",
-  "imagesPlaygroundPromptRequired": "Escribe un prompt."
+  "imagesPlaygroundPromptRequired": "Escribe un prompt.",
+  "searchEverything": "Buscar en todo",
+  "searchEverythingHint": "Busca en chats, mensajes y notas",
+  "searchFilterAll": "Todo",
+  "searchKindChats": "Chats",
+  "searchKindMessages": "Mensajes",
+  "searchKindNotes": "Notas",
+  "searchNoResults": "No hay resultados",
+  "searchSharedSnapshot": "Es una instantánea compartida",
+  "searchUntitled": "Sin título",
+  "searchFailedTitle": "No se pudo buscar",
+  "searchFailedMessage": "Comprueba la conexión y vuelve a intentarlo."
 }

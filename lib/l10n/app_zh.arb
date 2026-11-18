@@ -3689,5 +3689,16 @@
   "imagesPlaygroundPickFailed": "无法读取照片。",
   "imagesPlaygroundPromptRequired": "请输入提示词。",
   "noteOpenChat": "打开笔记聊天",
-  "noteOpenChatFailed": "无法打开笔记聊天"
+  "noteOpenChatFailed": "无法打开笔记聊天",
+  "searchEverything": "搜索全部",
+  "searchEverythingHint": "搜索聊天、消息和笔记",
+  "searchFilterAll": "全部",
+  "searchKindChats": "聊天",
+  "searchKindMessages": "消息",
+  "searchKindNotes": "笔记",
+  "searchNoResults": "没有结果",
+  "searchSharedSnapshot": "这是共享快照",
+  "searchUntitled": "无标题",
+  "searchFailedTitle": "搜索失败",
+  "searchFailedMessage": "请检查连接后重试。"
 }

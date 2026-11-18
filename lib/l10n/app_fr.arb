@@ -3689,5 +3689,16 @@
   "imagesPlaygroundPickFailed": "La photo n'a pas pu être lue.",
   "imagesPlaygroundPromptRequired": "Saisissez un prompt.",
   "noteOpenChat": "Ouvrir le chat de la note",
-  "noteOpenChatFailed": "Impossible d'ouvrir le chat de la note"
+  "noteOpenChatFailed": "Impossible d'ouvrir le chat de la note",
+  "searchEverything": "Tout rechercher",
+  "searchEverythingHint": "Rechercher dans les chats, messages et notes",
+  "searchFilterAll": "Tout",
+  "searchKindChats": "Chats",
+  "searchKindMessages": "Messages",
+  "searchKindNotes": "Notes",
+  "searchNoResults": "Aucun résultat",
+  "searchSharedSnapshot": "Ceci est un instantané partagé",
+  "searchUntitled": "Sans titre",
+  "searchFailedTitle": "Échec de la recherche",
+  "searchFailedMessage": "Vérifiez la connexion et réessayez."
 }
