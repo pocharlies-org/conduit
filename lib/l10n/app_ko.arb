@@ -3468,5 +3468,16 @@
   "imagesPlaygroundPickFailed": "사진을 읽을 수 없습니다.",
   "imagesPlaygroundPromptRequired": "프롬프트를 입력하세요.",
   "noteOpenChat": "노트 채팅 열기",
-  "noteOpenChatFailed": "노트 채팅을 열 수 없습니다"
+  "noteOpenChatFailed": "노트 채팅을 열 수 없습니다",
+  "searchEverything": "전체 검색",
+  "searchEverythingHint": "채팅, 메시지, 노트 검색",
+  "searchFilterAll": "전체",
+  "searchKindChats": "채팅",
+  "searchKindMessages": "메시지",
+  "searchKindNotes": "노트",
+  "searchNoResults": "결과 없음",
+  "searchSharedSnapshot": "공유 스냅샷입니다",
+  "searchUntitled": "제목 없음",
+  "searchFailedTitle": "검색 실패",
+  "searchFailedMessage": "연결을 확인하고 다시 시도하세요."
 }

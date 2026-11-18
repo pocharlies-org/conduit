@@ -3689,5 +3689,16 @@
   "imagesPlaygroundPickFailed": "Das Foto konnte nicht gelesen werden.",
   "imagesPlaygroundPromptRequired": "Gib einen Prompt ein.",
   "noteOpenChat": "Notiz-Chat öffnen",
-  "noteOpenChatFailed": "Der Notiz-Chat konnte nicht geöffnet werden"
+  "noteOpenChatFailed": "Der Notiz-Chat konnte nicht geöffnet werden",
+  "searchEverything": "Alles durchsuchen",
+  "searchEverythingHint": "Chats, Nachrichten und Notizen durchsuchen",
+  "searchFilterAll": "Alle",
+  "searchKindChats": "Chats",
+  "searchKindMessages": "Nachrichten",
+  "searchKindNotes": "Notizen",
+  "searchNoResults": "Keine Ergebnisse",
+  "searchSharedSnapshot": "Dies ist eine geteilte Momentaufnahme",
+  "searchUntitled": "Ohne Titel",
+  "searchFailedTitle": "Suche fehlgeschlagen",
+  "searchFailedMessage": "Verbindung prüfen und erneut versuchen."
 }

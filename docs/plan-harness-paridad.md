@@ -195,8 +195,9 @@ Orden por valor en el móvil. La columna «PR» es una estimación de tamaño, n
 
 - **Web**: `Ctrl+K`, busca chats, mensajes, notas y canales, con filtros (carpeta, canal, creado,
   compartido).
-- **Llamada**: `GET /api/v1/search` (`search.py:425`); la app hoy solo tiene `searchConversations`,
-  `searchChats` y `searchMessages` (`api_service_chat_lists.dart`).
+- **Llamada**: `GET /api/v1/search` (`search.py:425`), que la app llama con `searchWorkspace`
+  (`api_service_search.dart`); `searchConversations`, `searchChats` y `searchMessages`
+  (`api_service_chat_lists.dart`) buscan solo dentro de los chats.
 - **App**: barra lateral (`lib/features/navigation/widgets/`).
 - **Criterios**:
   - [ ] Buscar devuelve resultados por tipo, agrupados, y abrir uno lleva a su chat, nota o canal → prueba

@@ -3689,5 +3689,16 @@
   "imagesPlaygroundPickFailed": "De foto kon niet worden gelezen.",
   "imagesPlaygroundPromptRequired": "Voer een prompt in.",
   "noteOpenChat": "Notitiechat openen",
-  "noteOpenChatFailed": "De notitiechat kon niet worden geopend"
+  "noteOpenChatFailed": "De notitiechat kon niet worden geopend",
+  "searchEverything": "Alles doorzoeken",
+  "searchEverythingHint": "Zoek in chats, berichten en notities",
+  "searchFilterAll": "Alles",
+  "searchKindChats": "Chats",
+  "searchKindMessages": "Berichten",
+  "searchKindNotes": "Notities",
+  "searchNoResults": "Geen resultaten",
+  "searchSharedSnapshot": "Dit is een gedeelde momentopname",
+  "searchUntitled": "Zonder titel",
+  "searchFailedTitle": "Zoeken mislukt",
+  "searchFailedMessage": "Controleer de verbinding en probeer het opnieuw."
 }

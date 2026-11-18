@@ -6031,5 +6031,16 @@
   "imagesPlaygroundPickFailed": "Nie udało się odczytać zdjęcia.",
   "imagesPlaygroundPromptRequired": "Wpisz prompt.",
   "noteOpenChat": "Otwórz czat notatki",
-  "noteOpenChatFailed": "Nie udało się otworzyć czatu notatki"
+  "noteOpenChatFailed": "Nie udało się otworzyć czatu notatki",
+  "searchEverything": "Przeszukaj wszystko",
+  "searchEverythingHint": "Szukaj w czatach, wiadomościach i notatkach",
+  "searchFilterAll": "Wszystko",
+  "searchKindChats": "Czaty",
+  "searchKindMessages": "Wiadomości",
+  "searchKindNotes": "Notatki",
+  "searchNoResults": "Brak wyników",
+  "searchSharedSnapshot": "To jest udostępniona migawka",
+  "searchUntitled": "Bez tytułu",
+  "searchFailedTitle": "Wyszukiwanie nie powiodło się",
+  "searchFailedMessage": "Sprawdź połączenie i spróbuj ponownie."
 }

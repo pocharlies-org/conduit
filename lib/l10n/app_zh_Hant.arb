@@ -3689,5 +3689,16 @@
   "imagesPlaygroundPickFailed": "無法讀取照片。",
   "imagesPlaygroundPromptRequired": "請輸入提示詞。",
   "noteOpenChat": "開啟筆記聊天",
-  "noteOpenChatFailed": "無法開啟筆記聊天"
+  "noteOpenChatFailed": "無法開啟筆記聊天",
+  "searchEverything": "搜尋全部",
+  "searchEverythingHint": "搜尋聊天、訊息和筆記",
+  "searchFilterAll": "全部",
+  "searchKindChats": "聊天",
+  "searchKindMessages": "訊息",
+  "searchKindNotes": "筆記",
+  "searchNoResults": "沒有結果",
+  "searchSharedSnapshot": "這是共用快照",
+  "searchUntitled": "無標題",
+  "searchFailedTitle": "搜尋失敗",
+  "searchFailedMessage": "請檢查連線後再試一次。"
 }

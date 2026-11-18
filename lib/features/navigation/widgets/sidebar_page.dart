@@ -9,6 +9,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:conduit_core/sync/sync_engine.dart';
 
 import '../../../core/services/haptic_service.dart';
+import '../../../shared/services/navigation_service.dart';
 import '../../../shared/theme/theme_extensions.dart';
 import '../../../shared/utils/ui_utils.dart';
 import '../../../shared/widgets/adaptive_toolbar_components.dart';
@@ -17,6 +18,7 @@ import '../../../shared/widgets/sidebar_layout_contract.dart';
 import '../../../shared/widgets/sidebar_layout_constants.dart';
 import '../../../shared/widgets/sidebar_ios26_scaffold.dart';
 import '../providers/sidebar_providers.dart';
+import '../providers/workspace_search_providers.dart';
 import '../providers/sidebar_tab_scroll_registry.dart';
 import 'sidebar_user_pill.dart';
 import 'sidebar_tab_registry.dart';
@@ -328,6 +330,17 @@ class _SidebarPageState extends ConsumerState<SidebarPage> {
     final defaultTint = context.conduitTheme.textPrimary;
     if (isSearchExpanded) {
       return [
+        AdaptiveAppBarAction(
+          iosSymbol: 'text.magnifyingglass',
+          icon: Icons.manage_search,
+          tintColor: defaultTint,
+          onPressed: () {
+            ref
+                .read(workspaceSearchQueryProvider.notifier)
+                .set(ref.read(sidebarSearchFieldControllerProvider).text);
+            NavigationService.router.push(Routes.search);
+          },
+        ),
         AdaptiveAppBarAction(
           iosSymbol: 'xmark',
           icon: UiUtils.closeIcon,

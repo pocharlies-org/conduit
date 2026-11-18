@@ -35,6 +35,7 @@ import 'package:conduit_core/models/server_config.dart';
 import 'package:conduit_core/models/server_memory.dart';
 import 'package:conduit_core/models/server_user_settings.dart';
 import 'package:conduit_core/models/user.dart';
+import 'package:conduit_core/models/workspace_search.dart';
 
 import 'package:conduit_core/features/automations/models/automation.dart';
 import 'package:conduit_core/features/calendar/models/calendar_models.dart';
@@ -103,6 +104,7 @@ part 'api_service_knowledge_bases.dart';
 part 'api_service_media_retrieval.dart';
 part 'api_service_models.dart';
 part 'api_service_notes.dart';
+part 'api_service_search.dart';
 part 'api_service_notification_targets.dart';
 part 'api_service_prompts_skills.dart';
 part 'api_service_resource_grants.dart';
@@ -345,6 +347,7 @@ class ApiService extends _ApiServiceBase
         _ToolsFunctionsApi,
         _ChannelsApi,
         _NotesApi,
+        _WorkspaceSearchApi,
         _NotificationTargetsApi,
         _AutomationsApi,
         _CalendarApi,

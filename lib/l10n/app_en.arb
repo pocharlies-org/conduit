@@ -7636,5 +7636,49 @@
   "imagesPlaygroundPromptRequired": "Enter a prompt.",
   "@imagesPlaygroundPromptRequired": {
     "description": "Error shown when running the playground with an empty prompt."
+  },
+  "searchEverything": "Search everything",
+  "@searchEverything": {
+    "description": "Title of the global search page that crosses chats, messages and notes"
+  },
+  "searchEverythingHint": "Search chats, messages and notes",
+  "@searchEverythingHint": {
+    "description": "Hint of the global search field"
+  },
+  "searchFilterAll": "All",
+  "@searchFilterAll": {
+    "description": "Chip that clears the kind filter and shows every kind"
+  },
+  "searchKindChats": "Chats",
+  "@searchKindChats": {
+    "description": "Result group and filter for chats"
+  },
+  "searchKindMessages": "Messages",
+  "@searchKindMessages": {
+    "description": "Result group and filter for channel messages"
+  },
+  "searchKindNotes": "Notes",
+  "@searchKindNotes": {
+    "description": "Result group and filter for notes"
+  },
+  "searchNoResults": "No results",
+  "@searchNoResults": {
+    "description": "Shown when the search found nothing"
+  },
+  "searchSharedSnapshot": "This is a shared snapshot",
+  "@searchSharedSnapshot": {
+    "description": "Shown when a search hit is a read-only shared snapshot"
+  },
+  "searchUntitled": "Untitled",
+  "@searchUntitled": {
+    "description": "Stand-in title for a hit the server left untitled"
+  },
+  "searchFailedTitle": "Search failed",
+  "@searchFailedTitle": {
+    "description": "Title of the global search error state"
+  },
+  "searchFailedMessage": "Check the connection and try again.",
+  "@searchFailedMessage": {
+    "description": "Body of the global search error state"
   }
 }

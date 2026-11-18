@@ -5134,5 +5134,16 @@
   "imagesPlaygroundPickFailed": "Fotografiu sa nepodarilo prečítať.",
   "imagesPlaygroundPromptRequired": "Zadajte prompt.",
   "noteOpenChat": "Otvoriť chat poznámky",
-  "noteOpenChatFailed": "Chat poznámky sa nepodarilo otvoriť"
+  "noteOpenChatFailed": "Chat poznámky sa nepodarilo otvoriť",
+  "searchEverything": "Hľadať vo všetkom",
+  "searchEverythingHint": "Hľadajte v chatoch, správach a poznámkach",
+  "searchFilterAll": "Všetko",
+  "searchKindChats": "Chaty",
+  "searchKindMessages": "Správy",
+  "searchKindNotes": "Poznámky",
+  "searchNoResults": "Žiadne výsledky",
+  "searchSharedSnapshot": "Toto je zdieľaný snímok",
+  "searchUntitled": "Bez názvu",
+  "searchFailedTitle": "Hľadanie zlyhalo",
+  "searchFailedMessage": "Skontrolujte pripojenie a skúste to znova."
 }

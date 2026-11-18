@@ -4885,5 +4885,16 @@
   "imagesPlaygroundPickFailed": "写真を読み込めませんでした。",
   "imagesPlaygroundPromptRequired": "プロンプトを入力してください。",
   "noteOpenChat": "ノートのチャットを開く",
-  "noteOpenChatFailed": "ノートのチャットを開けませんでした"
+  "noteOpenChatFailed": "ノートのチャットを開けませんでした",
+  "searchEverything": "すべてを検索",
+  "searchEverythingHint": "チャット、メッセージ、ノートを検索",
+  "searchFilterAll": "すべて",
+  "searchKindChats": "チャット",
+  "searchKindMessages": "メッセージ",
+  "searchKindNotes": "ノート",
+  "searchNoResults": "結果がありません",
+  "searchSharedSnapshot": "これは共有スナップショットです",
+  "searchUntitled": "無題",
+  "searchFailedTitle": "検索に失敗しました",
+  "searchFailedMessage": "接続を確認してもう一度お試しください。"
 }
