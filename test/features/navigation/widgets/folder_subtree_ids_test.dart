@@ -1,5 +1,6 @@
 import 'package:checks/checks.dart';
 import 'package:conduit/features/navigation/widgets/chats_drawer.dart';
+import 'package:conduit/l10n/app_localizations_en.dart';
 import 'package:conduit_core/models/folder.dart';
 import 'package:flutter_test/flutter_test.dart';
 
@@ -34,5 +35,14 @@ void main() {
     ];
 
     check(folderSubtreeIds(folders, 'a')).deepEquals({'a', 'b'});
+  });
+
+  test('the delete warning names the chats of the whole subtree', () {
+    final l10n = AppLocalizationsEn();
+
+    check(l10n.deleteFolderWithChatsMessage(1))
+        .equals('This folder and its chat will be deleted.');
+    check(l10n.deleteFolderWithChatsMessage(2))
+        .equals('This folder and its 2 chats will be deleted.');
   });
 }
