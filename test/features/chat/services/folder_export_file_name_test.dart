@@ -17,6 +17,8 @@ void main() {
   test('an unnamed folder is a folder', () {
     final name = folderExportFileName('   ', DateTime(2026));
 
-    check(name).equals('folder-folder-export-${DateTime(2026).millisecondsSinceEpoch}.json');
+    check(name).equals(
+      'folder-folder-export-${DateTime(2026).millisecondsSinceEpoch}.json',
+    );
   });
 }
