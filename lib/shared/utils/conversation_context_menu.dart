@@ -18,7 +18,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:conduit_core/features/chat/providers/chat_providers.dart'
     as chat;
 import 'package:conduit/features/chat/widgets/chat_share_sheet.dart';
-import 'package:conduit/features/navigation/widgets/chat_tags_dialog.dart';
+import 'package:conduit/features/navigation/widgets/chat_tags_sheet.dart';
 import 'package:conduit/features/navigation/widgets/folder_tree_guides.dart';
 
 /// Defines an action for use in Conduit context menus.
@@ -288,7 +288,7 @@ List<ConduitContextMenuAction> buildConversationActionsWithFolders({
   Future<void> editTags() async {
     final chatId = conversation.id as String? ?? '';
     if (chatId.isEmpty || !context.mounted) return;
-    await showChatTagsDialog(
+    await showChatTagsSheet(
       context,
       chatId: chatId,
       tags: List<String>.from(conversation.tags as List? ?? const []),

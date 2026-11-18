@@ -1578,17 +1578,12 @@ class _ChatsDrawerState extends ConsumerState<ChatsDrawer>
           for (final tag in tags)
             Padding(
               padding: const EdgeInsets.only(right: Spacing.xs),
-              child: FilterChip(
-                label: Text(tag),
-                selected: selected == tag,
-                labelStyle: AppTypography.labelSmallStyle.copyWith(
-                  color: selected == tag
-                      ? theme.textPrimary
-                      : theme.textSecondary,
-                ),
-                onSelected: (on) => ref
+              child: ConduitChip(
+                label: tag,
+                isSelected: selected == tag,
+                onTap: () => ref
                     .read(chatTagFilterProvider.notifier)
-                    .set(on ? tag : null),
+                    .set(selected == tag ? null : tag),
               ),
             ),
         ],

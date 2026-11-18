@@ -1,11 +1,14 @@
-import 'package:material_ui/material_ui.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
-
 import 'package:conduit_core/providers/app_providers.dart';
 import 'package:conduit_core/utils/debug_logger.dart';
 import 'package:conduit/l10n/app_localizations.dart';
 import 'package:conduit/shared/theme/theme_extensions.dart';
+import 'package:conduit/shared/widgets/conduit_components.dart';
+import 'package:conduit/shared/widgets/platform_ui/platform_ui.dart';
+import 'package:conduit/shared/widgets/sheet_handle.dart';
 import 'package:conduit/shared/widgets/themed_dialogs.dart';
+import 'package:conduit/shared/widgets/themed_sheets.dart';
+import 'package:cupertino_ui/cupertino_ui.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../providers/sidebar_tag_providers.dart';
 
@@ -13,28 +16,30 @@ import '../providers/sidebar_tag_providers.dart';
 /// tags can be removed, every tag the account has is offered as a suggestion,
 /// and a new one can be typed. The server is the source of truth for the
 /// resulting list, so each call's answer replaces the local one.
-Future<void> showChatTagsDialog(
+Future<void> showChatTagsSheet(
   BuildContext context, {
   required String chatId,
   required List<String> tags,
 }) {
-  return ThemedDialogs.showCustom<void>(
+  return ThemedSheets.showCustom<void>(
     context: context,
-    builder: (context) => _ChatTagsDialog(chatId: chatId, tags: tags),
+    useSafeArea: true,
+    isScrollControlled: true,
+    builder: (_) => _ChatTagsSheet(chatId: chatId, tags: tags),
   );
 }
 
-class _ChatTagsDialog extends ConsumerStatefulWidget {
-  const _ChatTagsDialog({required this.chatId, required this.tags});
+class _ChatTagsSheet extends ConsumerStatefulWidget {
+  const _ChatTagsSheet({required this.chatId, required this.tags});
 
   final String chatId;
   final List<String> tags;
 
   @override
-  ConsumerState<_ChatTagsDialog> createState() => _ChatTagsDialogState();
+  ConsumerState<_ChatTagsSheet> createState() => _ChatTagsSheetState();
 }
 
-class _ChatTagsDialogState extends ConsumerState<_ChatTagsDialog> {
+class _ChatTagsSheetState extends ConsumerState<_ChatTagsSheet> {
   late List<String> _tags = widget.tags;
   final TextEditingController _controller = TextEditingController();
   bool _busy = false;
@@ -110,13 +115,45 @@ class _ChatTagsDialogState extends ConsumerState<_ChatTagsDialog> {
         .maybeWhen(data: (names) => names, orElse: () => const <String>[]);
     final offered = suggestions.where((name) => !_tags.contains(name)).toList();
 
-    return AlertDialog(
-      title: Text(l10n.chatTagsTitle),
-      content: SingleChildScrollView(
+    return DecoratedBox(
+      decoration: BoxDecoration(
+        color: theme.surfaceBackground,
+        borderRadius: const BorderRadius.vertical(
+          top: Radius.circular(AppBorderRadius.xl),
+        ),
+      ),
+      child: Padding(
+        padding: const EdgeInsets.fromLTRB(
+          Spacing.lg,
+          0,
+          Spacing.lg,
+          Spacing.lg,
+        ),
         child: Column(
           mainAxisSize: MainAxisSize.min,
-          crossAxisAlignment: CrossAxisAlignment.start,
+          crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
+            const SheetHandle(),
+            Row(
+              children: [
+                Icon(
+                  CupertinoIcons.tag,
+                  color: theme.iconPrimary,
+                  size: IconSize.lg,
+                ),
+                const SizedBox(width: Spacing.sm),
+                Expanded(
+                  child: Text(
+                    l10n.chatTagsTitle,
+                    style: AppTypography.headlineSmallStyle.copyWith(
+                      color: theme.textPrimary,
+                      fontWeight: FontWeight.w700,
+                    ),
+                  ),
+                ),
+              ],
+            ),
+            const SizedBox(height: Spacing.md),
             if (_tags.isEmpty)
               Text(
                 l10n.chatTagsEmpty,
@@ -130,25 +167,20 @@ class _ChatTagsDialogState extends ConsumerState<_ChatTagsDialog> {
                 runSpacing: Spacing.xs,
                 children: [
                   for (final tag in _tags)
-                    InputChip(
-                      label: Text(tag),
-                      onDeleted: _busy ? null : () => _remove(tag),
+                    ConduitChip(
+                      label: tag,
+                      isSelected: true,
+                      icon: CupertinoIcons.xmark,
+                      onTap: _busy ? null : () => _remove(tag),
                     ),
                 ],
               ),
             const SizedBox(height: Spacing.sm),
-            TextField(
+            ConduitInput(
               controller: _controller,
               enabled: !_busy,
+              hint: l10n.chatTagHint,
               textInputAction: TextInputAction.done,
-              decoration: InputDecoration(
-                hintText: l10n.chatTagHint,
-                suffixIcon: IconButton(
-                  icon: const Icon(Icons.add),
-                  tooltip: l10n.save,
-                  onPressed: _busy ? null : () => _add(_controller.text),
-                ),
-              ),
               onSubmitted: _busy ? null : _add,
             ),
             if (offered.isNotEmpty) ...[
@@ -159,27 +191,28 @@ class _ChatTagsDialogState extends ConsumerState<_ChatTagsDialog> {
                   color: theme.textSecondary,
                 ),
               ),
+              const SizedBox(height: Spacing.xs),
               Wrap(
                 spacing: Spacing.xs,
                 runSpacing: Spacing.xs,
                 children: [
                   for (final tag in offered)
-                    ActionChip(
-                      label: Text(tag),
-                      onPressed: _busy ? null : () => _add(tag),
+                    ConduitChip(
+                      label: tag,
+                      onTap: _busy ? null : () => _add(tag),
                     ),
                 ],
               ),
             ],
+            const SizedBox(height: Spacing.md),
+            ConduitTextButton(
+              text: l10n.close,
+              onPressed: () => Navigator.of(context).maybePop(),
+              isPrimary: true,
+            ),
           ],
         ),
       ),
-      actions: [
-        TextButton(
-          onPressed: () => Navigator.of(context).maybePop(),
-          child: Text(l10n.close),
-        ),
-      ],
     );
   }
 }

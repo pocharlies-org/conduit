@@ -1,6 +1,6 @@
 import 'package:conduit_core/models/conversation.dart';
 import 'package:conduit/features/navigation/widgets/sidebar_page.dart';
-import 'package:material_ui/material_ui.dart';
+import 'package:conduit/shared/widgets/conduit_components.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 import 'sidebar_page_test_support.dart';
@@ -48,7 +48,7 @@ void main() {
     expect(find.text('Work Chat'), findsOneWidget);
     expect(find.text('Home Chat'), findsOneWidget);
 
-    final workChip = find.widgetWithText(FilterChip, 'work');
+    final workChip = find.widgetWithText(ConduitChip, 'work');
     expect(workChip, findsOneWidget);
 
     await tester.tap(workChip);
@@ -56,7 +56,7 @@ void main() {
     expect(find.text('Work Chat'), findsOneWidget);
     expect(find.text('Home Chat'), findsNothing);
 
-    await tester.tap(find.widgetWithText(FilterChip, 'work'));
+    await tester.tap(find.widgetWithText(ConduitChip, 'work'));
     await tester.pumpAndSettle();
     expect(find.text('Work Chat'), findsOneWidget);
     expect(find.text('Home Chat'), findsOneWidget);
