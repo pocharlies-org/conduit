@@ -284,6 +284,10 @@ Widget sidebarTestBuildHarness({
 
 final class SidebarTestSidebarApiService extends Mock implements ApiService {
   @override
+  Future<List<Map<String, dynamic>>> getAllChatTags() async =>
+      const <Map<String, dynamic>>[];
+
+  @override
   Future<List<Conversation>> searchConversations(String query) async =>
       const <Conversation>[];
 
