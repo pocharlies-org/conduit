@@ -1566,7 +1566,6 @@ class _ChatsDrawerState extends ConsumerState<ChatsDrawer>
   /// The sidebar's tag chips: one per tag, the chosen one selected; tapping
   /// it again clears the filter.
   Widget _buildTagFilterRow(List<String> tags, String? selected) {
-    final theme = context.conduitTheme;
     return SingleChildScrollView(
       scrollDirection: Axis.horizontal,
       padding: const EdgeInsets.symmetric(
