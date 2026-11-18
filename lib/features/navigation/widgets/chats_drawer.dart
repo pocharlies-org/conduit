@@ -1556,7 +1556,7 @@ class _ChatsDrawerState extends ConsumerState<ChatsDrawer>
     String folderId,
   ) {
     final subtree = folderSubtreeIds(folders, folderId);
-    final conversations = ref.read(conversationsProvider).valueOrNull;
+    final conversations = ref.read(conversationsProvider).value;
     if (conversations == null) return const <Conversation>[];
     return conversations
         .where((conversation) => subtree.contains(conversation.folderId))
