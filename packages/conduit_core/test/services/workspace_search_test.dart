@@ -90,7 +90,7 @@ void main() {
     check(query['kind']).equals('note');
     check(query['sharing']).equals('mine');
     check(query['scope']).equals('folder:f1');
-    check(query['page']).equals('2');
+    check(query['page']).equals(2);
     check(page.hits).isNotEmpty();
   });
 

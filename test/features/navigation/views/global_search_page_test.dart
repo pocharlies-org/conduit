@@ -24,6 +24,7 @@ void main() {
 
   testWidgets('results render grouped under their kind', (tester) async {
     await tester.pumpWidget(_harness(page));
+    await tester.pumpAndSettle();
 
     expect(find.text('Chats'), findsWidgets);
     expect(find.text('Messages'), findsWidgets);
@@ -37,6 +38,7 @@ void main() {
     tester,
   ) async {
     await tester.pumpWidget(_harness(page));
+    await tester.pumpAndSettle();
 
     await tester.tap(find.widgetWithText(FilterChip, 'Notes'));
     await tester.pumpAndSettle();
@@ -57,12 +59,14 @@ void main() {
     await tester.pumpWidget(
       _harness(const WorkspaceSearchResults(kinds: [WorkspaceSearchKind.chat])),
     );
+    await tester.pumpAndSettle();
 
     expect(find.text('No results'), findsOneWidget);
   });
 
   testWidgets('a failed search says so and offers a retry', (tester) async {
     await tester.pumpWidget(_harness(null, error: StateError('down')));
+    await tester.pumpAndSettle();
 
     expect(find.text('Search failed'), findsOneWidget);
     expect(find.text('Retry'), findsOneWidget);
