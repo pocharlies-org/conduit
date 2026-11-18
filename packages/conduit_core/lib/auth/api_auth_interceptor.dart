@@ -170,9 +170,13 @@ class ApiAuthInterceptor extends Interceptor {
   }
 
   void _removeServerCredentials(RequestOptions options) {
-    options.headers.removeWhere(
-      (header, _) => _isServerCredentialHeader(header),
-    );
+    // Remove key by key: `removeWhere` on dio's case-insensitive header map
+    // leaves it corrupted, and the next header write throws a TypeError.
+    for (final header in options.headers.keys.toList()) {
+      if (_isServerCredentialHeader(header)) {
+        options.headers.remove(header);
+      }
+    }
   }
 
   bool _isServerCredentialHeader(String header) {

@@ -69,11 +69,14 @@ RequestOptions? nextSameOriginRedirectRequest({
   if (convertsToGet) {
     redirected.method = 'GET';
     redirected.data = null;
-    redirected.headers.removeWhere((name, _) {
+    // Key by key: `removeWhere` corrupts dio's case-insensitive header map.
+    for (final name in redirected.headers.keys.toList()) {
       final normalized = name.toLowerCase();
-      return normalized == Headers.contentLengthHeader ||
-          normalized == Headers.contentTypeHeader;
-    });
+      if (normalized == Headers.contentLengthHeader ||
+          normalized == Headers.contentTypeHeader) {
+        redirected.headers.remove(name);
+      }
+    }
   }
   return redirected;
 }

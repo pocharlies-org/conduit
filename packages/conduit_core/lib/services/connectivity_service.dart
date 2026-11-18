@@ -720,9 +720,12 @@ Dio createConnectivityHealthClient(
               (serverUri != null &&
                   isCredentialSafeRedirectTarget(serverUri, target));
           if (!sameServer) {
-            options.headers.removeWhere(
-              (name, _) => customHeaderNames.contains(name.toLowerCase()),
-            );
+            // Key by key: `removeWhere` corrupts dio's header map.
+            for (final name in options.headers.keys.toList()) {
+              if (customHeaderNames.contains(name.toLowerCase())) {
+                options.headers.remove(name);
+              }
+            }
           }
 
           if (suppressCustomCookieHeader != null) {
@@ -733,9 +736,11 @@ Dio createConnectivityHealthClient(
               // Fail closed if the live logout fence cannot be resolved.
             }
             if (suppressed) {
-              options.headers.removeWhere(
-                (name, _) => name.toLowerCase() == 'cookie',
-              );
+              for (final name in options.headers.keys.toList()) {
+                if (name.toLowerCase() == 'cookie') {
+                  options.headers.remove(name);
+                }
+              }
             }
           }
           handler.next(options);
