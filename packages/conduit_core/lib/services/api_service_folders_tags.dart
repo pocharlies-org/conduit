@@ -174,9 +174,26 @@ mixin _FoldersTagsApi on _ApiServiceBase {
     );
   }
 
-  Future<void> deleteFolder(String id) async {
-    _traceApi('Deleting folder: $id');
-    await _dio.delete('/api/v1/folders/$id');
+  /// POST `/api/v1/folders/{id}/read` — marks every chat in the folder's
+  /// subtree read for this account (`routers/folders.py:mark_folder_chats_read_by_id`).
+  /// Answers with `{folder_id, folder_ids, updated_count, folder_unread_counts}`,
+  /// or null when the server answers with something else.
+  Future<Map<String, dynamic>?> markFolderRead(String id) async {
+    _traceApi('Marking folder read: $id');
+    final response = await _dio.post('/api/v1/folders/$id/read');
+    final data = response.data;
+    return data is Map<String, dynamic> ? data : null;
+  }
+
+  /// GET `/api/v1/chats/folder/{id}` — the full chats of a folder and its
+  /// subfolders (`routers/chats.py:get_chats_by_folder_id`). This is what the
+  /// web exports as the folder's JSON.
+  Future<List<Map<String, dynamic>>> getFolderChats(String id) async {
+    _traceApi('Fetching chats of folder: $id');
+    final response = await _dio.get(
+      '/api/v1/chats/folder/${Uri.encodeComponent(id)}',
+    );
+    return _coerceRawMapList(response.data);
   }
 
   Future<void> moveConversationToFolder(

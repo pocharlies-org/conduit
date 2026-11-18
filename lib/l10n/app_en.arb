@@ -879,6 +879,35 @@
   "@failedToDeleteFolder": {
     "description": "Error notice when deleting a folder fails."
   },
+  "folderMarkRead": "Mark as read",
+  "@folderMarkRead": {
+    "description": "Menu action that marks every chat in the folder read."
+  },
+  "folderExport": "Export to JSON",
+  "@folderExport": {
+    "description": "Menu action that exports the folder's chats as JSON."
+  },
+  "failedToMarkFolderRead": "Could not mark the folder as read",
+  "@failedToMarkFolderRead": {
+    "description": "Error notice when marking a folder read fails."
+  },
+  "failedToExportFolder": "Could not export the folder",
+  "@failedToExportFolder": {
+    "description": "Error notice when exporting a folder fails."
+  },
+  "folderExportEmpty": "This folder has no chats to export",
+  "@folderExportEmpty": {
+    "description": "Notice that there is nothing to export in the folder."
+  },
+  "deleteFolderWithChatsMessage": "{count, plural, one{This folder and its chat will be deleted.} other{This folder and its {count} chats will be deleted.}}",
+  "@deleteFolderWithChatsMessage": {
+    "description": "Warning that deleting a folder also deletes the chats inside it.",
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
   "sharedFolderOwner": "Shared by {name}",
   "@sharedFolderOwner": {
     "description": "Owner label on a folder another user shared with this account.",

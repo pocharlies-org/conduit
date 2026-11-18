@@ -325,8 +325,8 @@ mixin _ChatsRawApi on _ApiServiceBase {
 
   /// DELETE `/api/v1/folders/{id}?delete_contents=<flag>`.
   ///
-  /// Distinct from [deleteFolder] (which omits the param and gets the
-  /// DESTRUCTIVE server default `true`). Sync-driven deletes pass `false` so
+  /// Omitting the param gets the DESTRUCTIVE server default `true`. Sync-driven
+  /// deletes pass `false` so
   /// contained chats are re-parented to root, not deleted (verified
   /// `routers/folders.py:delete_folder_by_id`).
   /// Returns `true` on success; `false` on 404 (already gone); 401/403 ->

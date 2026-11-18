@@ -758,6 +758,12 @@
     "description": "Warning that deleting a folder will remove it and its associations."
   },
   "failedToDeleteFolder": "Priečinok sa nepodarilo odstrániť",
+  "folderMarkRead": "Označiť ako prečítané",
+  "folderExport": "Exportovať do JSON",
+  "failedToMarkFolderRead": "Priečinok sa nepodarilo označiť ako prečítaný",
+  "failedToExportFolder": "Priečinok sa nepodarilo exportovať",
+  "folderExportEmpty": "Tento priečinok nemá žiadne chaty na export",
+  "deleteFolderWithChatsMessage": "{count, plural, one{Tento priečinok a jeho {count} chat budú vymazané.} few{Tento priečinok a jeho {count} chaty budú vymazané.} many{Tento priečinok a jeho {count} chatov bude vymazaných.} other{Tento priečinok a jeho {count} chatov bude vymazaných.}}",
   "@failedToDeleteFolder": {
     "description": "Error notice when deleting a folder fails."
   },

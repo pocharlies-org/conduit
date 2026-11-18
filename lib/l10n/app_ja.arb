@@ -758,6 +758,12 @@
     "description": "Warning that deleting a folder will remove it and its associations."
   },
   "failedToDeleteFolder": "フォルダーの削除に失敗しました",
+  "folderMarkRead": "既読にする",
+  "folderExport": "JSON にエクスポート",
+  "failedToMarkFolderRead": "フォルダを既読にできませんでした",
+  "failedToExportFolder": "フォルダをエクスポートできませんでした",
+  "folderExportEmpty": "このフォルダにはエクスポートするチャットがありません",
+  "deleteFolderWithChatsMessage": "{count, plural, other{このフォルダと {count} 件のチャットが削除されます。}}",
   "@failedToDeleteFolder": {
     "description": "Error notice when deleting a folder fails."
   },

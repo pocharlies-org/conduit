@@ -758,6 +758,12 @@
     "description": "Warning that deleting a folder will remove it and its associations."
   },
   "failedToDeleteFolder": "Složku se nepodařilo smazat",
+  "folderMarkRead": "Označit jako přečtené",
+  "folderExport": "Exportovat do JSON",
+  "failedToMarkFolderRead": "Složku se nepodařilo označit jako přečtenou",
+  "failedToExportFolder": "Složku se nepodařilo exportovat",
+  "folderExportEmpty": "Tato složka nemá žádné chaty k exportu",
+  "deleteFolderWithChatsMessage": "{count, plural, one{Tato složka a její {count} chat budou smazány.} few{Tato složka a její {count} chaty budou smazány.} many{Tato složka a jejích {count} chatů bude smazáno.} other{Tato složka a jejích {count} chatů bude smazáno.}}",
   "@failedToDeleteFolder": {
     "description": "Error notice when deleting a folder fails."
   },
