@@ -2,7 +2,7 @@
 
 Para lanzarlo **en vivo con el harness** (skill `company-cto`): una historia Jira por tanda, `en-vivo`,
 asignada a Dani e In Progress, y una sesión que la ejecuta con su brief de cuatro líneas. No es una épica
-asíncrona: la épica admite tres historias y esto son catorce PRs independientes.
+asíncrona: la épica admite tres historias y esto son siete PRs independientes.
 
 Lo que se compara y por qué, en `docs/paridad-openwebui.md` (superficie entera de la web, no endpoints).
 
@@ -356,8 +356,8 @@ Orden por valor en el móvil. La columna «PR» es una estimación de tamaño, n
   - [ ] Un bloque `html`/`svg` con documento completo se muestra en Ajustes del chat como artifact y se abre
         a pantalla completa.
 - **Riesgo alto**: un artifact es HTML ajeno en la app. Necesita el WebView del proyecto, sin JavaScript
-  puente ni cookies de la sesión, o no entra. **Decisión de Dani antes de empezar**: si el WebView no se
-  quiere en la app, T15 se queda en la previsualización de SVG/imagen y se cierra así.
+  puente ni cookies de la sesión, o no entra. **Decisión de Dani (20-11)**: el WebView entra como shell
+  (OWU-144) y T15 se retira.
 - **Tamaño**: L.
 
 ### Fuera de alcance (y por qué)
@@ -424,7 +424,7 @@ T15** ya no se abrirán: retiradas el 20-11 a favor del shell WebView (**OWU-144
 4. **Al terminar la tanda**, se marca su fila en `docs/paridad-openwebui.md` y se cierra la historia con la
    clave de la PR.
 
-Para lanzar todo de golpe, una sesión por tanda de la ola 1 y las demás al cerrar la anterior: no catorce a
+Para lanzar todo de golpe, una sesión por tanda de la ola 1 y las demás al cerrar la anterior: no siete a
 la vez.
 
 ## 5. Lo que espera a Dani

@@ -151,7 +151,7 @@ hace la web dentro del shell.
 | T12 | **Automatizaciones**: importar, exportar y clonar | `POST /automations/create`, `GET /automations/{id}` | pendiente |
 | T13 | **Memorias**: borrar todas y reindexar | `POST /memories/reset`, `/reindex` | pendiente |
 | T14 | **Compartido**: abrir un enlace público `/s/{id}` del servidor | `GET /chats/share/{share_id}` | pendiente |
-| T15 | **Controls y Artifacts** del chat | — (local + settings) | pendiente |
+| T15 | **Controls y Artifacts** del chat | — (local + settings) | retirada — shell WebView (OWU-144) |
 
 Cada tanda lleva su prueba: el recorrido en la app real cuando haya dispositivo (`mac-casa` hoy no
 tiene runtime de simulador utilizable) y, mientras no lo haya, widget test del menú o pantalla más
