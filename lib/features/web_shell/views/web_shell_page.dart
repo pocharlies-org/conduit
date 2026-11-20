@@ -96,14 +96,14 @@ class _WebShellWebViewState extends State<_WebShellWebView> {
       },
       shouldOverrideUrlLoading: (controller, action) async {
         final url = action.request.url;
-        if (url == null) return NavigationAction.ALLOW;
+        if (url == null) return NavigationAction.allow;
         if (webShellIsInternal(url.toString(), widget.baseUrl)) {
-          return NavigationAction.ALLOW;
+          return NavigationAction.allow;
         }
         if (await canLaunchUrl(url)) {
           await launchUrl(url, mode: LaunchMode.externalApplication);
         }
-        return NavigationAction.CANCEL;
+        return NavigationAction.cancel;
       },
     );
   }
