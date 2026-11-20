@@ -34,6 +34,7 @@ class Routes {
   static const String channel = '/channel/:id';
   static const String workspace = '/workspace';
   static const String search = '/search';
+  static const String web = '/web';
 
   static String folderPath(String id) => '/folder/$id';
 }
@@ -69,6 +70,7 @@ class RouteNames {
   static const String channel = 'channel';
   static const String workspace = 'workspace';
   static const String search = 'search';
+  static const String web = 'web';
 }
 
 enum WorkspaceSection { models, knowledge, prompts, tools, skills }

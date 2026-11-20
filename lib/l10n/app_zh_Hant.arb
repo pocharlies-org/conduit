@@ -3700,5 +3700,7 @@
   "searchSharedSnapshot": "這是共用快照",
   "searchUntitled": "無標題",
   "searchFailedTitle": "搜尋失敗",
-  "searchFailedMessage": "請檢查連線後再試一次。"
+  "searchFailedMessage": "請檢查連線後再試一次。",
+  "webShellTitle": "網頁",
+  "webShellNoServer": "沒有可開啟的伺服器"
 }

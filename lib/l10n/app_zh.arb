@@ -3700,5 +3700,7 @@
   "searchSharedSnapshot": "这是共享快照",
   "searchUntitled": "无标题",
   "searchFailedTitle": "搜索失败",
-  "searchFailedMessage": "请检查连接后重试。"
+  "searchFailedMessage": "请检查连接后重试。",
+  "webShellTitle": "网页",
+  "webShellNoServer": "没有可打开的服务器"
 }

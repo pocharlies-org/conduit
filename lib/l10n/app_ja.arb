@@ -4896,5 +4896,7 @@
   "searchSharedSnapshot": "これは共有スナップショットです",
   "searchUntitled": "無題",
   "searchFailedTitle": "検索に失敗しました",
-  "searchFailedMessage": "接続を確認してもう一度お試しください。"
+  "searchFailedMessage": "接続を確認してもう一度お試しください。",
+  "webShellTitle": "Web",
+  "webShellNoServer": "開くサーバーがありません"
 }

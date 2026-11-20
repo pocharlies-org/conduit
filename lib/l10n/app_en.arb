@@ -7680,5 +7680,13 @@
   "searchFailedMessage": "Check the connection and try again.",
   "@searchFailedMessage": {
     "description": "Body of the global search error state"
+  },
+  "webShellTitle": "Web",
+  "webShellNoServer": "No server to open",
+  "@webShellTitle": {
+    "description": "Title of the screen that shows the Open WebUI web inside the app"
+  },
+  "@webShellNoServer": {
+    "description": "Shown when the web shell has no server or session to load"
   }
 }

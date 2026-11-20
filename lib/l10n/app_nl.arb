@@ -3700,5 +3700,7 @@
   "searchSharedSnapshot": "Dit is een gedeelde momentopname",
   "searchUntitled": "Zonder titel",
   "searchFailedTitle": "Zoeken mislukt",
-  "searchFailedMessage": "Controleer de verbinding en probeer het opnieuw."
+  "searchFailedMessage": "Controleer de verbinding en probeer het opnieuw.",
+  "webShellTitle": "Web",
+  "webShellNoServer": "Geen server om te openen"
 }

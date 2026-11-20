@@ -130,6 +130,11 @@ parecía a primera vista: el hueco real es corto y está concentrado.
 Una PR por tanda; una tanda está hecha cuando su recorrido se puede usar en la app, no cuando la
 llamada existe. Orden por valor de uso en el móvil, no por tamaño del endpoint.
 
+**20-11, decisión de Dani:** la app deja de portar pantallas una a una. Conduit pasa a ser una
+cáscara nativa (login, servidores, y después push/compartir) que abre la web real de Open WebUI con
+la sesión de la app — el shell WebView, `OWU-144`. Las tandas T7–T11 se retiran: lo que piden ya lo
+hace la web dentro del shell.
+
 | Tanda | Qué | Dónde duele | Estado |
 |---|---|---|---|
 | T1 | Abrir el chat oculto de una nota | `POST /api/v1/notes/{id}/chat` | OWU-134, PR #20 |
@@ -138,11 +143,11 @@ llamada existe. Orden por valor de uso en el móvil, no por tamaño del endpoint
 | T4 | **Conectores**: paridad fina de servidores de herramientas y terminales, incluido OAuth de MCP y prueba de conexión | `GET/POST /api/v1/tools/*`, `GET /api/v1/terminals`, OAuth del tool server | pendiente |
 | T5 | **Valorar respuestas** (pulgar y motivo) y **etiquetas de chat** (poner, quitar, filtrar la lista por etiqueta) | `POST /api/v1/evaluations/feedback`, `/api/v1/chats/{id}/tags`, `GET /api/v1/chats/all/tags` | `OWU-141` |
 | T6 | **Buscador global** con tipos (chats, mensajes, notas) y filtros | `GET /api/v1/search` | `OWU-142` |
-| T7 | **Ajustes que faltan**: variables de usuario, atajos, uso, API key y MFA | `users/user/variables`, `users/user/settings/update` (`keybindings`), `GET /users/usage`, `/auths/api_key`, `/auths/mfa/*` | pendiente |
-| T8 | **Ficheros**: gestor con borrado y estado de procesado para RAG | `GET /files/`, `DELETE /files/{id}`, `GET /files/{id}/process/status` | pendiente |
-| T9 | **Espacio de trabajo fino**: etiquetas de prompts como filtro, sincronizar directorio, importar skills por carpeta o URL, exportar ZIP | `GET /prompts/tags`, `/knowledge/{id}/sync/*`, `/skills/import`, `/skills/export` | pendiente |
-| T10 | **Notas**: importar `.md`/`.txt`, descargar TXT/MD/PDF e insertar una respuesta en la nota | `POST /notes/create` (por fichero), `GET /notes/{id}/chats` | pendiente |
-| T11 | **Canales**: webhooks, chat cifrado y selector completo de reacciones | `/channels/{id}/webhooks*`, `/channels/{id}/encrypted` | pendiente |
+| T7 | **Ajustes que faltan**: variables de usuario, atajos, uso, API key y MFA | `users/user/variables`, `users/user/settings/update` (`keybindings`), `GET /users/usage`, `/auths/api_key`, `/auths/mfa/*` | retirada — shell WebView (OWU-144) |
+| T8 | **Ficheros**: gestor con borrado y estado de procesado para RAG | `GET /files/`, `DELETE /files/{id}`, `GET /files/{id}/process/status` | retirada — shell WebView (OWU-144) |
+| T9 | **Espacio de trabajo fino**: etiquetas de prompts como filtro, sincronizar directorio, importar skills por carpeta o URL, exportar ZIP | `GET /prompts/tags`, `/knowledge/{id}/sync/*`, `/skills/import`, `/skills/export` | retirada — shell WebView (OWU-144) |
+| T10 | **Notas**: importar `.md`/`.txt`, descargar TXT/MD/PDF e insertar una respuesta en la nota | `POST /notes/create` (por fichero), `GET /notes/{id}/chats` | retirada — shell WebView (OWU-144) |
+| T11 | **Canales**: webhooks, chat cifrado y selector completo de reacciones | `/channels/{id}/webhooks*`, `/channels/{id}/encrypted` | retirada — shell WebView (OWU-144) |
 | T12 | **Automatizaciones**: importar, exportar y clonar | `POST /automations/create`, `GET /automations/{id}` | pendiente |
 | T13 | **Memorias**: borrar todas y reindexar | `POST /memories/reset`, `/reindex` | pendiente |
 | T14 | **Compartido**: abrir un enlace público `/s/{id}` del servidor | `GET /chats/share/{share_id}` | pendiente |

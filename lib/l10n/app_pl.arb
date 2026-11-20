@@ -6042,5 +6042,7 @@
   "searchSharedSnapshot": "To jest udostępniona migawka",
   "searchUntitled": "Bez tytułu",
   "searchFailedTitle": "Wyszukiwanie nie powiodło się",
-  "searchFailedMessage": "Sprawdź połączenie i spróbuj ponownie."
+  "searchFailedMessage": "Sprawdź połączenie i spróbuj ponownie.",
+  "webShellTitle": "Sieć",
+  "webShellNoServer": "Brak serwera do otwarcia"
 }
