@@ -3479,5 +3479,7 @@
   "searchSharedSnapshot": "공유 스냅샷입니다",
   "searchUntitled": "제목 없음",
   "searchFailedTitle": "검색 실패",
-  "searchFailedMessage": "연결을 확인하고 다시 시도하세요."
+  "searchFailedMessage": "연결을 확인하고 다시 시도하세요.",
+  "webShellTitle": "웹",
+  "webShellNoServer": "열 서버가 없습니다"
 }

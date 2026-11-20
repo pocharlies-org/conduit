@@ -34,6 +34,7 @@ import '../../features/workspace/views/workspace_page.dart';
 import '../../features/workspace/workspace_navigation.dart';
 
 import '../../features/navigation/views/global_search_page.dart';
+import '../../features/web_shell/views/web_shell_page.dart';
 import '../../features/integrations/views/personal_connection_editor_page.dart';
 import '../../features/integrations/views/personal_connections_page.dart';
 import '../../features/automations/views/scheduled_task_detail_page.dart';
@@ -152,6 +153,12 @@ final goRouterProvider = Provider<GoRouter>((ref) {
           name: RouteNames.search,
           pageBuilder: (context, state) =>
               _buildNoTransitionPage(state: state, child: const GlobalSearchPage()),
+        ),
+        GoRoute(
+          path: Routes.web,
+          name: RouteNames.web,
+          pageBuilder: (context, state) =>
+              _buildNoTransitionPage(state: state, child: const WebShellPage()),
         ),
         GoRoute(
           path: Routes.channel,

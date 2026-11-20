@@ -363,6 +363,12 @@ class _SidebarPageState extends ConsumerState<SidebarPage> {
         tintColor: defaultTint,
         onPressed: () => openSidebarSearch(ref),
       ),
+      AdaptiveAppBarAction(
+        iosSymbol: 'globe',
+        icon: Icons.language,
+        tintColor: defaultTint,
+        onPressed: () => NavigationService.router.push(Routes.web),
+      ),
       ...contextualActions,
       if (createAction != null)
         AdaptiveAppBarAction(

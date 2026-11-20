@@ -5145,5 +5145,7 @@
   "searchSharedSnapshot": "Toto je zdieľaný snímok",
   "searchUntitled": "Bez názvu",
   "searchFailedTitle": "Hľadanie zlyhalo",
-  "searchFailedMessage": "Skontrolujte pripojenie a skúste to znova."
+  "searchFailedMessage": "Skontrolujte pripojenie a skúste to znova.",
+  "webShellTitle": "Web",
+  "webShellNoServer": "Žiadny server na otvorenie"
 }

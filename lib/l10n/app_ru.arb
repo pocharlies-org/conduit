@@ -3700,5 +3700,7 @@
   "searchSharedSnapshot": "Это общий снимок",
   "searchUntitled": "Без названия",
   "searchFailedTitle": "Не удалось выполнить поиск",
-  "searchFailedMessage": "Проверьте соединение и повторите попытку."
+  "searchFailedMessage": "Проверьте соединение и повторите попытку.",
+  "webShellTitle": "Веб",
+  "webShellNoServer": "Нет сервера для открытия"
 }

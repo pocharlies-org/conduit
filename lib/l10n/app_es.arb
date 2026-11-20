@@ -3700,5 +3700,7 @@
   "searchSharedSnapshot": "Es una instantánea compartida",
   "searchUntitled": "Sin título",
   "searchFailedTitle": "No se pudo buscar",
-  "searchFailedMessage": "Comprueba la conexión y vuelve a intentarlo."
+  "searchFailedMessage": "Comprueba la conexión y vuelve a intentarlo.",
+  "webShellTitle": "Web",
+  "webShellNoServer": "No hay servidor que abrir"
 }

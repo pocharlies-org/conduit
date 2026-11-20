@@ -2,7 +2,7 @@
 
 Para lanzarlo **en vivo con el harness** (skill `company-cto`): una historia Jira por tanda, `en-vivo`,
 asignada a Dani e In Progress, y una sesión que la ejecuta con su brief de cuatro líneas. No es una épica
-asíncrona: la épica admite tres historias y esto son catorce PRs independientes.
+asíncrona: la épica admite tres historias y esto son siete PRs independientes.
 
 Lo que se compara y por qué, en `docs/paridad-openwebui.md` (superficie entera de la web, no endpoints).
 
@@ -224,6 +224,10 @@ Orden por valor en el móvil. La columna «PR» es una estimación de tamaño, n
 - **Tamaño**: L. Es la tanda con más incógnitas; si el OAuth del fork no está listo, se entrega el resto y
   se abre una historia para el OAuth con lo medido.
 
+> **20-11, decisión de Dani (OWU-144):** la app es una cáscara nativa que abre la web real de
+> Open WebUI con la sesión de la app (shell WebView). **T7a, T7b, T8, T9, T10 y T11 se retiran**: lo
+> que piden ya lo hace la web dentro del shell. Las fichas quedan abajo como registro.
+
 ### T7a · Ajustes: variables de usuario, API key y uso
 
 - **Web**: variables de usuario (texto, secreto), la API key propia (ver, crear, borrar) y el dashboard de
@@ -352,8 +356,8 @@ Orden por valor en el móvil. La columna «PR» es una estimación de tamaño, n
   - [ ] Un bloque `html`/`svg` con documento completo se muestra en Ajustes del chat como artifact y se abre
         a pantalla completa.
 - **Riesgo alto**: un artifact es HTML ajeno en la app. Necesita el WebView del proyecto, sin JavaScript
-  puente ni cookies de la sesión, o no entra. **Decisión de Dani antes de empezar**: si el WebView no se
-  quiere en la app, T15 se queda en la previsualización de SVG/imagen y se cierra así.
+  puente ni cookies de la sesión, o no entra. **Decisión de Dani (20-11)**: el WebView entra como shell
+  (OWU-144) y T15 se retira.
 - **Tamaño**: L.
 
 ### Fuera de alcance (y por qué)
@@ -371,10 +375,10 @@ Orden por valor en el móvil. La columna «PR» es una estimación de tamaño, n
 |---|---|---|
 | 0 | S0 | quitar el rojo conocido antes de medir nada más |
 | 1 | T3, T5, T6 | lo que se usa a diario: carpetas, valorar, buscar |
-| 2 | T4, T7a, T8 | conectores y ajustes con credenciales |
-| 3 | T9, T10, T11 | espacio de trabajo, notas, canales |
-| 4 | T12, T13, T14, T7b | los pequeños |
-| 5 | T15 | decisión de WebView antes |
+| 2 | T4 | conectores con credenciales |
+| 3 | — | retirada el 20-11: T7a, T7b, T8, T9, T10 y T11 las cubre el shell WebView (OWU-144) |
+| 4 | T12, T13, T14 | los pequeños |
+| 5 | — | T15 decidida el 20-11: shell WebView adoptado (OWU-144) |
 
 Dos sesiones como máximo a la vez: `mac-casa` compila y prueba en serie, y dos ramas peleándose por el
 mismo `build_runner` dan falsos rojos. Ola 1 admite dos en paralelo (T3 + T6) porque no comparten ficheros;
@@ -392,9 +396,9 @@ Todas son `Task` en `OWU`, con `compania, en-vivo`, asignadas a Dani, In Progres
 | `OWU-141` | T5 | Valorar una respuesta y etiquetas de chat con su filtro | Añade valorar una respuesta y las etiquetas de chat con su filtro, como en la web. No toques el buscador ni las carpetas. Éxito = los tres criterios recorridos en el iPhone con captura en la PR. Cuando termines, informa y para. |
 | `OWU-142` | T6 | Buscador global: chats, mensajes, notas y canales | Añade el buscador global sobre `/api/v1/search`, agrupado y con filtros. No toques ninguna otra tanda. Éxito = los tres criterios recorridos en el iPhone con captura en la PR. Cuando termines, informa y para. |
 
-**Sin ticket todavía** (se abren al entrar en su ola, no antes): **T4**, **T7a**, **T7b**, **T8**, **T9**,
-**T10**, **T11**, **T12**, **T13**, **T14** y **T15**. Son las once restantes; su ficha está en la sección 2
-y no hace falta nada más para crearlas.
+**Sin ticket todavía** (se abren al entrar en su ola, no antes): **T4**, **T12**, **T13** y **T14**;
+su ficha está en la sección 2 y no hace falta nada más para crearlas. **T7a, T7b, T8, T9, T10, T11 y
+T15** ya no se abrirán: retiradas el 20-11 a favor del shell WebView (**OWU-144**, en vivo).
 
 ## 4. Cómo se lanza, paso a paso
 
@@ -420,13 +424,14 @@ y no hace falta nada más para crearlas.
 4. **Al terminar la tanda**, se marca su fila en `docs/paridad-openwebui.md` y se cierra la historia con la
    clave de la PR.
 
-Para lanzar todo de golpe, una sesión por tanda de la ola 1 y las demás al cerrar la anterior: no catorce a
+Para lanzar todo de golpe, una sesión por tanda de la ola 1 y las demás al cerrar la anterior: no siete a
 la vez.
 
 ## 5. Lo que espera a Dani
 
-1. **T15 y el WebView.** ¿Entra un WebView para Artifacts, o se queda en SVG/imagen?
-2. **MFA (T7b).** ¿Se hace con una cuenta de prueba en el servidor, o se deja fuera hasta que haya una?
+1. ~~**T15 y el WebView.**~~ Decidido el 20-11: entra el WebView — la app abre la web (shell
+   WebView, **OWU-144**), y con ella Artifacts, MFA y todo lo de las tandas retiradas.
+2. ~~**MFA (T7b).**~~ Retirada con T7b: la web dentro del shell ya la tiene.
 
 Lo demás no se pregunta: el orden de la sección 3, el reparto en olas, la rama y el método de fusión son
 los del plan y de las reglas.

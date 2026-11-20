@@ -3700,5 +3700,7 @@
   "searchSharedSnapshot": "Dies ist eine geteilte Momentaufnahme",
   "searchUntitled": "Ohne Titel",
   "searchFailedTitle": "Suche fehlgeschlagen",
-  "searchFailedMessage": "Verbindung prüfen und erneut versuchen."
+  "searchFailedMessage": "Verbindung prüfen und erneut versuchen.",
+  "webShellTitle": "Web",
+  "webShellNoServer": "Kein Server zum Öffnen"
 }
