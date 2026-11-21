@@ -869,7 +869,7 @@ Future<void> beginOpenWebUiCompletionSubmission(
 }
 
 const String _headlessCompletionRecoveryError =
-    'Conduit could not confirm or recover this response from Open WebUI. '
+    'openChat could not confirm or recover this response from Open WebUI. '
     'Refresh this chat to try again.';
 
 Future<void> _markHeadlessCompletionRecoveryFailed(

@@ -1,6 +1,6 @@
 {
   "@@locale": "en",
-  "appTitle": "Conduit",
+  "appTitle": "openChat",
   "@appTitle": {
     "description": "Application name displayed in the app and OS UI."
   },
@@ -66,11 +66,11 @@
   "@account": {
     "description": "Section header for account-related options."
   },
-  "supportConduit": "Support Conduit",
+  "supportConduit": "Support openChat",
   "@supportConduit": {
     "description": "Section header inviting the user to financially support the project."
   },
-  "supportConduitSubtitle": "Keep Conduit independent by funding ongoing development.",
+  "supportConduitSubtitle": "Keep openChat independent by funding ongoing development.",
   "@supportConduitSubtitle": {
     "description": "Subtitle explaining why donations are helpful."
   },
@@ -107,7 +107,7 @@
   "@releaseNotesLearnMore": {
     "description": "Prompt shown beneath the release announcement banner title."
   },
-  "releaseNotesReviewButton": "Review Conduit",
+  "releaseNotesReviewButton": "Review openChat",
   "@releaseNotesReviewButton": {
     "description": "Button opening the app store review/listing page."
   },
@@ -489,7 +489,7 @@
   "@voiceCallDisconnected": {
     "description": "Status label shown when the voice call has ended or disconnected."
   },
-  "messageHintText": "Ask Conduit",
+  "messageHintText": "Ask openChat",
   "@messageHintText": {
     "description": "Short placeholder text in the message input."
   },
@@ -589,7 +589,7 @@
   "@chatQueuedPendingTitle": {
     "description": "Title shown when a queued assistant response is waiting for sync/backoff."
   },
-  "chatQueuedPendingMessage": "Conduit will start this response as soon as sync runs.",
+  "chatQueuedPendingMessage": "openChat will start this response as soon as sync runs.",
   "@chatQueuedPendingMessage": {
     "description": "Body text shown for a queued assistant response that is waiting to be sent."
   },
@@ -1105,11 +1105,11 @@
   "@themePalette": {
     "description": "Title for selecting the app color palette."
   },
-  "themePaletteConduitLabel": "Conduit",
+  "themePaletteConduitLabel": "openChat",
   "@themePaletteConduitLabel": {
     "description": "Palette name for the default Conduit theme."
   },
-  "themePaletteConduitDescription": "Clean neutral theme designed for Conduit.",
+  "themePaletteConduitDescription": "Clean neutral theme designed for openChat.",
   "@themePaletteConduitDescription": {
     "description": "Description of the Conduit palette."
   },
@@ -1269,7 +1269,7 @@
   "@androidAssistantOverlayOption": {
     "description": "Option label for keeping the current assistant overlay."
   },
-  "androidAssistantNewChatOption": "Open Conduit with a new chat",
+  "androidAssistantNewChatOption": "Open openChat with a new chat",
   "@androidAssistantNewChatOption": {
     "description": "Option label for opening the app to a fresh chat from the assistant trigger."
   },
@@ -1467,7 +1467,7 @@
   "@ttsSelectVoice": {
     "description": "Title for voice picker bottom sheet."
   },
-  "ttsPreviewText": "Conduit can read responses aloud using this voice.",
+  "ttsPreviewText": "openChat can read responses aloud using this voice.",
   "@ttsPreviewText": {
     "description": "Sample text spoken during voice preview."
   },
@@ -3007,7 +3007,7 @@
   "@inactiveStatus": {
     "description": "Label for an inactive account status."
   },
-  "appInformation": "Conduit app",
+  "appInformation": "openChat app",
   "@appInformation": {
     "description": "Heading for local app information."
   },
@@ -3647,7 +3647,7 @@
   "@notificationSystemTitle": {
     "description": "Toggle title for OS-level notifications shown when the app is backgrounded."
   },
-  "notificationSystemDescription": "Show an alert when Conduit is in the background.",
+  "notificationSystemDescription": "Show an alert when openChat is in the background.",
   "@notificationSystemDescription": {
     "description": "Toggle description for system notifications."
   },
@@ -3707,7 +3707,7 @@
   "@notificationSystemSettingsTitle": {
     "description": "Row that opens the OS notification settings for this app."
   },
-  "notificationSystemSettingsDescription": "Change permission, sound, and banner options for Conduit.",
+  "notificationSystemSettingsDescription": "Change permission, sound, and banner options for openChat.",
   "@notificationSystemSettingsDescription": {
     "description": "Subtitle for the row that opens the OS notification settings."
   },
@@ -5290,8 +5290,8 @@
   "@ollamaThinkingAutomatic": {
     "description": "Ollama thinking option that lets the model or service choose."
   },
-  "releaseNotesSupportPromptHeading": "Enjoying Conduit?",
-  "releaseNotesSupportPromptMessage": "A short review helps more people find Conduit. A small tip helps me keep building it. Either one means a lot.",
+  "releaseNotesSupportPromptHeading": "Enjoying openChat?",
+  "releaseNotesSupportPromptMessage": "A short review helps more people find openChat. A small tip helps me keep building it. Either one means a lot.",
   "@releaseNotesSupportPromptHeading": {
     "description": "Heading above the combined review and donation actions in release notes."
   },
@@ -5410,7 +5410,7 @@
   "@voiceCallExpand": {
     "description": "Accessibility label for the button that opens the minimized voice call pill back into the full panel."
   },
-  "askConduitAction": "Ask Conduit",
+  "askConduitAction": "Ask openChat",
   "@askConduitAction": {
     "description": "Long-press menu action that puts the selected answer text into the chat composer to ask about it."
   },
@@ -5685,7 +5685,7 @@
   "@codeInterpreterDescription": {
     "description": "Subtitle for the Code interpreter composer action explaining that code runs on the server."
   },
-  "codeInterpreterBrowserEngine": "This server runs code in the browser, which Conduit can't do.",
+  "codeInterpreterBrowserEngine": "This server runs code in the browser, which openChat can't do.",
   "@codeInterpreterBrowserEngine": {
     "description": "Shown on the disabled Code interpreter composer action when the server asks the client to run code in a browser, which the app cannot do."
   },
@@ -6157,7 +6157,7 @@
       }
     }
   },
-  "queuedDraftsSessionNote": "Queued messages stay only while Conduit is open. When the response finishes they're sent together as one message.",
+  "queuedDraftsSessionNote": "Queued messages stay only while openChat is open. When the response finishes they're sent together as one message.",
   "@queuedDraftsSessionNote": {
     "description": "Explains how long queued messages are kept and how they are sent. Shown in the queue sheet and once after the first message is queued."
   },

@@ -262,7 +262,7 @@ class CallKitService implements VoiceCallKitPort {
     return CallKitParams(
       id: id,
       nameCaller: callerName,
-      appName: 'Conduit',
+      appName: 'openChat',
       avatar: avatar,
       handle: handle,
       type: 0, // 0 = audio call

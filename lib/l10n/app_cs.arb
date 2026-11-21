@@ -1,6 +1,6 @@
 {
   "@@locale": "cs",
-  "appTitle": "Conduit",
+  "appTitle": "openChat",
   "serverIncompatibleTitle": "Server není podporován",
   "serverIncompatibleMessage": "Tento server používá Open WebUI {serverVersion}, což je novější verze, než tato aplikace podporuje (maximálně {maxVersion}).",
   "@appTitle": {
@@ -39,11 +39,11 @@
   "@account": {
     "description": "Section header for account-related options."
   },
-  "supportConduit": "Podpořit Conduit",
+  "supportConduit": "Podpořit openChat",
   "@supportConduit": {
     "description": "Section header inviting the user to financially support the project."
   },
-  "supportConduitSubtitle": "Pomozte udržet Conduit nezávislý financováním dalšího vývoje.",
+  "supportConduitSubtitle": "Pomozte udržet openChat nezávislý financováním dalšího vývoje.",
   "@supportConduitSubtitle": {
     "description": "Subtitle explaining why donations are helpful."
   },
@@ -73,7 +73,7 @@
     }
   },
   "releaseNotesLearnMore": "Zjistit více",
-  "releaseNotesReviewButton": "Ohodnotit Conduit",
+  "releaseNotesReviewButton": "Ohodnotit openChat",
   "releaseNotesDoneButton": "Hotovo",
   "signOut": "Odhlásit se",
   "@signOut": {
@@ -371,7 +371,7 @@
   "@voiceCallDisconnected": {
     "description": "Status label shown when the voice call has ended or disconnected."
   },
-  "messageHintText": "Zeptat se Conduitu",
+  "messageHintText": "Zeptat se openChatu",
   "@messageHintText": {
     "description": "Short placeholder text in the message input."
   },
@@ -471,7 +471,7 @@
   "@chatQueuedPendingTitle": {
     "description": "Title shown when a queued assistant response is waiting for sync/backoff."
   },
-  "chatQueuedPendingMessage": "Conduit spustí tuto odpověď, jakmile poběží synchronizace.",
+  "chatQueuedPendingMessage": "openChat spustí tuto odpověď, jakmile poběží synchronizace.",
   "@chatQueuedPendingMessage": {
     "description": "Body text shown for a queued assistant response that is waiting to be sent."
   },
@@ -938,11 +938,11 @@
   "@themePalette": {
     "description": "Title for selecting the app color palette."
   },
-  "themePaletteConduitLabel": "Conduit",
+  "themePaletteConduitLabel": "openChat",
   "@themePaletteConduitLabel": {
     "description": "Palette name for the default Conduit theme."
   },
-  "themePaletteConduitDescription": "Čistý neutrální motiv navržený pro Conduit.",
+  "themePaletteConduitDescription": "Čistý neutrální motiv navržený pro openChat.",
   "@themePaletteConduitDescription": {
     "description": "Description of the Conduit palette."
   },
@@ -1090,7 +1090,7 @@
   "@androidAssistantOverlayOption": {
     "description": "Option label for keeping the current assistant overlay."
   },
-  "androidAssistantNewChatOption": "Otevřít Conduit s novým chatem",
+  "androidAssistantNewChatOption": "Otevřít openChat s novým chatem",
   "@androidAssistantNewChatOption": {
     "description": "Option label for opening the app to a fresh chat from the assistant trigger."
   },
@@ -2608,7 +2608,7 @@
   "@inactiveStatus": {
     "description": "Label for an inactive account status."
   },
-  "appInformation": "Aplikace Conduit",
+  "appInformation": "Aplikace openChat",
   "@appInformation": {
     "description": "Heading for local app information."
   },
@@ -4243,8 +4243,8 @@
   "loadChartPreview": "Load chart preview",
   "loadPdfPreview": "Load PDF preview: {title}",
   "ollamaThinkingAutomatic": "Automatic",
-  "releaseNotesSupportPromptHeading": "Líbí se vám Conduit?",
-  "releaseNotesSupportPromptMessage": "Krátká recenze pomůže více lidem objevit Conduit. Malé dýško mi pomáhá pokračovat ve vývoji. Obojí pro mě hodně znamená.",
+  "releaseNotesSupportPromptHeading": "Líbí se vám openChat?",
+  "releaseNotesSupportPromptMessage": "Krátká recenze pomůže více lidem objevit openChat. Malé dýško mi pomáhá pokračovat ve vývoji. Obojí pro mě hodně znamená.",
   "markdownShowMoreLines": "{count, plural, one{Zobrazit další řádek} few{Zobrazit další {count} řádky} other{Zobrazit dalších {count} řádků}}",
   "@markdownShowMoreLines": {
     "placeholders": {
@@ -4270,7 +4270,7 @@
   "directMcpAuthBearer": "Bearer token",
   "citationShowTitles": "Zobrazovat názvy stránek u citací",
   "citationShowTitlesDescription": "V odznacích citací používat názvy stránek místo domén webů",
-  "notificationSystemSettingsDescription": "Změňte oprávnění, zvuk a možnosti bannerů pro Conduit.",
+  "notificationSystemSettingsDescription": "Změňte oprávnění, zvuk a možnosti bannerů pro openChat.",
   "notificationSystemSettingsOpenFailed": "Systémové nastavení oznámení se nepodařilo otevřít.",
   "notificationTargetsTitle": "Cíle webhooků",
   "notificationTargetsDescription": "Váš server Open WebUI odesílá události na tyto adresy URL, i když je tato aplikace zavřená.",
@@ -4370,7 +4370,7 @@
   "@voiceCallExpand": {
     "description": "Accessibility label for the button that opens the minimized voice call pill back into the full panel."
   },
-  "askConduitAction": "Zeptat se Conduitu",
+  "askConduitAction": "Zeptat se openChatu",
   "voiceCallStartTimeout": "Spuštění hlasového hovoru trvalo příliš dlouho. Zkuste to znovu.",
   "@voiceCallStartTimeout": {
     "description": "Error shown when starting a voice call takes too long."
@@ -4475,7 +4475,7 @@
   "chatForkFailed": "Chat se nepodařilo rozvětvit. Zkuste to znovu.",
   "codeInterpreter": "Interpret kódu",
   "codeInterpreterDescription": "Spouštějte kód na serveru pro analýzu dat a vytváření souborů.",
-  "codeInterpreterBrowserEngine": "Tento server spouští kód v prohlížeči, což Conduit neumí.",
+  "codeInterpreterBrowserEngine": "Tento server spouští kód v prohlížeči, což openChat neumí.",
   "codeInterpreterUnavailable": "Pro tento server, účet nebo model není dostupný.",
   "folderProjectSettings": "Nastavení projektu",
   "folderProjectSettingsDescription": "Výchozí hodnoty pro nové chaty v této složce. Server na každý chat v ní použije její znalosti a systémový prompt.",
@@ -4645,7 +4645,7 @@
   "queueDraftAction": "Do fronty",
   "queuedDraftsTitle": "Zprávy ve frontě",
   "queuedDraftsCount": "{count, plural, one{{count} zpráva ve frontě} few{{count} zprávy ve frontě} many{{count} zprávy ve frontě} other{{count} zpráv ve frontě}}",
-  "queuedDraftsSessionNote": "Zprávy ve frontě se uchovávají jen po dobu, kdy je Conduit otevřený. Po dokončení odpovědi se odešlou společně jako jedna zpráva.",
+  "queuedDraftsSessionNote": "Zprávy ve frontě se uchovávají jen po dobu, kdy je openChat otevřený. Po dokončení odpovědi se odešlou společně jako jedna zpráva.",
   "queuedDraftSendNow": "Zastavit a odeslat",
   "queuedDraftUploading": "Čekání na dokončení nahrávání souboru",
   "queuedDraftFileFailed": "Soubor se nenahrál. Zkuste to znovu, nebo jej odeberte.",

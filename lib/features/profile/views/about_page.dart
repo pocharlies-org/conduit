@@ -183,7 +183,7 @@ class _AboutPageState extends ConsumerState<AboutPage> {
   }
 
   void _showLicenses(BuildContext context) {
-    showLicensePage(context: context, applicationName: 'Conduit');
+    showLicensePage(context: context, applicationName: 'openChat');
   }
 
   Future<void> _openReleaseNotes(BuildContext context, PackageInfo info) async {

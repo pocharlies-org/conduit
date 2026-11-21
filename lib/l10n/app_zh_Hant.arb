@@ -1,6 +1,6 @@
 {
   "@@locale": "zh_Hant",
-  "appTitle": "Conduit",
+  "appTitle": "openChat",
   "serverIncompatibleTitle": "不支援此伺服器",
   "serverIncompatibleMessage": "此伺服器執行的 Open WebUI 版本為 {serverVersion}，比此應用程式所支援的版本（最高 {maxVersion}）還要新。",
   "retry": "重試",
@@ -18,8 +18,8 @@
     "description": "当无法访问服务器时解释可用操作的副标题"
   },
   "account": "賬戶",
-  "supportConduit": "支持 Conduit",
-  "supportConduitSubtitle": "通過資助持續開發來保持 Conduit 的獨立性。",
+  "supportConduit": "支持 openChat",
+  "supportConduitSubtitle": "通過資助持續開發來保持 openChat 的獨立性。",
   "githubSponsorsTitle": "GitHub 贊助",
   "githubSponsorsSubtitle": "成爲定期贊助者以資助路線圖項目。",
   "buyMeACoffeeTitle": "Buy Me a Coffee",
@@ -34,7 +34,7 @@
     }
   },
   "releaseNotesLearnMore": "瞭解更多",
-  "releaseNotesReviewButton": "評價 Conduit",
+  "releaseNotesReviewButton": "評價 openChat",
   "releaseNotesDoneButton": "完成",
   "signOut": "退出登錄",
   "endYourSession": "結束您的會話",
@@ -81,7 +81,7 @@
   "voice": "語音",
   "voiceStatusListening": "正在聽...",
   "voiceHoldToTalk": "按住說話",
-  "messageHintText": "問 Conduit",
+  "messageHintText": "問 openChat",
   "stopGenerating": "停止生成",
   "codeCopiedToClipboard": "代碼已複製到剪貼板。",
   "send": "發送",
@@ -100,7 +100,7 @@
   "chatQueuedOfflineTitle": "離線排隊中",
   "chatQueuedOfflineMessage": "伺服器可連線時，這則回應就會開始。",
   "chatQueuedPendingTitle": "已排入傳送佇列",
-  "chatQueuedPendingMessage": "同步執行後，Conduit 會立即開始這則回應。",
+  "chatQueuedPendingMessage": "同步執行後，openChat 會立即開始這則回應。",
   "chatQueuedFailedTitle": "傳送失敗",
   "chatQueuedFailedMessage": "重試佇列中的回應或取消。",
   "chatQueuedSnackBar": "訊息已排入佇列。伺服器可連線時會傳送。",
@@ -258,7 +258,7 @@
   "androidAssistantTitle": "Android 數位助理",
   "androidAssistantDescription": "選擇觸發 Android 數位助理時要執行的操作。",
   "androidAssistantOverlayOption": "顯示快速浮層（預設）",
-  "androidAssistantNewChatOption": "開啟 Conduit 並建立新聊天",
+  "androidAssistantNewChatOption": "開啟 openChat 並建立新聊天",
   "androidAssistantVoiceCallOption": "開始語音通話",
   "sttSettings": "語音轉文字",
   "sttEngineLabel": "識別引擎",
@@ -617,11 +617,11 @@
   "@nextLabel": {
     "description": "Label for navigating to the next item."
   },
-  "themePaletteConduitLabel": "Conduit",
+  "themePaletteConduitLabel": "openChat",
   "@themePaletteConduitLabel": {
     "description": "Palette name for the default Conduit theme."
   },
-  "themePaletteConduitDescription": "爲 Conduit 設計的簡潔中性色主題。",
+  "themePaletteConduitDescription": "爲 openChat 設計的簡潔中性色主題。",
   "@themePaletteConduitDescription": {
     "description": "Description of the Conduit palette."
   },
@@ -1165,7 +1165,7 @@
   "passwordUpdated": "密碼已更新。",
   "activeStatus": "啟用",
   "inactiveStatus": "未啟用",
-  "appInformation": "Conduit 應用程式",
+  "appInformation": "openChat 應用程式",
   "appVersion": "版本",
   "serverInformation": "伺服器資訊",
   "serverInfoUnavailable": "伺服器資訊目前無法使用。",
@@ -2798,8 +2798,8 @@
   "loadChartPreview": "Load chart preview",
   "loadPdfPreview": "Load PDF preview: {title}",
   "ollamaThinkingAutomatic": "Automatic",
-  "releaseNotesSupportPromptHeading": "喜歡 Conduit 嗎？",
-  "releaseNotesSupportPromptMessage": "一則簡短的評價能幫助更多人發現 Conduit。一點小小的打賞能支持我繼續開發。無論哪一種，對我都意義重大。",
+  "releaseNotesSupportPromptHeading": "喜歡 openChat 嗎？",
+  "releaseNotesSupportPromptMessage": "一則簡短的評價能幫助更多人發現 openChat。一點小小的打賞能支持我繼續開發。無論哪一種，對我都意義重大。",
   "markdownShowMoreLines": "再顯示 {count} 行",
   "@markdownShowMoreLines": {
     "placeholders": {
@@ -2825,7 +2825,7 @@
   "directMcpAuthBearer": "Bearer token",
   "citationShowTitles": "顯示引用頁面標題",
   "citationShowTitlesDescription": "在引用標記中使用頁面標題，而非網站網域",
-  "notificationSystemSettingsDescription": "變更 Conduit 的權限、音效與橫幅選項。",
+  "notificationSystemSettingsDescription": "變更 openChat 的權限、音效與橫幅選項。",
   "notificationSystemSettingsOpenFailed": "無法開啟系統通知設定。",
   "notificationTargetsTitle": "Webhook 目的地",
   "notificationTargetsDescription": "即使此應用程式已關閉，您的 Open WebUI 伺服器仍會將事件傳送到這些 URL。",
@@ -2925,7 +2925,7 @@
   "@voiceCallExpand": {
     "description": "Accessibility label for the button that opens the minimized voice call pill back into the full panel."
   },
-  "askConduitAction": "問 Conduit",
+  "askConduitAction": "問 openChat",
   "voiceCallStartTimeout": "啟動語音通話耗時過長，請重試。",
   "@voiceCallStartTimeout": {
     "description": "Error shown when starting a voice call takes too long."
@@ -3030,7 +3030,7 @@
   "chatForkFailed": "無法為此聊天建立分支，請再試一次。",
   "codeInterpreter": "程式碼解譯器",
   "codeInterpreterDescription": "在伺服器上執行程式碼，以分析資料並產生檔案。",
-  "codeInterpreterBrowserEngine": "此伺服器在瀏覽器中執行程式碼，Conduit 不支援。",
+  "codeInterpreterBrowserEngine": "此伺服器在瀏覽器中執行程式碼，openChat 不支援。",
   "codeInterpreterUnavailable": "此伺服器、帳戶或模型無法使用。",
   "folderProjectSettings": "專案設定",
   "folderProjectSettingsDescription": "此資料夾中新聊天的預設設定。伺服器會對其中的每個聊天套用其知識庫與系統提示詞。",
@@ -3200,7 +3200,7 @@
   "queueDraftAction": "加入佇列",
   "queuedDraftsTitle": "排隊中的訊息",
   "queuedDraftsCount": "排隊中的訊息：{count} 則",
-  "queuedDraftsSessionNote": "排隊中的訊息只會在 Conduit 保持開啟時保留。回覆結束後，它們會合併成一則訊息一併傳送。",
+  "queuedDraftsSessionNote": "排隊中的訊息只會在 openChat 保持開啟時保留。回覆結束後，它們會合併成一則訊息一併傳送。",
   "queuedDraftSendNow": "停止並傳送",
   "queuedDraftUploading": "正在等待檔案上傳完成",
   "queuedDraftFileFailed": "有檔案未能上傳。請重試或移除它。",

@@ -160,7 +160,7 @@ class CodeInterpreterUnavailableException implements Exception {
     CodeInterpreterBlock.serverDisabled =>
       'The server no longer allows the code interpreter.',
     CodeInterpreterBlock.unsupportedEngine =>
-      'This server runs code in the browser, which Conduit cannot do.',
+      'This server runs code in the browser, which openChat cannot do.',
     CodeInterpreterBlock.noPermission =>
       'Your account can no longer use the code interpreter.',
     CodeInterpreterBlock.modelUnsupported =>

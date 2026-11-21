@@ -1,6 +1,6 @@
 {
   "@@locale": "pl",
-  "appTitle": "Conduit",
+  "appTitle": "openChat",
   "@appTitle": {
     "description": "Application name displayed in the app and OS UI."
   },
@@ -66,11 +66,11 @@
   "@account": {
     "description": "Section header for account-related options."
   },
-  "supportConduit": "Wesprzyj Conduit",
+  "supportConduit": "Wesprzyj openChat",
   "@supportConduit": {
     "description": "Section header inviting the user to financially support the project."
   },
-  "supportConduitSubtitle": "Zachowaj niezależność Conduit, finansując dalszy rozwój.",
+  "supportConduitSubtitle": "Zachowaj niezależność openChat, finansując dalszy rozwój.",
   "@supportConduitSubtitle": {
     "description": "Subtitle explaining why donations are helpful."
   },
@@ -107,7 +107,7 @@
   "@releaseNotesLearnMore": {
     "description": "Prompt shown beneath the release announcement banner title."
   },
-  "releaseNotesReviewButton": "Oceń Conduit",
+  "releaseNotesReviewButton": "Oceń openChat",
   "@releaseNotesReviewButton": {
     "description": "Button opening the app store review/listing page."
   },
@@ -489,7 +489,7 @@
   "@voiceCallDisconnected": {
     "description": "Status label shown when the voice call has ended or disconnected."
   },
-  "messageHintText": "Zapytaj Conduit",
+  "messageHintText": "Zapytaj openChat",
   "@messageHintText": {
     "description": "Short placeholder text in the message input."
   },
@@ -589,7 +589,7 @@
   "@chatQueuedPendingTitle": {
     "description": "Title shown when a queued assistant response is waiting for sync/backoff."
   },
-  "chatQueuedPendingMessage": "Conduit rozpocznie tę odpowiedź, gdy tylko wykona synchronizację.",
+  "chatQueuedPendingMessage": "openChat rozpocznie tę odpowiedź, gdy tylko wykona synchronizację.",
   "@chatQueuedPendingMessage": {
     "description": "Body text shown for a queued assistant response that is waiting to be sent."
   },
@@ -1090,11 +1090,11 @@
   "@themePalette": {
     "description": "Title for selecting the app color palette."
   },
-  "themePaletteConduitLabel": "Conduit",
+  "themePaletteConduitLabel": "openChat",
   "@themePaletteConduitLabel": {
     "description": "Palette name for the default Conduit theme."
   },
-  "themePaletteConduitDescription": "Czysty, neutralny motyw zaprojektowany dla Conduit.",
+  "themePaletteConduitDescription": "Czysty, neutralny motyw zaprojektowany dla openChat.",
   "@themePaletteConduitDescription": {
     "description": "Description of the Conduit palette."
   },
@@ -1254,7 +1254,7 @@
   "@androidAssistantOverlayOption": {
     "description": "Option label for keeping the current assistant overlay."
   },
-  "androidAssistantNewChatOption": "Otwórz Conduit z nowym czatem",
+  "androidAssistantNewChatOption": "Otwórz openChat z nowym czatem",
   "@androidAssistantNewChatOption": {
     "description": "Option label for opening the app to a fresh chat from the assistant trigger."
   },
@@ -2822,7 +2822,7 @@
   "@inactiveStatus": {
     "description": "Label for an inactive account status."
   },
-  "appInformation": "Aplikacja Conduit",
+  "appInformation": "Aplikacja openChat",
   "@appInformation": {
     "description": "Heading for local app information."
   },
@@ -3492,7 +3492,7 @@
   "@notificationSystemSettingsTitle": {
     "description": "Row that opens the OS notification settings for this app."
   },
-  "notificationSystemSettingsDescription": "Zmień uprawnienia, dźwięk i opcje banerów dla Conduit.",
+  "notificationSystemSettingsDescription": "Zmień uprawnienia, dźwięk i opcje banerów dla openChat.",
   "@notificationSystemSettingsDescription": {
     "description": "Subtitle for the row that opens the OS notification settings."
   },
@@ -4975,11 +4975,11 @@
   "@ollamaThinkingAutomatic": {
     "description": "Ollama thinking option that lets the model or service choose."
   },
-  "releaseNotesSupportPromptHeading": "Podoba Ci się Conduit?",
+  "releaseNotesSupportPromptHeading": "Podoba Ci się openChat?",
   "@releaseNotesSupportPromptHeading": {
     "description": "Heading above the combined review and donation actions in release notes."
   },
-  "releaseNotesSupportPromptMessage": "Krótka opinia pomaga większej liczbie osób znaleźć Conduit. Niewielki datek pomaga mi w dalszym rozwoju. Każde z tych działań wiele znaczy.",
+  "releaseNotesSupportPromptMessage": "Krótka opinia pomaga większej liczbie osób znaleźć openChat. Niewielki datek pomaga mi w dalszym rozwoju. Każde z tych działań wiele znaczy.",
   "@releaseNotesSupportPromptMessage": {
     "description": "Combined message explaining how a review or donation supports Conduit."
   },
@@ -5058,7 +5058,7 @@
   "@voiceCallExpand": {
     "description": "Accessibility label for the button that opens the minimized voice call pill back into the full panel."
   },
-  "askConduitAction": "Zapytaj Conduit",
+  "askConduitAction": "Zapytaj openChat",
   "@askConduitAction": {
     "description": "Long-press menu action that puts the selected answer text into the chat composer to ask about it."
   },
@@ -5166,7 +5166,7 @@
   "chatForkFailed": "Nie udało się rozgałęzić tego czatu. Spróbuj ponownie.",
   "codeInterpreter": "Interpreter kodu",
   "codeInterpreterDescription": "Uruchamiaj kod na serwerze, aby analizować dane i tworzyć pliki.",
-  "codeInterpreterBrowserEngine": "Ten serwer uruchamia kod w przeglądarce, czego Conduit nie potrafi.",
+  "codeInterpreterBrowserEngine": "Ten serwer uruchamia kod w przeglądarce, czego openChat nie potrafi.",
   "codeInterpreterUnavailable": "Niedostępny dla tego serwera, konta lub modelu.",
   "folderProjectSettings": "Ustawienia projektu",
   "folderProjectSettingsDescription": "Wartości domyślne dla nowych czatów w tym folderze. Serwer stosuje jego wiedzę i prompt systemowy do każdego czatu w nim.",
@@ -5336,7 +5336,7 @@
   "queueDraftAction": "Dodaj do kolejki",
   "queuedDraftsTitle": "Wiadomości w kolejce",
   "queuedDraftsCount": "{count, plural, one{{count} wiadomość w kolejce} few{{count} wiadomości w kolejce} many{{count} wiadomości w kolejce} other{{count} wiadomości w kolejce}}",
-  "queuedDraftsSessionNote": "Wiadomości w kolejce są przechowywane tylko, dopóki Conduit jest otwarty. Gdy odpowiedź się zakończy, zostaną wysłane razem jako jedna wiadomość.",
+  "queuedDraftsSessionNote": "Wiadomości w kolejce są przechowywane tylko, dopóki openChat jest otwarty. Gdy odpowiedź się zakończy, zostaną wysłane razem jako jedna wiadomość.",
   "queuedDraftSendNow": "Zatrzymaj i wyślij",
   "queuedDraftUploading": "Czekam na zakończenie przesyłania pliku",
   "queuedDraftFileFailed": "Nie udało się przesłać pliku. Spróbuj ponownie lub usuń go.",
