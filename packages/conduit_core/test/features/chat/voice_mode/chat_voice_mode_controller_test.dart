@@ -609,7 +609,7 @@ void main() {
       expect(messages.last.isStreaming, isFalse);
       expect(background.keepAliveCalls, 1);
       expect(tts.startedStreaming, isTrue);
-      expect(tts.fedTexts.join('\n'), contains('Conduit'));
+      expect(tts.fedTexts.join('\n'), contains('openChat'));
 
       await _until(() => input.beginCalls == 2);
       expect(

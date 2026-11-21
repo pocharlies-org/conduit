@@ -1,6 +1,6 @@
 {
   "@@locale": "es",
-  "appTitle": "Conduit",
+  "appTitle": "openChat",
   "serverIncompatibleTitle": "Servidor no compatible",
   "serverIncompatibleMessage": "Este servidor ejecuta Open WebUI {serverVersion}, que es más reciente de lo que admite esta app (hasta {maxVersion}).",
   "retry": "Reintentar",
@@ -18,8 +18,8 @@
     "description": "Subtítulo que explica las acciones disponibles cuando no se puede acceder al servidor"
   },
   "account": "Cuenta",
-  "supportConduit": "Apoyar Conduit",
-  "supportConduitSubtitle": "Mantén Conduit independiente financiando el desarrollo continuo.",
+  "supportConduit": "Apoyar openChat",
+  "supportConduitSubtitle": "Mantén openChat independiente financiando el desarrollo continuo.",
   "githubSponsorsTitle": "GitHub Sponsors",
   "githubSponsorsSubtitle": "Conviértete en un patrocinador recurrente para financiar elementos del roadmap.",
   "buyMeACoffeeTitle": "Buy Me a Coffee",
@@ -34,7 +34,7 @@
     }
   },
   "releaseNotesLearnMore": "Saber más",
-  "releaseNotesReviewButton": "Valorar Conduit",
+  "releaseNotesReviewButton": "Valorar openChat",
   "releaseNotesDoneButton": "Listo",
   "signOut": "Cerrar sesión",
   "endYourSession": "Finalizar tu sesión",
@@ -81,7 +81,7 @@
   "voice": "Voz",
   "voiceStatusListening": "Escuchando...",
   "voiceHoldToTalk": "Mantén presionado para hablar",
-  "messageHintText": "Pregunta a Conduit",
+  "messageHintText": "Pregunta a openChat",
   "stopGenerating": "Detener generación",
   "codeCopiedToClipboard": "Código copiado al portapapeles.",
   "send": "Enviar",
@@ -100,7 +100,7 @@
   "chatQueuedOfflineTitle": "En cola sin conexión",
   "chatQueuedOfflineMessage": "Esta respuesta empezará cuando el servidor esté disponible.",
   "chatQueuedPendingTitle": "En cola para enviar",
-  "chatQueuedPendingMessage": "Conduit iniciará esta respuesta en cuanto se ejecute la sincronización.",
+  "chatQueuedPendingMessage": "openChat iniciará esta respuesta en cuanto se ejecute la sincronización.",
   "chatQueuedFailedTitle": "Error al enviar",
   "chatQueuedFailedMessage": "Reintenta la respuesta en cola o cancélala.",
   "chatQueuedSnackBar": "Mensaje en cola. Se enviará cuando el servidor esté disponible.",
@@ -258,7 +258,7 @@
   "androidAssistantTitle": "Asistente digital de Android",
   "androidAssistantDescription": "Elige qué ocurre cuando activas el asistente digital de Android.",
   "androidAssistantOverlayOption": "Mostrar superposición rápida (predeterminado)",
-  "androidAssistantNewChatOption": "Abrir Conduit con un chat nuevo",
+  "androidAssistantNewChatOption": "Abrir openChat con un chat nuevo",
   "androidAssistantVoiceCallOption": "Iniciar una llamada de voz",
   "sttSettings": "Voz a texto",
   "sttEngineLabel": "Motor de reconocimiento",
@@ -617,11 +617,11 @@
   "@nextLabel": {
     "description": "Label for navigating to the next item."
   },
-  "themePaletteConduitLabel": "Conduit",
+  "themePaletteConduitLabel": "openChat",
   "@themePaletteConduitLabel": {
     "description": "Palette name for the default Conduit theme."
   },
-  "themePaletteConduitDescription": "Tema neutro y limpio diseñado para Conduit.",
+  "themePaletteConduitDescription": "Tema neutro y limpio diseñado para openChat.",
   "@themePaletteConduitDescription": {
     "description": "Description of the Conduit palette."
   },
@@ -1165,7 +1165,7 @@
   "passwordUpdated": "Contraseña actualizada.",
   "activeStatus": "Activo",
   "inactiveStatus": "Inactivo",
-  "appInformation": "Aplicación Conduit",
+  "appInformation": "Aplicación openChat",
   "appVersion": "Versión",
   "serverInformation": "Información del servidor",
   "serverInfoUnavailable": "La información del servidor no está disponible ahora.",
@@ -2798,8 +2798,8 @@
   "loadChartPreview": "Load chart preview",
   "loadPdfPreview": "Load PDF preview: {title}",
   "ollamaThinkingAutomatic": "Automatic",
-  "releaseNotesSupportPromptHeading": "¿Te gusta Conduit?",
-  "releaseNotesSupportPromptMessage": "Una breve reseña ayuda a que más personas descubran Conduit. Una pequeña propina me ayuda a seguir desarrollándolo. Cualquiera de las dos significa mucho.",
+  "releaseNotesSupportPromptHeading": "¿Te gusta openChat?",
+  "releaseNotesSupportPromptMessage": "Una breve reseña ayuda a que más personas descubran openChat. Una pequeña propina me ayuda a seguir desarrollándolo. Cualquiera de las dos significa mucho.",
   "markdownShowMoreLines": "{count, plural, =1{Mostrar 1 línea más} other{Mostrar {count} líneas más}}",
   "@markdownShowMoreLines": {
     "placeholders": {
@@ -2825,7 +2825,7 @@
   "directMcpAuthBearer": "Bearer token",
   "citationShowTitles": "Mostrar títulos de página en las citas",
   "citationShowTitlesDescription": "Usar títulos de página en lugar de dominios en las insignias de cita",
-  "notificationSystemSettingsDescription": "Cambia los permisos, el sonido y las opciones de banner de Conduit.",
+  "notificationSystemSettingsDescription": "Cambia los permisos, el sonido y las opciones de banner de openChat.",
   "notificationSystemSettingsOpenFailed": "No se pudieron abrir los ajustes de notificaciones del sistema.",
   "notificationTargetsTitle": "Destinos de webhook",
   "notificationTargetsDescription": "Tu servidor de Open WebUI envía eventos a estas URL, incluso con esta app cerrada.",
@@ -2925,7 +2925,7 @@
   "@voiceCallExpand": {
     "description": "Accessibility label for the button that opens the minimized voice call pill back into the full panel."
   },
-  "askConduitAction": "Pregunta a Conduit",
+  "askConduitAction": "Pregunta a openChat",
   "voiceCallStartTimeout": "Iniciar la llamada de voz tardó demasiado. Inténtalo de nuevo.",
   "@voiceCallStartTimeout": {
     "description": "Error shown when starting a voice call takes too long."
@@ -3032,7 +3032,7 @@
   "chatForkFailed": "No se pudo bifurcar este chat. Inténtalo de nuevo.",
   "codeInterpreter": "Intérprete de código",
   "codeInterpreterDescription": "Ejecuta código en el servidor para analizar datos y crear archivos.",
-  "codeInterpreterBrowserEngine": "Este servidor ejecuta el código en el navegador, algo que Conduit no puede hacer.",
+  "codeInterpreterBrowserEngine": "Este servidor ejecuta el código en el navegador, algo que openChat no puede hacer.",
   "codeInterpreterUnavailable": "No disponible para este servidor, cuenta o modelo.",
   "folderProjectSettings": "Ajustes del proyecto",
   "folderProjectSettingsDescription": "Valores predeterminados para los chats nuevos de esta carpeta. El servidor aplica sus conocimientos y el prompt del sistema a cada chat de la carpeta.",
@@ -3202,7 +3202,7 @@
   "queueDraftAction": "En cola",
   "queuedDraftsTitle": "Mensajes en cola",
   "queuedDraftsCount": "{count, plural, one{{count} mensaje en cola} other{{count} mensajes en cola}}",
-  "queuedDraftsSessionNote": "Los mensajes en cola solo se conservan mientras Conduit esté abierto. Cuando termine la respuesta, se envían juntos como un solo mensaje.",
+  "queuedDraftsSessionNote": "Los mensajes en cola solo se conservan mientras openChat esté abierto. Cuando termine la respuesta, se envían juntos como un solo mensaje.",
   "queuedDraftSendNow": "Detener y enviar",
   "queuedDraftUploading": "Esperando a que termine de subirse un archivo",
   "queuedDraftFileFailed": "No se subió un archivo. Reinténtalo o quítalo.",

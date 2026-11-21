@@ -227,7 +227,7 @@ void main() {
     const description =
         'Run code on the server to analyze data and make files.';
     const browserExplanation =
-        "This server runs code in the browser, which Conduit can't do.";
+        "This server runs code in the browser, which openChat can't do.";
     const unavailableExplanation =
         'Not available for this server, account, or model.';
     final states =
@@ -524,7 +524,7 @@ void main() {
 
         expect(
           find.text(
-            "This server runs code in the browser, which Conduit can't do.",
+            "This server runs code in the browser, which openChat can't do.",
           ),
           findsOneWidget,
         );

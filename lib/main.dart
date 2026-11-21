@@ -723,7 +723,7 @@ class _ConduitAppState extends ConsumerState<ConduitApp> {
       if (event.id == NativeSheetRoutes.openSourceLicenses) {
         final context = NavigationService.context;
         if (context == null || !context.mounted) return;
-        showLicensePage(context: context, applicationName: 'Conduit');
+        showLicensePage(context: context, applicationName: 'openChat');
         return;
       }
 
