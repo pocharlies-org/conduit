@@ -6,7 +6,7 @@ import 'package:conduit_core/services/server_tls_http_client_factory.dart';
 
 /// Extensions the app previews or downloads from a link. PDFs have their own
 /// inline view and are deliberately not here.
-const Set<String> fileLinkExtensions = {
+const Set<String> _fileLinkExtensions = {
   // Office documents: Quick Look renders these on iOS.
   '.xls',
   '.xlsx',
@@ -40,7 +40,7 @@ String fileExtensionFromUrl(String url) {
 /// Whether [href] points at a file the app previews or downloads.
 bool isFileLink(String href) {
   final extension = fileExtensionFromUrl(href);
-  return extension.isNotEmpty && fileLinkExtensions.contains(extension);
+  return extension.isNotEmpty && _fileLinkExtensions.contains(extension);
 }
 
 /// The file name the last path segment of [url] carries, URL-decoded, or null
@@ -109,7 +109,7 @@ String safeDownloadFileName(String fileName) {
       .trim();
   if (name == '.' || name == '..') name = '';
   if (name.length > 120) name = name.substring(name.length - 120);
-  return name.isEmpty ? 'archivo' : name;
+  return name.isEmpty ? 'document' : name;
 }
 
 /// Resolves a server-relative [url] against the selected server's [baseUrl];

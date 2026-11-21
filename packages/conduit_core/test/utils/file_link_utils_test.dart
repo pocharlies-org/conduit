@@ -78,8 +78,8 @@ void main() {
       check(safeDownloadFileName('../../etc/passwd')).equals('passwd');
       check(safeDownloadFileName('a/b/../c.xlsx')).equals('c.xlsx');
       check(safeDownloadFileName('gira\r\n.xlsx')).equals('gira.xlsx');
-      check(safeDownloadFileName('..')).equals('archivo');
-      check(safeDownloadFileName('')).equals('archivo');
+      check(safeDownloadFileName('..')).equals('document');
+      check(safeDownloadFileName('')).equals('document');
     });
 
     test('keeps the tail of an over-long name', () {

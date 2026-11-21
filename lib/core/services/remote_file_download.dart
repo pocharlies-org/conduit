@@ -44,7 +44,6 @@ Future<File> downloadServerFile({
       error.response?.statusCode == null
           ? 'sin respuesta del servidor'
           : 'HTTP ${error.response!.statusCode}',
-      cause: error,
     );
   }
 
@@ -71,10 +70,9 @@ Future<File> downloadServerFile({
 
 /// Why a generated file could not be fetched.
 class RemoteFileDownloadException implements Exception {
-  const RemoteFileDownloadException(this.reason, {this.cause});
+  const RemoteFileDownloadException(this.reason);
 
   final String reason;
-  final Object? cause;
 
   @override
   String toString() => 'RemoteFileDownloadException: $reason';

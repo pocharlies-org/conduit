@@ -21,16 +21,10 @@ import 'package:conduit_core/utils/file_link_utils.dart';
 /// anywhere else, and for anything Quick Look refuses, the file goes straight
 /// to the share sheet. The download button skips the preview and shares.
 class FileLinkCard extends ConsumerStatefulWidget {
-  const FileLinkCard({
-    super.key,
-    required this.url,
-    this.label,
-    this.constraints,
-  });
+  const FileLinkCard({super.key, required this.url, this.label});
 
   final String url;
   final String? label;
-  final BoxConstraints? constraints;
 
   @override
   ConsumerState<FileLinkCard> createState() => _FileLinkCardState();
@@ -103,8 +97,7 @@ class _FileLinkCardState extends ConsumerState<FileLinkCard> {
           onTap: () => _run(_open),
           onLongPress: () => _run(() => _fetch().then(_share)),
           child: Container(
-            constraints: widget.constraints ??
-                const BoxConstraints(maxWidth: 420),
+            constraints: const BoxConstraints(maxWidth: 420),
             padding: const EdgeInsets.all(Spacing.md),
             decoration: BoxDecoration(
               color: conduitTheme.cardBackground,
