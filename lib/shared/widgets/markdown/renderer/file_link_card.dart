@@ -72,9 +72,10 @@ class _FileLinkCardState extends ConsumerState<FileLinkCard> {
   );
 
   Future<void> _open() async {
+    final title = _title(context);
     final file = await _fetch();
     final presented = await NativeImageViewerBridge.instance.present(
-      files: [NativeImageFile(path: file.path, title: _title(context))],
+      files: [NativeImageFile(path: file.path, title: title)],
       initialIndex: 0,
     );
     if (!presented) await _share(file);

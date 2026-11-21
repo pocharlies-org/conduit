@@ -5,7 +5,6 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:path_provider/path_provider.dart';
 
 import 'package:conduit_core/providers/app_providers.dart';
-import 'package:conduit_core/services/api_service.dart';
 import 'package:conduit_core/utils/file_link_utils.dart';
 
 import '../network/image_header_utils.dart';

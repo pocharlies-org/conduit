@@ -105,6 +105,7 @@ class _EnhancedAttachmentState extends ConsumerState<EnhancedAttachment> {
 
   /// The file's bytes on disk, fetched with the server's session.
   Future<String?> _ensureLocalFile() async {
+    final container = ProviderScope.containerOf(context, listen: false);
     if (_localFilePath != null && await File(_localFilePath!).exists()) {
       return _localFilePath;
     }
@@ -114,7 +115,7 @@ class _EnhancedAttachmentState extends ConsumerState<EnhancedAttachment> {
         url: (id.startsWith('http') || id.startsWith('/'))
             ? id
             : '/api/v1/files/$id/content',
-        container: ProviderScope.containerOf(context, listen: false),
+        container: container,
         fileName: _filename,
       );
       _localFilePath = file.path;
