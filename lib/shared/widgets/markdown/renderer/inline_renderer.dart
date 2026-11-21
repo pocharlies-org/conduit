@@ -11,6 +11,8 @@ import '../citation_badge.dart';
 import 'latex_preprocessor.dart';
 import 'markdown_style.dart';
 import 'pdf_inline_view.dart';
+import 'file_link_card.dart';
+import 'package:conduit_core/utils/file_link_utils.dart' show isFileLink;
 
 /// Callback invoked when a user taps a markdown link.
 typedef LinkTapCallback = void Function(String url, String title);
@@ -89,7 +91,7 @@ class InlineRenderer {
     this.sources,
     this.onSourceTap,
     this.latexStartupFuture,
-    this.renderPdfPreviews = true,
+    this.renderFilePreviews = true,
   ]);
 
   /// The style configuration for rendering.
@@ -110,8 +112,9 @@ class InlineRenderer {
   /// Shared LaTeX startup future for the current visible document.
   final Future<void>? latexStartupFuture;
 
-  /// Whether PDF links should hydrate preview cards instead of plain links.
-  final bool renderPdfPreviews;
+  /// Whether links to generated files (PDFs, spreadsheets, decks, photos)
+  /// should hydrate preview cards instead of plain links.
+  final bool renderFilePreviews;
 
   /// Per-leaf document-coordinate ranges recorded during the current walk,
   /// keyed by emitted leaf-span identity.
@@ -458,11 +461,20 @@ class InlineRenderer {
     final href = element.attributes['href'] ?? '';
     final title = element.attributes['title'] ?? '';
 
-    if (renderPdfPreviews && PdfInlineView.isPdfLink(href)) {
+    if (renderFilePreviews && PdfInlineView.isPdfLink(href)) {
       return [
         _buildFadableWidgetSpan(
           textLength: element.textContent.length,
           child: PdfInlineView(url: href, label: element.textContent),
+        ),
+      ];
+    }
+
+    if (renderFilePreviews && isFileLink(href)) {
+      return [
+        _buildFadableWidgetSpan(
+          textLength: element.textContent.length,
+          child: FileLinkCard(url: href, label: element.textContent),
         ),
       ];
     }

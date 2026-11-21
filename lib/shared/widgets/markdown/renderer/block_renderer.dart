@@ -16,6 +16,8 @@ import 'inline_renderer.dart';
 import 'latex_preprocessor.dart';
 import 'markdown_style.dart';
 import 'pdf_inline_view.dart';
+import 'file_link_card.dart';
+import 'package:conduit_core/utils/file_link_utils.dart' show isFileLink;
 
 /// Signature for a builder that creates image widgets.
 typedef ImageBuilder = Widget Function(String src, String? alt, String? title);
@@ -350,12 +352,12 @@ class BlockRenderer {
       );
     }
 
-    final singlePdfLink = _extractSinglePdfLink(element);
-    if (singlePdfLink != null &&
+    final singleFileLink = _extractSingleFileLink(element);
+    if (singleFileLink != null &&
         heavyBlockPolicy == MarkdownHeavyBlockPolicy.eager) {
       return Padding(
         padding: EdgeInsets.only(bottom: style.paragraphSpacing),
-        child: _renderPdfLink(singlePdfLink),
+        child: _renderFileLink(singleFileLink),
       );
     }
 
@@ -394,7 +396,7 @@ class BlockRenderer {
     return null;
   }
 
-  CompiledMarkdownElement? _extractSinglePdfLink(
+  CompiledMarkdownElement? _extractSingleFileLink(
     CompiledMarkdownElement paragraph,
   ) {
     final children = paragraph.children;
@@ -402,19 +404,23 @@ class BlockRenderer {
       return null;
     }
     final child = children.first;
+    final href = child is CompiledMarkdownElement
+        ? (child.attributes['href'] ?? '')
+        : '';
     if (child is CompiledMarkdownElement &&
         child.tag == 'a' &&
-        PdfInlineView.isPdfLink(child.attributes['href'] ?? '')) {
+        (PdfInlineView.isPdfLink(href) || isFileLink(href))) {
       return child;
     }
     return null;
   }
 
-  Widget _renderPdfLink(CompiledMarkdownElement element) {
-    return PdfInlineView(
-      url: element.attributes['href'] ?? '',
-      label: element.textContent,
-    );
+  Widget _renderFileLink(CompiledMarkdownElement element) {
+    final href = element.attributes['href'] ?? '';
+    if (PdfInlineView.isPdfLink(href)) {
+      return PdfInlineView(url: href, label: element.textContent);
+    }
+    return FileLinkCard(url: href, label: element.textContent);
   }
 
   Widget? _renderParagraphWithStandaloneImages(

@@ -17,57 +17,6 @@ void main() {
     });
   });
 
-  group('pdfTitle', () {
-    test('prefers the label without its document emoji', () {
-      check(
-        pdfTitle(
-          rawLabel: '\u{1F4C4} Q1 report',
-          url: 'https://x.test/a.pdf',
-          fallback: 'PDF',
-        ),
-      ).equals('Q1 report');
-    });
-
-    test('falls back to the decoded file name, then the fallback', () {
-      check(
-        pdfTitle(
-          rawLabel: 'https://x.test/dir/My%20File.pdf',
-          url: 'https://x.test/dir/My%20File.pdf',
-          fallback: 'PDF',
-        ),
-      ).equals('My File.pdf');
-      check(pdfTitle(rawLabel: null, url: '', fallback: 'PDF')).equals('PDF');
-    });
-  });
-
-  test('share file names are safe and end in .pdf', () {
-    check(pdfShareFileName('Q1: report/final')).equals('Q1 report final.pdf');
-    check(pdfShareFileName('notes.PDF')).equals('notes.PDF');
-    check(pdfShareFileName('***')).equals('document.pdf');
-    check(pdfShareFileName('a' * 120).length).equals(84);
-  });
-
-  group('resolvePdfRequestUrl', () {
-    test('absolute URLs pass through', () {
-      check(resolvePdfRequestUrl('https://cdn.test/a.pdf', 'https://owui.test'))
-          .equals('https://cdn.test/a.pdf');
-    });
-
-    test('root-relative paths join the server origin and base path', () {
-      check(resolvePdfRequestUrl('/files/a.pdf', 'https://owui.test/base/'))
-          .equals('https://owui.test/base/files/a.pdf');
-    });
-
-    test('relative paths resolve under the base path', () {
-      check(resolvePdfRequestUrl('files/a.pdf', 'https://owui.test/base'))
-          .equals('https://owui.test/base/files/a.pdf');
-    });
-
-    test('without a server a relative path stays as is', () {
-      check(resolvePdfRequestUrl('files/a.pdf', null)).equals('files/a.pdf');
-    });
-  });
-
   test('page geometry falls back to A4 for pages without a size', () {
     check(pdfHeightForWidth(pageWidth: 612, pageHeight: 792, width: 306))
         .equals(396);

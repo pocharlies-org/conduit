@@ -17,6 +17,7 @@ import 'package:pdfrx/pdfrx.dart';
 import 'package:share_plus/share_plus.dart';
 
 import 'package:conduit_core/models/server_config.dart';
+import 'package:conduit_core/utils/file_link_utils.dart';
 import 'package:conduit_core/utils/pdf_link_utils.dart';
 import 'package:conduit_core/utils/pdf_link_utils.dart'
     as core_pdf
@@ -673,7 +674,7 @@ class _PdfInlineViewState extends ConsumerState<PdfInlineView> {
     try {
       final container = ProviderScope.containerOf(context, listen: false);
       final api = container.read(apiServiceProvider);
-      final requestUrl = resolvePdfRequestUrl(loadingUrl, api?.baseUrl);
+      final requestUrl = resolveServerFileUrl(loadingUrl, api?.baseUrl);
       final headers = buildImageHeadersForUrlFromContainer(
         container,
         requestUrl,
@@ -903,7 +904,7 @@ class _PdfInlineViewState extends ConsumerState<PdfInlineView> {
     // newly visible PDFs hydrate and displaced PDFs suspend raster work.
     _scheduleViewportCheck();
     final l10n = AppLocalizations.of(context);
-    final title = pdfTitle(
+    final title = fileLinkTitle(
       rawLabel: widget.label,
       url: widget.url,
       fallback: l10n?.document ?? 'PDF document',
@@ -1451,7 +1452,7 @@ class _PdfPageSlotState extends State<_PdfPageSlot> {
 }
 
 Future<void> _sharePdf(String filePath, String title) async {
-  final name = pdfShareFileName(title);
+  final name = fileShareFileName(title, fallbackExtension: '.pdf');
   try {
     final base = await getTemporaryDirectory();
     final root = Directory(path.join(base.path, 'pdf-share'));
