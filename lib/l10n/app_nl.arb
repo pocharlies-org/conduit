@@ -1,6 +1,6 @@
 {
   "@@locale": "nl",
-  "appTitle": "Conduit",
+  "appTitle": "openChat",
   "serverIncompatibleTitle": "Server niet ondersteund",
   "serverIncompatibleMessage": "Deze server draait Open WebUI {serverVersion}, wat nieuwer is dan deze app ondersteunt (tot {maxVersion}).",
   "retry": "Opnieuw proberen",
@@ -18,8 +18,8 @@
     "description": "Ondertitel die beschikbare acties uitlegt wanneer de server niet bereikbaar is"
   },
   "account": "Account",
-  "supportConduit": "Ondersteun Conduit",
-  "supportConduitSubtitle": "Houd Conduit onafhankelijk door doorlopende ontwikkeling te financieren.",
+  "supportConduit": "Ondersteun openChat",
+  "supportConduitSubtitle": "Houd openChat onafhankelijk door doorlopende ontwikkeling te financieren.",
   "githubSponsorsTitle": "GitHub Sponsors",
   "githubSponsorsSubtitle": "Word een terugkerende sponsor om roadmap-items te financieren.",
   "buyMeACoffeeTitle": "Buy Me a Coffee",
@@ -34,7 +34,7 @@
     }
   },
   "releaseNotesLearnMore": "Meer informatie",
-  "releaseNotesReviewButton": "Beoordeel Conduit",
+  "releaseNotesReviewButton": "Beoordeel openChat",
   "releaseNotesDoneButton": "Gereed",
   "signOut": "Uitloggen",
   "endYourSession": "Beëindig je sessie",
@@ -81,7 +81,7 @@
   "voice": "Stem",
   "voiceStatusListening": "Luisteren...",
   "voiceHoldToTalk": "Houd ingedrukt om te praten",
-  "messageHintText": "Vraag Conduit",
+  "messageHintText": "Vraag openChat",
   "stopGenerating": "Stop met genereren",
   "codeCopiedToClipboard": "Code gekopieerd naar klembord.",
   "send": "Verzenden",
@@ -100,7 +100,7 @@
   "chatQueuedOfflineTitle": "Offline in wachtrij",
   "chatQueuedOfflineMessage": "Deze reactie start wanneer de server bereikbaar is.",
   "chatQueuedPendingTitle": "In wachtrij voor verzending",
-  "chatQueuedPendingMessage": "Conduit start deze reactie zodra synchronisatie wordt uitgevoerd.",
+  "chatQueuedPendingMessage": "openChat start deze reactie zodra synchronisatie wordt uitgevoerd.",
   "chatQueuedFailedTitle": "Verzenden mislukt",
   "chatQueuedFailedMessage": "Probeer de reactie in de wachtrij opnieuw of annuleer deze.",
   "chatQueuedSnackBar": "Bericht in wachtrij geplaatst. Het wordt verzonden wanneer de server bereikbaar is.",
@@ -258,7 +258,7 @@
   "androidAssistantTitle": "Digitale Android-assistent",
   "androidAssistantDescription": "Kies wat er gebeurt wanneer je de digitale Android-assistent activeert.",
   "androidAssistantOverlayOption": "Snelle overlay tonen (standaard)",
-  "androidAssistantNewChatOption": "Conduit openen met een nieuwe chat",
+  "androidAssistantNewChatOption": "openChat openen met een nieuwe chat",
   "androidAssistantVoiceCallOption": "Spraakoproep starten",
   "sttSettings": "Spraak naar tekst",
   "sttEngineLabel": "Herkenningsengine",
@@ -617,11 +617,11 @@
   "@nextLabel": {
     "description": "Label for navigating to the next item."
   },
-  "themePaletteConduitLabel": "Conduit",
+  "themePaletteConduitLabel": "openChat",
   "@themePaletteConduitLabel": {
     "description": "Palette name for the default Conduit theme."
   },
-  "themePaletteConduitDescription": "Strak neutraal thema ontworpen voor Conduit.",
+  "themePaletteConduitDescription": "Strak neutraal thema ontworpen voor openChat.",
   "@themePaletteConduitDescription": {
     "description": "Description of the Conduit palette."
   },
@@ -1165,7 +1165,7 @@
   "passwordUpdated": "Wachtwoord bijgewerkt.",
   "activeStatus": "Actief",
   "inactiveStatus": "Inactief",
-  "appInformation": "Conduit-app",
+  "appInformation": "openChat-app",
   "appVersion": "Versie",
   "serverInformation": "Serverinformatie",
   "serverInfoUnavailable": "Serverinformatie is nu niet beschikbaar.",
@@ -2798,8 +2798,8 @@
   "loadChartPreview": "Grafiekvoorbeeld laden",
   "loadPdfPreview": "PDF-voorbeeld laden: {title}",
   "ollamaThinkingAutomatic": "Automatisch",
-  "releaseNotesSupportPromptHeading": "Bevalt Conduit je?",
-  "releaseNotesSupportPromptMessage": "Een korte review helpt meer mensen Conduit te vinden. Een kleine fooi helpt me om eraan te blijven bouwen. Allebei betekenen veel.",
+  "releaseNotesSupportPromptHeading": "Bevalt openChat je?",
+  "releaseNotesSupportPromptMessage": "Een korte review helpt meer mensen openChat te vinden. Een kleine fooi helpt me om eraan te blijven bouwen. Allebei betekenen veel.",
   "markdownShowMoreLines": "{count, plural, =1{Toon nog 1 regel} other{Toon nog {count} regels}}",
   "@markdownShowMoreLines": {
     "placeholders": {
@@ -2825,7 +2825,7 @@
   "directMcpAuthBearer": "Bearer token",
   "citationShowTitles": "Paginatitels in bronvermeldingen tonen",
   "citationShowTitlesDescription": "Paginatitels gebruiken in plaats van websitedomeinen in bronlabels",
-  "notificationSystemSettingsDescription": "Wijzig toestemming, geluid en bannerinstellingen voor Conduit.",
+  "notificationSystemSettingsDescription": "Wijzig toestemming, geluid en bannerinstellingen voor openChat.",
   "notificationSystemSettingsOpenFailed": "Kan systeeminstellingen voor meldingen niet openen.",
   "notificationTargetsTitle": "Webhookbestemmingen",
   "notificationTargetsDescription": "Je Open WebUI-server stuurt gebeurtenissen naar deze URL's, ook als deze app gesloten is.",
@@ -2925,7 +2925,7 @@
   "@voiceCallExpand": {
     "description": "Accessibility label for the button that opens the minimized voice call pill back into the full panel."
   },
-  "askConduitAction": "Vraag Conduit",
+  "askConduitAction": "Vraag openChat",
   "voiceCallStartTimeout": "Het starten van het spraakgesprek duurde te lang. Probeer het opnieuw.",
   "@voiceCallStartTimeout": {
     "description": "Error shown when starting a voice call takes too long."
@@ -3030,7 +3030,7 @@
   "chatForkFailed": "Kon deze chat niet vertakken. Probeer het opnieuw.",
   "codeInterpreter": "Code-interpreter",
   "codeInterpreterDescription": "Voer code uit op de server om gegevens te analyseren en bestanden te maken.",
-  "codeInterpreterBrowserEngine": "Deze server voert code uit in de browser, wat Conduit niet kan.",
+  "codeInterpreterBrowserEngine": "Deze server voert code uit in de browser, wat openChat niet kan.",
   "codeInterpreterUnavailable": "Niet beschikbaar voor deze server, dit account of dit model.",
   "folderProjectSettings": "Projectinstellingen",
   "folderProjectSettingsDescription": "Standaardwaarden voor nieuwe chats in deze map. De server past de kennis en het systeemprompt toe op elke chat erin.",
@@ -3200,7 +3200,7 @@
   "queueDraftAction": "In wachtrij",
   "queuedDraftsTitle": "Berichten in de wachtrij",
   "queuedDraftsCount": "{count, plural, one{{count} bericht in de wachtrij} other{{count} berichten in de wachtrij}}",
-  "queuedDraftsSessionNote": "Berichten in de wachtrij blijven alleen bewaard zolang Conduit open is. Zodra het antwoord klaar is, worden ze samen als één bericht verzonden.",
+  "queuedDraftsSessionNote": "Berichten in de wachtrij blijven alleen bewaard zolang openChat open is. Zodra het antwoord klaar is, worden ze samen als één bericht verzonden.",
   "queuedDraftSendNow": "Stoppen en verzenden",
   "queuedDraftUploading": "Wachten tot een bestand is geüpload",
   "queuedDraftFileFailed": "Een bestand is niet geüpload. Probeer het opnieuw of verwijder het.",

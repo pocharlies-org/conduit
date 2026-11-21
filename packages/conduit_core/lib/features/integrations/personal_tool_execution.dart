@@ -254,7 +254,7 @@ Future<Object?> executePersonalToolCall(
   } on PersonalConnectionProbeException catch (error) {
     return _failed(switch (error.failure) {
       PersonalConnectionProbeFailure.unsupportedAuth =>
-        'This tool server uses an authentication mode Conduit cannot send.',
+        'This tool server uses an authentication mode openChat cannot send.',
       PersonalConnectionProbeFailure.unauthorized =>
         'The tool server rejected the saved key.',
       _ => 'The tool server could not be reached.',

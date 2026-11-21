@@ -1497,13 +1497,13 @@ class SocketService {
     final unsupported = switch (type) {
       'execute' => const <String, dynamic>{
         'error':
-            'Conduit does not support client-side JavaScript execution. '
+            'openChat does not support client-side JavaScript execution. '
             'Use a server-side tool or the Open WebUI browser client.',
       },
       'execute:python' => const <String, dynamic>{
         'stdout': '',
         'stderr':
-            'Conduit does not support client-side Python execution. '
+            'openChat does not support client-side Python execution. '
             'Configure a server-side Jupyter code interpreter or use the '
             'Open WebUI browser client.',
         'result': null,

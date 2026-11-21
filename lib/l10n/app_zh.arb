@@ -1,6 +1,6 @@
 {
   "@@locale": "zh",
-  "appTitle": "Conduit",
+  "appTitle": "openChat",
   "serverIncompatibleTitle": "不支持该服务器",
   "serverIncompatibleMessage": "此服务器运行的 Open WebUI 版本为 {serverVersion}，高于本应用支持的版本（最高 {maxVersion}）。",
   "retry": "重试",
@@ -18,8 +18,8 @@
     "description": "当无法访问服务器时解释可用操作的副标题"
   },
   "account": "账户",
-  "supportConduit": "支持 Conduit",
-  "supportConduitSubtitle": "通过资助持续开发来保持 Conduit 的独立性。",
+  "supportConduit": "支持 openChat",
+  "supportConduitSubtitle": "通过资助持续开发来保持 openChat 的独立性。",
   "githubSponsorsTitle": "GitHub 赞助",
   "githubSponsorsSubtitle": "成为定期赞助者以资助路线图项目。",
   "buyMeACoffeeTitle": "Buy Me a Coffee",
@@ -34,7 +34,7 @@
     }
   },
   "releaseNotesLearnMore": "了解更多",
-  "releaseNotesReviewButton": "评价 Conduit",
+  "releaseNotesReviewButton": "评价 openChat",
   "releaseNotesDoneButton": "完成",
   "signOut": "退出登录",
   "endYourSession": "结束您的会话",
@@ -81,7 +81,7 @@
   "voice": "语音",
   "voiceStatusListening": "正在听...",
   "voiceHoldToTalk": "按住说话",
-  "messageHintText": "问 Conduit",
+  "messageHintText": "问 openChat",
   "stopGenerating": "停止生成",
   "codeCopiedToClipboard": "代码已复制到剪贴板。",
   "send": "发送",
@@ -100,7 +100,7 @@
   "chatQueuedOfflineTitle": "离线排队中",
   "chatQueuedOfflineMessage": "服务器可访问时，此响应将开始。",
   "chatQueuedPendingTitle": "已排队等待发送",
-  "chatQueuedPendingMessage": "同步运行后，Conduit 将立即开始此响应。",
+  "chatQueuedPendingMessage": "同步运行后，openChat 将立即开始此响应。",
   "chatQueuedFailedTitle": "发送失败",
   "chatQueuedFailedMessage": "重试排队的响应或取消它。",
   "chatQueuedSnackBar": "消息已排队。服务器可访问时将发送。",
@@ -258,7 +258,7 @@
   "androidAssistantTitle": "Android 数字助理",
   "androidAssistantDescription": "选择触发 Android 数字助理时要执行的操作。",
   "androidAssistantOverlayOption": "显示快速浮层（默认）",
-  "androidAssistantNewChatOption": "打开 Conduit 并新建聊天",
+  "androidAssistantNewChatOption": "打开 openChat 并新建聊天",
   "androidAssistantVoiceCallOption": "开始语音通话",
   "sttSettings": "语音转文字",
   "sttEngineLabel": "识别引擎",
@@ -617,11 +617,11 @@
   "@nextLabel": {
     "description": "Label for navigating to the next item."
   },
-  "themePaletteConduitLabel": "Conduit",
+  "themePaletteConduitLabel": "openChat",
   "@themePaletteConduitLabel": {
     "description": "Palette name for the default Conduit theme."
   },
-  "themePaletteConduitDescription": "为 Conduit 设计的简洁中性色主题。",
+  "themePaletteConduitDescription": "为 openChat 设计的简洁中性色主题。",
   "@themePaletteConduitDescription": {
     "description": "Description of the Conduit palette."
   },
@@ -1165,7 +1165,7 @@
   "passwordUpdated": "密码已更新。",
   "activeStatus": "活跃",
   "inactiveStatus": "未活跃",
-  "appInformation": "Conduit 应用",
+  "appInformation": "openChat 应用",
   "appVersion": "版本",
   "serverInformation": "服务器信息",
   "serverInfoUnavailable": "服务器信息暂不可用。",
@@ -2798,8 +2798,8 @@
   "loadChartPreview": "Load chart preview",
   "loadPdfPreview": "Load PDF preview: {title}",
   "ollamaThinkingAutomatic": "Automatic",
-  "releaseNotesSupportPromptHeading": "喜欢 Conduit 吗？",
-  "releaseNotesSupportPromptMessage": "一条简短的评价能帮助更多人发现 Conduit。一点小小的打赏能支持我继续开发。无论哪一种，对我都意义重大。",
+  "releaseNotesSupportPromptHeading": "喜欢 openChat 吗？",
+  "releaseNotesSupportPromptMessage": "一条简短的评价能帮助更多人发现 openChat。一点小小的打赏能支持我继续开发。无论哪一种，对我都意义重大。",
   "markdownShowMoreLines": "再显示 {count} 行",
   "@markdownShowMoreLines": {
     "placeholders": {
@@ -2825,7 +2825,7 @@
   "directMcpAuthBearer": "Bearer token",
   "citationShowTitles": "显示引用页面标题",
   "citationShowTitlesDescription": "在引用标记中使用页面标题而非网站域名",
-  "notificationSystemSettingsDescription": "更改 Conduit 的权限、声音和横幅选项。",
+  "notificationSystemSettingsDescription": "更改 openChat 的权限、声音和横幅选项。",
   "notificationSystemSettingsOpenFailed": "无法打开系统通知设置。",
   "notificationTargetsTitle": "Webhook 目标",
   "notificationTargetsDescription": "即使此应用已关闭，您的 Open WebUI 服务器也会向这些 URL 发送事件。",
@@ -2925,7 +2925,7 @@
   "@voiceCallExpand": {
     "description": "Accessibility label for the button that opens the minimized voice call pill back into the full panel."
   },
-  "askConduitAction": "问 Conduit",
+  "askConduitAction": "问 openChat",
   "voiceCallStartTimeout": "启动语音通话耗时过长，请重试。",
   "@voiceCallStartTimeout": {
     "description": "Error shown when starting a voice call takes too long."
@@ -3030,7 +3030,7 @@
   "chatForkFailed": "无法为此聊天创建分支，请重试。",
   "codeInterpreter": "代码解释器",
   "codeInterpreterDescription": "在服务器上运行代码，以分析数据并生成文件。",
-  "codeInterpreterBrowserEngine": "此服务器在浏览器中运行代码，Conduit 不支持。",
+  "codeInterpreterBrowserEngine": "此服务器在浏览器中运行代码，openChat 不支持。",
   "codeInterpreterUnavailable": "此服务器、账户或模型不可用。",
   "folderProjectSettings": "项目设置",
   "folderProjectSettingsDescription": "此文件夹中新聊天的默认设置。服务器会对其中的每个聊天应用其知识库和系统提示词。",
@@ -3200,7 +3200,7 @@
   "queueDraftAction": "加入队列",
   "queuedDraftsTitle": "排队的消息",
   "queuedDraftsCount": "排队的消息：{count} 条",
-  "queuedDraftsSessionNote": "排队的消息仅在 Conduit 保持打开时保留。回复结束后，它们会合并为一条消息一起发送。",
+  "queuedDraftsSessionNote": "排队的消息仅在 openChat 保持打开时保留。回复结束后，它们会合并为一条消息一起发送。",
   "queuedDraftSendNow": "停止并发送",
   "queuedDraftUploading": "正在等待文件上传完成",
   "queuedDraftFileFailed": "有文件未能上传。请重试或移除它。",

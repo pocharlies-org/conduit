@@ -1,6 +1,6 @@
 {
   "@@locale": "ja",
-  "appTitle": "Conduit",
+  "appTitle": "openChat",
   "serverIncompatibleTitle": "サーバーは未対応です",
   "serverIncompatibleMessage": "このサーバーは Open WebUI {serverVersion} を実行しており、このアプリが対応するバージョン（{maxVersion} まで）よりも新しいバージョンです。",
   "@appTitle": {
@@ -39,11 +39,11 @@
   "@account": {
     "description": "Section header for account-related options."
   },
-  "supportConduit": "Conduit を支援",
+  "supportConduit": "openChat を支援",
   "@supportConduit": {
     "description": "Section header inviting the user to financially support the project."
   },
-  "supportConduitSubtitle": "継続的な開発を支援して、Conduit の独立性を保ちます。",
+  "supportConduitSubtitle": "継続的な開発を支援して、openChat の独立性を保ちます。",
   "@supportConduitSubtitle": {
     "description": "Subtitle explaining why donations are helpful."
   },
@@ -73,7 +73,7 @@
     }
   },
   "releaseNotesLearnMore": "詳細を見る",
-  "releaseNotesReviewButton": "Conduit をレビュー",
+  "releaseNotesReviewButton": "openChat をレビュー",
   "releaseNotesDoneButton": "完了",
   "signOut": "サインアウト",
   "@signOut": {
@@ -371,7 +371,7 @@
   "@voiceCallDisconnected": {
     "description": "Status label shown when the voice call has ended or disconnected."
   },
-  "messageHintText": "Conduit に質問",
+  "messageHintText": "openChat に質問",
   "@messageHintText": {
     "description": "Short placeholder text in the message input."
   },
@@ -471,7 +471,7 @@
   "@chatQueuedPendingTitle": {
     "description": "Title shown when a queued assistant response is waiting for sync/backoff."
   },
-  "chatQueuedPendingMessage": "同期が実行され次第、Conduit がこの応答を開始します。",
+  "chatQueuedPendingMessage": "同期が実行され次第、openChat がこの応答を開始します。",
   "@chatQueuedPendingMessage": {
     "description": "Body text shown for a queued assistant response that is waiting to be sent."
   },
@@ -938,11 +938,11 @@
   "@themePalette": {
     "description": "Title for selecting the app color palette."
   },
-  "themePaletteConduitLabel": "Conduit",
+  "themePaletteConduitLabel": "openChat",
   "@themePaletteConduitLabel": {
     "description": "Palette name for the default Conduit theme."
   },
-  "themePaletteConduitDescription": "Conduit 向けに設計されたクリーンなニュートラルテーマ。",
+  "themePaletteConduitDescription": "openChat 向けに設計されたクリーンなニュートラルテーマ。",
   "@themePaletteConduitDescription": {
     "description": "Description of the Conduit palette."
   },
@@ -1090,7 +1090,7 @@
   "@androidAssistantOverlayOption": {
     "description": "Option label for keeping the current assistant overlay."
   },
-  "androidAssistantNewChatOption": "新しいチャットで Conduit を開く",
+  "androidAssistantNewChatOption": "新しいチャットで openChat を開く",
   "@androidAssistantNewChatOption": {
     "description": "Option label for opening the app to a fresh chat from the assistant trigger."
   },
@@ -2417,7 +2417,7 @@
   "passwordUpdated": "パスワードを更新しました。",
   "activeStatus": "有効",
   "inactiveStatus": "無効",
-  "appInformation": "Conduit アプリ",
+  "appInformation": "openChat アプリ",
   "appVersion": "バージョン",
   "serverInformation": "サーバー情報",
   "serverInfoUnavailable": "現在サーバー情報を利用できません。",
@@ -3994,8 +3994,8 @@
   "loadChartPreview": "Load chart preview",
   "loadPdfPreview": "Load PDF preview: {title}",
   "ollamaThinkingAutomatic": "Automatic",
-  "releaseNotesSupportPromptHeading": "Conduit を気に入っていただけましたか?",
-  "releaseNotesSupportPromptMessage": "短いレビューは、より多くの人が Conduit と出会う助けになります。小さなチップは、開発を続ける力になります。どちらも本当に励みになります。",
+  "releaseNotesSupportPromptHeading": "openChat を気に入っていただけましたか?",
+  "releaseNotesSupportPromptMessage": "短いレビューは、より多くの人が openChat と出会う助けになります。小さなチップは、開発を続ける力になります。どちらも本当に励みになります。",
   "markdownShowMoreLines": "あと{count}行を表示",
   "@markdownShowMoreLines": {
     "placeholders": {
@@ -4021,7 +4021,7 @@
   "directMcpAuthBearer": "Bearer token",
   "citationShowTitles": "引用にページタイトルを表示",
   "citationShowTitlesDescription": "引用バッジにサイトのドメインではなくページタイトルを使用します",
-  "notificationSystemSettingsDescription": "Conduit の許可、サウンド、バナーの設定を変更します。",
+  "notificationSystemSettingsDescription": "openChat の許可、サウンド、バナーの設定を変更します。",
   "notificationSystemSettingsOpenFailed": "システムの通知設定を開けませんでした。",
   "notificationTargetsTitle": "Webhook の送信先",
   "notificationTargetsDescription": "このアプリを閉じている間も、Open WebUI サーバーがこれらの URL にイベントを送信します。",
@@ -4121,7 +4121,7 @@
   "@voiceCallExpand": {
     "description": "Accessibility label for the button that opens the minimized voice call pill back into the full panel."
   },
-  "askConduitAction": "Conduit に質問",
+  "askConduitAction": "openChat に質問",
   "voiceCallStartTimeout": "音声通話の開始に時間がかかりすぎました。もう一度お試しください。",
   "@voiceCallStartTimeout": {
     "description": "Error shown when starting a voice call takes too long."
@@ -4226,7 +4226,7 @@
   "chatForkFailed": "このチャットを分岐できませんでした。もう一度お試しください。",
   "codeInterpreter": "コードインタープリター",
   "codeInterpreterDescription": "サーバー上でコードを実行して、データの分析やファイルの作成ができます。",
-  "codeInterpreterBrowserEngine": "このサーバーはコードをブラウザで実行しますが、Conduit では対応していません。",
+  "codeInterpreterBrowserEngine": "このサーバーはコードをブラウザで実行しますが、openChat では対応していません。",
   "codeInterpreterUnavailable": "このサーバー、アカウント、またはモデルでは使用できません。",
   "folderProjectSettings": "プロジェクト設定",
   "folderProjectSettingsDescription": "このフォルダ内の新しいチャットの既定値です。サーバーは、フォルダ内のすべてのチャットにナレッジとシステムプロンプトを適用します。",
@@ -4396,7 +4396,7 @@
   "queueDraftAction": "キューに追加",
   "queuedDraftsTitle": "キューのメッセージ",
   "queuedDraftsCount": "キューに入っているメッセージ: {count} 件",
-  "queuedDraftsSessionNote": "キューに入れたメッセージは、Conduit を開いている間だけ保持されます。応答が完了すると、1 件のメッセージとしてまとめて送信されます。",
+  "queuedDraftsSessionNote": "キューに入れたメッセージは、openChat を開いている間だけ保持されます。応答が完了すると、1 件のメッセージとしてまとめて送信されます。",
   "queuedDraftSendNow": "停止して送信",
   "queuedDraftUploading": "ファイルのアップロード完了を待っています",
   "queuedDraftFileFailed": "アップロードできなかったファイルがあります。再試行するか削除してください。",

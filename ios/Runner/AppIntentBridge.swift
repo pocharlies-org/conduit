@@ -455,7 +455,7 @@ final class AppIntentBridge: AppIntentHostApi, @unchecked Sendable {
                     deadline: .now() + Self.invocationTimeout
                 ) {
                     completion.resolveInterrupted(
-                        "App Intent timed out waiting for Conduit."
+                        "App Intent timed out waiting for openChat."
                     )
                 }
 
