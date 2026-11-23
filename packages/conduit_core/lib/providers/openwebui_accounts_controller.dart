@@ -18,9 +18,8 @@ import 'package:conduit_core/features/chat/providers/chat_providers.dart'
     show
         isChatStreamingProvider,
         localChatGenerationActiveProvider,
-        stopGenerationProvider;
-import 'package:conduit_core/features/chat/providers/chat_generation_control.dart'
-    show stopOpenWebUiMainResponse;
+        stopGenerationProvider,
+        stopOpenWebUiMainResponse;
 import 'package:conduit_core/persistence/persistence_keys.dart';
 import 'package:conduit_core/persistence/preferences_store.dart';
 import 'package:conduit_core/providers/app_providers.dart';
