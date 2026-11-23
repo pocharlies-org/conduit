@@ -167,8 +167,8 @@ class NavigationService {
   static Future<void> navigateToFolder(String folderId) =>
       navigateTo(Routes.folderPath(folderId));
 
-  /// OWU-134: sign-in is the login of the one seeded server; there is no
-  /// server-connection flow to fall back to.
+  /// OWU-134: sign-in is the login of the one seeded server, not the
+  /// server-connection flow.
   static Future<void> navigateToLogin() => navigateTo(Routes.authentication);
   static Future<void> navigateToProfile() => navigateTo(Routes.profile);
 }

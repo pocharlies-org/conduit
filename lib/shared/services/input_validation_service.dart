@@ -1,25 +1,5 @@
 /// Comprehensive input validation service
 class InputValidationService {
-  // Email regex pattern
-  static final RegExp _emailRegex = RegExp(
-    r'^[a-zA-Z0-9._%+-]+@([a-zA-Z0-9.-]+\.[a-zA-Z]{2,}|localhost)$',
-    caseSensitive: false,
-  );
-
-  /// Validate email address
-  static String? validateEmail(String? value) {
-    if (value == null || value.isEmpty) {
-      return 'Email is required';
-    }
-
-    final trimmed = value.trim();
-    if (!_emailRegex.hasMatch(trimmed)) {
-      return 'Please enter a valid email address';
-    }
-
-    return null;
-  }
-
   /// Validate URL (enhanced version for server addresses)
   static String? validateUrl(String? value, {bool required = true}) {
     if (value == null || value.isEmpty) {
@@ -91,61 +71,6 @@ class InputValidationService {
       return '$fieldName is required';
     }
     return null;
-  }
-
-  /// Validate minimum length
-  static String? validateMinLength(
-    String? value,
-    int minLength, {
-    String fieldName = 'This field',
-  }) {
-    if (value == null || value.isEmpty) {
-      return '$fieldName is required';
-    }
-
-    if (value.length < minLength) {
-      return '$fieldName must be at least $minLength characters';
-    }
-
-    return null;
-  }
-
-  /// Validate username
-  static String? validateUsername(String? value) {
-    if (value == null || value.isEmpty) {
-      return 'Username is required';
-    }
-
-    if (value.length < 3) {
-      return 'Username must be at least 3 characters';
-    }
-
-    if (value.length > 20) {
-      return 'Username must be at most 20 characters';
-    }
-
-    if (!RegExp(r'^[a-zA-Z0-9_]+$').hasMatch(value)) {
-      return 'Username can only contain letters, numbers, and underscores';
-    }
-
-    return null;
-  }
-
-  /// Validate email or username (flexible login)
-  static String? validateEmailOrUsername(String? value) {
-    if (value == null || value.isEmpty) {
-      return 'Email or username is required';
-    }
-
-    final trimmed = value.trim();
-
-    // If it contains @ symbol, validate as email
-    if (trimmed.contains('@')) {
-      return validateEmail(value);
-    }
-
-    // Otherwise validate as username
-    return validateUsername(value);
   }
 
   /// Composite validator that runs multiple validators
