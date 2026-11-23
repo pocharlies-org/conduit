@@ -6,8 +6,8 @@ import 'package:conduit/shared/widgets/platform_ui/platform_ui.dart';
 import 'package:dio/dio.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/foundation.dart' show kIsWeb, visibleForTesting;
-import 'package:flutter/cupertino.dart';
-import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
+import 'package:conduit/shared/widgets/platform_ui/vocabulary.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:conduit/core/services/haptic_service.dart';
@@ -2365,7 +2365,7 @@ class _ServerConnectionPageState extends ConsumerState<ServerConnectionPage> {
                       : Icons.close_rounded,
                   onPressed: () => _removeCustomHeader(entry.key),
                   tooltip: AppLocalizations.of(context)!.removeHeader,
-                  backgroundColor: Colors.transparent,
+                  backgroundColor: const Color(0x00000000),
                   iconColor: theme.textTertiary,
                   isCompact: true,
                 ),
