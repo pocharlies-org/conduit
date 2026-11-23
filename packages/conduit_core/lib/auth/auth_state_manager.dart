@@ -1823,6 +1823,193 @@ class AuthStateManager extends _$AuthStateManager {
     ref.invalidate(apiServiceProvider);
   }
 
+  /// OWU-157 (from 3f95de15): commit the session a proxy sign-in already
+  /// validated with the server, staging its candidate config transactionally.
+  Future<bool> commitPrevalidatedProxySession({
+    required ServerConfig serverConfig,
+    required String token,
+    required User user,
+    bool Function()? canCommit,
+  }) async {
+    final tokenStr = token.trim();
+    if (tokenStr.isEmpty) {
+      throw Exception('Token cannot be empty');
+    }
+    if (TokenValidator.isApiKey(tokenStr)) {
+      throw Exception('apiKeyNotSupported');
+    }
+    if (!_isValidTokenFormat(tokenStr)) {
+      throw Exception('Invalid token format');
+    }
+    // An interactive proxy commit validated this token with the server during
+    // the current connect attempt; a completed logout's marker no longer
+    // applies. While a logout is still in flight, the marker keeps rejecting
+    // resurrection of the bearer being revoked.
+    _acceptFreshlyIssuedServerToken(tokenStr, source: 'proxy');
+    if (_recentlyRevokedTokens.contains(tokenStr)) {
+      throw Exception(
+        'This sign-in session was already signed out. Please authenticate again.',
+      );
+    }
+    // The proxy discovery client validated this exact pair with the server.
+    _recordValidatedIdentity(tokenStr, user);
+
+    final currentState = _current;
+    final previousState =
+        currentState.isLoading || currentState.status == AuthStatus.loading
+        ? _lastSettledState
+        : currentState;
+    final capturedSessionSafetyEpoch = _sessionSafetyEpoch;
+    final attemptRevision = _beginAuthAttempt();
+    bool superseded() =>
+        _authAttemptSuperseded(attemptRevision) || !_canCommitAuth(canCommit);
+    _update(
+      (current) => current.copyWith(
+        status: AuthStatus.loading,
+        isLoading: true,
+        clearError: true,
+      ),
+    );
+
+    final storage = ref.read(optimizedStorageServiceProvider);
+    // Stopped by the caller rather than by a newer attempt, this one still
+    // owns the state it set loading, and settles it back.
+    void settleStopped() => _restorePrevalidatedProxyAttemptState(
+      attemptRevision: attemptRevision,
+      capturedSessionSafetyEpoch: capturedSessionSafetyEpoch,
+      previousState: previousState,
+    );
+    ServerConfigCandidateSnapshot? candidateSnapshot;
+    try {
+      if (superseded()) {
+        settleStopped();
+        return false;
+      }
+      final snapshot = await storage.stageServerConfigCandidate(serverConfig);
+      candidateSnapshot = snapshot;
+      if (superseded()) {
+        await _restorePrevalidatedProxyConfig(
+          storage: storage,
+          candidate: serverConfig,
+          snapshot: snapshot,
+        );
+        settleStopped();
+        return false;
+      }
+
+      final committed = await _commitSilentLoginResult(
+        storage: storage,
+        token: tokenStr,
+        user: user,
+        canCommit: () => !superseded(),
+        commitPersistenceAndPublish: ({required publish}) {
+          return storage.commitServerConfigCandidateSession(
+            candidate: serverConfig,
+            transactionId: snapshot.transactionId,
+            token: tokenStr,
+            canCommit: () => !superseded(),
+            publish: () async {
+              await publish();
+              ref.invalidate(serverConfigsProvider);
+              _lastTransactionalSessionRevision = attemptRevision;
+            },
+            onRollbackUncertain: () {
+              if (!ref.mounted) return;
+              _poisonUncertainServerSession(
+                failedAttemptRevision: attemptRevision,
+              );
+            },
+          );
+        },
+      );
+      if (!committed) {
+        await _restorePrevalidatedProxyConfig(
+          storage: storage,
+          candidate: serverConfig,
+          snapshot: snapshot,
+        );
+        _restorePrevalidatedProxyAttemptState(
+          attemptRevision: attemptRevision,
+          capturedSessionSafetyEpoch: capturedSessionSafetyEpoch,
+          previousState: previousState,
+        );
+      }
+      return committed;
+    } catch (error, stackTrace) {
+      final rollbackUncertain = error is ServerConfigSessionRollbackException;
+      if (rollbackUncertain &&
+          capturedSessionSafetyEpoch == _sessionSafetyEpoch) {
+        // Poison the prior session before any provider invalidation. A newer
+        // attempt may already be loading while still carrying the old token;
+        // revision checks alone cannot make that cross-origin state safe.
+        _poisonUncertainServerSession(failedAttemptRevision: attemptRevision);
+      }
+      final snapshot = candidateSnapshot;
+      if (snapshot != null) {
+        await _restorePrevalidatedProxyConfig(
+          storage: storage,
+          candidate: serverConfig,
+          snapshot: snapshot,
+        );
+      }
+      if (!rollbackUncertain) {
+        _restorePrevalidatedProxyAttemptState(
+          attemptRevision: attemptRevision,
+          capturedSessionSafetyEpoch: capturedSessionSafetyEpoch,
+          previousState: previousState,
+        );
+      }
+      final failureMessage = _safeLoginFailureMessage(error);
+      _logAuthenticationFailure(
+        'prevalidated-proxy-session-commit-failed',
+        error,
+        stackTrace: stackTrace,
+      );
+      Error.throwWithStackTrace(Exception(failureMessage), stackTrace);
+    }
+  }
+
+  void _restorePrevalidatedProxyAttemptState({
+    required int attemptRevision,
+    required int capturedSessionSafetyEpoch,
+    required AuthState previousState,
+  }) {
+    if (!ref.mounted || _authAttemptRevision != attemptRevision) return;
+    if (capturedSessionSafetyEpoch == _sessionSafetyEpoch) {
+      _set(previousState);
+      _restoreApiServiceTokenToCurrent();
+      return;
+    }
+
+    // Another overlapping proxy attempt encountered an incomplete durable
+    // rollback. This attempt's captured previousState may contain the poisoned
+    // token, so it must settle tokenless if it cannot publish a fresh session.
+    _set(const AuthState(status: AuthStatus.unauthenticated, isLoading: false));
+    _updateApiServiceToken(null);
+    ref.invalidate(apiServiceProvider);
+  }
+
+  Future<void> _restorePrevalidatedProxyConfig({
+    required OptimizedStorageService storage,
+    required ServerConfig candidate,
+    required ServerConfigCandidateSnapshot snapshot,
+  }) async {
+    try {
+      await storage.discardServerConfigCandidate(
+        candidate: candidate,
+        transactionId: snapshot.transactionId,
+      );
+    } catch (error, stackTrace) {
+      _logAuthenticationFailure(
+        'prevalidated-proxy-config-restore-failed',
+        error,
+        stackTrace: stackTrace,
+      );
+    } finally {
+      if (ref.mounted) ref.invalidate(serverConfigsProvider);
+    }
+  }
+
   Future<bool> _loginWithApiKeyInternal(
     String apiKey, {
     bool rememberCredentials = false,

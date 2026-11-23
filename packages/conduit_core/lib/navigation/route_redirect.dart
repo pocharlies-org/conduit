@@ -3,6 +3,8 @@ import 'package:conduit_core/features/auth/providers/unified_auth_providers.dart
 import 'package:conduit_core/features/workspace/providers/workspace_capabilities_provider.dart';
 import 'package:conduit_core/navigation/routes.dart';
 import 'package:conduit_core/providers/app_providers.dart';
+import 'package:conduit_core/providers/openwebui_route_resolver.dart'
+    show proxySignInForRouteEditingProvider;
 import 'package:riverpod/misc.dart';
 import 'package:riverpod/riverpod.dart';
 
@@ -17,6 +19,7 @@ final List<ProviderListenable<Object?>> routeRedirectDependencies = [
   activeServerProvider,
   authNavigationStateProvider,
   workspaceCapabilitiesProvider,
+  proxySignInForRouteEditingProvider,
 ];
 
 /// Where the app should send a user who asked for [location], or null to let
@@ -26,9 +29,10 @@ final List<ProviderListenable<Object?>> routeRedirectDependencies = [
 /// go_router or Flutter.
 ///
 /// OWU-134: the app is Open WebUI only, pre-configured with the single seeded
-/// server. There is no backend chooser, no setup wizard and no account
-/// chooser: the splash hands over to the login of the active server when a
-/// sign-in is owed, and to chat once there is a session.
+/// server: the splash hands over to the login of the active server when a
+/// sign-in is owed, and to chat once there is a session. OWU-157 restores the
+/// generic sign-in routes (server connection, SSO, proxy) as auth routes the
+/// redirect leaves open; the seeded home flow still lands on authentication.
 String? resolveRouteRedirect(String location, ProviderRead read) {
   final reviewerMode = read(reviewerModeProvider);
   if (reviewerMode) {
@@ -54,7 +58,8 @@ String? resolveRouteRedirect(String location, ProviderRead read) {
   // completed sign-in be stranded on a sign-in page.
   if (authState == AuthNavigationState.authenticated &&
       isAuthLocation(location) &&
-      location != Routes.connectionIssue) {
+      location != Routes.connectionIssue &&
+      !_isProxySignInForRouteEditing(location, read)) {
     return Routes.chat;
   }
 
@@ -112,7 +117,8 @@ String? resolveRouteRedirect(String location, ProviderRead read) {
       return location == Routes.connectionIssue ? null : Routes.connectionIssue;
     case AuthNavigationState.authenticated:
       // Avoid unnecessary redirects if already on a non-auth route
-      if (isAuthLocation(location) ||
+      if ((isAuthLocation(location) &&
+              !_isProxySignInForRouteEditing(location, read)) ||
           location == Routes.splash ||
           location == Routes.connectionIssue) {
         return Routes.chat;
@@ -144,7 +150,18 @@ String? _workspaceRedirect(String location, ProviderRead read) {
   return null;
 }
 
+/// Whether the address editor has the reverse-proxy sign-in open, which it
+/// does while signed in. The router normally keeps a signed-in user away from
+/// sign-in screens; this is the one screen it lets through.
+bool _isProxySignInForRouteEditing(String location, ProviderRead read) =>
+    location == Routes.proxyAuth && read(proxySignInForRouteEditingProvider);
+
 bool isAuthLocation(String location) {
-  return location == Routes.authentication ||
-      location == Routes.connectionIssue;
+  return location == Routes.serverConnection ||
+      location == Routes.addServer ||
+      location == Routes.login ||
+      location == Routes.authentication ||
+      location == Routes.connectionIssue ||
+      location == Routes.ssoAuth ||
+      location == Routes.proxyAuth;
 }

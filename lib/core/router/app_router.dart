@@ -12,7 +12,12 @@ import 'package:conduit_core/services/performance_profiler.dart';
 import 'package:conduit_core/utils/debug_logger.dart';
 
 import '../../features/auth/views/authentication_page.dart';
+import '../../features/auth/views/backend_chooser_page.dart';
+import '../../features/auth/views/connect_signin_page.dart';
 import '../../features/auth/views/connection_issue_page.dart';
+import '../../features/auth/views/proxy_auth_page.dart';
+import '../../features/auth/views/server_connection_page.dart';
+import '../../features/auth/views/sso_auth_page.dart';
 import '../../features/chat/views/chat_page.dart';
 import '../../features/navigation/views/folder_page.dart';
 import '../../features/navigation/widgets/drawer_shell_page.dart';
@@ -199,6 +204,79 @@ final goRouterProvider = Provider<GoRouter>((ref) {
           child: AuthenticationPage(
             serverConfig: extra is ServerConfig ? extra : null,
           ),
+        );
+      },
+    ),
+    GoRoute(
+      path: Routes.login,
+      name: RouteNames.login,
+      pageBuilder: (context, state) =>
+          _buildPlatformPage(state: state, child: const ConnectAndSignInPage()),
+    ),
+    GoRoute(
+      path: Routes.backendChooser,
+      name: RouteNames.backendChooser,
+      pageBuilder: (context, state) =>
+          _buildPlatformPage(state: state, child: const BackendChooserPage()),
+    ),
+    GoRoute(
+      path: Routes.serverConnection,
+      name: RouteNames.serverConnection,
+      pageBuilder: (context, state) => _buildPlatformPage(
+        state: state,
+        child: ServerConnectionPage(
+          handoff: state.extra is ServerConnectionHandoff
+              ? state.extra as ServerConnectionHandoff
+              : null,
+        ),
+      ),
+    ),
+    GoRoute(
+      path: Routes.addServer,
+      name: RouteNames.addServer,
+      pageBuilder: (context, state) => _buildPlatformPage(
+        state: state,
+        child: ServerConnectionPage(
+          addingAccount: true,
+          serverId: switch (state.extra) {
+            final String serverId => serverId,
+            ServerConnectionHandoff(:final serverId) => serverId,
+            _ => null,
+          },
+          handoff: state.extra is ServerConnectionHandoff
+              ? state.extra as ServerConnectionHandoff
+              : null,
+        ),
+      ),
+    ),
+    GoRoute(
+      path: Routes.ssoAuth,
+      name: RouteNames.ssoAuth,
+      pageBuilder: (context, state) {
+        final config = state.extra;
+        return _buildPlatformPage(
+          state: state,
+          child: SsoAuthPage(
+            serverConfig: config is ServerConfig ? config : null,
+          ),
+        );
+      },
+    ),
+    GoRoute(
+      path: Routes.proxyAuth,
+      name: RouteNames.proxyAuth,
+      pageBuilder: (context, state) {
+        final config = state.extra;
+        if (config is! ProxyAuthConfig) {
+          // Fallback - should not happen in normal flow
+          return _buildPlatformPage(
+            state: state,
+            child: const ServerConnectionPage(),
+          );
+        }
+        return _buildPlatformPage(
+          state: state,
+          child: ProxyAuthPage(config: config),
         );
       },
     ),
