@@ -6,6 +6,7 @@ import 'package:conduit/shared/widgets/platform_ui/platform_ui.dart';
 import 'package:dio/dio.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/foundation.dart' show kIsWeb, visibleForTesting;
+import 'package:flutter/services.dart' show TextInputAction;
 import 'package:flutter/widgets.dart';
 import 'package:conduit/shared/widgets/platform_ui/vocabulary.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -2103,9 +2104,8 @@ class _ServerConnectionPageState extends ConsumerState<ServerConnectionPage> {
         ),
 
         if (!kIsWeb) ...[
-          Divider(
+          Container(
             height: BorderWidth.thin,
-            thickness: BorderWidth.thin,
             color: theme.cardBorder,
           ),
 
@@ -2198,9 +2198,8 @@ class _ServerConnectionPageState extends ConsumerState<ServerConnectionPage> {
             ),
           ),
 
-          Divider(
+          Container(
             height: BorderWidth.thin,
-            thickness: BorderWidth.thin,
             color: theme.cardBorder,
           ),
         ],
