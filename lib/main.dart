@@ -49,6 +49,7 @@ import 'platform/wakelock_plus_port.dart';
 import 'package:conduit_core/providers/app_providers.dart';
 
 import 'package:conduit_core/providers/host_ports.dart';
+import 'package:conduit_home/conduit_home.dart';
 
 import 'package:conduit_core/network/conduit_user_agent.dart';
 
@@ -68,7 +69,6 @@ import 'shared/services/flutter_ui_requests.dart';
 import 'shared/services/navigation_service.dart';
 import 'shared/services/raster_media_policy.dart';
 
-import 'package:conduit_core/services/openwebui_seed.dart';
 import 'package:conduit_core/services/readiness_gated_secure_storage.dart';
 import 'package:conduit_core/features/chat/realtime_call/realtime_call_availability.dart';
 import 'package:conduit_core/services/settings_service.dart';
@@ -233,9 +233,7 @@ void main() {
   PreferencesStore.installLoader(FlutterKeyValueStore.load);
   // Cuentas precargadas (OWU-104, y OWU-134 también con el registry vacío):
   // el seed del build es la única configuración: el servidor Chat.
-  OpenWebUiSeed.installLoader(
-    () => rootBundle.loadString('assets/seed_accounts.json'),
-  );
+  installHomeSeed();
 
   if (_enableFlutterDriverExtension) {
     enableFlutterDriverExtension();
@@ -415,6 +413,15 @@ void main() {
           appLanguageTagProvider.overrideWith(
             (ref) => ref.watch(appLocaleProvider)?.toLanguageTag(),
           ),
+          // OWU-157: el login de casa (hoja Keycloak y renovación) entra por
+          // estos puertos; un build sin conduit_home se queda con el login
+          // genérico.
+          signInFlowProvider.overrideWithValue(
+            // La hoja es iOS-only: fuera, el botón sigue deshabilitado
+            // (comportamiento de siempre), aunque el flujo esté cableado.
+            SystemBrowserAuth.isSupported ? runPkceSignIn : null,
+          ),
+          sessionRenewalProvider.overrideWithValue(renewHomeSession),
           clipboardPortProvider.overrideWithValue(const FlutterClipboardPort()),
           uiRequestPortProvider.overrideWithValue(const FlutterUiRequests()),
           routeNavigatorProvider.overrideWithValue(const GoRouterNavigator()),

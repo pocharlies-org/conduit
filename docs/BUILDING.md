@@ -128,7 +128,7 @@ description is the only context a translator gets.
 ```text
 lib/
   core/                 auth, routing, models, networking, database, platform services
-    auth/               system-browser sign-in (PKCE)
+    auth/               native cookie store access
     database/           Drift schema, DAOs, mappers, full-text search
     services/           API client, streaming, widgets, quick actions
   features/

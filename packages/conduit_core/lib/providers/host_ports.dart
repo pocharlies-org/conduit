@@ -2,6 +2,7 @@ import 'package:conduit_core/conduit_core.dart';
 import 'package:riverpod/misc.dart' show ProviderOrFamily;
 import 'package:riverpod/riverpod.dart';
 
+import 'package:conduit_core/auth/owui_oidc.dart' show OwuiSignIn;
 import 'package:conduit_core/persistence/persistence_keys.dart';
 import 'package:conduit_core/persistence/preferences_store.dart';
 
@@ -67,6 +68,19 @@ final clipboardPortProvider = Provider<ClipboardPort>(
 /// guessing at a handler.
 final openExternalUrlProvider = Provider<OpenExternalUrlPort>(
   (ref) => const NullOpenExternalUrlPort(),
+);
+
+/// The host's interactive sign-in: opens its sheet and comes back with a
+/// session. Defaults to «no flow» (OWU-157): a generic build signs in through
+/// the server screens, not through one fixed identity provider.
+final signInFlowProvider = Provider<Future<OwuiSignIn?> Function()?>(
+  (ref) => null,
+);
+
+/// One renewal of the active session through the host's identity provider.
+/// Defaults to «nothing to renew» (OWU-157).
+final sessionRenewalProvider = Provider<Future<String?> Function(Ref ref)?>(
+  (ref) => null,
 );
 
 /// Cookies captured from an external sign-in surface.

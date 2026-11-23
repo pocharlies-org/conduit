@@ -106,15 +106,11 @@ final apiServiceProvider = Provider<ApiService?>((ref) {
 /// Keyed by the Open WebUI user the session belongs to: the refresh token is
 /// filed under that id, so a renewal can never mint a JWT for a different
 /// account than the one signed in.
-Future<String?> _renewOpenWebUiSession(Ref ref) async {
-  final userId = ref.read(currentUserProvider2)?.id;
-  if (userId == null) return null;
-  return SessionRefresher(
-    storage: ref.read(optimizedStorageServiceProvider),
-    oidc: OwuiOidc(config: OwuiOidcConfig.live),
-    userId: userId,
-    stillCurrent: () => ref.read(currentUserProvider2)?.id == userId,
-  ).refreshOnce();
+Future<String?> _renewOpenWebUiSession(Ref ref) {
+  // The host's identity provider renews (OWU-157); a build without one keeps
+  // the session until it expires and the sign-in screen takes over.
+  return ref.read(sessionRenewalProvider)?.call(ref) ??
+      Future<String?>.value();
 }
 
 /// Whether server-backed Open WebUI settings are usable in the current

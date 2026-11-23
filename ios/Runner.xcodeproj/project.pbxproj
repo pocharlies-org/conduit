@@ -18,7 +18,6 @@
 		C073CCD19D2508BCAD536200 /* NativeIosTtsBridge.swift in Sources */ = {isa = PBXBuildFile; fileRef = C07E41E507BC83CDF6A2F806 /* NativeIosTtsBridge.swift */; };
 		C073D293D6D3C0AE42208200 /* AppIntentBridge.swift in Sources */ = {isa = PBXBuildFile; fileRef = C0733DBE0EC21B8BA584F742 /* AppIntentBridge.swift */; };
 		C0778A160B9E0F6B3D0E5C00 /* BackgroundStreamingHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = C07B0ACB6D900F7182D98598 /* BackgroundStreamingHandler.swift */; };
-		AA11BB22CC33DD44EE550001 /* SystemBrowserAuthBridge.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA11BB22CC33DD44EE550002 /* SystemBrowserAuthBridge.swift */; };
 		C078DBCB5B400CC724551100 /* ConduitBridgeHost.swift in Sources */ = {isa = PBXBuildFile; fileRef = C07202B2AF712D67C45FE1BC /* ConduitBridgeHost.swift */; };
 		C079094EC8D3F2DCA002F300 /* VoiceAudioRouteBridge.swift in Sources */ = {isa = PBXBuildFile; fileRef = C0748D3BCA6CB2E7D24C8438 /* VoiceAudioRouteBridge.swift */; };
 		C0799EE7361E2F33F8F82200 /* ConduitAppIntents.swift in Sources */ = {isa = PBXBuildFile; fileRef = C073CB9E0C18631B25DCC01B /* ConduitAppIntents.swift */; };
@@ -124,7 +123,6 @@
 		C07202B2AF712D67C45FE1BC /* ConduitBridgeHost.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConduitBridgeHost.swift; sourceTree = "<group>"; };
 		C0733DBE0EC21B8BA584F742 /* AppIntentBridge.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppIntentBridge.swift; sourceTree = "<group>"; };
 		C073CB9E0C18631B25DCC01B /* ConduitAppIntents.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConduitAppIntents.swift; sourceTree = "<group>"; };
-		AA11BB22CC33DD44EE550002 /* SystemBrowserAuthBridge.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SystemBrowserAuthBridge.swift; sourceTree = "<group>"; };
 		C0748D3BCA6CB2E7D24C8438 /* VoiceAudioRouteBridge.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VoiceAudioRouteBridge.swift; sourceTree = "<group>"; };
 		C076D53F677D9AB9577FCB47 /* ShareImportBridge.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShareImportBridge.swift; sourceTree = "<group>"; };
 		C07B0ACB6D900F7182D98598 /* BackgroundStreamingHandler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BackgroundStreamingHandler.swift; sourceTree = "<group>"; };
@@ -355,7 +353,6 @@
 				C07D6E81F9707D1BBEDB9BB5 /* PlatformEnvironmentBridge.swift */,
 				C07CD1E93C33B4AE1AD1A0F2 /* FlutterConduitBridgeHost.swift */,
 				C07202B2AF712D67C45FE1BC /* ConduitBridgeHost.swift */,
-				AA11BB22CC33DD44EE550002 /* SystemBrowserAuthBridge.swift */,
 				C073CB9E0C18631B25DCC01B /* ConduitAppIntents.swift */,
 				C0733DBE0EC21B8BA584F742 /* AppIntentBridge.swift */,
 				C0700E3C1D3E25D23C2D9095 /* AppIntentInvocationStore.swift */,
@@ -673,7 +670,6 @@
 				C07FFD404BC56A760606B800 /* PlatformEnvironmentBridge.swift in Sources */,
 				C07CD0FC676C9F75CE320600 /* FlutterConduitBridgeHost.swift in Sources */,
 				C078DBCB5B400CC724551100 /* ConduitBridgeHost.swift in Sources */,
-				AA11BB22CC33DD44EE550001 /* SystemBrowserAuthBridge.swift in Sources */,
 				C0799EE7361E2F33F8F82200 /* ConduitAppIntents.swift in Sources */,
 				C073D293D6D3C0AE42208200 /* AppIntentBridge.swift in Sources */,
 				C07A1ABDC1D26441C3348E00 /* AppIntentInvocationStore.swift in Sources */,

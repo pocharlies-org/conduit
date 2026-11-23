@@ -1,5 +1,5 @@
 import 'package:checks/checks.dart';
-import 'package:conduit/core/auth/pkce_sign_in.dart';
+import 'package:conduit_core/providers/host_ports.dart';
 import 'package:flutter/foundation.dart';
 import 'package:conduit_core/auth/owui_oidc.dart';
 import 'package:conduit_core/features/auth/providers/unified_auth_providers.dart';
@@ -102,7 +102,7 @@ void main() {
       );
       addTearDown(harness.dispose);
       harness.extraOverrides = [
-        pkceSignInProvider.overrideWithValue(
+        signInFlowProvider.overrideWithValue(
           () async =>
               const OwuiSignIn(jwt: 'owui-jwt', refreshToken: 'kc-refresh'),
         ),
@@ -131,7 +131,7 @@ void main() {
       final harness = AdaptiveAuthHarness(server: server, authActions: actions);
       addTearDown(harness.dispose);
       harness.extraOverrides = [
-        pkceSignInProvider.overrideWithValue(() async => null),
+        signInFlowProvider.overrideWithValue(() async => null),
       ];
 
       await tester.pumpWidget(
@@ -155,7 +155,7 @@ void main() {
       final harness = AdaptiveAuthHarness(server: server, authActions: actions);
       addTearDown(harness.dispose);
       harness.extraOverrides = [
-        pkceSignInProvider.overrideWithValue(
+        signInFlowProvider.overrideWithValue(
           () async => throw const OwuiLoginException('exchange refused'),
         ),
       ];
