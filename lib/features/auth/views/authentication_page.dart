@@ -82,8 +82,9 @@ bool authenticationApiMatchesSelection(
       authenticationServerMatchesSelection(actual.serverConfig, expected);
 }
 
-/// The product's only sign-in: Keycloak in the system-browser sheet (PKCE),
-/// the token exchange for an Open WebUI JWT, and that JWT as the bearer.
+/// The sign-in the host supplies through [signInFlowProvider] (the home build's
+/// is Keycloak in the system-browser sheet with PKCE, then the token exchange
+/// for an Open WebUI JWT), and that JWT as the bearer.
 ///
 /// There is no form here and nothing to fill in: the server is the seeded one,
 /// the person is whoever the realm already knows, and the sheet is the real

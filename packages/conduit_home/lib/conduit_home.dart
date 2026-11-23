@@ -6,7 +6,7 @@
 library;
 
 export 'pkce_sign_in.dart' show runPkceSignIn, authorizationCodeFromCallback;
-export 'owui_oidc.dart' show OwuiOidc, OidcTokens, homeOwuiConfig;
+export 'owui_oidc.dart' show homeOwuiConfig;
 export 'renewal.dart' show renewHomeSession;
 export 'seed.dart' show installHomeSeed;
 export 'system_browser_auth.dart';
