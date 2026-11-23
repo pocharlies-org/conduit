@@ -7688,5 +7688,319 @@
   },
   "@webShellNoServer": {
     "description": "Shown when the web shell has no server or session to load"
-  }
+  },
+  "accountsAddAddress": "Add address",
+  "@accountsAddAddress": {
+    "description": "Row and page title for adding another address (URL) at which the same Open WebUI server can be reached."
+  },
+  "accountsAddressConfirmAction": "Check address",
+  "@accountsAddressConfirmAction": {
+    "description": "Confirms sending a saved account's session to a new address of an Open WebUI server, to check that it reaches the same server."
+  },
+  "accountsAddressConfirmMessage": "To make sure {host} is this server, Conduit sends it the session of an account saved here. Continue only if you trust this address.",
+  "@accountsAddressConfirmMessage": {
+    "description": "Body of the confirmation shown before a saved account's session is sent to a new address to check that it reaches the same Open WebUI server. {host} is the new address's host name, with its port when it has one.",
+    "placeholders": {
+      "host": {
+        "type": "String",
+        "example": "chat.example.com"
+      }
+    }
+  },
+  "accountsAddressConfirmTitle": "Check this address?",
+  "@accountsAddressConfirmTitle": {
+    "description": "Title of the confirmation shown before a new address of a saved Open WebUI server, on a host none of its addresses uses, is checked by sending it a saved account's session."
+  },
+  "accountsAddressDifferentServer": "This address reaches a different server, or a different account on it.",
+  "@accountsAddressDifferentServer": {
+    "description": "Error shown when a new address of an Open WebUI server answers as another server: the signed-in account is not recognized there."
+  },
+  "accountsAddressName": "Name (optional)",
+  "@accountsAddressName": {
+    "description": "Label of the optional field naming an address of an Open WebUI server, such as Home network or Tailscale."
+  },
+  "accountsAddressNameHint": "Home network, Tailscale…",
+  "@accountsAddressNameHint": {
+    "description": "Placeholder in the optional name field of an Open WebUI server address."
+  },
+  "accountsAddressNeedsSignIn": "Sign in to an account on this server first, so the address can be checked.",
+  "@accountsAddressNeedsSignIn": {
+    "description": "Error shown when a new address of an Open WebUI server cannot be checked: the server's accounts keep a saved sign-in but are not signed in."
+  },
+  "accountsEditAddress": "Edit address",
+  "@accountsEditAddress": {
+    "description": "Title of the page that edits one saved address (URL) of an Open WebUI server."
+  },
+  "accountsSaveAddress": "Save address",
+  "@accountsSaveAddress": {
+    "description": "Button that checks an address of an Open WebUI server and saves it."
+  },
+  "addHeader": "Add header",
+  "@addHeader": {
+    "description": "Button to add a new custom header row."
+  },
+  "advancedSettings": "Advanced settings",
+  "@advancedSettings": {
+    "description": "Section that contains additional/optional configuration."
+  },
+  "allowSelfSignedCertificatesDescription": "Accept a certificate this device cannot verify. This weakens connection security; enable only for a server and network you control.",
+  "@allowSelfSignedCertificatesDescription": {
+    "description": "Helper text clarifying the risks of enabling the self-signed certificate toggle."
+  },
+  "backendChooserOpenWebUISubtitle": "Sign in to your server for synced chats, notes, and more.",
+  "@backendChooserOpenWebUISubtitle": {
+    "description": "Description of the Open WebUI option on the backend chooser."
+  },
+  "backendChooserOpenWebUITitle": "Open WebUI",
+  "@backendChooserOpenWebUITitle": {
+    "description": "Short Open WebUI title used on the backend chooser and server setup page."
+  },
+  "backendChooserPrompt": "Choose one to start. You can add more later.",
+  "@backendChooserPrompt": {
+    "description": "Prompt on the first-run backend chooser."
+  },
+  "backendChooserSelfHostedSectionTitle": "Self-hosted services",
+  "@backendChooserSelfHostedSectionTitle": {
+    "description": "Section title for self-hosted backend choices on the first-run backend chooser."
+  },
+  "backendChooserWelcome": "Choose how to connect",
+  "@backendChooserWelcome": {
+    "description": "Welcome heading on the first-run backend chooser."
+  },
+  "connectToServerButton": "Connect",
+  "@connectToServerButton": {
+    "description": "Primary action button to initiate server connection."
+  },
+  "continueButton": "Continue",
+  "@continueButton": {
+    "description": "Generic continue button text."
+  },
+  "customHeadersDescription": "Conduit sends these headers with requests to this server and stores them securely on this device.",
+  "@customHeadersDescription": {
+    "description": "Helper text explaining use-cases for custom headers."
+  },
+  "demoModeActive": "Demo Mode Active",
+  "@demoModeActive": {
+    "description": "Banner/text indicating the app runs in demo mode."
+  },
+  "enterDemo": "Enter Demo",
+  "@enterDemo": {
+    "description": "Button to enter demo mode."
+  },
+  "enterServerUrlSemantic": "Enter the address of your Open WebUI server",
+  "@enterServerUrlSemantic": {
+    "description": "Semantic/ARIA label instructing to enter server URL or IP."
+  },
+  "headerAlreadyExists": "Header \"{key}\" already exists. Remove it first to update.",
+  "@headerAlreadyExists": {
+    "description": "Error when a custom header with key {key} already exists.",
+    "placeholders": {
+      "key": {
+        "type": "String"
+      }
+    }
+  },
+  "headerName": "Header name",
+  "@headerName": {
+    "description": "Label for custom header key."
+  },
+  "headerNameInvalidChars": "Invalid header name. Use only letters, numbers, and these symbols: !#$&-^_`|~",
+  "@headerNameInvalidChars": {
+    "description": "Validation message for invalid characters in header name."
+  },
+  "headerNameReserved": "Cannot override reserved header \"{key}\"",
+  "@headerNameReserved": {
+    "description": "Error when attempting to override a reserved HTTP header {key}.",
+    "placeholders": {
+      "key": {
+        "type": "String"
+      }
+    }
+  },
+  "headerNameTooLong": "Header name too long (max 64 characters)",
+  "@headerNameTooLong": {
+    "description": "Validation message for header name length."
+  },
+  "headerValue": "Header value",
+  "@headerValue": {
+    "description": "Label for custom header value."
+  },
+  "headerValueHint": "api-key-123",
+  "@headerValueHint": {
+    "description": "Hint text with an example custom header value."
+  },
+  "headerValueInvalidChars": "Header value contains invalid characters. Use only printable ASCII.",
+  "@headerValueInvalidChars": {
+    "description": "Validation message for invalid characters in header value."
+  },
+  "headerValueTooLong": "Header value too long (max 1024 characters)",
+  "@headerValueTooLong": {
+    "description": "Validation message for header value length."
+  },
+  "headerValueUnsafe": "Header value appears to contain potentially unsafe content",
+  "@headerValueUnsafe": {
+    "description": "Security warning for suspicious header values."
+  },
+  "invalidIpFormat": "Invalid IP address format. Use format like 192.168.1.10.",
+  "@invalidIpFormat": {
+    "description": "Validation message for IP addresses with example."
+  },
+  "invalidUrlFormat": "Invalid URL format. Please check your input.",
+  "@invalidUrlFormat": {
+    "description": "Validation message when URL format is incorrect."
+  },
+  "maxHeadersReachedDetail": "Maximum of 10 custom headers allowed. Remove some to add more.",
+  "@maxHeadersReachedDetail": {
+    "description": "Explains the upper limit of custom headers."
+  },
+  "mutualTlsCertificatePemRequired": "The selected certificate file must contain a PEM certificate chain.",
+  "@mutualTlsCertificatePemRequired": {
+    "description": "Error shown when the selected mTLS certificate file does not look like PEM certificate content."
+  },
+  "mutualTlsCertificateReady": "Certificate",
+  "@mutualTlsCertificateReady": {
+    "description": "Short label used in a badge once an mTLS certificate file has been selected."
+  },
+  "mutualTlsClearCredentials": "Remove certificate and key",
+  "@mutualTlsClearCredentials": {
+    "description": "Button label that removes selected mTLS certificate material from the form."
+  },
+  "mutualTlsConnectionClosed": "The server closed the connection before replying. If it requires a client certificate, confirm that the certificate, private key, and password are correct.",
+  "@mutualTlsConnectionClosed": {
+    "description": "Connection error shown when the server closes an HTTPS connection before replying while mTLS credentials are configured, which a refused client certificate also causes."
+  },
+  "mutualTlsFileReadFailed": "Could not read the selected mTLS file.",
+  "@mutualTlsFileReadFailed": {
+    "description": "Error shown when a picked certificate or key file cannot be read as text."
+  },
+  "mutualTlsHandshakeFailed": "The server rejected the mTLS credentials. Confirm that the certificate, private key, and password are correct.",
+  "@mutualTlsHandshakeFailed": {
+    "description": "Connection error shown when the TLS handshake fails while mTLS credentials are configured."
+  },
+  "mutualTlsMissingCredentialPair": "Select both a client certificate and private key to use mTLS.",
+  "@mutualTlsMissingCredentialPair": {
+    "description": "Validation message shown when only one half of the mTLS credential pair is configured."
+  },
+  "mutualTlsPrivateKeyPasswordHint": "Private key password (optional)",
+  "@mutualTlsPrivateKeyPasswordHint": {
+    "description": "Placeholder for the optional password used to decrypt an mTLS private key."
+  },
+  "mutualTlsPrivateKeyPemRequired": "The selected private key file must contain a PEM private key.",
+  "@mutualTlsPrivateKeyPemRequired": {
+    "description": "Error shown when the selected mTLS private key file does not look like PEM private key content."
+  },
+  "mutualTlsPrivateKeyReady": "Private key",
+  "@mutualTlsPrivateKeyReady": {
+    "description": "Short label used in a badge once an mTLS private key file has been selected."
+  },
+  "mutualTlsSectionDescription": "If this server requires mTLS, choose its client certificate and private key.",
+  "@mutualTlsSectionDescription": {
+    "description": "Helper text explaining when to use the mTLS configuration section."
+  },
+  "mutualTlsSectionTitle": "Client certificate (mTLS)",
+  "@mutualTlsSectionTitle": {
+    "description": "Section title for configuring a client certificate and private key for mutual TLS."
+  },
+  "mutualTlsSelectCertificate": "Certificate",
+  "@mutualTlsSelectCertificate": {
+    "description": "Button label for picking a PEM client certificate chain file. The surrounding section title and description supply the 'choose' verb, so the label names the file only."
+  },
+  "mutualTlsSelectPrivateKey": "Private key",
+  "@mutualTlsSelectPrivateKey": {
+    "description": "Button label for picking a PEM private key file. The surrounding section title and description supply the 'choose' verb, so the label names the file only."
+  },
+  "onlyHttpHttps": "Only HTTP and HTTPS protocols are supported.",
+  "@onlyHttpHttps": {
+    "description": "Validation note restricting protocols to HTTP/HTTPS."
+  },
+  "portRange": "Port must be between 1 and 65535.",
+  "@portRange": {
+    "description": "Validation message for allowed port range."
+  },
+  "proxyAuthFailed": "Proxy authentication failed",
+  "@proxyAuthFailed": {
+    "description": "Error message when proxy authentication fails."
+  },
+  "proxyAuthHelpTextSimple": "Sign in through your proxy. Once authenticated, tap Continue to proceed to sign in.",
+  "@proxyAuthHelpTextSimple": {
+    "description": "Simplified help text for proxy-only authentication flow."
+  },
+  "proxyAuthLoading": "Loading authentication page...",
+  "@proxyAuthLoading": {
+    "description": "Loading message while the proxy login page loads."
+  },
+  "proxyAuthPlatformNotSupported": "Proxy authentication requires a mobile device. Please authenticate through a browser first.",
+  "@proxyAuthPlatformNotSupported": {
+    "description": "Error message when proxy auth is attempted on an unsupported platform."
+  },
+  "proxyAuthentication": "Proxy Authentication",
+  "@proxyAuthentication": {
+    "description": "Title for the proxy authentication page."
+  },
+  "proxyManualSignInRequired": "Authentication failed. Please try signing in manually.",
+  "@proxyManualSignInRequired": {
+    "description": "Error shown when trusted-proxy authentication cannot produce a valid Open WebUI session."
+  },
+  "proxyServerVerificationFailed": "Could not verify the Open WebUI server. The proxy session may have expired or be invalid. Please try again.",
+  "@proxyServerVerificationFailed": {
+    "description": "Error shown when a server cannot be verified after proxy authentication."
+  },
+  "removeHeader": "Remove header",
+  "@removeHeader": {
+    "description": "Action to remove a custom header row."
+  },
+  "reviewerModeDisabled": "Reviewer mode disabled.",
+  "@reviewerModeDisabled": {
+    "description": "Confirmation shown when the hidden reviewer demo mode is disabled."
+  },
+  "reviewerModeEnabled": "Reviewer mode enabled. You can open the demo without a server.",
+  "@reviewerModeEnabled": {
+    "description": "Confirmation shown when the hidden reviewer demo mode is enabled."
+  },
+  "serverAddressRequired": "Server address is required (e.g., 192.168.1.10 or example.com).",
+  "@serverAddressRequired": {
+    "description": "Validation hint providing examples for server addresses."
+  },
+  "serverNotOpenWebUI": "This does not appear to be an Open WebUI server.",
+  "@serverNotOpenWebUI": {
+    "description": "Validation error when the server does not resemble Open WebUI."
+  },
+  "serverUrlEmpty": "Enter your server address.",
+  "@serverUrlEmpty": {
+    "description": "Validation message for empty server URL."
+  },
+  "serverUrlHint": "https://openwebui.example.com",
+  "@serverUrlHint": {
+    "description": "Hint text showing example server URL format."
+  },
+  "skipServerSetupTryDemo": "Skip server setup and try the demo",
+  "@skipServerSetupTryDemo": {
+    "description": "CTA to bypass server configuration and enter demo mode."
+  },
+  "sso": "SSO",
+  "@sso": {
+    "description": "Label for Single Sign-On authentication option."
+  },
+  "ssoAuthFailed": "SSO authentication failed",
+  "@ssoAuthFailed": {
+    "description": "Error message when SSO authentication fails."
+  },
+  "ssoAuthenticating": "Authenticating...",
+  "@ssoAuthenticating": {
+    "description": "Loading message during SSO authentication."
+  },
+  "ssoLoadingLogin": "Loading login page...",
+  "@ssoLoadingLogin": {
+    "description": "Loading message while SSO login page loads."
+  },
+  "ssoPlatformNotSupported": "SSO authentication is not supported on this platform. Please use credentials or LDAP authentication instead.",
+  "@ssoPlatformNotSupported": {
+    "description": "Error message when SSO is attempted on an unsupported platform (desktop/web)."
+  },
+  "useHttpOrHttpsOnly": "Use http:// or https:// only.",
+  "@useHttpOrHttpsOnly": {
+    "description": "Note instructing the user to include protocol in URL."
+  },
+  "accountsAddressChangeStopsReply": "Changing the address in use stops it.",
+  "accountsAddressChangeAnyway": "Change anyway"
 }

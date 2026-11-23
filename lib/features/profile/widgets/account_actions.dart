@@ -192,6 +192,32 @@ Future<bool> confirmLeavingActiveAccount(BuildContext context, WidgetRef ref) =>
       confirm: () => _confirmSwitchStopsReply(context),
     );
 
+/// Whether the address the active account uses may be changed or removed:
+/// at once when no reply is being written, else once the user agrees to
+/// stop it, which this then does (OWU-157, from 3f95de15). The clients move
+/// off the address with the change, and a reply arriving through them would
+/// end without a word.
+Future<bool> confirmChangingAddressInUse(
+  BuildContext context,
+  ProviderContainer container,
+) => _mayStopReply(
+  context,
+  container.read,
+  // Only the replies arriving through the address.
+  guard: addressChangeReplyGuardProvider,
+  stop: addressChangeStopRepliesProvider,
+  confirm: () {
+    final l10n = AppLocalizations.of(context)!;
+    return ThemedDialogs.confirm(
+      context,
+      title: l10n.accountsReplyInProgressTitle,
+      message: l10n.accountsAddressChangeStopsReply,
+      confirmText: l10n.accountsAddressChangeAnyway,
+      isDestructive: true,
+    );
+  },
+);
+
 Future<bool> _mayStopReply(
   BuildContext context,
   T Function<T>(ProviderListenable<T> provider) read, {

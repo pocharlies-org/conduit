@@ -6044,5 +6044,288 @@
   "searchFailedTitle": "Wyszukiwanie nie powiodło się",
   "searchFailedMessage": "Sprawdź połączenie i spróbuj ponownie.",
   "webShellTitle": "Sieć",
-  "webShellNoServer": "Brak serwera do otwarcia"
+  "webShellNoServer": "Brak serwera do otwarcia",
+  "accountsAddAddress": "Dodaj adres",
+  "accountsAddressConfirmAction": "Sprawdź adres",
+  "accountsAddressConfirmMessage": "Aby upewnić się, że {host} to ten serwer, Conduit wyśle tam sesję konta zapisanego na tym urządzeniu. Kontynuuj tylko wtedy, gdy ufasz temu adresowi.",
+  "@accountsAddressConfirmMessage": {
+    "placeholders": {
+      "host": {
+        "type": "String",
+        "example": "chat.example.com"
+      }
+    }
+  },
+  "accountsAddressConfirmTitle": "Sprawdzić ten adres?",
+  "accountsAddressDifferentServer": "Ten adres prowadzi do innego serwera lub do innego konta na nim.",
+  "accountsAddressName": "Nazwa (opcjonalnie)",
+  "accountsAddressNameHint": "Sieć domowa, Tailscale…",
+  "accountsAddressNeedsSignIn": "Najpierw zaloguj się na konto na tym serwerze, aby można było sprawdzić adres.",
+  "accountsEditAddress": "Edytuj adres",
+  "accountsSaveAddress": "Zapisz adres",
+  "addHeader": "Dodaj nagłówek",
+  "@addHeader": {
+    "description": "Button to add a new custom header row."
+  },
+  "advancedSettings": "Ustawienia zaawansowane",
+  "@advancedSettings": {
+    "description": "Section that contains additional/optional configuration."
+  },
+  "allowSelfSignedCertificatesDescription": "Akceptuj certyfikat, którego to urządzenie nie może zweryfikować. Osłabia to bezpieczeństwo połączenia; włączaj tylko dla serwera i sieci, które kontrolujesz.",
+  "@allowSelfSignedCertificatesDescription": {
+    "description": "Helper text clarifying the risks of enabling the self-signed certificate toggle."
+  },
+  "backendChooserOpenWebUISubtitle": "Zaloguj się do swojego serwera, aby synchronizować czaty, notatki i nie tylko.",
+  "@backendChooserOpenWebUISubtitle": {
+    "description": "Description of the Open WebUI option on the backend chooser."
+  },
+  "backendChooserOpenWebUITitle": "Open WebUI",
+  "@backendChooserOpenWebUITitle": {
+    "description": "Short Open WebUI title used on the backend chooser and server setup page."
+  },
+  "backendChooserPrompt": "Wybierz jedną opcję na początek. Kolejne możesz dodać później.",
+  "@backendChooserPrompt": {
+    "description": "Prompt on the first-run backend chooser."
+  },
+  "backendChooserSelfHostedSectionTitle": "Usługi hostowane samodzielnie",
+  "@backendChooserSelfHostedSectionTitle": {
+    "description": "Section title for self-hosted backend choices on the first-run backend chooser."
+  },
+  "backendChooserWelcome": "Wybierz sposób połączenia",
+  "@backendChooserWelcome": {
+    "description": "Welcome heading on the first-run backend chooser."
+  },
+  "connectToServerButton": "Połącz",
+  "@connectToServerButton": {
+    "description": "Primary action button to initiate server connection."
+  },
+  "continueButton": "Kontynuuj",
+  "@continueButton": {
+    "description": "Generic continue button text."
+  },
+  "customHeadersDescription": "Conduit wysyła te nagłówki z żądaniami do tego serwera i przechowuje je bezpiecznie na tym urządzeniu.",
+  "@customHeadersDescription": {
+    "description": "Helper text explaining use-cases for custom headers."
+  },
+  "demoModeActive": "Tryb demo aktywny",
+  "@demoModeActive": {
+    "description": "Banner/text indicating the app runs in demo mode."
+  },
+  "enterDemo": "Wejdź do demo",
+  "@enterDemo": {
+    "description": "Button to enter demo mode."
+  },
+  "enterServerUrlSemantic": "Wpisz adres swojego serwera Open WebUI",
+  "@enterServerUrlSemantic": {
+    "description": "Semantic/ARIA label instructing to enter server URL or IP."
+  },
+  "headerAlreadyExists": "Nagłówek „{key}” już istnieje. Najpierw usuń go, aby go zaktualizować.",
+  "@headerAlreadyExists": {
+    "description": "Error when a custom header with key {key} already exists.",
+    "placeholders": {
+      "key": {
+        "type": "String"
+      }
+    }
+  },
+  "headerName": "Nazwa nagłówka",
+  "@headerName": {
+    "description": "Label for custom header key."
+  },
+  "headerNameInvalidChars": "Nieprawidłowa nazwa nagłówka. Używaj wyłącznie liter, cyfr i tych znaków: !#$&-^_`|~",
+  "@headerNameInvalidChars": {
+    "description": "Validation message for invalid characters in header name."
+  },
+  "headerNameReserved": "Nie można zastąpić zastrzeżonego nagłówka „{key}”",
+  "@headerNameReserved": {
+    "description": "Error when attempting to override a reserved HTTP header {key}.",
+    "placeholders": {
+      "key": {
+        "type": "String"
+      }
+    }
+  },
+  "headerNameTooLong": "Nazwa nagłówka jest za długa (maks. 64 znaki)",
+  "@headerNameTooLong": {
+    "description": "Validation message for header name length."
+  },
+  "headerValue": "Wartość nagłówka",
+  "@headerValue": {
+    "description": "Label for custom header value."
+  },
+  "headerValueHint": "api-key-123",
+  "@headerValueHint": {
+    "description": "Hint text with an example custom header value."
+  },
+  "headerValueInvalidChars": "Wartość nagłówka zawiera nieprawidłowe znaki. Używaj wyłącznie drukowalnych znaków ASCII.",
+  "@headerValueInvalidChars": {
+    "description": "Validation message for invalid characters in header value."
+  },
+  "headerValueTooLong": "Wartość nagłówka jest za długa (maks. 1024 znaki)",
+  "@headerValueTooLong": {
+    "description": "Validation message for header value length."
+  },
+  "headerValueUnsafe": "Wartość nagłówka wydaje się zawierać potencjalnie niebezpieczną treść",
+  "@headerValueUnsafe": {
+    "description": "Security warning for suspicious header values."
+  },
+  "invalidIpFormat": "Nieprawidłowy format adresu IP. Użyj formatu takiego jak 192.168.1.10.",
+  "@invalidIpFormat": {
+    "description": "Validation message for IP addresses with example."
+  },
+  "invalidUrlFormat": "Nieprawidłowy format adresu URL. Sprawdź wprowadzone dane.",
+  "@invalidUrlFormat": {
+    "description": "Validation message when URL format is incorrect."
+  },
+  "maxHeadersReachedDetail": "Dozwolonych jest maksymalnie 10 własnych nagłówków. Usuń część, aby dodać kolejne.",
+  "@maxHeadersReachedDetail": {
+    "description": "Explains the upper limit of custom headers."
+  },
+  "mutualTlsCertificatePemRequired": "Wybrany plik certyfikatu musi zawierać łańcuch certyfikatów PEM.",
+  "@mutualTlsCertificatePemRequired": {
+    "description": "Error shown when the selected mTLS certificate file does not look like PEM certificate content."
+  },
+  "mutualTlsCertificateReady": "Certyfikat",
+  "@mutualTlsCertificateReady": {
+    "description": "Short label used in a badge once an mTLS certificate file has been selected."
+  },
+  "mutualTlsClearCredentials": "Usuń certyfikat i klucz",
+  "@mutualTlsClearCredentials": {
+    "description": "Button label that removes selected mTLS certificate material from the form."
+  },
+  "mutualTlsConnectionClosed": "Serwer zamknął połączenie przed odpowiedzią. Jeśli wymaga certyfikatu klienta, sprawdź, czy certyfikat, klucz prywatny i hasło są poprawne.",
+  "mutualTlsFileReadFailed": "Nie można odczytać wybranego pliku mTLS.",
+  "@mutualTlsFileReadFailed": {
+    "description": "Error shown when a picked certificate or key file cannot be read as text."
+  },
+  "mutualTlsHandshakeFailed": "Serwer odrzucił dane uwierzytelniające mTLS. Sprawdź, czy certyfikat, klucz prywatny i hasło są poprawne.",
+  "@mutualTlsHandshakeFailed": {
+    "description": "Connection error shown when the TLS handshake fails while mTLS credentials are configured."
+  },
+  "mutualTlsMissingCredentialPair": "Aby korzystać z mTLS, wybierz zarówno certyfikat klienta, jak i klucz prywatny.",
+  "@mutualTlsMissingCredentialPair": {
+    "description": "Validation message shown when only one half of the mTLS credential pair is configured."
+  },
+  "mutualTlsPrivateKeyPasswordHint": "Hasło klucza prywatnego (opcjonalnie)",
+  "@mutualTlsPrivateKeyPasswordHint": {
+    "description": "Placeholder for the optional password used to decrypt an mTLS private key."
+  },
+  "mutualTlsPrivateKeyPemRequired": "Wybrany plik klucza prywatnego musi zawierać klucz prywatny PEM.",
+  "@mutualTlsPrivateKeyPemRequired": {
+    "description": "Error shown when the selected mTLS private key file does not look like PEM private key content."
+  },
+  "mutualTlsPrivateKeyReady": "Klucz prywatny",
+  "@mutualTlsPrivateKeyReady": {
+    "description": "Short label used in a badge once an mTLS private key file has been selected."
+  },
+  "mutualTlsSectionDescription": "Jeśli ten serwer wymaga mTLS, wybierz jego certyfikat klienta i klucz prywatny.",
+  "@mutualTlsSectionDescription": {
+    "description": "Helper text explaining when to use the mTLS configuration section."
+  },
+  "mutualTlsSectionTitle": "Certyfikat klienta (mTLS)",
+  "@mutualTlsSectionTitle": {
+    "description": "Section title for configuring a client certificate and private key for mutual TLS."
+  },
+  "mutualTlsSelectCertificate": "Wybierz certyfikat",
+  "@mutualTlsSelectCertificate": {
+    "description": "Button label for picking a PEM client certificate chain file. The surrounding section title and description supply the 'choose' verb, so the label names the file only."
+  },
+  "mutualTlsSelectPrivateKey": "Wybierz klucz prywatny",
+  "@mutualTlsSelectPrivateKey": {
+    "description": "Button label for picking a PEM private key file. The surrounding section title and description supply the 'choose' verb, so the label names the file only."
+  },
+  "onlyHttpHttps": "Obsługiwane są tylko protokoły HTTP i HTTPS.",
+  "@onlyHttpHttps": {
+    "description": "Validation note restricting protocols to HTTP/HTTPS."
+  },
+  "portRange": "Port musi mieć wartość od 1 do 65535.",
+  "@portRange": {
+    "description": "Validation message for allowed port range."
+  },
+  "proxyAuthFailed": "Uwierzytelnianie przez proxy nie powiodło się",
+  "@proxyAuthFailed": {
+    "description": "Error message when proxy authentication fails."
+  },
+  "proxyAuthHelpTextSimple": "Zaloguj się przez swoje proxy. Po uwierzytelnieniu dotknij Kontynuuj, aby przejść do logowania.",
+  "@proxyAuthHelpTextSimple": {
+    "description": "Simplified help text for proxy-only authentication flow."
+  },
+  "proxyAuthLoading": "Wczytywanie strony uwierzytelniania…",
+  "@proxyAuthLoading": {
+    "description": "Loading message while the proxy login page loads."
+  },
+  "proxyAuthPlatformNotSupported": "Uwierzytelnianie przez proxy wymaga urządzenia mobilnego. Najpierw zaloguj się przez przeglądarkę.",
+  "@proxyAuthPlatformNotSupported": {
+    "description": "Error message when proxy auth is attempted on an unsupported platform."
+  },
+  "proxyAuthentication": "Uwierzytelnianie przez proxy",
+  "@proxyAuthentication": {
+    "description": "Title for the proxy authentication page."
+  },
+  "proxyManualSignInRequired": "Uwierzytelnianie nie powiodło się. Spróbuj zalogować się ręcznie.",
+  "@proxyManualSignInRequired": {
+    "description": "Error shown when trusted-proxy authentication cannot produce a valid Open WebUI session."
+  },
+  "proxyServerVerificationFailed": "Nie można zweryfikować serwera Open WebUI. Sesja proxy mogła wygasnąć lub być nieprawidłowa. Spróbuj ponownie.",
+  "@proxyServerVerificationFailed": {
+    "description": "Error shown when a server cannot be verified after proxy authentication."
+  },
+  "removeHeader": "Usuń nagłówek",
+  "@removeHeader": {
+    "description": "Action to remove a custom header row."
+  },
+  "reviewerModeDisabled": "Tryb recenzenta wyłączony.",
+  "@reviewerModeDisabled": {
+    "description": "Confirmation shown when the hidden reviewer demo mode is disabled."
+  },
+  "reviewerModeEnabled": "Tryb recenzenta włączony. Możesz otworzyć demo bez serwera.",
+  "@reviewerModeEnabled": {
+    "description": "Confirmation shown when the hidden reviewer demo mode is enabled."
+  },
+  "serverAddressRequired": "Adres serwera jest wymagany (np. 192.168.1.10 lub example.com).",
+  "@serverAddressRequired": {
+    "description": "Validation hint providing examples for server addresses."
+  },
+  "serverNotOpenWebUI": "To nie wygląda na serwer Open WebUI.",
+  "@serverNotOpenWebUI": {
+    "description": "Validation error when the server does not resemble Open WebUI."
+  },
+  "serverUrlEmpty": "Adres serwera nie może być pusty",
+  "@serverUrlEmpty": {
+    "description": "Validation message for empty server URL."
+  },
+  "serverUrlHint": "https://openwebui.example.com",
+  "@serverUrlHint": {
+    "description": "Hint text showing example server URL format."
+  },
+  "skipServerSetupTryDemo": "Pomiń konfigurację serwera i wypróbuj demo",
+  "@skipServerSetupTryDemo": {
+    "description": "CTA to bypass server configuration and enter demo mode."
+  },
+  "sso": "SSO",
+  "@sso": {
+    "description": "Label for Single Sign-On authentication option."
+  },
+  "ssoAuthFailed": "Uwierzytelnianie SSO nie powiodło się",
+  "@ssoAuthFailed": {
+    "description": "Error message when SSO authentication fails."
+  },
+  "ssoAuthenticating": "Uwierzytelnianie…",
+  "@ssoAuthenticating": {
+    "description": "Loading message during SSO authentication."
+  },
+  "ssoLoadingLogin": "Wczytywanie strony logowania…",
+  "@ssoLoadingLogin": {
+    "description": "Loading message while SSO login page loads."
+  },
+  "ssoPlatformNotSupported": "Uwierzytelnianie SSO nie jest obsługiwane na tej platformie. Użyj zamiast tego danych logowania lub uwierzytelniania LDAP.",
+  "@ssoPlatformNotSupported": {
+    "description": "Error message when SSO is attempted on an unsupported platform (desktop/web)."
+  },
+  "useHttpOrHttpsOnly": "Użyj wyłącznie http:// lub https://.",
+  "@useHttpOrHttpsOnly": {
+    "description": "Note instructing the user to include protocol in URL."
+  },
+  "accountsAddressChangeStopsReply": "Zmiana używanego adresu ją zatrzyma.",
+  "accountsAddressChangeAnyway": "Zmień mimo to"
 }
