@@ -8,7 +8,7 @@ import '../models/openwebui_registry.dart';
 /// desde Ajustes. Tras un wipe el registry queda guardado (vacío) y no vuelve
 /// a sembrar.
 ///
-/// Formato: `{"servers":[{"name":"Chat","url":"https://chat.e-dani.com"}]}`.
+/// Formato: `{"servers":[{"name":"Mi servidor","url":"https://mi-openwebui.example"}]}`.
 class OpenWebUiSeed {
   OpenWebUiSeed._();
 
