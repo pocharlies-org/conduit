@@ -51,10 +51,4 @@ class NativeCookieManager {
       return {};
     }
   }
-
-  /// Formats cookies as a Cookie header string.
-  static String formatCookieHeader(Map<String, String> cookies) {
-    if (cookies.isEmpty) return '';
-    return cookies.entries.map((e) => '${e.key}=${e.value}').join('; ');
-  }
 }
