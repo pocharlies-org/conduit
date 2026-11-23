@@ -166,7 +166,7 @@ or [Google Play](https://play.google.com/store/apps/details?id=app.cogwheel.cond
 then sign in.
 
 1. Launch Conduit. The server comes preloaded from the build's
-   `assets/seed_accounts.json`.
+   `packages/conduit_home/assets/seed_accounts.json`.
 2. Sign in from the login sheet that opens in the system browser.
 3. Pick a model and start chatting.
 
