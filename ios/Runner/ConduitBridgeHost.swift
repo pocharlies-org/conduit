@@ -92,6 +92,5 @@ enum ConduitBridgeRegistry {
     NativeIosTtsBridge.shared.attach(to: host)
     BackgroundStreamingHandler.shared.attach(to: host)
     ShareImportBridge.shared.attach(to: host)
-    SystemBrowserAuthBridge.shared.attach(to: host)
   }
 }

@@ -1,4 +1,5 @@
-import '../services/optimized_storage_service.dart';
+import 'package:conduit_core/services/optimized_storage_service.dart';
+
 import 'owui_oidc.dart';
 import 'package:conduit_core/utils/debug_logger.dart';
 
