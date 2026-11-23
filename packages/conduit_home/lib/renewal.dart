@@ -1,6 +1,7 @@
-import 'package:conduit_core/auth/owui_oidc.dart' show OwuiLoginException;
+import 'package:conduit_core/features/auth/providers/unified_auth_providers.dart'
+    show currentUserProvider2;
 import 'package:conduit_core/providers/app_providers.dart'
-    show currentUserProvider2, optimizedStorageServiceProvider;
+    show optimizedStorageServiceProvider;
 import 'package:riverpod/riverpod.dart';
 
 import 'owui_oidc.dart';

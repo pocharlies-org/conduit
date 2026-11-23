@@ -1,3 +1,4 @@
+import 'package:conduit_core/auth/owui_oidc.dart' show OwuiLoginException;
 import 'package:conduit_core/services/optimized_storage_service.dart';
 
 import 'owui_oidc.dart';
