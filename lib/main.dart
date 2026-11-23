@@ -416,7 +416,11 @@ void main() {
           // OWU-157: el login de casa (hoja Keycloak y renovación) entra por
           // estos puertos; un build sin conduit_home se queda con el login
           // genérico.
-          signInFlowProvider.overrideWithValue(runPkceSignIn),
+          signInFlowProvider.overrideWithValue(
+            // La hoja es iOS-only: fuera, el botón sigue deshabilitado
+            // (comportamiento de siempre), aunque el flujo esté cableado.
+            SystemBrowserAuth.isSupported ? runPkceSignIn : null,
+          ),
           sessionRenewalProvider.overrideWithValue(renewHomeSession),
           clipboardPortProvider.overrideWithValue(const FlutterClipboardPort()),
           uiRequestPortProvider.overrideWithValue(const FlutterUiRequests()),
