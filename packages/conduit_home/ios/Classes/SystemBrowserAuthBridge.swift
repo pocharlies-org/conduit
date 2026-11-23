@@ -12,7 +12,7 @@ final class SystemBrowserAuthBridge: NSObject,
   ASWebAuthenticationPresentationContextProviding {
   private var session: ASWebAuthenticationSession?
 
-  @MainActor func attach(to channel: FlutterMethodChannel) {
+  func attach(to channel: FlutterMethodChannel) {
     channel.setMethodCallHandler { [weak self] call, result in
       switch call.method {
       case "start":
