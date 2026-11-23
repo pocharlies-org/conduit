@@ -276,6 +276,46 @@ mixin _HealthApi on _ApiServiceBase {
     _dio.close();
   }
 
+  /// Verifies this is actually an OpenWebUI server by checking the /api/config
+  /// endpoint for OpenWebUI-specific fields (version, status, features).
+  ///
+  /// Verifies this is an OpenWebUI server and returns the backend config.
+  ///
+  /// Returns `BackendConfig` if the server is valid, `null` otherwise.
+  /// This combines server verification and config fetching in a single call.
+  /// (OWU-157, from 3f95de15; the generic sign-in's server check.)
+  Future<BackendConfig?> verifyAndGetConfig() async {
+    try {
+      final response = await _dio.get('/api/config');
+      if (response.statusCode != 200) {
+        return null;
+      }
+
+      final data = response.data;
+      if (data is! Map<String, dynamic>) {
+        return null;
+      }
+
+      // Check for OpenWebUI-specific fields
+      // The /api/config endpoint always returns these fields on OpenWebUI
+      final hasStatus = data['status'] == true;
+      final hasVersion =
+          data['version'] is String && (data['version'] as String).isNotEmpty;
+      final hasFeatures = data['features'] is Map;
+
+      if (!hasStatus || !hasVersion || !hasFeatures) {
+        return null;
+      }
+
+      _setChatRequestMetadataFormatFromVersion(data['version']);
+      return await _enrichBackendConfigWithAudioConfig(
+        BackendConfig.fromJson(data),
+      );
+    } catch (e) {
+      return null;
+    }
+  }
+
   /// Reads `/api/config`. With [authSnapshot], every request here (the audio
   /// enrichment included) is refused if the session changed since it was
   /// captured, rather than being read under a later account's token.

@@ -5393,5 +5393,7 @@
   "useHttpOrHttpsOnly": "Používajte iba http:// alebo https://.",
   "@useHttpOrHttpsOnly": {
     "description": "Note instructing the user to include protocol in URL."
-  }
+  },
+  "accountsAddressChangeStopsReply": "Zmena používanej adresy ju zastaví.",
+  "accountsAddressChangeAnyway": "Napriek tomu zmeniť"
 }

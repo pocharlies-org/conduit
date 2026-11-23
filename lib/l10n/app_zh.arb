@@ -3793,5 +3793,7 @@
   "ssoAuthenticating": "正在验证...",
   "ssoLoadingLogin": "正在加载登录页面...",
   "ssoPlatformNotSupported": "此平台不支持 SSO 验证。请改用凭据或 LDAP 验证。",
-  "useHttpOrHttpsOnly": "仅使用 http:// 或 https://。"
+  "useHttpOrHttpsOnly": "仅使用 http:// 或 https://。",
+  "accountsAddressChangeStopsReply": "更改正在使用的地址会停止该回复。",
+  "accountsAddressChangeAnyway": "仍然更改"
 }

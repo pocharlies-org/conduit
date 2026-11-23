@@ -12,11 +12,15 @@ import 'package:riverpod/riverpod.dart';
 
 import 'package:conduit_core/auth/auth_state_manager.dart';
 import 'package:conduit_core/auth/openwebui_account_summaries.dart';
+import 'package:conduit_core/database/account_storage_isolation.dart'
+    show conversationUsesOpenWebUiStorage;
 import 'package:conduit_core/features/chat/providers/chat_providers.dart'
     show
         isChatStreamingProvider,
         localChatGenerationActiveProvider,
         stopGenerationProvider;
+import 'package:conduit_core/features/chat/providers/chat_generation_control.dart'
+    show stopOpenWebUiMainResponse;
 import 'package:conduit_core/persistence/persistence_keys.dart';
 import 'package:conduit_core/persistence/preferences_store.dart';
 import 'package:conduit_core/providers/app_providers.dart';
@@ -53,6 +57,28 @@ final accountChangeReplyGuardProvider = Provider<bool Function()>((ref) {
 /// user has agreed to leave the account anyway.
 final accountChangeStopRepliesProvider = Provider<void Function()>((ref) {
   return () => ref.read(stopGenerationProvider)();
+});
+
+/// Whether a reply is arriving through the active Open WebUI account's
+/// address, which changing or removing that address cuts off: the open
+/// chat's, when it is an Open WebUI chat (OWU-157, from 3f95de15).
+final addressChangeReplyGuardProvider = Provider<bool Function()>((ref) {
+  return () {
+    try {
+      return ref.read(isChatStreamingProvider) &&
+          conversationUsesOpenWebUiStorage(
+            ref.read(activeConversationProvider),
+          );
+    } catch (_) {
+      return false;
+    }
+  };
+});
+
+/// Stops the reply [addressChangeReplyGuardProvider] reported, once the user
+/// has agreed to change the address anyway.
+final addressChangeStopRepliesProvider = Provider<void Function()>((ref) {
+  return () => unawaited(stopOpenWebUiMainResponse(ref));
 });
 
 /// Called after the active Open WebUI account changed, with the new one (or

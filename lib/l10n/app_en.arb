@@ -8000,5 +8000,7 @@
   "useHttpOrHttpsOnly": "Use http:// or https:// only.",
   "@useHttpOrHttpsOnly": {
     "description": "Note instructing the user to include protocol in URL."
-  }
+  },
+  "accountsAddressChangeStopsReply": "Changing the address in use stops it.",
+  "accountsAddressChangeAnyway": "Change anyway"
 }

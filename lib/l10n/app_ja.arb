@@ -5144,5 +5144,7 @@
   "useHttpOrHttpsOnly": "http:// または https:// のみ使用してください。",
   "@useHttpOrHttpsOnly": {
     "description": "Note instructing the user to include protocol in URL."
-  }
+  },
+  "accountsAddressChangeStopsReply": "使用中のアドレスを変更すると停止します。",
+  "accountsAddressChangeAnyway": "それでも変更する"
 }

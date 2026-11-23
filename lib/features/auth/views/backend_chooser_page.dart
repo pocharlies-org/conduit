@@ -7,7 +7,6 @@ import 'package:conduit_core/navigation/routes.dart';
 
 import '../../../l10n/app_localizations.dart';
 import '../../../shared/theme/theme_extensions.dart';
-import '../../../shared/widgets/platform_ui/platform_ui.dart';
 import '../../../shared/widgets/utility_components.dart';
 
 /// First-run screen letting a fresh install choose its chat backend.

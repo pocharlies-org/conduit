@@ -3571,5 +3571,7 @@
   "ssoAuthenticating": "인증 중...",
   "ssoLoadingLogin": "로그인 페이지 로딩 중...",
   "ssoPlatformNotSupported": "이 플랫폼에서는 SSO 인증이 지원되지 않습니다. 대신 자격 증명 또는 LDAP 인증을 사용하세요.",
-  "useHttpOrHttpsOnly": "http:// 또는 https:// 만 사용하세요."
+  "useHttpOrHttpsOnly": "http:// 또는 https:// 만 사용하세요.",
+  "accountsAddressChangeStopsReply": "사용 중인 주소를 변경하면 답변이 중지됩니다.",
+  "accountsAddressChangeAnyway": "그래도 변경"
 }

@@ -6325,5 +6325,7 @@
   "useHttpOrHttpsOnly": "Użyj wyłącznie http:// lub https://.",
   "@useHttpOrHttpsOnly": {
     "description": "Note instructing the user to include protocol in URL."
-  }
+  },
+  "accountsAddressChangeStopsReply": "Zmiana używanego adresu ją zatrzyma.",
+  "accountsAddressChangeAnyway": "Zmień mimo to"
 }

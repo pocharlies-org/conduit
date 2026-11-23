@@ -3793,5 +3793,7 @@
   "ssoAuthenticating": "Autenticazione...",
   "ssoLoadingLogin": "Caricamento pagina di accesso...",
   "ssoPlatformNotSupported": "L'autenticazione SSO non è supportata su questa piattaforma. Usa invece le credenziali o l'autenticazione LDAP.",
-  "useHttpOrHttpsOnly": "Usa solo http:// o https://."
+  "useHttpOrHttpsOnly": "Usa solo http:// o https://.",
+  "accountsAddressChangeStopsReply": "Se modifichi l'indirizzo in uso, verrà interrotta.",
+  "accountsAddressChangeAnyway": "Modifica comunque"
 }
