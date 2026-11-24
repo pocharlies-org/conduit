@@ -7634,6 +7634,26 @@
     "description": "Error shown when the picked photo cannot be opened."
   },
   "imagesPlaygroundPromptRequired": "Enter a prompt.",
+  "createImage": "Create image",
+  "imageCardUpscale": "Upscale",
+  "imageCardEdit": "Edit",
+  "imageCardGenerate": "Generate",
+  "imageCardApply": "Apply",
+  "@createImage": {
+    "description": "Menu command that opens the in-chat image generation card."
+  },
+  "@imageCardUpscale": {
+    "description": "Action on the image card that re-renders the image with more detail."
+  },
+  "@imageCardEdit": {
+    "description": "Action on the image card that asks for a change to apply to the image."
+  },
+  "@imageCardGenerate": {
+    "description": "Button that starts image generation from the card."
+  },
+  "@imageCardApply": {
+    "description": "Button that applies the typed edit to the generated image."
+  },
   "@imagesPlaygroundPromptRequired": {
     "description": "Error shown when running the playground with an empty prompt."
   },

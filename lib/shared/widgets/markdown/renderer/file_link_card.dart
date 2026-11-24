@@ -9,6 +9,7 @@ import 'package:conduit/features/chat/services/native_image_viewer_bridge.dart';
 import 'package:conduit/l10n/app_localizations.dart';
 import 'package:conduit/shared/theme/theme_extensions.dart';
 import 'package:conduit/shared/utils/file_type_utils.dart';
+import 'package:conduit/shared/widgets/action_card.dart';
 import 'package:conduit/shared/widgets/platform_ui/platform_ui.dart';
 import 'package:conduit_core/utils/file_link_utils.dart';
 
@@ -77,7 +78,6 @@ class _FileLinkCardState extends ConsumerState<FileLinkCard> {
 
   @override
   Widget build(BuildContext context) {
-    final conduitTheme = context.conduitTheme;
     final l10n = AppLocalizations.of(context);
     final title = _title(context);
     final extension = fileExtensionFromUrl(widget.url);
@@ -87,76 +87,29 @@ class _FileLinkCardState extends ConsumerState<FileLinkCard> {
         ? (l10n?.download ?? 'Download')
         : extension.toUpperCase();
 
-    return Padding(
-      padding: const EdgeInsets.symmetric(vertical: Spacing.xs),
-      child: Semantics(
-        button: true,
-        label: title,
-        child: GestureDetector(
-          behavior: HitTestBehavior.opaque,
-          onTap: () => _run(_open),
-          onLongPress: () => _run(() => _fetch().then(_share)),
-          child: Container(
-            constraints: const BoxConstraints(maxWidth: 420),
-            padding: const EdgeInsets.all(Spacing.md),
-            decoration: BoxDecoration(
-              color: conduitTheme.cardBackground,
-              borderRadius: BorderRadius.circular(AppBorderRadius.md),
-              border: Border.all(
-                color: conduitTheme.textPrimary.withValues(alpha: 0.12),
-                width: BorderWidth.regular,
-              ),
-            ),
-            child: Row(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                Text(
-                  FileTypeUtils.emojiForExtension(extension),
-                  style: AppTypography.headlineLargeStyle,
-                ),
-                const SizedBox(width: Spacing.sm),
-                Flexible(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      Text(
-                        title,
-                        maxLines: 1,
-                        overflow: TextOverflow.ellipsis,
-                        style: AppTypography.labelStyle.copyWith(
-                          color: conduitTheme.textPrimary,
-                          fontWeight: FontWeight.w600,
-                        ),
-                      ),
-                      Text(
-                        detail,
-                        style: AppTypography.labelMediumStyle.copyWith(
-                          color: _failed
-                              ? conduitTheme.error
-                              : conduitTheme.textSecondary.withValues(
-                                  alpha: 0.7,
-                                ),
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-                const SizedBox(width: Spacing.sm),
-                if (_busy)
-                  const AdaptiveProgressIndicator.activity(radius: 9)
-                else
-                  AdaptiveButton(
-                    onPressed: () => _run(() => _fetch().then(_share)),
-                    label: l10n?.download ?? 'Download',
-                    style: AdaptiveButtonStyle.bordered,
-                    size: AdaptiveButtonSize.small,
-                  ),
-              ],
-            ),
-          ),
-        ),
+    return ConduitActionCard(
+      title: title,
+      subtitle: detail,
+      state: _busy
+          ? ConduitCardState.loading
+          : _failed
+          ? ConduitCardState.error
+          : ConduitCardState.idle,
+      maxWidth: 420,
+      leading: Text(
+        FileTypeUtils.emojiForExtension(extension),
+        style: AppTypography.headlineLargeStyle,
       ),
+      actions: [
+        AdaptiveButton(
+          onPressed: () => _run(() => _fetch().then(_share)),
+          label: l10n?.download ?? 'Download',
+          style: AdaptiveButtonStyle.bordered,
+          size: AdaptiveButtonSize.small,
+        ),
+      ],
+      onTap: () => _run(_open),
+      onLongPress: () => _run(() => _fetch().then(_share)),
     );
   }
 }
