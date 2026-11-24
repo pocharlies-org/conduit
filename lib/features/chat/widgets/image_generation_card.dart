@@ -30,9 +30,8 @@ const imageCardUpscalePrompt =
 /// shows the result with working Upscale and Edit actions. The latest result
 /// joins the conversation through the composer's attachment tray.
 class ImageGenerationCard extends ConsumerStatefulWidget {
-  const ImageGenerationCard({super.key, this.initialPrompt, this.onDismiss});
+  const ImageGenerationCard({super.key, this.onDismiss});
 
-  final String? initialPrompt;
   final VoidCallback? onDismiss;
 
   @override
@@ -44,9 +43,7 @@ class ImageGenerationCard extends ConsumerStatefulWidget {
 class ImageGenerationCardState extends ConsumerState<ImageGenerationCard> {
   String? _model;
   String _size = '1024x1024';
-  late final TextEditingController _prompt = TextEditingController(
-    text: widget.initialPrompt ?? '',
-  );
+  final TextEditingController _prompt = TextEditingController();
   final TextEditingController _editPrompt = TextEditingController();
   bool _busy = false;
   bool _editing = false;

@@ -39,8 +39,7 @@ class ConduitActionCard extends StatelessWidget {
   Widget build(BuildContext context) {
     final conduitTheme = context.conduitTheme;
     final actions = this.actions;
-    final showActions =
-        state != ConduitCardState.loading && actions != null && actions.isNotEmpty;
+    final showActions = actions != null && actions.isNotEmpty;
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: Spacing.xs),
       child: Semantics(
