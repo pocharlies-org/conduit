@@ -1,10 +1,11 @@
 import 'package:material_ui/material_ui.dart';
-import 'package:flutter/services.dart';
 import 'package:conduit/core/services/haptic_service.dart';
+import 'package:conduit/core/services/remote_file_download.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../shared/theme/theme_extensions.dart';
 import '../../../shared/widgets/skeleton_loader.dart';
+import '../services/native_image_viewer_bridge.dart';
 
 import 'package:conduit_core/providers/app_providers.dart';
 import 'package:conduit_core/services/api_service.dart';
@@ -12,12 +13,8 @@ import 'package:conduit_core/services/api_service.dart';
 import 'enhanced_image_attachment.dart';
 
 import 'package:share_plus/share_plus.dart';
-import 'package:path_provider/path_provider.dart';
 
 import 'dart:io';
-import 'dart:convert';
-
-import 'package:conduit_core/services/worker_manager.dart';
 
 class EnhancedAttachment extends ConsumerStatefulWidget {
   final String attachmentId;
@@ -103,37 +100,25 @@ class _EnhancedAttachmentState extends ConsumerState<EnhancedAttachment> {
     return ['jpg', 'jpeg', 'png', 'gif', 'webp', 'bmp'].contains(ext);
   }
 
+  String get _filename =>
+      (_fileInfo?['filename'] ?? _fileInfo?['name'] ?? 'file').toString();
+
+  /// The file's bytes on disk, fetched with the server's session.
   Future<String?> _ensureLocalFile() async {
+    final container = ProviderScope.containerOf(context, listen: false);
     if (_localFilePath != null && await File(_localFilePath!).exists()) {
       return _localFilePath;
     }
     try {
-      final api = ref.read(apiServiceProvider);
-      if (api is! ApiService) return null;
-
-      final content = await api.getFileContent(widget.attachmentId);
-      final filename = (_fileInfo?['filename'] ?? _fileInfo?['name'] ?? 'file')
-          .toString();
-      final dir = await getTemporaryDirectory();
-      final filePath = '${dir.path}/$filename';
-
-      final worker = ref.read(workerManagerProvider);
-      try {
-        if (_looksLikeBase64(content)) {
-          final bytes = await worker.schedule<String, Uint8List>(
-            _decodeAttachmentBase64,
-            content,
-            debugLabel: 'attachment_decode_bytes',
-          );
-          await File(filePath).writeAsBytes(bytes, flush: true);
-        } else {
-          await File(filePath).writeAsString(content, flush: true);
-        }
-      } catch (_) {
-        await File(filePath).writeAsString(content, flush: true);
-      }
-
-      _localFilePath = filePath;
+      final id = widget.attachmentId;
+      final file = await downloadServerFile(
+        url: (id.startsWith('http') || id.startsWith('/'))
+            ? id
+            : '/api/v1/files/$id/content',
+        container: container,
+        fileName: _filename,
+      );
+      _localFilePath = file.path;
       return _localFilePath;
     } catch (e) {
       setState(() {
@@ -146,11 +131,21 @@ class _EnhancedAttachmentState extends ConsumerState<EnhancedAttachment> {
   Future<void> _shareFile() async {
     final path = await _ensureLocalFile();
     if (path == null) return;
-    final filename = (_fileInfo?['filename'] ?? _fileInfo?['name'] ?? 'file')
-        .toString();
     await SharePlus.instance.share(
-      ShareParams(files: [XFile(path, name: filename)]),
+      ShareParams(files: [XFile(path, name: _filename)]),
     );
+  }
+
+  /// Shows the file in the app where the platform can (Quick Look renders
+  /// xlsx, pptx, docx and PDF on iOS) and falls back to the share sheet.
+  Future<void> _openFile() async {
+    final path = await _ensureLocalFile();
+    if (path == null) return;
+    final presented = await NativeImageViewerBridge.instance.present(
+      files: [NativeImageFile(path: path, title: _filename)],
+      initialIndex: 0,
+    );
+    if (!presented) await _shareFile();
   }
 
   String _fileIconFor(String filename) {
@@ -323,6 +318,10 @@ class _EnhancedAttachmentState extends ConsumerState<EnhancedAttachment> {
         behavior: HitTestBehavior.opaque,
         onTap: () async {
           await ConduitHaptics.mediumImpact();
+          await _openFile();
+        },
+        onLongPress: () async {
+          await ConduitHaptics.mediumImpact();
           await _shareFile();
         },
         child: card,
@@ -340,15 +339,4 @@ class _EnhancedAttachmentState extends ConsumerState<EnhancedAttachment> {
     }
     return '${(bytes / (1024 * 1024 * 1024)).toStringAsFixed(1)} GB';
   }
-}
-
-bool _looksLikeBase64(String content) {
-  if (content.length <= 128) return false;
-  final sanitized = content.replaceAll('\n', '');
-  return RegExp(r'^[A-Za-z0-9+/=]+$').hasMatch(sanitized);
-}
-
-Uint8List _decodeAttachmentBase64(String raw) {
-  final sanitized = raw.replaceAll('\n', '');
-  return base64Decode(sanitized);
 }

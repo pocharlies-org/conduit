@@ -7,7 +7,7 @@ import 'package:material_ui/material_ui.dart';
 import 'package:conduit_core/models/chat_message.dart';
 import '../../../core/services/native_sheet_bridge.dart';
 import '../../../shared/theme/theme_extensions.dart';
-import '../../../shared/utils/external_link_launcher.dart';
+import '../../../shared/widgets/markdown/renderer/file_link_card.dart';
 import '../../../shared/widgets/themed_sheets.dart';
 import 'assistant_detail_header.dart';
 
@@ -236,20 +236,16 @@ class CodeExecutionListView extends StatelessWidget {
                     const SizedBox(height: Spacing.xs),
                     ...result!.files.map((file) {
                       final name = file.name ?? file.url ?? l10n.download;
-                      return AdaptiveListTile(
-                        padding: EdgeInsets.zero,
-                        leading: const Icon(Icons.insert_drive_file_outlined),
-                        title: Text(name),
-                        onTap: file.url != null
-                            ? () => launchExternalLink(
-                                file.url!,
-                                scope: 'chat/assistant',
-                              )
-                            : null,
-                        trailing: file.url != null
-                            ? const Icon(Icons.open_in_new)
-                            : null,
-                      );
+                      if (file.url == null) {
+                        return AdaptiveListTile(
+                          padding: EdgeInsets.zero,
+                          leading: const Icon(
+                            Icons.insert_drive_file_outlined,
+                          ),
+                          title: Text(name),
+                        );
+                      }
+                      return FileLinkCard(url: file.url!, label: name);
                     }),
                   ],
                 ],

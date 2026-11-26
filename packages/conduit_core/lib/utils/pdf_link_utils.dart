@@ -1,9 +1,8 @@
 import 'dart:collection';
 
-import 'package:conduit_core/services/server_tls_http_client_factory.dart';
-
-/// Markdown PDF links: which links preview as a PDF, what their card is
-/// called, and where the bytes are fetched from, for the PDF views (pdfrx).
+/// Markdown PDF links: which links preview as a PDF, and the page geometry and
+/// page-bitmap cache the PDF views (pdfrx) need. The card's name, its share
+/// file name and where its bytes come from are the file-link utils.
 
 /// Whether [href] points at a PDF: its path, not its query, ends in `.pdf`.
 bool isPdfLink(String href) {
@@ -15,68 +14,6 @@ bool isPdfLink(String href) {
       ? uri!.path
       : trimmed.split('?').first.split('#').first;
   return _decodeUriComponent(rawPath).toLowerCase().endsWith('.pdf');
-}
-
-/// The card title: the link label without a leading 📄, else the file name
-/// from the URL, else [fallback].
-String pdfTitle({
-  required String? rawLabel,
-  required String url,
-  required String fallback,
-}) {
-  final label = (rawLabel ?? '')
-      .replaceFirst(RegExp(r'^\s*\u{1F4C4}\s*', unicode: true), '')
-      .trim();
-  if (label.isNotEmpty && label != url.trim()) {
-    return label;
-  }
-
-  final fileName = _fileNameFromUrl(url);
-  if (fileName != null && fileName.isNotEmpty) {
-    return fileName;
-  }
-  return fallback;
-}
-
-/// A file name for sharing [title]: letters, digits, spaces, `.`, `_`, `-`,
-/// at most 80 characters, ending in `.pdf`.
-String pdfShareFileName(String title) {
-  var base = title
-      .replaceAll(RegExp(r'[^\p{L}\p{N}\s._\-]', unicode: true), ' ')
-      .replaceAll(RegExp(r'\s+'), ' ')
-      .trim();
-  if (base.length > 80) base = base.substring(0, 80).trim();
-  if (base.isEmpty) base = 'document';
-  return base.toLowerCase().endsWith('.pdf') ? base : '$base.pdf';
-}
-
-/// Resolves a server-relative [url] against the selected server's
-/// [baseUrl]; absolute URLs pass through.
-String resolvePdfRequestUrl(String url, String? baseUrl) {
-  final trimmed = url.trim();
-  if (trimmed.isEmpty) return url;
-
-  final uri = Uri.tryParse(trimmed);
-  if (uri == null || uri.hasScheme) {
-    return trimmed;
-  }
-
-  var baseUri = baseUrl == null
-      ? null
-      : ServerTlsHttpClientFactory.parseBaseUri(baseUrl);
-  if (baseUri == null) {
-    return trimmed;
-  }
-
-  if (trimmed.startsWith('/')) {
-    return '${_baseUrlWithoutTrailingSlash(baseUri)}$trimmed';
-  }
-
-  if (!baseUri.path.endsWith('/')) {
-    baseUri = baseUri.replace(path: '${baseUri.path}/');
-  }
-
-  return baseUri.resolveUri(uri).toString();
 }
 
 /// Height of a page rendered [width] wide; A4 proportions for a page that
@@ -167,24 +104,6 @@ class PdfPageImageCache<T> {
     _heldBytes = 0;
     images.forEach(_onEvict);
   }
-}
-
-String? _fileNameFromUrl(String url) {
-  final trimmed = url.trim();
-  if (trimmed.isEmpty) return null;
-  final uri = Uri.tryParse(trimmed);
-  final rawPath = uri?.path.isNotEmpty == true
-      ? uri!.path
-      : trimmed.split('?').first.split('#').first;
-  final segments = rawPath.split('/').where((part) => part.isNotEmpty);
-  if (segments.isEmpty) return null;
-  return _decodeUriComponent(segments.last).trim();
-}
-
-String _baseUrlWithoutTrailingSlash(Uri uri) {
-  final withoutFragment = uri.removeFragment();
-  final withoutQuery = withoutFragment.replace(query: null);
-  return withoutQuery.toString().replaceFirst(RegExp(r'/+$'), '');
 }
 
 String _decodeUriComponent(String value) {
