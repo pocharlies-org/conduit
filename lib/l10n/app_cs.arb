@@ -5152,5 +5152,253 @@
   "searchFailedTitle": "Hledání se nezdařilo",
   "searchFailedMessage": "Zkontrolujte připojení a zkuste to znovu.",
   "webShellTitle": "Web",
-  "webShellNoServer": "Žádný server k otevření"
+  "webShellNoServer": "Žádný server k otevření",
+  "accountsAddAddress": "Přidat adresu",
+  "accountsAddressConfirmAction": "Ověřit adresu",
+  "accountsAddressConfirmMessage": "Aby Conduit ověřil, že {host} je tento server, pošle mu relaci účtu uloženého v tomto zařízení. Pokračujte, jen pokud této adrese důvěřujete.",
+  "accountsAddressConfirmTitle": "Ověřit tuto adresu?",
+  "accountsAddressDifferentServer": "Tato adresa vede na jiný server nebo k jinému účtu na něm.",
+  "accountsAddressName": "Název (volitelné)",
+  "accountsAddressNameHint": "Domácí síť, Tailscale…",
+  "accountsAddressNeedsSignIn": "Nejprve se přihlaste k účtu na tomto serveru, aby bylo možné adresu ověřit.",
+  "accountsEditAddress": "Upravit adresu",
+  "accountsSaveAddress": "Uložit adresu",
+  "addHeader": "Přidat hlavičku",
+  "@addHeader": {
+    "description": "Button to add a new custom header row."
+  },
+  "advancedSettings": "Pokročilá nastavení",
+  "@advancedSettings": {
+    "description": "Section that contains additional/optional configuration."
+  },
+  "allowSelfSignedCertificatesDescription": "Přijmout certifikát TLS tohoto serveru, i když je podepsaný vlastním podpisem. Zapínejte pouze u serverů, kterým důvěřujete.",
+  "@allowSelfSignedCertificatesDescription": {
+    "description": "Helper text clarifying the risks of enabling the self-signed certificate toggle."
+  },
+  "backendChooserOpenWebUISubtitle": "Use your self-hosted Open WebUI server with full chat, notes, and more.",
+  "backendChooserOpenWebUITitle": "Open WebUI",
+  "backendChooserPrompt": "Choose how you want to connect.",
+  "backendChooserSelfHostedSectionTitle": "Vlastní hostované služby",
+  "backendChooserWelcome": "Welcome to Conduit",
+  "connectToServerButton": "Připojit k serveru",
+  "@connectToServerButton": {
+    "description": "Primary action button to initiate server connection."
+  },
+  "continueButton": "Pokračovat",
+  "@continueButton": {
+    "description": "Generic continue button text."
+  },
+  "customHeadersDescription": "Přidejte vlastní HTTP hlavičky pro ověřování, klíče API nebo speciální požadavky serveru.",
+  "@customHeadersDescription": {
+    "description": "Helper text explaining use-cases for custom headers."
+  },
+  "demoModeActive": "Aktivní demo režim",
+  "@demoModeActive": {
+    "description": "Banner/text indicating the app runs in demo mode."
+  },
+  "enterDemo": "Spustit demo",
+  "@enterDemo": {
+    "description": "Button to enter demo mode."
+  },
+  "enterServerUrlSemantic": "Zadejte URL nebo IP adresu serveru",
+  "@enterServerUrlSemantic": {
+    "description": "Semantic/ARIA label instructing to enter server URL or IP."
+  },
+  "headerAlreadyExists": "Hlavička „{key}“ už existuje. Pokud ji chcete aktualizovat, nejprve ji odeberte.",
+  "@headerAlreadyExists": {
+    "description": "Error when a custom header with key {key} already exists.",
+    "placeholders": {
+      "key": {
+        "type": "String"
+      }
+    }
+  },
+  "headerName": "Název hlavičky",
+  "@headerName": {
+    "description": "Label for custom header key."
+  },
+  "headerNameInvalidChars": "Neplatný název hlavičky. Používejte pouze písmena, číslice a tyto symboly: !#$&-^_`|~",
+  "@headerNameInvalidChars": {
+    "description": "Validation message for invalid characters in header name."
+  },
+  "headerNameReserved": "Vyhrazenou hlavičku „{key}“ nelze přepsat",
+  "@headerNameReserved": {
+    "description": "Error when attempting to override a reserved HTTP header {key}.",
+    "placeholders": {
+      "key": {
+        "type": "String"
+      }
+    }
+  },
+  "headerNameTooLong": "Název hlavičky je příliš dlouhý (max. 64 znaků)",
+  "@headerNameTooLong": {
+    "description": "Validation message for header name length."
+  },
+  "headerValue": "Hodnota hlavičky",
+  "@headerValue": {
+    "description": "Label for custom header value."
+  },
+  "headerValueHint": "api-key-123 nebo Bearer token",
+  "@headerValueHint": {
+    "description": "Hint text with example header values, including API key or Bearer token."
+  },
+  "headerValueInvalidChars": "Hodnota hlavičky obsahuje neplatné znaky. Používejte pouze tisknutelné ASCII.",
+  "@headerValueInvalidChars": {
+    "description": "Validation message for invalid characters in header value."
+  },
+  "headerValueTooLong": "Hodnota hlavičky je příliš dlouhá (max. 1024 znaků)",
+  "@headerValueTooLong": {
+    "description": "Validation message for header value length."
+  },
+  "headerValueUnsafe": "Hodnota hlavičky zřejmě obsahuje potenciálně nebezpečný obsah",
+  "@headerValueUnsafe": {
+    "description": "Security warning for suspicious header values."
+  },
+  "invalidIpFormat": "Neplatný formát IP adresy. Použijte formát jako 192.168.1.10.",
+  "@invalidIpFormat": {
+    "description": "Validation message for IP addresses with example."
+  },
+  "invalidUrlFormat": "Neplatný formát URL. Zkontrolujte zadání.",
+  "@invalidUrlFormat": {
+    "description": "Validation message when URL format is incorrect."
+  },
+  "maxHeadersReachedDetail": "Je povoleno maximálně 10 vlastních hlaviček. Chcete-li přidat další, některé odeberte.",
+  "@maxHeadersReachedDetail": {
+    "description": "Explains the upper limit of custom headers."
+  },
+  "mutualTlsCertificatePemRequired": "Vybraný soubor certifikátu musí obsahovat řetězec certifikátů PEM.",
+  "@mutualTlsCertificatePemRequired": {
+    "description": "Error shown when the selected mTLS certificate file does not look like PEM certificate content."
+  },
+  "mutualTlsCertificateReady": "Certifikát",
+  "@mutualTlsCertificateReady": {
+    "description": "Short label used in a badge once an mTLS certificate file has been selected."
+  },
+  "mutualTlsClearCredentials": "Vymazat soubory mTLS",
+  "@mutualTlsClearCredentials": {
+    "description": "Button label that removes selected mTLS certificate material from the form."
+  },
+  "mutualTlsConnectionClosed": "Server ukončil spojení před odpovědí. Pokud vyžaduje klientský certifikát, ověřte, že certifikát, privátní klíč a heslo jsou správné.",
+  "mutualTlsFileReadFailed": "Vybraný soubor mTLS se nepodařilo přečíst.",
+  "@mutualTlsFileReadFailed": {
+    "description": "Error shown when a picked certificate or key file cannot be read as text."
+  },
+  "mutualTlsHandshakeFailed": "Server odmítl přihlašovací údaje mTLS. Ověřte, že certifikát, privátní klíč a heslo jsou správné.",
+  "@mutualTlsHandshakeFailed": {
+    "description": "Connection error shown when the TLS handshake fails while mTLS credentials are configured."
+  },
+  "mutualTlsMissingCredentialPair": "Pro použití mTLS vyberte klientský certifikát i privátní klíč.",
+  "@mutualTlsMissingCredentialPair": {
+    "description": "Validation message shown when only one half of the mTLS credential pair is configured."
+  },
+  "mutualTlsPrivateKeyPasswordHint": "Heslo privátního klíče (volitelné)",
+  "@mutualTlsPrivateKeyPasswordHint": {
+    "description": "Placeholder for the optional password used to decrypt an mTLS private key."
+  },
+  "mutualTlsPrivateKeyPemRequired": "Vybraný soubor privátního klíče musí obsahovat privátní klíč PEM.",
+  "@mutualTlsPrivateKeyPemRequired": {
+    "description": "Error shown when the selected mTLS private key file does not look like PEM private key content."
+  },
+  "mutualTlsPrivateKeyReady": "Privátní klíč",
+  "@mutualTlsPrivateKeyReady": {
+    "description": "Short label used in a badge once an mTLS private key file has been selected."
+  },
+  "mutualTlsSectionDescription": "Připojte řetězec certifikátů PEM a privátní klíč PEM, pokud váš server při nastavování připojení vyžaduje vzájemné TLS.",
+  "@mutualTlsSectionDescription": {
+    "description": "Helper text explaining when to use the mTLS configuration section."
+  },
+  "mutualTlsSectionTitle": "Klientský certifikát mTLS",
+  "@mutualTlsSectionTitle": {
+    "description": "Section title for configuring a client certificate and private key for mutual TLS."
+  },
+  "mutualTlsSelectCertificate": "Vybrat certifikát",
+  "@mutualTlsSelectCertificate": {
+    "description": "Button label for picking a PEM client certificate chain file."
+  },
+  "mutualTlsSelectPrivateKey": "Vybrat privátní klíč",
+  "@mutualTlsSelectPrivateKey": {
+    "description": "Button label for picking a PEM private key file."
+  },
+  "onlyHttpHttps": "Podporovány jsou pouze protokoly HTTP a HTTPS.",
+  "@onlyHttpHttps": {
+    "description": "Validation note restricting protocols to HTTP/HTTPS."
+  },
+  "portRange": "Port musí být v rozsahu 1 až 65535.",
+  "@portRange": {
+    "description": "Validation message for allowed port range."
+  },
+  "proxyAuthFailed": "Ověření přes proxy selhalo",
+  "@proxyAuthFailed": {
+    "description": "Error message when proxy authentication fails."
+  },
+  "proxyAuthHelpTextSimple": "Přihlaste se přes proxy. Po ověření pokračujte klepnutím na Pokračovat.",
+  "@proxyAuthHelpTextSimple": {
+    "description": "Simplified help text for proxy-only authentication flow."
+  },
+  "proxyAuthLoading": "Načítání ověřovací stránky...",
+  "@proxyAuthLoading": {
+    "description": "Loading message while the proxy login page loads."
+  },
+  "proxyAuthPlatformNotSupported": "Ověření přes proxy vyžaduje mobilní zařízení. Nejprve se prosím ověřte v prohlížeči.",
+  "@proxyAuthPlatformNotSupported": {
+    "description": "Error message when proxy auth is attempted on an unsupported platform."
+  },
+  "proxyAuthentication": "Ověření přes proxy",
+  "@proxyAuthentication": {
+    "description": "Title for the proxy authentication page."
+  },
+  "proxyManualSignInRequired": "Authentication failed. Please try signing in manually.",
+  "proxyServerVerificationFailed": "Could not verify the Open WebUI server. The proxy session may have expired or be invalid. Please try again.",
+  "removeHeader": "Odebrat hlavičku",
+  "@removeHeader": {
+    "description": "Action to remove a custom header row."
+  },
+  "reviewerModeDisabled": "Reviewer mode disabled.",
+  "reviewerModeEnabled": "Reviewer mode enabled. You can open the demo without a server.",
+  "serverAddressRequired": "Adresa serveru je povinná (např. 192.168.1.10 nebo example.com).",
+  "@serverAddressRequired": {
+    "description": "Validation hint providing examples for server addresses."
+  },
+  "serverNotOpenWebUI": "Toto zřejmě není server Open-WebUI.",
+  "@serverNotOpenWebUI": {
+    "description": "Validation error when the server does not resemble Open-WebUI."
+  },
+  "serverUrlEmpty": "URL serveru nesmí být prázdná",
+  "@serverUrlEmpty": {
+    "description": "Validation message for empty server URL."
+  },
+  "serverUrlHint": "https://your-server.com",
+  "@serverUrlHint": {
+    "description": "Hint text showing example server URL format."
+  },
+  "skipServerSetupTryDemo": "Přeskočit nastavení serveru a vyzkoušet demo",
+  "@skipServerSetupTryDemo": {
+    "description": "CTA to bypass server configuration and enter demo mode."
+  },
+  "sso": "SSO",
+  "@sso": {
+    "description": "Label for Single Sign-On authentication option."
+  },
+  "ssoAuthFailed": "Ověření SSO selhalo",
+  "@ssoAuthFailed": {
+    "description": "Error message when SSO authentication fails."
+  },
+  "ssoAuthenticating": "Ověřování...",
+  "@ssoAuthenticating": {
+    "description": "Loading message during SSO authentication."
+  },
+  "ssoLoadingLogin": "Načítání přihlašovací stránky...",
+  "@ssoLoadingLogin": {
+    "description": "Loading message while SSO login page loads."
+  },
+  "ssoPlatformNotSupported": "Ověřování SSO není na této platformě podporováno. Použijte místo toho přihlašovací údaje nebo LDAP.",
+  "@ssoPlatformNotSupported": {
+    "description": "Error message when SSO is attempted on an unsupported platform (desktop/web)."
+  },
+  "useHttpOrHttpsOnly": "Používejte pouze http:// nebo https://.",
+  "@useHttpOrHttpsOnly": {
+    "description": "Note instructing the user to include protocol in URL."
+  },
+  "accountsAddressChangeStopsReply": "Změna používané adresy ji zastaví.",
+  "accountsAddressChangeAnyway": "Přesto změnit"
 }

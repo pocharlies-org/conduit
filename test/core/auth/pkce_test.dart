@@ -1,7 +1,6 @@
 import 'package:conduit_core/auth/owui_oidc.dart';
 import 'package:conduit_core/auth/pkce.dart';
-import 'package:conduit/core/auth/pkce_sign_in.dart';
-import 'package:conduit/core/auth/system_browser_auth.dart';
+import 'package:conduit_home/conduit_home.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 void main() {
@@ -26,16 +25,16 @@ void main() {
     });
   });
 
-  group('OwuiOidcConfig.live', () {
+  group('homeOwuiConfig', () {
     test('authorize URL asks for the code with PKCE and the fixed callback', () {
-      final url = OwuiOidcConfig.live.authorizeUrl(
+      final url = homeOwuiConfig.authorizeUrl(
         challenge: 'challenge',
         state: 'state',
       );
       expect(
         url.toString(),
         startsWith(
-          '${OwuiOidcConfig.live.keycloakRealmUrl}/protocol/openid-connect/auth?',
+          '${homeOwuiConfig.keycloakRealmUrl}/protocol/openid-connect/auth?',
         ),
       );
       expect(url.queryParameters, {
@@ -48,7 +47,7 @@ void main() {
         'state': 'state',
       });
       expect(
-        OwuiOidcConfig.live.exchangeUrl.toString(),
+        homeOwuiConfig.exchangeUrl.toString(),
         'https://chat.e-dani.com/api/v1/auths/oauth/oidc/token/exchange',
       );
     });

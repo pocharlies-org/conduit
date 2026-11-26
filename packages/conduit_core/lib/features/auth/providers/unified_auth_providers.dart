@@ -42,6 +42,22 @@ class AuthActions {
     );
   }
 
+  /// OWU-157 (from 3f95de15): commit a proxy sign-in the discovery client
+  /// already validated with the server.
+  Future<bool> commitPrevalidatedProxySession({
+    required ServerConfig serverConfig,
+    required String token,
+    required User user,
+    bool Function()? canCommit,
+  }) {
+    return _auth.commitPrevalidatedProxySession(
+      serverConfig: serverConfig,
+      token: token,
+      user: user,
+      canCommit: canCommit,
+    );
+  }
+
   Future<bool> ldapLogin(
     String username,
     String password, {

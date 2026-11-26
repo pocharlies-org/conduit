@@ -24,10 +24,11 @@ const _server = ServerConfig(
 /// shows up as a failing test when the policy starts reading something new.
 ///
 /// OWU-134: the app is Open WebUI only, pre-configured with the one seeded
-/// server. There is no backend chooser, no setup wizard and no account
-/// chooser, so the only providers the redirect reads are the reviewer flag,
-/// the active server, the auth navigation state, the auth snapshot and (for
-/// workspace routes) the workspace capabilities.
+/// server. The redirect never sends anyone to a backend chooser, a setup
+/// wizard or an account chooser, so the only providers it reads are the
+/// reviewer flag, the active server, the auth navigation state, the auth
+/// snapshot, (for workspace routes) the workspace capabilities and (for the
+/// proxy sign-in route) whether the address editor has it open.
 ProviderRead _reader({
   bool reviewerMode = false,
   AsyncValue<ServerConfig?> activeServer = const AsyncData(_server),

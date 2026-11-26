@@ -1,0 +1,29 @@
+name: conduit_home
+description: >-
+  Home-build sign-in: the edani Keycloak PKCE sheet, its iOS bridge, session
+  renewal and the seeded accounts. A generic build drops this package.
+version: 0.1.0
+publish_to: 'none'
+resolution: workspace
+
+environment:
+  sdk: ">=3.13.0 <4.0.0"
+
+dependencies:
+  flutter:
+    sdk: flutter
+  conduit_core:
+    path: ../conduit_core
+  dio: ^5.9.0
+  riverpod: ^3.4.3
+
+dev_dependencies:
+  lints: ^6.0.0
+
+flutter:
+  plugin:
+    platforms:
+      ios:
+        pluginClass: ConduitHomePlugin
+  assets:
+    - assets/seed_accounts.json

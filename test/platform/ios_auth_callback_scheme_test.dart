@@ -10,7 +10,7 @@ import 'package:flutter_test/flutter_test.dart';
 void main() {
   test('the app registers the callback scheme the login sheet asks for', () {
     final bridge = File(
-      'ios/Runner/SystemBrowserAuthBridge.swift',
+      'packages/conduit_home/ios/Classes/SystemBrowserAuthBridge.swift',
     ).readAsStringSync();
     final scheme = RegExp(
       r'callbackURLScheme:\s*"([^"]+)"',

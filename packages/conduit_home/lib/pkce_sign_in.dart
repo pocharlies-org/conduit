@@ -1,24 +1,8 @@
 import 'package:conduit_core/auth/owui_oidc.dart';
 import 'package:conduit_core/auth/pkce.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import 'owui_oidc.dart';
 import 'system_browser_auth.dart';
-
-/// What a completed login yields: the Open WebUI JWT to send as bearer, and
-/// the Keycloak refresh token that renews it later.
-final class OwuiSignIn {
-  const OwuiSignIn({required this.jwt, this.refreshToken});
-
-  final String jwt;
-  final String? refreshToken;
-}
-
-/// The login sheet and the token exchange behind it, in one step.
-///
-/// Overridable so the page can be tested without a browser sheet.
-final pkceSignInProvider = Provider<Future<OwuiSignIn?> Function()>(
-  (ref) => runPkceSignIn,
-);
 
 /// Runs the login sheet, redeems the code and exchanges the edani token for
 /// an Open WebUI JWT.
@@ -27,7 +11,7 @@ final pkceSignInProvider = Provider<Future<OwuiSignIn?> Function()>(
 /// server refused (the realm's error, another attempt's `state`, a code that
 /// no longer holds, an exchange that answers 401/403).
 Future<OwuiSignIn?> runPkceSignIn() async {
-  final config = OwuiOidcConfig.live;
+  final config = homeOwuiConfig;
   final pkce = generatePkcePair();
   final state = generatePkceState();
   final result = await SystemBrowserAuth.start(

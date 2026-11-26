@@ -2,13 +2,13 @@ import 'dart:convert';
 
 import '../models/openwebui_registry.dart';
 
-/// Cuentas precargadas (OWU-104): el `assets/seed_accounts.json` del build se
+/// Cuentas precargadas (OWU-104): el `seed_accounts.json` del build se
 /// escribe en el registry en el primer arranque, cuando nunca hubo nada
 /// guardado — las cuentas se configuran desde fuera del teléfono, no añadiendo
 /// desde Ajustes. Tras un wipe el registry queda guardado (vacío) y no vuelve
 /// a sembrar.
 ///
-/// Formato: `{"servers":[{"name":"Chat","url":"https://chat.e-dani.com"}]}`.
+/// Formato: `{"servers":[{"name":"Mi servidor","url":"https://mi-openwebui.example"}]}`.
 class OpenWebUiSeed {
   OpenWebUiSeed._();
 

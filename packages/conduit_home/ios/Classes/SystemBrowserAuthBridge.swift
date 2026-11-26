@@ -8,21 +8,11 @@ import UIKit
 /// (`disallowed_useragent`) y en la hoja viven la sesión de Keycloak y AutoFill.
 /// La hoja se cierra sola cuando la página navega al esquema propio de la app y
 /// devuelve esa URL a Dart, que lee de ella `code` y `state`.
-final class SystemBrowserAuthBridge: NSObject, ConduitBridge,
+final class SystemBrowserAuthBridge: NSObject,
   ASWebAuthenticationPresentationContextProviding {
-  static let shared = SystemBrowserAuthBridge()
-
   private var session: ASWebAuthenticationSession?
-  private var host: ConduitBridgeHost?
 
-  private override init() { super.init() }
-
-  @MainActor func attach(to host: ConduitBridgeHost) {
-    self.host = host
-    let channel = FlutterMethodChannel(
-      name: "com.conduit.app/system_browser_auth",
-      binaryMessenger: host.messenger
-    )
+  func attach(to channel: FlutterMethodChannel) {
     channel.setMethodCallHandler { [weak self] call, result in
       switch call.method {
       case "start":
@@ -75,6 +65,8 @@ final class SystemBrowserAuthBridge: NSObject, ConduitBridge,
   func presentationAnchor(for session: ASWebAuthenticationSession) -> UIWindow {
     // shortcut: sin escena activa no hay ancla real; la app está en primer
     // plano siempre que se abre la hoja, si falta un ancla viable se revisa.
-    host?.activeWindowScene?.keyWindow ?? UIWindow()
+    UIApplication.shared.connectedScenes
+      .compactMap { ($0 as? UIWindowScene)?.keyWindow }
+      .first ?? UIWindow()
   }
 }

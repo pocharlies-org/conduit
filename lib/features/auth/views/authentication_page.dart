@@ -10,8 +10,8 @@ import 'package:conduit_core/providers/app_providers.dart';
 import 'package:conduit_core/providers/openwebui_accounts_controller.dart';
 import 'package:conduit_core/services/api_service.dart';
 
-import '../../../core/auth/pkce_sign_in.dart';
-import '../../../core/auth/system_browser_auth.dart';
+import 'package:conduit_core/providers/host_ports.dart'
+    show signInFlowProvider;
 import '../../../core/services/haptic_service.dart';
 import '../../../shared/theme/theme_extensions.dart';
 import '../../../shared/widgets/conduit_components.dart';
@@ -82,8 +82,9 @@ bool authenticationApiMatchesSelection(
       authenticationServerMatchesSelection(actual.serverConfig, expected);
 }
 
-/// The product's only sign-in: Keycloak in the system-browser sheet (PKCE),
-/// the token exchange for an Open WebUI JWT, and that JWT as the bearer.
+/// The sign-in the host supplies through [signInFlowProvider] (the home build's
+/// is Keycloak in the system-browser sheet with PKCE, then the token exchange
+/// for an Open WebUI JWT), and that JWT as the bearer.
 ///
 /// There is no form here and nothing to fill in: the server is the seeded one,
 /// the person is whoever the realm already knows, and the sheet is the real
@@ -154,7 +155,7 @@ class _AuthenticationPageState extends ConsumerState<AuthenticationPage> {
       }
       if (!mounted) return;
 
-      final signedIn = await ref.read(pkceSignInProvider)();
+      final signedIn = await ref.read(signInFlowProvider)?.call();
       if (!mounted || signedIn == null) return;
       final jwt = signedIn.jwt;
 
@@ -443,7 +444,7 @@ class _AuthenticationPageState extends ConsumerState<AuthenticationPage> {
     final l10n = AppLocalizations.of(context)!;
     return ConduitButton(
       text: _isSigningIn ? l10n.signingIn : l10n.signInWithSso,
-      onPressed: _isSigningIn || !SystemBrowserAuth.isSupported
+      onPressed: _isSigningIn || ref.read(signInFlowProvider) == null
           ? null
           : _signIn,
       isLoading: _isSigningIn,
