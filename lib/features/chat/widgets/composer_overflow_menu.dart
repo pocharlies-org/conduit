@@ -184,6 +184,7 @@ class ComposerAttachmentKeyboard extends ConsumerStatefulWidget {
     this.onImageAttachment,
     this.onCameraCapture,
     this.onWebAttachment,
+    this.onCreateImage,
     this.onToolSettings,
     this.onCompareModels,
     this.compareModelsHasMessage = true,
@@ -196,6 +197,9 @@ class ComposerAttachmentKeyboard extends ConsumerStatefulWidget {
   final VoidCallback? onImageAttachment;
   final VoidCallback? onCameraCapture;
   final VoidCallback? onWebAttachment;
+
+  /// Opens the in-chat image generation card. Null hides the command.
+  final VoidCallback? onCreateImage;
 
   /// Opens the personal tool settings sheet. Null hides the Advanced command.
   final VoidCallback? onToolSettings;
@@ -236,6 +240,7 @@ class _ComposerAttachmentKeyboardState
     final theme = context.conduitTheme;
     final selectedModel = ref.watch(selectedModelProvider);
     final userSettingsFuture = _userSettingsFuture ??= _loadUserSettings();
+    final imageGenAvailable = ref.watch(imageGenerationAvailableProvider);
     final attachmentItems = buildComposerOverflowAttachmentItems(
       l10n: l10n,
       attachmentAvailability: ComposerOverflowAttachmentAvailability(
@@ -244,6 +249,8 @@ class _ComposerAttachmentKeyboardState
         photo: widget.onImageAttachment != null,
         camera: widget.onCameraCapture != null,
         web: widget.onWebAttachment != null,
+        imageGeneration:
+            imageGenAvailable && widget.onCreateImage != null,
       ),
     );
 
@@ -256,7 +263,6 @@ class _ComposerAttachmentKeyboardState
 
     final webSearchAvailable = ref.watch(webSearchAvailableProvider);
     final webSearchEnabled = ref.watch(webSearchEnabledProvider);
-    final imageGenAvailable = ref.watch(imageGenerationAvailableProvider);
     final imageGenEnabled = ref.watch(imageGenerationEnabledProvider);
     final featureTiles =
         buildComposerOverflowFeatureItems(
@@ -650,6 +656,8 @@ class _ComposerAttachmentKeyboardState
         return widget.onCameraCapture;
       case ComposerOverflowActionIds.web:
         return widget.onWebAttachment;
+      case ComposerOverflowActionIds.createImage:
+        return widget.onCreateImage;
       default:
         return null;
     }

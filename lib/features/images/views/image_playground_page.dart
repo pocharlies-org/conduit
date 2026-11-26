@@ -10,9 +10,9 @@ import 'package:conduit/shared/widgets/platform_ui/platform_ui.dart';
 import 'package:conduit/shared/widgets/utility_components.dart';
 import 'package:conduit_core/providers/app_providers.dart';
 import 'package:dio/dio.dart';
+import 'package:flutter/widgets.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:image_picker/image_picker.dart';
-import 'package:material_ui/material_ui.dart';
 import 'package:share_plus/share_plus.dart';
 
 /// Open WebUI's Images playground — an admin page in the web UI: create an
@@ -219,7 +219,7 @@ class _ImagePlaygroundState extends ConsumerState<_ImagePlayground> {
                           key: Key('image-playground-source-$i'),
                           onTap: () => setState(() => _sources.removeAt(i)),
                           child: ConduitIconButton(
-                            icon: Icons.close,
+                            icon: cupertinoIconForSFSymbol('xmark')!,
                             isCompact: true,
                             iconColor: tokens.neutralOnSurface,
                             tooltip: l10n.imagesPlaygroundRemoveSource,
@@ -244,10 +244,10 @@ class _ImagePlaygroundState extends ConsumerState<_ImagePlayground> {
         const SizedBox(height: Spacing.md),
         Row(
           children: [
-            TextButton.icon(
+            AdaptiveButton(
               onPressed: _busy ? null : _pickSources,
-              icon: const Icon(Icons.add_photo_alternate_outlined, size: 18),
-              label: Text(l10n.imagesPlaygroundAddImage),
+              label: l10n.imagesPlaygroundAddImage,
+              style: AdaptiveButtonStyle.plain,
             ),
             const Spacer(),
             ConduitButton(

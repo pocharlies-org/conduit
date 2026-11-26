@@ -86,6 +86,7 @@ import 'expanded_text_editor.dart';
 import 'chat_comparison_widgets.dart';
 import 'composer_overflow_items.dart';
 import 'composer_overflow_menu.dart';
+import 'image_generation_card.dart';
 import 'mention_text_controller.dart';
 import 'personal_valves_sheet.dart';
 import 'model_suggestion_overlay.dart';
@@ -520,6 +521,7 @@ class _ModernChatInputState extends ConsumerState<ModernChatInput>
   ComposerConnectionsOwner? _builtNativeConnectionsOwner;
   bool _nativeConnectionToggleBusy = false;
   bool _isFallbackAttachmentPanelVisible = false;
+  bool _imageCardVisible = false;
   bool _fallbackPanelReplacedKeyboard = false;
   double _fallbackAttachmentPanelHeight = 300;
   bool _fallbackPanelWaitingForKeyboard = false;
@@ -3612,6 +3614,7 @@ class _ModernChatInputState extends ConsumerState<ModernChatInput>
           ? () => unawaited(_openCompareModels())
           : null,
       compareModelsHasMessage: _hasText,
+      onCreateImage: () => setState(() => _imageCardVisible = true),
     );
 
     return PopScope(
@@ -3635,6 +3638,10 @@ class _ModernChatInputState extends ConsumerState<ModernChatInput>
       child: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
+          if (_imageCardVisible)
+            ImageGenerationCard(
+              onDismiss: () => setState(() => _imageCardVisible = false),
+            ),
           composer,
           if (widget.managesSystemKeyboardInset)
             SizedBox(

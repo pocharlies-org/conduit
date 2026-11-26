@@ -20,6 +20,7 @@ class ComposerOverflowActionIds {
   static const photo = 'photo';
   static const camera = 'camera';
   static const web = 'web';
+  static const createImage = 'createImage';
   static const webSearch = 'webSearch';
   static const imageGeneration = 'imageGeneration';
   static const codeInterpreter = 'codeInterpreter';
@@ -91,6 +92,7 @@ class ComposerOverflowAttachmentAvailability {
     this.photo = false,
     this.camera = false,
     this.web = false,
+    this.imageGeneration = false,
   });
 
   final bool file;
@@ -98,6 +100,7 @@ class ComposerOverflowAttachmentAvailability {
   final bool photo;
   final bool camera;
   final bool web;
+  final bool imageGeneration;
 }
 
 class ComposerOverflowItem {
@@ -242,6 +245,16 @@ List<ComposerOverflowItem> buildComposerOverflowAttachmentItems({
       sfSymbol: 'globe',
       enabled: attachmentAvailability.web,
     ),
+    if (attachmentAvailability.imageGeneration)
+      ComposerOverflowItem(
+        id: ComposerOverflowActionIds.createImage,
+        kind: ComposerOverflowItemKind.action,
+        section: ComposerOverflowSection.attachments,
+        label: l10n.createImage,
+        cupertinoIcon: CupertinoIcons.wand_stars,
+        materialIcon: Icons.auto_awesome,
+        sfSymbol: 'wand.and.stars',
+      ),
   ];
 }
 
