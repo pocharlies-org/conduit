@@ -258,8 +258,10 @@ void main() {
       check(result.changedChats).equals(4);
       check(result.watermarkAdvanced).isTrue();
       check(result.foldersFeatureEnabled).equals(true);
-      // Archived chats feed maxSeen too.
-      check(await db.syncMetaDao.getPullWatermark()).equals(500);
+      // OWU-163: the main watermark tracks the newest MAIN chat (400); the
+      // archived chat (500) advances its OWN watermark, not the main one.
+      check(await db.syncMetaDao.getPullWatermark()).equals(400);
+      check(await db.syncMetaDao.getArchivedPullWatermark()).equals(500);
 
       final rows = {for (final row in await allChats()) row.id: row};
       check(rows.keys)
@@ -440,22 +442,41 @@ void main() {
       },
     );
 
-    test('archived list failure freezes the watermark but already-collected '
-        'chats still merge', () async {
+    test('a persistent archived failure no longer freezes the main watermark '
+        '(OWU-163): the next run stays incremental', () async {
       server.seedChat(
-        id: 'chat-1',
-        blob: blobFor('chat-1'),
+        id: 'chat-old',
+        blob: blobFor('chat-old'),
         createdAt: 100,
         updatedAt: 100,
+      );
+      server.seedChat(
+        id: 'chat-new',
+        blob: blobFor('chat-new'),
+        createdAt: 200,
+        updatedAt: 200,
       );
       client.failArchivedListPages.add(1);
 
       final result = await pull.run();
 
+      // The archived axis failed, so the cycle is not a full success ...
       check(result.success).isFalse();
-      check(result.watermarkAdvanced).isFalse();
-      check(await db.syncMetaDao.getPullWatermark()).equals(0);
-      check((await allChats()).map((c) => c.id)).deepEquals(['chat-1']);
+      // ... but the main chats synced fine, so the MAIN watermark advances (the
+      // old coupling froze it here, forcing a full re-download on every open).
+      check(result.watermarkAdvanced).isTrue();
+      check(await db.syncMetaDao.getPullWatermark()).equals(200);
+      // The archived watermark stays put until the archived axis succeeds.
+      check(await db.syncMetaDao.getArchivedPullWatermark()).equals(0);
+      check((await allChats()).map((c) => c.id))
+          .unorderedEquals(['chat-old', 'chat-new']);
+
+      // Second run, archived still failing: the main walk stops at the
+      // watermark — only the 5s overlap window is re-pulled, not the whole list.
+      client.chatFetchStarts.clear();
+      final second = await pull.run();
+      check(second.watermarkAdvanced).isFalse(); // main already caught up to 200
+      check(client.chatFetchStarts).deepEquals(['chat-new']); // overlap only
     });
 
     test(
@@ -505,7 +526,10 @@ void main() {
       check(row.archived).isTrue();
       check(row.updatedAt).equals(250);
       check((await db.messagesDao.getForChat('chat-1')).length).equals(4);
-      check(await db.syncMetaDao.getPullWatermark()).equals(250);
+      // OWU-163: the archived bump advances the ARCHIVED watermark, not the main
+      // one (main stays at the last main-chat watermark, 100).
+      check(await db.syncMetaDao.getPullWatermark()).equals(100);
+      check(await db.syncMetaDao.getArchivedPullWatermark()).equals(250);
     });
 
     test(

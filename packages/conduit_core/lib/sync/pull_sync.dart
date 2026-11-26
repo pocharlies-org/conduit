@@ -309,9 +309,12 @@ class PullSync {
     return listLastReadAt == null || (local.lastReadAt ?? 0) >= listLastReadAt;
   }
 
-  /// Runs one pull cycle. The watermark advances only when every list page
-  /// and every chat fetch succeeded (REQ 5); on any failure it stays frozen
-  /// and the idempotent merge makes the next run safe.
+  /// Runs one pull cycle. The MAIN chat-list watermark advances when every main
+  /// list page and every main chat fetch succeeded (REQ 5); on any failure it
+  /// stays frozen and the idempotent merge makes the next run safe. OWU-163: the
+  /// archived axis is tracked by its OWN watermark, so an archived failure no
+  /// longer freezes the main watermark (that coupling re-downloaded every chat
+  /// on every app open).
   Future<PullResult> run() async {
     _fetchMemo?.beginCycle();
     // The list pages below describe the account as of now; a bulk barrier that
@@ -320,6 +323,9 @@ class PullSync {
     final watermark = await _db.syncMetaDao.getPullWatermark();
     final threshold = watermark - kPullOverlapSeconds;
     var maxSeen = watermark;
+    final archivedWatermark = await _db.syncMetaDao.getArchivedPullWatermark();
+    final archivedThreshold = archivedWatermark - kPullOverlapSeconds;
+    var archivedMaxSeen = archivedWatermark;
 
     // Keyed by chat id; first occurrence wins (list order is newest-first).
     final changed = <String, _ChangedItem>{};
@@ -358,9 +364,9 @@ class PullSync {
       return const PullResult(success: false, watermarkAdvanced: false);
     }
 
-    // 3. Archived loop (Q-03 default: metadata only). A list-page error here
-    // keeps the cycle going for already-collected chats, but success=false
-    // freezes the watermark.
+    // 3. Archived loop (Q-03 default: metadata only), on its OWN watermark. A
+    // list-page error here keeps the cycle going and freezes only the archived
+    // watermark — never the main one (OWU-163).
     var archivedListFailed = false;
     final archivedChanged = <_ChangedItem>[];
     final archivedChangedIds = <String>{};
@@ -370,16 +376,16 @@ class PullSync {
       while (!stop) {
         final items = await _client.getArchivedChatListPage(page);
         final archivedChangedBefore = archivedChanged.length;
-        final maxSeenBefore = maxSeen;
+        final archivedMaxSeenBefore = archivedMaxSeen;
         for (final item in items) {
           final parsed = _parseListItem(item);
           if (parsed == null) continue;
-          if (parsed.updatedAt > threshold) {
+          if (parsed.updatedAt > archivedThreshold) {
             if (!changed.containsKey(parsed.id) &&
                 archivedChangedIds.add(parsed.id)) {
               archivedChanged.add(parsed);
             }
-            maxSeen = math.max(maxSeen, parsed.updatedAt);
+            archivedMaxSeen = math.max(archivedMaxSeen, parsed.updatedAt);
           } else {
             stop = true;
             break;
@@ -387,7 +393,7 @@ class PullSync {
         }
         if (stop || items.length < kOpenWebUiChatListPageSize) break;
         if (archivedChanged.length == archivedChangedBefore &&
-            maxSeen == maxSeenBefore) {
+            archivedMaxSeen == archivedMaxSeenBefore) {
           break;
         }
         page++;
@@ -403,6 +409,7 @@ class PullSync {
     }
 
     var failedFetches = 0;
+    var archivedFailedFetches = 0;
     var foldedArchivedCount = 0;
 
     // Archived items: full-fetch when a synced body would otherwise go
@@ -429,7 +436,7 @@ class PullSync {
           });
         }
       } catch (error, stackTrace) {
-        failedFetches++;
+        archivedFailedFetches++;
         DebugLogger.error(
           'archived-stub-failed',
           scope: 'sync/pull',
@@ -509,11 +516,26 @@ class PullSync {
       for (var i = 0; i < kPullFetchConcurrency; i++) worker(),
     ]);
 
-    // 6. Watermark advance rule (REQ 5).
-    final success = !archivedListFailed && failedFetches == 0;
-    final watermarkAdvanced = success && maxSeen > watermark;
-    if (success) {
+    // 6. Watermark advance rule (REQ 5), per axis (OWU-163). The MAIN chat-list
+    // watermark advances on main cleanliness alone; the archived watermark is
+    // independent. Previously a single archived failure froze the one shared
+    // watermark, so every app open re-walked the whole main list and re-downloaded
+    // every chat body. `success` keeps its full-cycle meaning (backoff and the
+    // first-full-pull side effects — legacy-cache purge, reconcile advance — must
+    // still wait for the archived axis, so a not-yet-migrated archived chat is
+    // never dropped). The archived watermark advances only on a fully clean
+    // cycle: a bodySynced archived chat is folded into the main worker, so an
+    // unfetched body must not let the archived watermark advance past it.
+    final mainSuccess = failedFetches == 0;
+    final success =
+        mainSuccess && !archivedListFailed && archivedFailedFetches == 0;
+    final watermarkAdvanced = mainSuccess && maxSeen > watermark;
+    if (watermarkAdvanced) {
       await _db.syncMetaDao.setPullWatermark(maxSeen);
+    }
+    final archivedAdvanced = success && archivedMaxSeen > archivedWatermark;
+    if (archivedAdvanced) {
+      await _db.syncMetaDao.setArchivedPullWatermark(archivedMaxSeen);
     }
 
     final changedCount =
@@ -524,8 +546,11 @@ class PullSync {
       data: {
         'changed': changedCount,
         'failed': failedFetches,
+        'archivedFailed': archivedFailedFetches,
         'watermark': maxSeen,
         'advanced': watermarkAdvanced,
+        'archivedWatermark': archivedMaxSeen,
+        'archivedAdvanced': archivedAdvanced,
         'folders': foldersFeatureEnabled,
       },
     );
@@ -544,7 +569,7 @@ class PullSync {
   // drainer/seam can treat chats and notes uniformly. The chat-only axes — the
   // Q-03 archived sub-loop, §7.6 folders, and the §7.3 createChat crash-heal —
   // are NOT here: they stay in the concrete [run] orchestrator above (the
-  // archived loop folds into the SAME watermark/worker-pool as the main list, a
+  // archived loop folds into the SAME worker-pool as the main list, a
   // coupling that the generic `runPullFor` driver deliberately does not model —
   // see the seam's anti-over-abstraction caveat). So `runPullFor` drives NOTES
   // and the chat-only [run] keeps its integrated orchestration; both share the
