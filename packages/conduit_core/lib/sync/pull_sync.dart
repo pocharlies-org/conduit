@@ -569,7 +569,7 @@ class PullSync {
   // drainer/seam can treat chats and notes uniformly. The chat-only axes — the
   // Q-03 archived sub-loop, §7.6 folders, and the §7.3 createChat crash-heal —
   // are NOT here: they stay in the concrete [run] orchestrator above (the
-  // archived loop folds into the SAME watermark/worker-pool as the main list, a
+  // archived loop folds into the SAME worker-pool as the main list, a
   // coupling that the generic `runPullFor` driver deliberately does not model —
   // see the seam's anti-over-abstraction caveat). So `runPullFor` drives NOTES
   // and the chat-only [run] keeps its integrated orchestration; both share the
