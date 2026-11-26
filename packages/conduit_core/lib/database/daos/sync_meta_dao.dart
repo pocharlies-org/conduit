@@ -139,6 +139,22 @@ class SyncMetaDao extends DatabaseAccessor<AppDatabase>
     return setValue('pull_watermark', '$epochSeconds');
   }
 
+  /// OWU-163: the archived-chat axis has its OWN pull watermark, so an archived
+  /// failure can no longer freeze the main chat-list watermark (which forced a
+  /// full re-download of every chat on every app open). Same clock as
+  /// [getPullWatermark] (server epoch seconds), separate key, never
+  /// cross-compared.
+  static const String kArchivedPullWatermarkKey = 'archived_pull_watermark';
+
+  Future<int> getArchivedPullWatermark() async {
+    final raw = await getValue(kArchivedPullWatermarkKey);
+    return int.tryParse(raw ?? '') ?? 0;
+  }
+
+  Future<void> setArchivedPullWatermark(int epochSeconds) {
+    return setValue(kArchivedPullWatermarkKey, '$epochSeconds');
+  }
+
   /// Last full-ID deletion reconcile time (§7.5 throttle). `0` when never run.
   /// This is a SCHEDULING gate (device clock acceptable per the reconcile
   /// contract); it never feeds `serverUpdatedAt` or any merge timestamp.
